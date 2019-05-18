@@ -1,0 +1,143 @@
+// Easy.free.js v1.0.0
+
+Easy.free.js é uma ferramenta ou ficheiro auxiliar que possibilita o desenvolvedor livremente costumizar o acesso 
+a dados a sua maneira, podendo liga-lo a qualquer servidor api ou servidor de base de dados.
+
+As funções de acesso a serem costumizadas são: add, remove, update, list, getOne. todas as funções devem retornar uma outra 
+função chamada "e_return", que contem um estado da requisição, a mensagem da requisição e o objecto em si. 
+A sintaxe é: e_return([Boolean], [String], [Object]).
+    - [Boolean]: O estado da requisição.
+    - [String]: A mensagem de da requisição.
+    - [Object]: O objecto de requisição que pode ser nulo para o caso de mensagem de erro.
+
+    Nota': todas as funções de acesso devem 'SEMPRE' retornar o objecto que foi manElemento pra base de dados, significa que, no 
+    caso de inserção o objecto último inserido na base de dados deverá ser retornado, no caso de actualização também, para 
+    que o easy possa saber a sua chave e os seus valores.
+
+    Nota'': As funções recebem os dados preparados e passados pelo easy.js e decide onde os dados serão executados ou 
+    enviados.
+
+    * add: Sintaxe add([TableName], [Object]).
+        - [TableName]: É passado o nome da tabela ou a referência na base de dados.
+        - [Object]: É passado o objecto que deverá ser inserido na base de dados.
+
+        Ex.: # Este codigo tem poucos tratamento de erros, a ideia é simplesmente mostrar como funcionar.
+        
+        add: async function (r, o) {
+            var obj = db.insert(r, o); // Inserindo o elemento
+            if(obj != null)
+                return e_return(true, 'Elemento inserido na base de dados', obj); // Sucesso
+            else
+                return e_return(true, 'Elemento não inserido na base de dados', null); // Falha
+        };
+
+        // Chamando a função
+        add('Pessoa', { Id:'P0001', Nome:'Afonso Matumona', Idade: 23 });
+    
+    * remove: Sintaxe remove([TableName], [String], [TableField{Optional:Default=Id}]).
+
+        - [TableName]: É passado o nome da tabela ou a referência na base de dados.
+        - [String]: É passado o valor que é combinado com o [TableField] que por padrão é "Id" pra poder executar a 
+        função de remocão mais livre. Ex.: [String] = 'AfonsoMatElias' e [TableField] = 'Username'. Mas geralmente neste 
+        campo é passado o valor da chave primária.
+        - [TableField{Optional:Default=Id}]: É passado o nome do campo que deverá ser combinado com o [String].
+
+        Ex.: # Este codigo tem poucos tratamento de erros, a ideia é simplesmente mostrar como funcionar.
+            
+        remove: async function (r, id, fld) {
+            if(fld != 'Id'){
+                var result = db.find(r, function(x) { x[fld] == id }); // Procurando pelo elemento
+                id = result.Id;
+            }
+            var obj = db.remove(r, id); // Removendo o Elemento 
+            if(obj != null)
+                return e_return(true, 'Elemento removido da base de dados', obj); // Sucesso
+            else
+                return e_return(true, 'Elemento não removido da base de dados', null); // Falha
+        };
+
+        // Chamando a função
+        remove('Pessoa', 'P0001');
+
+        // Ou 
+
+        // Chamando a função
+        remove('Pessoa', 'P0001', 'IdPessoa');
+
+    * update: Sintaxe é update([TableName], [Object], [ElemKeyVal]).
+        - [TableName]: É passado o nome da tabela ou a referência na base de dados.
+        - [Object]: É passado o objecto que deverá ser inserido na base de dados.
+        - [ElemKeyVal]: É o valor da chave primária do elemento.
+
+        Ex.: # Este codigo tem poucos tratamento de erros, a ideia é simplesmente mostrar como funcionar.
+            
+        update: async function (r, o, id) {
+
+            var obj = db.update(r, o, id); // actualizando o Elemento 
+            if(obj != null)
+                return e_return(true, 'Elemento actualizado na base de dados', obj); // Sucesso
+            else
+                return e_return(true, 'Elemento não actualizado na base de dados', null); // Falha
+        };
+
+        // Chamando a função
+        update('Pessoa', { Id:'P0001' Name:'Elias', Idade:15 }, 'P0001');
+
+    * list: Sintaxe list([TableName], [FilterExpression:String{Optional}], [String{Optional}]).
+        - [TableName]: É passado o nome da tabela ou a referência na base de dados.
+        - [FilterExpression:String{Optional}]: A expressão para filtrar os dados vindo do servidor.
+        Para filtar os dados retornados no easy.free.js deve ser usado uma função auxiliar chamada
+        e_data_filter([List], [String]).
+            - [List]: A lista de dados retornado.
+            - [String]: A expressão de filtro.
+
+        Ex.': # Este codigo tem poucos tratamento de erros, a ideia é simplesmente mostrar como funcionar.
+            
+        list: async function (r, f, s) {
+
+            var objs = db.list(r); // Pegando os elementos
+            if(objs != null){
+                // O conteúdo do parametro s pode ser utilizado para envio de dados a um servidor
+                // para campos de pesquisas e tudo mais.
+                if(f != null)
+                    objs = e_data_filter(objs, f);
+                return e_return(true, 'Lista de Elementos', objs); // Sucesso
+            }else{
+                return e_return(true, 'Erro na obtenção dos elementos', null); // Falha
+            }
+        };
+
+        // Chamando a função
+        list('Pessoa');
+
+        // Chamando a função
+        list('Pessoa', 'Name == Afonso');
+
+        // Chamando a função
+        list('Pessoa', 'Name == Afonso');
+
+    * getOne: Sintaxe getOne([TableName], [String], [TableField{Optional:Default=Id}]).
+        - [TableName]: É passado o nome da tabela ou a referência na base de dados.
+        - [String]: É passado o valor que é combinado com o [TableField] que por padrão é "Id" pra poder executar a 
+        função de remocão mais livre. Ex.: [String] = 'AfonsoMatElias' e [TableField] = 'Username'. Mas geralmente neste 
+        campo é passado o valor da chave primária.
+        - [TableField{Optional:Default=Id}]: É passado o nome do campo que deverá ser combinado com o [String].
+
+        Ex.: # Este codigo tem poucos tratamento de erros, a ideia é simplesmente mostrar como funcionar.
+            
+        getOne: async function (r, id, fld) {
+            
+            var obj = db.list(r).first(x => x[fld] == id); // Pegando o Elemento 
+            if(obj != null)
+                return e_return(true, 'Elemento', obj); // Sucesso
+            else
+                return e_return(true, 'Elemento não encontrado', null); // Falha
+        };
+
+        // Chamando a função
+        getOne('Pessoa', 'P0001');
+
+        // Ou 
+
+        // Chamando a função
+        getOne('Pessoa', 'P0001', 'IdPessoa');
