@@ -135,19 +135,19 @@ As funções podem ser chamadas ou executadas da seguinte forma:
 					<div class="data-field">
 						<label>Pais</label><br/>
 						<select name="PaisId">
-							<option e-tmp="Pais" value="--e-Id--">--e-Pais--</option>
+							<option e-tmp="Pais" value="-e-Id-">-e-Pais-</option>
 						</select>
 					</div>
 					<div class="data-field">
 						<label>Provincia</label><br/>
 						<select name="ProvinciaId">
-							<option e-tmp="Provincia" value="--e-Id--">--e-Provincia--</option>
+							<option e-tmp="Provincia" value="-e-Id-">-e-Provincia-</option>
 						</select>
 					</div>
 					<div class="data-field">
 						<label>Municipio</label><br/>
 						<select name="MunicipioId">
-							<option e-tmp="Municipio" value="--e-Id--">--e-Municipio--</option>
+							<option e-tmp="Municipio" value="-e-Id-">-e-Municipio-</option>
 						</select>
 					</div>
 					<div class="data-field">
@@ -217,17 +217,17 @@ Os comandos para tal são: "e-tmp", "e-m-tmp", "e-id", "e-field", "e-filter", "e
 				easy.addHtml('#PessoaContianer', p);
 			});
 				
-    * --e-[Field]--: Tem como significado "easy-replace" diz ou permite definir valores a um elemento ou propriedades html, ele é muito poderoso 
+    * -e-[Field]-: Tem como significado "easy-replace" diz ou permite definir valores a um elemento ou propriedades html, ele é muito poderoso 
 		por permitir definir valores em qualquer lugar de um HTMLElement.
-		Sintaxe --e-[Field]--.
+		Sintaxe -e-[Field]-.
 		Ex.: <div e-tmp="Pessoa">
-				<p title="--e-Descricao--"> Este é nome --e-Nome-- está a vir de uma base de dados ou um servidor, e esta é a usa descrição: 
-				--e-Descricao--.</p>
+				<p title="-e-Descricao-"> Este é nome -e-Nome- está a vir de uma base de dados ou um servidor, e esta é a usa descrição: 
+				-e-Descricao-.</p>
 			</div>
 
-		No caso de atributos, este comando pode ser combinado com a expressão 'e-' antes do nome do tal. Ex.: e-src="assets/--e-Name--". Isto possibilita 
+		No caso de atributos, este comando pode ser combinado com a expressão 'e-' antes do nome do tal. Ex.: e-src="assets/-e-Name-". Isto possibilita 
 		criar dois atributos com o mesmo propósito, Ex.: 'src' e 'e-src', isso significa para o primeiro atributo 'src' pode se definir o valor padrão 
-		Ex.: src="assets/default-img.png". e 'e-src' o valor a ser atribuido no momento de execução. Ex.: e-src="assets/--e-Img--".
+		Ex.: src="assets/default-img.png". e 'e-src' o valor a ser atribuido no momento de execução. Ex.: e-src="assets/-e-Img-".
 	
 	* e-filter: Tem como significado "easy-filter" diz ou permite filtrar dados a partir do elemento html, os dados vindo do servidor, 
 		simplesmente uma condição de cada vez. Os operadores para o filtros são: ==, !=, <, >, <=, >=. Sintaxe e-filter="[Prop][Op][Val]".
@@ -235,8 +235,8 @@ Os comandos para tal são: "e-tmp", "e-m-tmp", "e-id", "e-field", "e-filter", "e
 			elementos pode ser posto neste mesmo elemento.
 		Nota'': Este comando só funciona com o comando "e-tmp".
 			Ex.: <div e-tmp="Pessoa" e-filter="Idade>=10">
-					<label e-field="Nome"> --Nome-- </label>
-					<label e-field="Idade"> -- Idade -- </label>
+					<label> -e-Nome- </label>
+					<label> -e-Idade- </label>
 				</div>
 	
     * e-id: Tem como significado "easy-id" diz ou permite que o easy conheça qual é a chave primária do elemento a ser listado ou preenchido,
@@ -246,7 +246,7 @@ Os comandos para tal são: "e-tmp", "e-m-tmp", "e-id", "e-field", "e-filter", "e
 		Nota': Para todas as tabela que têm a chave primária "Id" (Pascal Case), pode não se definir ele, porque automaticamente será reconhecido.
 		Nota'': Caso a chave primária não seja "Id" (Pascal Case), deve-se explicitamente defini-lá tal como ela é.
 			Ex.: <div e-tmp="Pessoa" e-id="IdPessoa">
-					<label e-field="Nome"> --Nome-- </label>
+					<label > -e-Nome- </label>
 				</div>
 				
 	* e-anm: Tem como significado "easy-animation" diz ou permite que os elementos sejam adicionados no HTML DOM de uma forma animada, com uma certa 
@@ -257,7 +257,7 @@ Os comandos para tal são: "e-tmp", "e-m-tmp", "e-id", "e-field", "e-filter", "e
 		 - left: quer dizer que os elementos serão postos no HTML DOM animadamente da direita para esquerda. 
 		 - right: quer dizer que os elementos serão postos no HTML DOM animadamente da esquerda para direita.
 		Ex.: <div e-tmp="Pessoa" e-anm="up">
-				<label e-field="Nome"> --Nome-- </label>
+				<label> -e-Nome- </label>
 			</div>
 	
 	* e-code: Tem como significado "easy-code" diz ou permite que o easy possa distinguir os containers dos templates.

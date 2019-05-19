@@ -418,7 +418,7 @@ let e_handler = {
     },
     // Easy value checker
     e_checker(v){
-        return v ? v.match(/--e-[^]*--/i) : null; // Checker function
+        return v ? v.match(/-e-[^]*-/i) : null; // Checker function
     },
     // Easy element checker
     e_elem:function (v) {
@@ -663,7 +663,7 @@ function e_propGetter(v, m) {
     if (v.includes(e_cmds._e_)) {
         value += v;
         value = value.replace(e_cmds._e_, ''); // Removing cmd
-        value = value.substr(0, value.length - 2); // Removing the delimiter 
+        value = value.substr(0, value.length - 1); // Removing the delimiter 
         try 
         { value = eval(`m.${rep(value)}`); } // Rebuilding the value
         catch (e) 
@@ -879,7 +879,7 @@ const e_cmds = {
     e_id: "e-id",
     e_filter: "e-filter",
     e_anm: "e-anm",
-    _e_: "--e-",
+    _e_: "-e-",
     e_code: 'e-code',
     e_fill: 'e-fill',
     e_build: 'e-build'
