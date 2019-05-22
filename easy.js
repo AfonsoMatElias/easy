@@ -479,11 +479,11 @@ let e_handler = {
     },
     // Helper to unlink an element from the DOM
     unlinkElem: function (v) {
-        let aux = document.createElement('div');
+        let aux = document.createElement('tbody');
         aux.appendChild(v);
-        let div = document.createElement('div');
+        let div = document.createElement('tbody');
         div.innerHTML = aux.innerHTML;
-        return div.children[0]; // # Disconnecting the elem from the DOM
+        return aux.children[0]; // # Disconnecting the elem from the DOM
     },
     // Get the elems according the data base elem passed in the parameter
     getHTMLElems: function (v) {
