@@ -320,7 +320,10 @@ easy.fillHtml = function(el) {
         let v = a.value || a.data; 
         let value = e_handler.e_checker(v); // Checking the value
         if(value){
-            value = value[0].split(','); 
+
+            if(!Array.isArray(value))
+                value = value[0].split(',');
+            
             value.filter(function (e) {
                 let res = e_propGetter(e, mdl);
                 if(res != null){ 
@@ -418,7 +421,7 @@ let e_handler = {
     },
     // Easy value checker
     e_checker(v){
-        return v ? v.match(/-e-[^]*-/i) : null; // Checker function
+        return v ? v.match(/-e-[^-]*-/g) : null; // Checker function
     },
     // Easy element checker
     e_elem:function (v) {
@@ -483,7 +486,7 @@ let e_handler = {
         aux.appendChild(v);
         let div = document.createElement('tbody');
         div.innerHTML = aux.innerHTML;
-        return aux.children[0]; // # Disconnecting the elem from the DOM
+        return div.children[0]; // # Disconnecting the elem from the DOM
     },
     // Get the elems according the data base elem passed in the parameter
     getHTMLElems: function (v) {
@@ -650,26 +653,17 @@ function e_generateObj(frm) {
 
 // Object value getter
 function e_propGetter(v, m) {
-    // Replace function
-    function rep(v) {
-        let value = "", sep = '->';
-        value += v;
-        do 
-        { value = value.replace(sep, '.'); }
-        while (value.includes(sep));
-        return value;
-    }
     let value = "";
     if (v.includes(e_cmds._e_)) {
         value += v;
         value = value.replace(e_cmds._e_, ''); // Removing cmd
         value = value.substr(0, value.length - 1); // Removing the delimiter 
         try 
-        { value = eval(`m.${rep(value)}`); } // Rebuilding the value
+        { value = eval(`m.${value}`); } // Rebuilding the value
         catch (e) 
-        { try { value = eval(`m.${value.split('->')[0]}`); } catch(e){ value = 'null'; } } // Rebuilding the value
+        { try { value = eval(`m.${value.split('.')[0]}`); } catch(e){ value = 'null'; } } // Rebuilding the value
     } else {
-        value = eval(`m.${rep(v)}`); // Executing the value
+        value = eval(`m.${v}`); // Executing the value
     }
     return value;
 }
@@ -832,7 +826,7 @@ if (typeof Object.prototype.fullTyping !== 'function') {
                 let enter = false, c = ''; 
                 elem.onkeyup = function (e) {
                     enter = false;
-                    if (e.keyCode == keys.ENTER) { // Enter key pressed
+                    if (e.keyCode == e_keys.ENTER) { // Enter key pressed
                         enter = true; w = false; // Assuming that the user finish to type
                         if (t_out != null) clearTimeout(t_out);
                         cb(e.target); // Executing the callback

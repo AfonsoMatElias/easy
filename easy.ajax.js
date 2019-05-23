@@ -10,7 +10,8 @@
 
 // This is the root url of the your API or The Data Source url 
 // *** Modify as you will ***
-let e_url = 'http://myServer.com/api/';
+//let e_url = 'http://myServer.com/api/';
+let e_url = 'https://jsonplaceholder.typicode.com/'; // Example
 
 let e_data = {
     baseUrl: e_url,
@@ -27,7 +28,7 @@ let e_data = {
         return await ajaxCall(e_data.baseUrl + r + '/' + id, o, 'put');
     },
     list: async function (r, f, s) {
-        return await ajaxCall(e_data.baseUrl + r, s, 'get', f);
+        return await ajaxCall(e_data.baseUrl + r, null, 'get', f);
     },
     getOne: async function (r, id, fld) {
         fld = fld == undefined ? 'Id' : fld;
@@ -84,10 +85,7 @@ async function ajaxCall(u, d, m, f) {
 };
 
 function checkResponse(r){
-    return (typeof r === 'undefined') || 
-            (r.message == "Failed to fetch") ||
-            (typeof r.ok !== 'undefined' &&
-            r.ok != false &&
-            r.redirected != undefined && 
-            r.status != undefined);
+    return (typeof r === 'undefined') ||
+           ((r.message && r.stack) && 
+           r.message.includes("Failed") && r.stack.includes("TypeError"));
 }

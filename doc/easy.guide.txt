@@ -219,6 +219,7 @@ Os comandos para tal são: "e-tmp", "e-m-tmp", "e-id", "e-field", "e-filter", "e
 				
     * -e-[Field]-: Tem como significado "easy-replace" diz ou permite definir valores a um elemento ou propriedades html, ele é muito poderoso 
 		por permitir definir valores em qualquer lugar de um HTMLElement.
+		Nota: Para acessar propriedades internas de um objecto deve-se pôr ponto '.' Ex.: Pessoa.Endereco.Nome 
 		Sintaxe -e-[Field]-.
 		Ex.: <div e-tmp="Pessoa">
 				<p title="-e-Descricao-"> Este é nome -e-Nome- está a vir de uma base de dados ou um servidor, e esta é a usa descrição: 
