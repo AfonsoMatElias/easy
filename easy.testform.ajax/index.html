@@ -1,0 +1,175 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <title>Easy Framework Test form</title>
+</head>
+
+<body>
+
+    <div id="main-div-container">
+        
+        <div class="modal-control">
+            <br>
+            <div><label><b>Id</b> of the element to be updated </label></div>
+            <div><input type="text" id="ElemId" placeholder="Id" /></div>
+        </div>
+
+        <form id="medicine-form" >
+            <div class="modal-control">
+                <div>
+                    <h4>Test Form</h4>
+                </div>
+            </div>
+
+            <div class="modal-control">
+                <div><label>Name</label></div>
+                <div><input type="text" name="name" placeholder="John" /></div>
+            </div>
+
+            <div class="modal-control">
+                <div><label>Username</label></div>
+                <div><input type="text" name="username" placeholder="John0011" /></div>
+            </div>
+
+            <div class="modal-control">
+                <div><label>E-mail</label></div>
+                <div><input type="email" name="email" placeholder="j0011@gmail.com" /></div>
+            </div>
+
+            <div><h3>Address</h3></div>
+            <div e-build="address">
+                <div class="modal-control">
+                    <div><label>Street</label></div>
+                    <div><input name="street" placeholder="Kulas Light" /></div>
+                </div>
+                <div class="modal-control">
+                    <div><label>Suite</label></div>
+                    <div><input name="suite" placeholder="Apt. 556" /></div>
+                </div>
+                <div class="modal-control">
+                    <div><label>City</label></div>
+                    <div><input name="city" placeholder="Gwenborough" /></div>
+                </div>
+                <div class="modal-control">
+                    <div><label>Zipcode</label></div>
+                    <div><input name="zipcode" placeholder="92998-3874" /></div>
+                </div>
+                <div><h3>Geo</h3></div>
+                <div e-build="geo">
+                    <div class="modal-control">
+                        <div><label>Latitude</label></div>
+                        <div><input name="lat" placeholder="8.23" /></div>
+                    </div>
+                    <div class="modal-control">
+                        <div><label>Longitude</label></div>
+                        <div><input name="lng" placeholder="-13.4" /></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-control">
+                <div class="modal-control-button">
+                    <button type="submit" id="save" class="save-medicine">Salvar</button>
+                    <button type="submit" id="update" class="update-medicine">Update</button>
+                    <button id="send" class="close-modal" type="button">Cancelar</button>
+                </div>
+            </div>
+
+        </form>
+        <br />
+        <div class="modal-control">
+            <div><input type="text" id="Search" placeholder="Search..." /></div>
+        </div>
+        <br />
+    </div>
+    <!-- List -->
+    <div id="prod-list">
+
+        <div class="prod-list-item" 
+             e-tmp="users" 
+             e-anm="up"
+             e-id="id" 
+             title="Click twice to remove">
+
+            <div class="text-content">
+                <div class="top-text-content">
+                    
+                    <div class="info-m">
+                        <div class="info">
+                            <b><label>-e-name-</label></b>
+                        </div>
+                        <div class="info">
+                            <label>-e-username-</label>
+                        </div>
+                    </div>
+                    <div class="info-m">
+                        <div class="info">
+                            <label>-e-email-</label>
+                        </div>
+                        <div class="info">
+                            <label>Id: -e-id- </label>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="bottom-text-content">
+                    <div class="info-max">
+                        <p e-field="Description">
+                            Live in -e-address.street-, -e-address.city- with the zipcode number -e-address.zipcode-. exact location, lat: -e-address.geo.lat-, long: -e-address.geo.lng-
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="../easy.ajax.js"></script>
+    <script src="../easy.js"></script>
+
+    <script>
+
+        let rootTable = 'users';
+
+        e('#medicine-form', 'submit', function (e) {
+            e.preventDefault();
+        });
+
+        e('#save','click', async function (e) {
+            console.log(await easy.create(rootTable, '#medicine-form', true));
+            console.log('Created, list: ', await easy.read(rootTable));
+        });
+
+        e('#update','click', async function (e) {
+            e.preventDefault();
+            var id = document.getElementById('ElemId').value;
+            console.log(await easy.update(rootTable, '#medicine-form', id, 'id'));
+            console.log('Updated, list: ', await easy.read(rootTable));
+        });
+
+        // Com isto poderás encontrar elementos mesmo depois de terem sido
+        // adicionados no HTML.
+        e('.prod-list-item', 'dblclick', async function (e, el) {
+            let res = await easy.delete(rootTable, el.getAttribute('e-key'), 'id');
+            console.log('Removed', res, 'list: ', await easy.read(rootTable));
+        });
+
+        let cnt = e_sltr('#prod-list');
+        document.querySelector('#Search').fullTyping(function (el) {
+            cnt.innerHTML = '';
+            easy.read(rootTable, function (e) {
+                easy.addHtml('#prod-list', e);
+            }, null, el.value);
+        });
+
+    </script>
+
+</body>
+
+</html>
