@@ -73,9 +73,9 @@
 
             <div class="modal-control">
                 <div class="modal-control-button">
-                    <button type="submit" id="save" class="save-medicine">Salvar</button>
+                    <button type="submit" id="save" class="save-medicine">Save</button>
                     <button type="submit" id="update" class="update-medicine">Update</button>
-                    <button id="send" class="close-modal" type="button">Cancelar</button>
+                    <button id="send" class="close-modal" type="button">Cancel</button>
                 </div>
             </div>
 
@@ -135,26 +135,35 @@
 
     <script>
 
+        /* I was took this page and the styles in other project
+        reason why you see medicine-form and other stuffs..
+        */
+       
+        // With the 'e' function you can find any element in the DOM even if
+        // it was added after the DOM Loaded
+       
         let rootTable = 'users';
 
+        // Preventing the default form action
         e('#medicine-form', 'submit', function (e) {
             e.preventDefault();
         });
 
+        // Save Buttom
         e('#save','click', async function (e) {
-            console.log(await easy.create(rootTable, '#medicine-form', true));
+            console.log(await easy.create(rootTable, '#medicine-form'));
             console.log('Created, list: ', await easy.read(rootTable));
         });
 
+        // Update buttom
         e('#update','click', async function (e) {
             e.preventDefault();
             var id = document.getElementById('ElemId').value;
             console.log(await easy.update(rootTable, '#medicine-form', id, 'id'));
             console.log('Updated, list: ', await easy.read(rootTable));
         });
-
-        // Com isto poderás encontrar elementos mesmo depois de terem sido
-        // adicionados no HTML.
+  
+        // Remove elem event
         e('.prod-list-item', 'dblclick', async function (e, el) {
             let res = await easy.delete(rootTable, el.getAttribute('e-key'), 'id');
             console.log('Removed', res, 'list: ', await easy.read(rootTable));

@@ -22,20 +22,20 @@
         
         <div class="modal-control">
             <br>
-            <div><label><b>Id</b> do Elemento a ser actualizado </label></div>
+            <div><label><b>Id</b> of the element t be updated </label></div>
             <div><input type="text" id="ElemId" placeholder="Id" /></div>
         </div>
 
         <form id="medicine-form" >
             <div class="modal-control">
                 <div>
-                    <h4>Formulario de teste - Product</h4>
+                    <h4>Test Form</h4>
                 </div>
             </div>
 
             <div class="modal-control">
                 <div><label>Name</label></div>
-                <div><input type="text" name="Name" placeholder="Qualquer coisa serve" /></div>
+                <div><input type="text" name="Name" placeholder="Car" /></div>
             </div>
 
             <div class="modal-control">
@@ -70,15 +70,15 @@
             <div e-build="Category">
                 <div class="modal-control">
                     <div><label>Name</label></div>
-                    <div><input name="Name" placeholder="Electronic" /></div>
+                    <div><input name="Name" placeholder="Vehicle" /></div>
                 </div>
             </div>
 
             <div class="modal-control">
                 <div class="modal-control-button">
-                    <button type="submit" id="save" class="save-medicine">Salvar</button>
+                    <button type="submit" id="save" class="save-medicine">Save</button>
                     <button type="submit" id="update" class="update-medicine">Update</button>
-                    <button id="send" class="close-modal" type="button">Cancelar</button>
+                    <button id="send" class="close-modal" type="button">Cancel</button>
                 </div>
             </div>
 
@@ -105,7 +105,7 @@
                 </div>
                 <div class="info-m">
                     <div class="info">
-                        <label>Custa -e-Price- AOA</label>
+                        <label>Custa -e-Price- $</label>
                     </div>
                     <div class="info">
                         <label> -e-Stock- </label> : <label> -e-Id- </label>
@@ -164,17 +164,28 @@
     <script src="../easy.js"></script>
 
     <script>
-        let rootTable = 'Product';
+        
+        /* I was took this page and the styles in other project
+        reason why you see medicine-form and other stuffs..
+        */
+       
+        // With the 'e' function you can find any element in the DOM even if
+        // it was added after the DOM Loaded  
 
+        let rootTable = 'Product';
+        
+        // Preventing the default form action
         e('#medicine-form', 'submit', function (e) {
             e.preventDefault();
         });
 
+        // Save buttom
         e('#save','click', async function (e) {
             console.log(await easy.create(rootTable, '#medicine-form', true));
             console.log('Created, list: ', await easy.read(rootTable));
         });
 
+        // Update buttom
         e('#update','click', async function (e) {
             e.preventDefault();
             var id = document.getElementById('ElemId').value;
@@ -182,8 +193,7 @@
             console.log('Updated, list: ', await easy.read(rootTable));
         });
 
-        // Com isto poderás encontrar elementos mesmo depois de terem sido
-        // adicionados no HTML.
+        // Remove elem event
         e('.prod-list-item', 'dblclick', async function (e, el) {
             let res = await easy.delete(rootTable, el.getAttribute('e-key'));
             console.log('Removed', res, 'list: ', await easy.read(rootTable));

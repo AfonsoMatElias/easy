@@ -85,7 +85,9 @@ async function ajaxCall(u, d, m, f) {
 };
 
 function checkResponse(r){
-    return (typeof r === 'undefined') ||
-           ((r.message && r.stack) && 
-           r.message.includes("Failed") && r.stack.includes("TypeError"));
+    let res = 
+    ( r.ok == false || 
+    (r.message && r.stack) && 
+    (r.message.includes("Failed") && r.stack.includes("TypeError")) )
+    return res;
 }
