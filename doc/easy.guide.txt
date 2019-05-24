@@ -7,9 +7,9 @@
  * # Be Happy ;-)  
  */
 
-Easy js é um javascript framework para auxiliar na criação aplicação web ou app mobile. Ela estende de "Easy and asyncronous js" que em portugues podemos traduzi-lo
-como "Javascript fácil e assíncrono". Ela possibilita e facilita na disposião das informações vindas de um servidor ou uma fonte de dados, ela também possibilita
-criacao de objectos automaticamente com fome o desenvolvedor definir e envia-lo a um servidor. 
+Easy js é um javascript framework para auxiliar na criação de aplicações web ou mobile. Ela estende de "Easy and asyncronous js" que em portugues podemos traduzi-lo
+como "Javascript fácil e assíncrono". Ela possibilita e facilita na disposição das informações vindas de um servidor ou uma fonte de dados, ela também possibilita
+criacao de objectos automaticamente conforme o desenvolvedor definir e envia-lo a um servidor. 
 
 Easy.js possibilita que a página corrente seja uma página "realtime" ou com dados "em tempo real", com isso, podemos dizer que em todas as secções
 do HTML DOM onde foi usado o "callback" ou a "função de retorno" ou mesmo de secções usadas a função de preenchimento se torne secção "em tempo real". 

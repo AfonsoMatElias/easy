@@ -179,8 +179,8 @@ easy.source = function (ds) {
     e_data = {
         add: async function (r, mdl) {
             try {
-                let ref = r == null ? ds : ds[r];
-                if (ref == null || ref == undefined) { throw ({ message: e_error_msg.notDefinedField(r) }); }
+                let ref = ds;
+                if (ref == null || ref == undefined) { throw ({ message: e_error_msg.nullDs() }); }
                 
                 ref.push(mdl);
                 let last = ref[ref.length - 1];
@@ -193,8 +193,8 @@ easy.source = function (ds) {
             try {
                 if (id == null || id == undefined) throw ({ message: e_error_msg.notValidValue(id) });
                 
-                let ref = r == null ? ds : ds[r];
-                if (ref == null || ref == undefined) { throw ({ message: e_error_msg.notDefinedField(r) }); }
+                let ref = ds;
+                if (ref == null || ref == undefined) { throw ({ message: e_error_msg.nullDs() }); }
                 
                 let obj = null;
                 field = field == null ? 'Id' : field;
@@ -214,8 +214,8 @@ easy.source = function (ds) {
             try {
                 if (id == null || id == undefined) throw ({ message: e_error_msg.notValidValue(id) });
                 
-                let ref = r == null ? ds : ds[r];
-                if (ref == null || ref == undefined) { throw ({ message: e_error_msg.notDefinedField(r) }); }
+                let ref = ds;
+                if (ref == null || ref == undefined) { throw ({ message: e_error_msg.nullDs() }); }
                 field = field == null ? 'Id' : field;
                 for (let i = 0; ref.length; i++) {
                     let o = field ? ref[i][field] : ref[i];
@@ -231,8 +231,8 @@ easy.source = function (ds) {
         },
         list: async function (r, filter, search) {
             try {
-                let ref = r == null ? ds : ds[r];
-                if (ref == null || ref == undefined) { throw ({ message: e_error_msg.notDefinedField(r) }); }
+                let ref = ds;
+                if (ref == null || ref == undefined) { throw ({ message: e_error_msg.nullDs() }); }
                 
                 let _ref = e_data_filter(ref, filter);
                 if (search != null) { _ref = e_data_search(_ref, search); }
@@ -246,8 +246,8 @@ easy.source = function (ds) {
             try {
                 if (id == null || id == undefined) throw ({ message: e_error_msg.notDefinedField(id) });
                 
-                let ref = r == null ? ds : ds[r];
-                if (ref == null || ref == undefined) { throw ({ message: e_error_msg.notDefinedField(r) }); }
+                let ref = ds;
+                if (ref == null || ref == undefined) { throw ({ message: e_error_msg.nullDs() }); }
                 
                 let obj = null;
                 field = field == null ? 'Id' : field;
@@ -909,6 +909,7 @@ const e_error_msg = {
                                 \nNote: The parameter must be a 'element selector' or a 'js object'`;
     },
     notFoundedObj: function () { return `Obj not founded`; },
+    nullDs: function () { return 'Data Source is NULL, please initialize the it as Array.'; }
 };
 // Running easy default funciton 
 const initEasy = function () {

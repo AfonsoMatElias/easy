@@ -11,7 +11,8 @@
 // This is the root url of the your API or The Data Source url 
 // *** Modify as you will ***
 //let e_url = 'http://myServer.com/api/';
-let e_url = 'https://jsonplaceholder.typicode.com/'; // Example
+let e_url = 'https://jsonplaceholder.typicode.com/'; // Example, Unfortunately you will be able to make GET. 
+// {POST, PUT, DELETE} will not work in this url... You can test with your own api
 
 let e_data = {
     baseUrl: e_url,
