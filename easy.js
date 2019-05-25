@@ -256,7 +256,7 @@ easy.source = function (ds) {
                     if (o == null || o == undefined)
                         throw ({ message: e_error_msg.notDefinedField(field) });
                     if (o == id) {
-                        obj = o;
+                        obj = ref[i];
                         break;
                     }
                 }
@@ -289,7 +289,7 @@ easy.source = function (ds) {
             e_data = e_data_old;
             return res;
         },
-        getOne: async function (id, elem, fld) {
+        getOne: async function (r, id, elem, fld) {
             let res = await easy.getOne(r, id, elem, fld);
             e_data = e_data_old;
             return res;
@@ -369,7 +369,7 @@ easy.fillHtml = function(el) {
 }
 
 // easy aditionnal function
-easy.addHtml = function (cnt, el) {
+easy.addHtml = function (cnt, el, rvs) {
     let _cnt_ = typeof cnt === 'string' ? e_sltr(cnt) : cnt;
     if (_cnt_ == null) { e_error(e_error_msg.notFoudedElem(cnt)); return; }
 
@@ -394,8 +394,15 @@ easy.addHtml = function (cnt, el) {
         cnt_tmp.classList.add(e_animation[anm.toLowerCase()]);
         cnt_tmp.removeAttribute(e_cmds.e_anm);
     }
+    // Filling the element
+    let filled = easy.fillHtml(cnt_tmp, el);
     // Adding into container
-    _cnt_.appendChild(easy.fillHtml(cnt_tmp, el));
+    if(rvs == null) rvs = false;
+    if(rvs){
+        _cnt_.insertBefore(filled, _cnt_.children[0]);
+    }else{
+        _cnt_.appendChild(filled);
+    }
 }
 // Easy html handlers
 let e_handler = {
@@ -873,11 +880,12 @@ const e_cmds = {
     e_key: "e-key",
     e_id: "e-id",
     e_filter: "e-filter",
-    e_anm: "e-anm",
+    e_anm: 'e-anm',
     _e_: "-e-",
     e_code: 'e-code',
     e_fill: 'e-fill',
-    e_build: 'e-build'
+    e_build: 'e-build',
+    e_rvs: 'e-rvs'
 };// Easy controls
 // Helper to store the old e_data
 let e_data_old = typeof e_data !== 'undefined' ? e_data : undefined;
@@ -908,59 +916,99 @@ const e_error_msg = {
         v = v ? v : ''; return `Couldn't prepare the object to be ${v}, please check the 2 parameter of easy.update.
                                 \nNote: The parameter must be a 'element selector' or a 'js object'`;
     },
-    notFoundedObj: function () { return `Obj not founded`; },
+    notFoundedObj: function (v) { v = v ? v : ''; return `Obj ${v} not founded`; },
     nullDs: function () { return 'Data Source is NULL, please initialize the it as Array.'; }
 };
-// Running easy default funciton 
-const initEasy = function () {
-    let v = arguments[0] || document;
-    let elems = v.querySelectorAll(`[${e_cmds.e_tmp}]`);
-    let m_elems = v.querySelectorAll(`[${e_cmds.e_m_tmp}]`);
-    let e_fills = v.querySelectorAll(`[${e_cmds.e_fill}]`);
 
-    m_elems.forEach(function (el) {
-        if (el.getAttribute(e_cmds.e_m_tmp).trim() != '') {
-            let p = el.parentElement;
-            p.setAttribute(e_cmds.e_code, e_code());
-            e_cnts.push({ p: p, e: e_handler.unlinkElem(el) });
-        }
-    });
-    elems.forEach(async function (el) {
-        if (el.getAttribute(e_cmds.e_tmp).trim() != ''){
-            let p = el.parentElement;
-            p.setAttribute(e_cmds.e_code, e_code());
-            e_cnts.push({ p: p, e: e_handler.unlinkElem(el) });
-            if(typeof e_data !== 'undefined')
-                await easy.read(el.getAttribute(e_cmds.e_tmp), function (e) { // Getting data and setting
-                    easy.addHtml(p, e);
-                }, el.getAttribute(e_cmds.e_filter));
-        }
-    });
-    e_fills.forEach(async function (el) {
-        if (el.getAttribute(e_cmds.e_fill).trim() != ''){
-            el.setAttribute(e_cmds.e_code, e_code());
-            let n = document.createElement('div');
-            n.innerHTML = e_handler.getHtml(el);
-            e_cnts.push({ p: null, e: n.children[0] });
-            if(typeof e_data !== 'undefined'){
-                let value = el.getAttribute(e_cmds.e_fill).split(':');
-                await easy.getOne(value[0], value[1], el, value[2]); // Getting data and setting
+document.addEventListener('DOMContentLoaded', function () {
+
+    const initEasy = async function () {
+        let v = arguments[0] || document;
+        let elems = v.querySelectorAll(`[${e_cmds.e_tmp}]`);
+        let m_elems = v.querySelectorAll(`[${e_cmds.e_m_tmp}]`);
+        let e_fills = v.querySelectorAll(`[${e_cmds.e_fill}]`);
+    
+        for (const el of m_elems) {
+            if (el.getAttribute(e_cmds.e_m_tmp).trim() != '') {
+                let p = el.parentElement;
+                p.setAttribute(e_cmds.e_code, e_code());
+                e_cnts.push({ p: p, e: e_handler.unlinkElem(el) });
             }
         }
-    });
-}; initEasy();
-// Easy observer
-function e_observeTmp(s, cb) {
-    var observer = new MutationObserver(function (ms) {
-        ms.forEach(function (m) {
-            if (m.addedNodes && m.addedNodes.length > 0) {
-                let obj = m.addedNodes[0];
-                if(obj.attributes)
-                    if(obj.getAttribute(e_cmds.e_m_tmp) || obj.getAttribute(e_cmds.e_tmp)) { cb(obj); }
+
+        for (const el of elems) {
+            let tmp = el.getAttribute(e_cmds.e_tmp);
+            if (tmp.trim() != ''){
+                let p = el.parentElement;
+                p.setAttribute(e_cmds.e_code, e_code());
+                e_cnts.push({ p: p, e: e_handler.unlinkElem(el) });
+                let rvs = el.getAttribute(e_cmds.e_rvs) == 'true' ? true : false;
+                let src = tmp.includes('[') && tmp.includes(']');
+               
+                if(typeof e_data !== 'undefined' && !src){ // Init filling
+                    await easy.read(tmp, function (e) { // Getting data and setting
+                        easy.addHtml(p, e, rvs);
+                    }, el.getAttribute(e_cmds.e_filter));
+                }
+
+                if(src){ // Init filling by source
+                    try {
+                        let _ds_ = eval(tmp.substr(1, tmp.length - 2)); // Getting the source 
+                        if(Array.isArray(_ds_)) // Checking if the source is valid
+                            await easy.source(_ds_).read(tmp, function (e) { // Getting data and setting
+                                easy.addHtml(p, e, rvs);
+                            }, el.getAttribute(e_cmds.e_filter));    
+                    } catch (er) {
+                        e_error(e_error_msg.notFoundedObj(tmp));
+                    }
+                }
             }
+        }
+
+        for (const el of e_fills) {
+            let tmp = el.getAttribute(e_cmds.e_fill);
+            if (tmp.trim() != ''){
+                let src = tmp.includes('[') && tmp.includes(']');
+                el.setAttribute(e_cmds.e_code, e_code());
+                let n = document.createElement('div');
+                n.innerHTML = e_handler.getHtml(el);
+                e_cnts.push({ p: null, e: n.children[0] });
+                let value = tmp.split(':');
+                if(typeof e_data !== 'undefined' && !src){
+                    await easy.getOne(value[0], value[1], el, value[2]); // Getting data and setting
+                }
+
+                if(src){ // Checking if it must be taken in the source
+                    try {
+                        let _ds_ = eval(value[0].substr(1, value[0].length - 2)); // Getting the source 
+                        if(Array.isArray(_ds_)) // Checking if its valid
+                            await easy.source(_ds_).getOne(value[0], value[1], el, value[2]); // Getting data and setting
+                    } catch (er) {
+                        e_error(e_error_msg.notFoundedObj(tmp));
+                    }
+                }
+            }
+        }
+
+    };
+
+    // Running easy default funciton 
+    initEasy();
+
+    // Easy observer
+    const e_observeTmp = function (s, cb) {
+        var observer = new MutationObserver(function (ms) {
+            ms.forEach(function (m) {
+                if (m.addedNodes && m.addedNodes.length > 0) {
+                    let obj = m.addedNodes[0];
+                    if(obj.attributes)
+                        if(obj.getAttribute(e_cmds.e_m_tmp) || obj.getAttribute(e_cmds.e_tmp)) { cb(obj); }
+                }
+            });
         });
-    });
-    observer.observe(e_sltr(s), { childList: true, subtree: true, });
-}
-// An Easy observer e-tmp
-e_observeTmp('body', function (m) { initEasy(m); });
+        observer.observe(e_sltr(s), { childList: true, subtree: true, });
+    }
+    // An Easy observer e-tmp
+    e_observeTmp('body', function (m) { initEasy(m); });
+
+});  

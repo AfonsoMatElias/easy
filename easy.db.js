@@ -24,7 +24,31 @@ var _database = {
             Category:{
                 Name:"Electronic"
             }
-        }
+        },
+        {
+            Id:'P0002',
+            Name:'Dell Computer e72740',
+            Price:1400,
+            Stock:10,
+            Description:'Dell e72740, HD SSD 2TB, 32GB RAM',
+            Aditionals:'Workstation Computer',
+            Color:'#ea1',
+            Category:{
+                Name:"Electronic"
+            }
+        },
+        {
+            Id:'P0003',
+            Name:'Dell Computer e72740',
+            Price:1400,
+            Stock:10,
+            Description:'Dell e72740, HD SSD 2TB, 32GB RAM',
+            Aditionals:'Workstation Computer',
+            Color:'#c4a',
+            Category:{
+                Name:"Electronic"
+            }
+        },
     ]
 };
 

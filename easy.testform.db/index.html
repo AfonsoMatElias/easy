@@ -16,7 +16,7 @@
         <div class="modal-control">
             <div><label>Product</label></div>
             <div><select ><!-- Isto é simplesmente demonstrar como funcionam na tag 'select' -->
-                <option e-tmp="Product" value="-e-Id-">-e-Name-</option>
+                <option e-tmp="[ds]" value="-e-Id-">-e-Name-</option>
             </select></div>
         </div>
         
@@ -124,7 +124,10 @@
     <!-- List -->
     <div id="prod-list">
 
-        <div class="prod-list-item" e-tmp="Product" e-anm="up" 
+        <div class="prod-list-item" 
+             e-tmp="Product" 
+             e-anm="down"
+             e-rvs="true" 
              title="Clique duas vezes para remover o item.">
             <div class="img" e-style="background-color:-e-Color-">
             </div>
@@ -164,8 +167,8 @@
     <script src="../easy.js"></script>
 
     <script>
-        
-        /* I was took this page and the styles in other project
+
+        /* I took this page and the styles in other project
         reason why you see medicine-form and other stuffs..
         */
        

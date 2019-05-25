@@ -104,16 +104,27 @@ As funções podem ser chamadas ou executadas da seguinte forma:
 	tal são: addHtml, fillHtml, e_generateObj(), e(...).
 	As extensões para tal são: fullTyping.
 
-		* easy.addHtml([HTMLSelector{Container}],[DbElement])
+		* easy.addHtml([HTMLSelector{Container}], [DbElement], [Reverse:Boolean{Opcional}]): Permite adicionar elementos em um container desde que
+		o mesmo seja um easy template.
 			- [HTMLSelector{Container}]: O container onde deve ser listado os itens.
 			- [DbElement]: Um elemento de uma lista de dados.
-			Nota: A esta função deve ser estritamente usado com a função read.
+			- [Reverse:Boolean{Opcional}]: Valor "true" / "false" de reversão de inserção, determina a forma que elemento deverá ser inserido, "Append -> false" 
+			ou "Prepend -> true". Nota: Por padrão o valor é false.
+			Nota: A esta função deve ser estritamente usado com a função easy.read ou qualquer outro fonte de dados.
 
 			Ex.: easy.read('Pessoa', function(e){
 					easy.addHtml('#PessoaContianer', e);
 				});
 
-		* e_generateObj([HTMLSelector], [GenerateId:Boolean{Opcional}]).
+		* easy.fillHtml([HTMLSelector{Container}], [DbElement]): Permite preencher dados em um container.
+		 - [HTMLSelector{Container}]: O container onde deve ser listado os itens.
+		 - [DbElement]: O elemento a ser preenchido no html.
+
+			Ex.: easy.fillHtml('#PessoaContianer', obj);
+
+		* e_generateObj([HTMLSelector], [GenerateId:Boolean{Opcional}]): Permite serializar um formulário e gerar um objecto estruturado (quando combinado com 
+		o comdando "e-build") com base o que foi definido.
+		no HTML.
 			- [HTMLSelector]: O selector do elemento. Ex.: '#PessoaContianer'.
 			- [GenerateId:Boolean{Opcional}]: Valor "true" / "false", que determina se na criação do objecto deverá ser gerado um campo Id, 
 			Nota: Retorna result, onde é passado do resultado, e type, onde é passado o tipo do object retornado.
@@ -179,25 +190,26 @@ As funções podem ser chamadas ou executadas da seguinte forma:
 
 			}
 		
-		* e: e([HTMLElement] ,[Event], [Callback]).
+		* e: e([HTMLElement], [Event], [Callback([Event], [Element])]).
 			- [ElementId]: O valor do id do elemento a ser seleccionado.
 			- [Event]: O evento a ser disparado. Ex.: 'click'
 			- [Callback]: a função que será disparada com base o evento seleccionado.
+			- [EventCallback]: O retorno do evento.
+			- [Element]: O elemento que foi aplicado o evento. 
 				O elemento é passado novamente como paramento do callback / da função.
 			Nota: Esta extensão permite dar ações a todos os elementos, mesmo aqueles que são via javascript depois do HTML DOM estiver carregado 
 			ou pronto. 
 			
-			Ex.: e('#btn1' ,'click', function(e){
+			Ex.: e('#btn1' ,'click', function(e, el){
 				console.log('Olá', e);
 			});
 
-		* fullTyping: [HTMLElement].fullTyping([Callback]).
+		* fullTyping: [HTMLElement].fullTyping([Callback]): Está extensão permite recuperar o texto de um input ou textarea depois de 1.5s ou depois do usuário pressionar a tecla enter,
+			Muito usada quando deve se fazer requisição de pesquisa a um servidor ou uma base de dados.
+			+ Porquê usar? Resposta: Porque não é aconselhavel em cada tecla pressionada fazer requisição a um servidor ou uma base de dados,
+			isso poderá sobrecarregar ele, então umas das soluções pra isso pode ser para este problema. 
 			- [Callback]: a função que será disparada em 1.5s depois e se e somente se o usuário parou de escrever ou pressionou a tecla enter.
 				O mesmo elemento é passado novamente como paramento do callback / da função.
-			Nota: Está extensão permite recuperar o texto de um input ou textarea depois de 1.5s ou depois do usuário pressionar a tecla enter,
-			Muito usada quando deve se fazer requisição de pesquisa a um servidor ou uma base de dados.
-			+ Porquê usar? Resposta: Porque não é muito aconselhavel em cada tecla pressionada fazer requisição a um servidor ou uma base de dados,
-			isso poderá sobrecarregar ele, então umas das soluções pra isso pode ser para este problema.
 
 			Ex.: document.getElementById('#serach').fullTyping(function(e){
 				console.log('Texto digitado: ', e.value);
@@ -205,7 +217,7 @@ As funções podem ser chamadas ou executadas da seguinte forma:
 
 Existem comandos são definidos como attributos dos elementos HTML DOM, com a finalidade de mapper o documento HTML DOM e ativar certas funcionalidades,
 como listagem e preenchimento automatico e/ou manual de dados vindo do servidor que torna a pagina "dinâmica" ou "em tempo real".
-Os comandos para tal são: "e-tmp", "e-m-tmp", "e-id", "e-filter", "e-anm", "-e-", "e-code".
+Os comandos para tal são: "e-tmp", "e-m-tmp", "e-id", "e-filter", "e-anm", "-e-", "e-code", "e-fill", "e-build", "e-rvs".
 	* e-tmp: Tem como significado "easy-template" que diz ao "easy" que pretende-se usar o elemento corrente como o template
 		onde os dados vindo de um servidor serão apresentados, e como o valor do "template" será o nome da tabela na base de dados.
 		Sintaxe e-tmp="[TableName]".
@@ -213,7 +225,7 @@ Os comandos para tal são: "e-tmp", "e-m-tmp", "e-id", "e-filter", "e-anm", "-e-
 		Nota'': Este comando é estritamente combinado com o comando -e-.
 			Ex.: <div e-tmp="Pessoa"></div>
 		
-    * e-m-tmp: Tem como significado "easy-manual-template" que diz ao "easy" que pretende-se usar o elemento corrente como o template
+  * e-m-tmp: Tem como significado "easy-manual-template" que diz ao "easy" que pretende-se usar o elemento corrente como o template
 		onde os dados vindo de um servidor serão apresentados, e como o valor do template será o nome da tabela na base de dados.
 		Sintaxe e-m-tmp="[TableName]".
 		Nota': Usando este comando, a ferramenta só listará dos dados no "template" os retornados se forem percorridos/usando o callback da 
@@ -230,7 +242,7 @@ Os comandos para tal são: "e-tmp", "e-m-tmp", "e-id", "e-filter", "e-anm", "-e-
 				easy.addHtml('#PessoaContianer', p);
 			});
 				
-    * -e-[Field]-: Tem como significado "easy-replace" diz ou permite definir valores a um elemento ou propriedades html, ele é muito poderoso 
+  * -e-[Field]-: Tem como significado "easy-replace" diz ou permite definir valores a um elemento ou propriedades html, ele é muito poderoso 
 		por permitir definir valores em qualquer lugar de um HTMLElement.
 		Nota: Para acessar propriedades internas de um objecto deve-se pôr ponto '.' Ex.: Pessoa.Endereco.Nome 
 		Sintaxe -e-[Field]-.
@@ -253,10 +265,10 @@ Os comandos para tal são: "e-tmp", "e-m-tmp", "e-id", "e-filter", "e-anm", "-e-
 					<label> -e-Idade- </label>
 				</div>
 	
-    * e-id: Tem como significado "easy-id" diz ou permite que o easy conheça qual é a chave primária do elemento a ser listado ou preenchido,
-	se não for definida ela assume o valor de Id, que significa que o campo 'chave primária' do elemento que está a ser listado ou preenchido,
-	é 'Id'. Nota: é muito importante definir o este campo se por acaso a chave do elemento não é 'Id', é por causa dela o elemento se torna 
-	dinâmico ou 'realtime'. 
+  * e-id: Tem como significado "easy-id" diz ou permite que o easy conheça qual é a chave primária do elemento a ser listado ou preenchido,
+		se não for definida ela assume o valor de Id, que significa que o campo 'chave primária' do elemento que está a ser listado ou preenchido,
+		é 'Id'. Nota: é muito importante definir o este campo se por acaso a chave do elemento não é 'Id', é por causa dela o elemento se torna 
+		dinâmico ou 'realtime'. 
 		Nota': Para todas as tabela que têm a chave primária "Id" (Pascal Case), pode não se definir ele, porque automaticamente será reconhecido.
 		Nota'': Caso a chave primária não seja "Id" (Pascal Case), deve-se explicitamente defini-lá tal como ela é.
 			Ex.: <div e-tmp="Pessoa" e-id="IdPessoa">
@@ -275,6 +287,73 @@ Os comandos para tal são: "e-tmp", "e-m-tmp", "e-id", "e-filter", "e-anm", "-e-
 			</div>
 	
 	* e-code: Tem como significado "easy-code" diz ou permite que o easy possa distinguir os containers dos templates.
+		OBJ: nao é preciso ser definido, ele automaticamente se definirá.
 
-O easy.js não funciona por si só, para que tenha acesso a dados deve ser combinado com o outros ficheiros que possibilitam este acesso,
-os ficheiros pode ser encontrado na mesma secção ou pasta do easy.js, os ficheiros têm a seguinte estrutura: easy.[type].js
+	* e-fill: Tem como significado "easy-fill" diz ou permite que o easy possa preencher um container com um determinado
+		objecto de dados. Este comando tem quase a mesma função que os outros dois comandos e-tmp e e-m-tmp, mas a diferença,
+		é que o e-fill tem como objectivo preencher um único container com informações, já o outros servem para lista de 
+		informações. Sintaxe e-fill="[TableName]:[ElemKeyVal]:[ElemKeyName:{Opcional:Default=Id}]"
+		
+		- [TableName]:  O nome da tabela ou a referência na base de dados.
+		- [ElemKeyVal]: O valor da chave primária do objecto ou mesmo o valor do attributo e-key.
+		- [ElemKeyName:{Opcional:Default=Id}]: O nome da campo chave primária.
+		Ex.: <div e-fill="Pessoa:P0001:IdPessoa" >
+					<label > -e-Nome- </label>
+				</div>
+
+	* e-build: Tem como significado "easy-build" diz ou permite que o easy possa construir um objecto do elemento (geralmente uma div)
+	assinado. Sintaxe e-build="[SomeObjectName]", no caso em que a hierarquia do objecto é muito profunda, pode-se também pôr ou '.' para
+	poder se situar. 
+	Ex.: 
+	// Primeira forma
+	<form>
+
+		<input="Nome" />
+	
+		<div e-build="Endereco">
+	
+			<input name="Rua" />
+
+			<div e-build="Geo">
+	
+				<input name="Lat" />
+				<input name="Lng" />
+
+				<div e-build="Constelacao">
+					<input name="Nome" />
+				</div>
+
+			<div/>
+		<div/>
+	</form>
+
+	// Segunda forma
+	<form>
+
+		<input="Nome" />
+	
+		<div e-build="Endereco">
+	
+			<input name="Rua" />
+
+			<div e-build="Endereco.Geo">
+	
+				<input name="Lat" />
+				<input name="Lng" />
+
+				<div e-build="Endereco.Geo.Constelacao">
+					<input name="Nome" />
+				</div>
+
+			<div/>
+		<div/>
+	</form>
+	
+	* e-rvs: Tem como significado "easy-rvs" ou "easy-reverse" diz ou permite a reversão da inserção dos elementos no HTML, 
+	  determina a forma que elemento deverá ser inserido, "Append -> false" ou "Prepend -> true".
+		Sintaxe e-rvs="[Boolean]".
+		Nota': Ele aceita dois valores, 'true' ou 'false'.  	  
+	  Nota'': Se ele não for definido, a acção padrão será 'Append'
+
+O easy.js para o acesso externo, não funciona por si só, para que tenha acesso a dados deve ser combinado com outros ficheiros que possibilitam este acesso,
+os ficheiros podem ser encontrados na mesma secção ou pasta do easy.js, os ficheiros têm a seguinte estrutura: easy.[type].js
