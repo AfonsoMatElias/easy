@@ -16,6 +16,7 @@ let e_url = 'https://jsonplaceholder.typicode.com/'; // Example, Unfortunately y
 
 let e_data = {
     baseUrl: e_url,
+    header: { "Content-Type": "application/json" }, // you can redefine to your header
     add: async function (r, o) {
         return await ajaxCall(e_data.baseUrl + r, o, 'post');
     },
@@ -54,10 +55,10 @@ async function ajaxCall(u, d, m, f) {
 
     const webResquest = (url, m, d) => {
         return fetch(url, {
-            credentials: 'same-origin', // '', default: 'omit'
+            credentials: 'same-origin',
             method: m,
             body: d,
-            headers: { "Content-Type": "application/json" }
+            headers: e_data.header
         }).then(r => {             
             if(r.ok){
                 return r.json();

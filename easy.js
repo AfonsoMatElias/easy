@@ -170,6 +170,15 @@ const easy = {
     }
 };
 
+// Easy ajax header setter
+/**
+ * @param {Object} v - the header object
+ */
+easy.header = function (v) {
+    e_data.header = v ? v : e_data.head;
+    return easy;
+};
+
 /**
  * easy function that allow the user to pass an array as data source and manage with the main actions (CRUD).
  * It doesnt modify the main data source

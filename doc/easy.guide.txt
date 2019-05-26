@@ -101,7 +101,7 @@ As funções podem ser chamadas ou executadas da seguinte forma:
 	isso consegue-se referenciar a raiz da lista já que passou-se null no nome da tabela a acessar.  
 
 	* Extra: Existem algumas funções e extensões auxiliares para que se faça manipulações em um elemento do HTML DOM. As funções para 
-	tal são: addHtml, fillHtml, e_generateObj(), e(...).
+	tal são: addHtml, fillHtml, easy.header, e_generateObj(), e(...).
 	As extensões para tal são: fullTyping.
 
 		* easy.addHtml([HTMLSelector{Container}], [DbElement], [Reverse:Boolean{Opcional}]): Permite adicionar elementos em um container desde que
@@ -115,6 +115,11 @@ As funções podem ser chamadas ou executadas da seguinte forma:
 			Ex.: easy.read('Pessoa', function(e){
 					easy.addHtml('#PessoaContianer', e);
 				});
+			
+		* easy.header([Header]): Permite Permite configurar o header da ajax antes dos dados serem enviados.
+			Ex.: easy.header({
+				'Content-Type':'application/json'
+			}).create(...);
 
 		* easy.fillHtml([HTMLSelector{Container}], [DbElement]): Permite preencher dados em um container.
 		 - [HTMLSelector{Container}]: O container onde deve ser listado os itens.
