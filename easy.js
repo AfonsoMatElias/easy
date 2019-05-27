@@ -342,7 +342,7 @@ easy.fillHtml = function(el) {
                     if(a.name){ // Checking if is valid
                         if(a.name.startsWith('e-')){ // Checking if it's easy-repleacer
                             let o = a.ownerElement; // Getting the owner
-                            o.setAttribute(a.name.substr(2), a.value); // Setting the 
+                            if(a.value) o.setAttribute(a.name.substr(2), a.value); // Setting the 
                             o.removeAttribute(a.name); // Removing the easy-repleacer attr
                         }
                     }
