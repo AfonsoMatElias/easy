@@ -221,7 +221,7 @@ Functions can be called or performed as follows:
 
 There are commands that are defined as attributes of the HTML DOM elements, for the purpose of mapping the HTML DOM document and activating certain functionalities,
 such as listing and automatic and / or manual filling of data coming from the server that makes the page "dynamic" or "real-time".
-The commands for this are: "e-tmp", "em-tmp", "e-id", "e-filter", "e-anm", "-e", "e-code", "e -fill "," e-build "," e-rvs ".
+The commands for this are: "e-tmp", "em-tmp", "e-id", "e-filter", "e-anm", "-e", "e-code", "e -fill "," e-build "," e-rvs ", "e-array".
 	* e-tmp: It has the meaning "easy-template" that tells "easy" that it is intended to use the current element as the template
 		where data coming from a server will be displayed, and how the value of the "template" will be the name of the table in the database.
 		Syntax e-tmp = "[TableName]".
@@ -229,7 +229,7 @@ The commands for this are: "e-tmp", "em-tmp", "e-id", "e-filter", "e-anm", "-e",
 		Nota'': Este comando é estritamente combinado com o comando -e-.
 			Ex.: <div e-tmp="Pessoa"></div>
 		
-  * e-m-tmp: It has the meaning "easy-manual-template" that tells "easy" that you want to use the current element as the template
+	* e-m-tmp: It has the meaning "easy-manual-template" that tells "easy" that you want to use the current element as the template
 		where data coming from a server will be displayed, and how the value of the template will be the name of the table in the database.
 		Syntax e-m-tmp = "[TableName]".
 		Note: Using this command, the tool will only list the data in the "template" the returned if it is traversed / using the callback of the
@@ -246,7 +246,7 @@ The commands for this are: "e-tmp", "em-tmp", "e-id", "e-filter", "e-anm", "-e",
 				easy.addHtml('#PessoaContianer', p);
 			});
 				
-  * -e-[Field]-: It has as meaning "easy-replace" says or lets set values to an element or html properties, it is very powerful
+	* -e-[Field]-: It has as meaning "easy-replace" says or lets set values to an element or html properties, it is very powerful
 		for allowing you to define values anywhere in an HTMLElement.
 		Note: To access internal properties of an object, you must set the '.' Ex .: Person.Endereco.Name
 		Syntax -e- [Field] -.
@@ -269,7 +269,7 @@ The commands for this are: "e-tmp", "em-tmp", "e-id", "e-filter", "e-anm", "-e",
 				<label> -e-Idade- </label>
 			</div>
 	
-  * e-id: It means "easy-id" says or lets easy know the primary key of the element to be listed or filled,
+	* e-id: It means "easy-id" says or lets easy know the primary key of the element to be listed or filled,
 		if it is not set it takes the value of Id, which means that the 'primary key' field of the element that is being listed or filled,
 		is 'Id'. Note: It is very important to define this field if by chance the element key is not 'Id', it is because of it the element becomes
 		dynamic or realtime.
@@ -357,6 +357,9 @@ The commands for this are: "e-tmp", "em-tmp", "e-id", "e-filter", "e-anm", "-e",
 		Syntax e-rvs = "[Boolean]".
 		Note ': It accepts two values,' true 'or' false '.
 		Note '': If it is not set, the default action will be 'Append'
+
+	* e-array: Meaning "easy-array" says allows a given field to be created and treated as an array in the serialization of a form,
+		by default it is set to "false". Syntax e-array = "[Boolean]".
 
 The easy.js for external access does not work by itself, so it has access to data must be combined with other files that enable this access,
 the files can be found in the same section or folder of easy.js, the files have the following structure: easy. [type] .js

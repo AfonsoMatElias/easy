@@ -112,12 +112,12 @@ const easy = {
             if (r.status) {
                 let elems = e_handler.getHTMLElems(r.result);
                 elems.forEach(function (el) {
-                    if (!el.getAttribute(e_cmds.e_fill)) { getParent(el).removeChild(el); }
+                    if (!el.e_attr(e_cmds.e_fill)) { getParent(el).removeChild(el); }
                 });
                 e_calls.forEach(async function (c) {
                     if (c.flag == ref && c.meth == 'get') {
                         elems.forEach(function (el) {
-                            if (el.getAttribute(e_cmds.e_fill)) {
+                            if (el.e_attr(e_cmds.e_fill)) {
                                 let obj = JSON.parse(JSON.stringify(r.result));
                                 e_for(getKeys(obj), function (v) { obj[v] = `--${v}--`; });
                                 easy.fillHtml(el, obj, true);
@@ -317,12 +317,12 @@ easy.fillHtml = function(el) {
 
     if(!el){ e_error(e_error_msg.notFoudedElem()); return null };
     // Adding some key to the elem
-    let id = el.getAttribute(e_cmds.e_id);
+    let id = el.e_attr(e_cmds.e_id);
     id = id ? id : 'Id'; // Setting the default value 'Id' if it was not assigned
     let mdl = arguments[1], rep = arguments[2];
-    let value = el.getAttribute(e_cmds.e_tmp);
-    if (!value) { value = el.getAttribute(e_cmds.e_m_tmp); }
-    if (!value) { value = el.getAttribute(e_cmds.e_fill) ? el.getAttribute(e_cmds.e_fill).split(':')[0] : null; }
+    let value = el.e_attr(e_cmds.e_tmp);
+    if (!value) { value = el.e_attr(e_cmds.e_m_tmp); }
+    if (!value) { value = el.e_attr(e_cmds.e_fill) ? el.e_attr(e_cmds.e_fill).split(':')[0] : null; }
     if (!value) { console.log(`You haven't defined: ${e_cmds.e_tmp}, ${e_cmds.e_m_tmp}, or ${e_cmds.e_fill}... the auto update will not work!`); }
  
     // Elem setter
@@ -342,7 +342,7 @@ easy.fillHtml = function(el) {
                     if(a.name){ // Checking if is valid
                         if(a.name.startsWith('e-')){ // Checking if it's easy-repleacer
                             let o = a.ownerElement; // Getting the owner
-                            if(a.value) o.setAttribute(a.name.substr(2), a.value); // Setting the 
+                            if(a.value) o.e_attr(a.name.substr(2), a.value); // Setting the 
                             o.removeAttribute(a.name); // Removing the easy-repleacer attr
                         }
                     }
@@ -353,12 +353,12 @@ easy.fillHtml = function(el) {
 
     let aux = el;
     if(rep){ // Elem must be Replaced 
-        let isFill = el.getAttribute(e_cmds.e_fill) ? true : false; // Checking type
-        let cnt_code = isFill ? el.getAttribute(e_cmds.e_code) : getParent(el).getAttribute(e_cmds.e_code);
+        let isFill = el.e_attr(e_cmds.e_fill) ? true : false; // Checking type
+        let cnt_code = isFill ? el.e_attr(e_cmds.e_code) : getParent(el).e_attr(e_cmds.e_code);
         let e_cnt = e_cnts.find(function (x) {
             if(isFill)
-            { return x.e.getAttribute(e_cmds.e_code) == cnt_code; }
-            else { return x.p.getAttribute(e_cmds.e_code) == cnt_code; }
+            { return x.e.e_attr(e_cmds.e_code) == cnt_code; }
+            else { return x.p.e_attr(e_cmds.e_code) == cnt_code; }
         }); // Getting the e container
         
         if(isFill) { aux = e_cnt.e; }
@@ -372,7 +372,7 @@ easy.fillHtml = function(el) {
         e_setter(v);
     });
     
-    aux.setAttribute(e_cmds.e_key, value + ':' + mdl[id]);
+    aux.e_attr(e_cmds.e_key, value + ':' + mdl[id]);
     if(rep) el.parentElement.replaceChild(aux, el); // Replacing
     return aux;
 }
@@ -382,22 +382,22 @@ easy.addHtml = function (cnt, el, rvs) {
     let _cnt_ = typeof cnt === 'string' ? e_sltr(cnt) : cnt;
     if (_cnt_ == null) { e_error(e_error_msg.notFoudedElem(cnt)); return; }
 
-    let cnt_code = _cnt_.getAttribute(e_cmds.e_code); // Getting the code of the container
+    let cnt_code = _cnt_.e_attr(e_cmds.e_code); // Getting the code of the container
     if (cnt_code == undefined) {
         e_error('The current element has not the e-code prop. Please, check the selector.');
         return;
     }
 
-    let e_cnt = e_cnts.find(function (x) { return x.p.getAttribute(e_cmds.e_code) == cnt_code; }); // Getting the e container
+    let e_cnt = e_cnts.find(function (x) { return x.p.e_attr(e_cmds.e_code) == cnt_code; }); // Getting the e container
     if (e_cnt == null) {
         e_error('The container "' + cnt + '" must have a template "e-tmp" or "e-m-tmp. And the "template" must have a valid value"');
         return;
     }
 
-    let cnt_tmp = e_cnt.e.getAttribute(e_cmds.e_tmp) != null ? e_handler.unlinkElem(e_cnt.e) : null;
-    if (cnt_tmp == undefined) cnt_tmp = e_cnt.e.getAttribute(e_cmds.e_m_tmp) ? e_handler.unlinkElem(e_cnt.e) : null;
+    let cnt_tmp = e_cnt.e.e_attr(e_cmds.e_tmp) != null ? e_handler.unlinkElem(e_cnt.e) : null;
+    if (cnt_tmp == undefined) cnt_tmp = e_cnt.e.e_attr(e_cmds.e_m_tmp) ? e_handler.unlinkElem(e_cnt.e) : null;
 
-    let anm = cnt_tmp.getAttribute(e_cmds.e_anm);
+    let anm = cnt_tmp.e_attr(e_cmds.e_anm);
     if (anm != null) {
         e_handler.css(); // Adding a style elem in the DOM
         cnt_tmp.classList.add(e_animation[anm.toLowerCase()]);
@@ -468,7 +468,7 @@ let e_handler = {
             let time = 3, duration = 1,
                 opacity = 1, value = 15;
             var s = document.createElement("style");
-            s.setAttribute("e-style", "true");
+            s.e_attr("e-style", "true");
             s.textContent = `.e-toTop, .e-toBottom, .e-toRight, .e-toLeft { opacity: .${opacity}; }
                 .e-toTop{ transform: translateY(${value}%); -webkit-transform: translateY(${value}%);
                 animation: toTop .${time}s .${duration}s ease-out forwards;-webkit-animation: toTop .${time}s .${duration}s ease-out forwards; }
@@ -511,9 +511,9 @@ let e_handler = {
             let elems = [].slice.call(e_sltrAll(`[${e_cmds.e_key}]`));
             return elems.filter(function (x) { // Looping them
                 let key = 'Id'; // Setting the default Id
-                let id = x.getAttribute(e_cmds.e_id); // Getting the e-id value
+                let id = x.e_attr(e_cmds.e_id); // Getting the e-id value
                 if (id) key = id; // Setting it if it's valid
-                let _v_ = x.getAttribute(e_cmds.e_key).split(':')[1]; // Gettting the e-key value
+                let _v_ = x.e_attr(e_cmds.e_key).split(':')[1]; // Gettting the e-key value
                 return _v_ == v[key]; // Checking the data
             });
         } catch (e) { return []; }
@@ -569,8 +569,8 @@ function e_generateObj(frm) {
         
         if (res != null) {
             if (mdl) { eval(`obj${str}=value`); } // Updating
-            else 
-                writeProp(obj, res, str.substr(1), value); // Writting prop
+            else
+                writeProp(obj, res, str.substr(1), value, (p.e_attr('e-array') == 'true')); // Writting prop
         } else { // Creating or Updating
             eval(`obj${str}=value`);
         }
@@ -579,7 +579,7 @@ function e_generateObj(frm) {
     function getBuilders(el, elem) {
             let els = []; 
             while (el) {
-                let v = el.getAttribute(e_cmds.e_build); // Getting the attr
+                let v = el.e_attr(e_cmds.e_build); // Getting the attr
                 if (v) els.unshift(v); // Adding elements
                 if (elem == el) break; // Breaking the loop
                 el = el.parentNode;
@@ -592,8 +592,9 @@ function e_generateObj(frm) {
             return build.substr(1); // Removing the . and returning
     }
     // Write a prop in obj
-    function writeProp(obj, res, str, value) {
-        if (Array.isArray(res)){ // Checking if its an array
+    function writeProp(obj, res, str, value, arr) {
+        if (arr == true && eval(`obj.${str}`) == null) eval(`obj.${str}=[]`); // Setting the Object to array
+        if (Array.isArray(res) || arr == true){ // Checking if its an array
             let aux = ''; 
             if(!Array.isArray(obj)) // Checking if the isn't an array 
                 aux = '.' + str;
@@ -608,7 +609,7 @@ function e_generateObj(frm) {
         }
     }
     // Object structer
-    function structObj(p_obj, str, value) {
+    function structObj(p_obj, str, value, arr) {
 
         let auxStr = '', 
             obj = p_obj, 
@@ -653,21 +654,20 @@ function e_generateObj(frm) {
     // Looping the builder
     for (const el of elem.querySelectorAll(`[${e_cmds.e_build}]`)) {
         let str = getBuilders(el, elem); // Getting the builders
-        let attr = el.getAttribute(e_cmds.e_build); // Getting the e-build value
+        let attr = el.e_attr(e_cmds.e_build); // Getting the e-build value
         el.removeAttribute(e_cmds.e_build);
 
         if(mdl) { aux = eval(`mdl.${str}`); }
         else { aux = {}; }
 
         let value = e_preBuildObj(el, aux);
-        el.setAttribute(e_cmds.e_build, attr);
+        el.e_attr(e_cmds.e_build, attr);
         if(mdl){ eval(`obj.${str}=value`); }
-        else { structObj(obj, str, value); }
+        else { structObj(obj, str, value, (el.e_attr('e-array') == 'true')); }
     }
     return obj;
 
 }
-
 // Object value getter
 function e_propGetter(v, m) {
     let value = "";
@@ -683,16 +683,6 @@ function e_propGetter(v, m) {
         value = eval(`m.${v}`); // Executing the value
     }
     return value;
-}
-// Element value add
-function e_addvalue(e, p, v) {
-    var val = e.getAttribute(p);
-    if (!val) return v;
-    let array = val.split(' '); 
-    array.push(v);
-    let build = "";
-    e_for(array, function (el) { build += ' ' + el; });
-    return build;
 }
 // Helper to get the parent value
 function getParent(v) { return v.parentElement; }
@@ -827,6 +817,7 @@ function e(v, ev, cb) {
 function e_sltrAll(v) { try { return document.querySelectorAll(v); } catch(e){} }
 // DOM Selector One helper
 function e_sltr(v) { try { return document.querySelector(v); } catch(e){} }
+
 // Extensions
 if (typeof Object.prototype.fullTyping !== 'function') {
     // Adding into Javascript object
@@ -874,9 +865,19 @@ if (typeof Object.prototype.fullTyping !== 'function') {
         }
     });
 }
+
+if(typeof Object.prototype.e_attr !== 'function'){
+    Object.defineProperty(Object.prototype, "e_attr", {
+        value: function (e, v) { // Setter and Getter
+            if(v == null){ return this.getAttribute(e); }
+            else{ this.setAttribute(e, v); return v; }
+        }
+    });
+}
+
 // Global Variables
-let e_calls = []; // Easy calls
-let e_cnts = []; // Easy containers
+const e_calls = []; // Easy calls
+const e_cnts = []; // Easy containers
 //let e_elems = []; // Easy elements
 const e_types = { 
     obj: 'object',
@@ -894,7 +895,8 @@ const e_cmds = {
     e_code: 'e-code',
     e_fill: 'e-fill',
     e_build: 'e-build',
-    e_rvs: 'e-rvs'
+    e_rvs: 'e-rvs',
+    e_array: 'e-array' 
 };// Easy controls
 // Helper to store the old e_data
 let e_data_old = typeof e_data !== 'undefined' ? e_data : undefined;
@@ -938,26 +940,26 @@ document.addEventListener('DOMContentLoaded', function () {
         let e_fills = v.querySelectorAll(`[${e_cmds.e_fill}]`);
     
         for (const el of m_elems) {
-            if (el.getAttribute(e_cmds.e_m_tmp).trim() != '') {
+            if (el.e_attr(e_cmds.e_m_tmp).trim() != '') {
                 let p = el.parentElement;
-                p.setAttribute(e_cmds.e_code, e_code());
+                p.e_attr(e_cmds.e_code, e_code());
                 e_cnts.push({ p: p, e: e_handler.unlinkElem(el) });
             }
         }
 
         for (const el of elems) {
-            let tmp = el.getAttribute(e_cmds.e_tmp);
+            let tmp = el.e_attr(e_cmds.e_tmp);
             if (tmp.trim() != ''){
                 let p = el.parentElement;
-                p.setAttribute(e_cmds.e_code, e_code());
+                p.e_attr(e_cmds.e_code, e_code());
                 e_cnts.push({ p: p, e: e_handler.unlinkElem(el) });
-                let rvs = el.getAttribute(e_cmds.e_rvs) == 'true' ? true : false;
+                let rvs = el.e_attr(e_cmds.e_rvs) == 'true' ? true : false;
                 let src = tmp.includes('[') && tmp.includes(']');
                
                 if(typeof e_data !== 'undefined' && !src){ // Init filling
                     await easy.read(tmp, function (e) { // Getting data and setting
                         easy.addHtml(p, e, rvs);
-                    }, el.getAttribute(e_cmds.e_filter));
+                    }, el.e_attr(e_cmds.e_filter));
                 }
 
                 if(src){ // Init filling by source
@@ -966,7 +968,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         if(Array.isArray(_ds_)) // Checking if the source is valid
                             await easy.source(_ds_).read(tmp, function (e) { // Getting data and setting
                                 easy.addHtml(p, e, rvs);
-                            }, el.getAttribute(e_cmds.e_filter));    
+                            }, el.e_attr(e_cmds.e_filter));    
                     } catch (er) {
                         e_error(e_error_msg.notFoundedObj(tmp));
                     }
@@ -975,10 +977,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         for (const el of e_fills) {
-            let tmp = el.getAttribute(e_cmds.e_fill);
+            let tmp = el.e_attr(e_cmds.e_fill);
             if (tmp.trim() != ''){
                 let src = tmp.includes('[') && tmp.includes(']');
-                el.setAttribute(e_cmds.e_code, e_code());
+                el.e_attr(e_cmds.e_code, e_code());
                 let n = document.createElement('div');
                 n.innerHTML = e_handler.getHtml(el);
                 e_cnts.push({ p: null, e: n.children[0] });
@@ -1011,7 +1013,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (m.addedNodes && m.addedNodes.length > 0) {
                     let obj = m.addedNodes[0];
                     if(obj.attributes)
-                        if(obj.getAttribute(e_cmds.e_m_tmp) || obj.getAttribute(e_cmds.e_tmp)) { cb(obj); }
+                        if(obj.e_attr(e_cmds.e_m_tmp) || obj.e_attr(e_cmds.e_tmp)) { cb(obj); }
                 }
             });
         });
