@@ -635,7 +635,7 @@ function e_generateObj(frm) {
             auxStr = str; // Getting the string buider
             res = eval(`obj.${str}`); // Setting the result object
         }
-        writeProp(obj, res, auxStr, value); // Writting prop
+        writeProp(obj, res, auxStr, value, arr); // Writting prop
     }
     // Object pre-builder
     function e_preBuildObj(elem, o) { 
