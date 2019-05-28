@@ -866,15 +866,15 @@ if (typeof Object.prototype.fullTyping !== 'function') {
     });
 }
 
-if(typeof Object.prototype.e_attr !== 'function'){
+if (typeof Object.prototype.e_attr !== 'function') {
     Object.defineProperty(Object.prototype, "e_attr", {
-        value: function (e, v) { // Setter and Getter
-            if(v == null){ return this.getAttribute(e); }
-            else{ this.setAttribute(e, v); return v; }
+        value: function(e, v) { // Setter and Getter
+            if (v == null) 
+            { return (e == 'value') ? value = this.value || this.getAttribute(e) : this.getAttribute(e); } 
+            else { this.setAttribute(e, v); return v; }
         }
     });
 }
-
 // Global Variables
 const e_calls = []; // Easy calls
 const e_cnts = []; // Easy containers
