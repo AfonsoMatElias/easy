@@ -93,7 +93,7 @@ As funções podem ser chamadas ou executadas da seguinte forma:
 			
 			Ex.''': easy.getOne('Pessoa', 'AfonsoMatElias', '#Pessoa', 'Nome');
 	
-	Para poder usar as funções de manipulação de dados em uma lista javascript, deve-se adicionar a função 'source' e como paramento deverá
+	Para poder usar as funções de manipulação de dados em uma lista javascript, deve-se adicionar a função 'source' e como parametro deverá
 	ser posto a fonte de dados, depois da função  de qualquer manipulador.
 	A sintaxe base é: easy.source(...).[Easy-Function]. Conforme está na sintaxe base, depois de ser adicionado a função source, pode se usar
 	as funções de manipulação citadas em cima.
@@ -108,7 +108,7 @@ As funções podem ser chamadas ou executadas da seguinte forma:
 		o mesmo seja um easy template.
 			- [HTMLSelector{Container}]: O container onde deve ser listado os itens.
 			- [DbElement]: Um elemento de uma lista de dados.
-			- [Reverse:Boolean{Opcional}]: Valor "true" / "false" de reversão de inserção, determina a forma que elemento deverá ser inserido, "Append -> false" 
+			- [Reverse:Boolean{Opcional}]: Valor "true" ou "false" de reversão de inserção, determina a forma que elemento deverá ser inserido, "Append -> false" 
 			ou "Prepend -> true". Nota: Por padrão o valor é false.
 			Nota: A esta função deve ser estritamente usado com a função easy.read ou qualquer outro fonte de dados.
 
@@ -127,11 +127,14 @@ As funções podem ser chamadas ou executadas da seguinte forma:
 
 			Ex.: easy.fillHtml('#PessoaContianer', obj);
 
-		* e_generateObj([HTMLSelector], [GenerateId:Boolean{Opcional}]): Permite serializar um formulário e gerar um objecto estruturado (quando combinado com 
-		o comdando "e-build") com base o que foi definido.
+		* e_generateObj({ form: [HTMLSelector], ident: [Boolean{Opcional}], options: [Object{Opcional}], model: [DbElement] }): Permite serializar um formulário e gerar um objecto estruturado (quando combinado
+		 com o comdando "e-build") com base o que foi definido.
 		no HTML.
-			- [HTMLSelector]: O selector do elemento. Ex.: '#PessoaContianer'.
-			- [GenerateId:Boolean{Opcional}]: Valor "true" / "false", que determina se na criação do objecto deverá ser gerado um campo Id, 
+			- form: O selector do elemento. Ex.: '#PessoaContianer'.
+			- ident: Valor "true" ou "false", que determina se na criação do objecto deverá ser gerado um campo Id, 
+			- options: Objecto de opções para criação das propriedades do objecto a ser gerado, leva dois paramentros 'name', value, os dois são uma lista 
+			de string... A ordem dos valores é MUITO IMPORTANTE, define qual atributo é o primordial. Ex.: { name:['data-name', 'rep-name'], value:['data-value', 'rep-value'] }
+			- model: Modelo de dados onde o gerador de objectos vai se basear e pra recuperar dados que se encontram nulos no formulário
 			Nota: Retorna result, onde é passado do resultado, e type, onde é passado o tipo do object retornado.
 			
 			Ex.: 
@@ -179,7 +182,7 @@ As funções podem ser chamadas ou executadas da seguinte forma:
 			</form>
 
 			// Javascript Code
-			var obj = e_generateObj('#PessoaForm')
+			var obj = e_generateObj({ form: '#PessoaForm' })
 			console.log(obj);
 			
 			// Object gerado
@@ -201,7 +204,7 @@ As funções podem ser chamadas ou executadas da seguinte forma:
 			- [Callback]: a função que será disparada com base o evento seleccionado.
 			- [EventCallback]: O retorno do evento.
 			- [Element]: O elemento que foi aplicado o evento. 
-				O elemento é passado novamente como paramento do callback / da função.
+				O elemento é passado novamente como parametro do callback / da função.
 			Nota: Esta extensão permite dar ações a todos os elementos, mesmo aqueles que são via javascript depois do HTML DOM estiver carregado 
 			ou pronto. 
 			
@@ -214,7 +217,7 @@ As funções podem ser chamadas ou executadas da seguinte forma:
 			+ Porquê usar? Resposta: Porque não é aconselhavel em cada tecla pressionada fazer requisição a um servidor ou uma base de dados,
 			isso poderá sobrecarregar ele, então umas das soluções pra isso pode ser para este problema. 
 			- [Callback]: a função que será disparada em 1.5s depois e se e somente se o usuário parou de escrever ou pressionou a tecla enter.
-				O mesmo elemento é passado novamente como paramento do callback / da função.
+				O mesmo elemento é passado novamente como parametro do callback / da função.
 
 			Ex.: document.getElementById('#serach').fullTyping(function(e){
 				console.log('Texto digitado: ', e.value);

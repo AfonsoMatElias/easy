@@ -8,7 +8,6 @@
  * # Be Happy ;-)  
  */
 
-// easy 
 const easy = {
     /**
      * Creates an obj and insert it in a source
@@ -169,7 +168,6 @@ const easy = {
         }
     }
 };
-
 // Easy ajax header setter
 /**
  * @param {Object} v - the header object
@@ -178,7 +176,6 @@ easy.header = function (v) {
     e_data.header = v ? v : e_data.head;
     return easy;
 };
-
 /**
  * easy function that allow the user to pass an array as data source and manage with the main actions (CRUD).
  * It doesnt modify the main data source
@@ -324,7 +321,6 @@ easy.fillHtml = function(el) {
     if (!value) { value = el.e_attr(e_cmds.e_m_tmp); }
     if (!value) { value = el.e_attr(e_cmds.e_fill) ? el.e_attr(e_cmds.e_fill).split(':')[0] : null; }
     if (!value) { console.log(`You haven't defined: ${e_cmds.e_tmp}, ${e_cmds.e_m_tmp}, or ${e_cmds.e_fill}... the auto update will not work!`); }
- 
     // Elem setter
     function e_setter(a) {
         let v = a.value || a.data; 
@@ -376,7 +372,6 @@ easy.fillHtml = function(el) {
     if(rep) el.parentElement.replaceChild(aux, el); // Replacing
     return aux;
 }
-
 // easy aditionnal function
 easy.addHtml = function (cnt, el, rvs) {
     let _cnt_ = typeof cnt === 'string' ? e_sltr(cnt) : cnt;
@@ -548,29 +543,40 @@ function e_createObj(f) {
         if (gId) f.result["Id"] = e_code();
         return f.result;
     } // Js obj
-    return e_generateObj(f.result, gId, mdl);
+    return e_generateObj({ form: f.result, ident: gId, model:mdl });
 }
 /**
  * Helper function to serialize and create an object according the form (with or not easy proprerties)
  * @param {HTMLElement} frm - The form selector 
  * @returns {Object} - A structed Object or a simple one
  */
-function e_generateObj(frm) {
-
-    if(typeof frm !== 'string') return frm;
-    let elem = e_sltr(frm), gId = arguments[1], 
-    mdl = arguments[2];
-    if (!elem) return frm;
+function e_generateObj(input) {    
+    if(typeof input['form'] !== 'string') return input['form'];
+    let elem = e_sltr(input['form']), gId = input['ident'], mdl = input['model'];
+    if (!elem) return input['form'];
+    // Helper
+    if (typeof Object.prototype.e_get !== 'function') {
+        Object.defineProperty(Object.prototype, 'e_get', {
+            value: function (n) {
+                let opts = [], options = input['options']; // Options aux
+                if(options) opts = options[n] ? options[n] : []; // Checking and adding the options
+                for (const l of opts) { // Looping the options
+                    let p = this.e_attr(l); if(p) return p; // Setting and returning
+                }
+                return this.e_attr(n); // Returning the default
+            }
+        });
+    }
     // Builder
     function builder(obj, str, p) {
         let res = eval(`obj${str}`);
-        let value = p.value == '' ? null : p.value;
-        if (mdl) { try { value = value ? value : eval(`mdl${str}`); } catch(e){} }
+        let v = p.e_get('value') == '' ? null : p.e_get('value');
+        if (mdl) { try { v = v ? v : eval(`mdl${str}`); } catch(e){} }
         
         if (res != null) {
             if (mdl) { eval(`obj${str}=value`); } // Updating
             else
-                writeProp(obj, res, str.substr(1), value, (p.e_attr('e-array') == 'true')); // Writting prop
+                writeProp(obj, res, str.substr(1), v, (p.e_attr('e-array') == 'true')); // Writting prop
         } else { // Creating or Updating
             eval(`obj${str}=value`);
         }
@@ -643,7 +649,7 @@ function e_generateObj(frm) {
         let elems = elem.querySelectorAll('[name]');
         e_for(elems, function (p) {
             if (getBuilders(p, elem) == '') {
-                builder(o, `.${p.name}`, p);                    
+                builder(o, `.${p.e_get('name')}`, p);                    
             }
         });
         return o;
@@ -807,8 +813,7 @@ function e(v, ev, cb) {
             } else if (html == elem) {
                 return undefined;
             } else {
-                elem = parent;
-                parent = getParent(parent);
+                elem = parent; parent = getParent(parent);
             } // Getting the parent
         } while (true);
     }, false);
@@ -951,15 +956,14 @@ document.addEventListener('DOMContentLoaded', function () {
         for (const el of fills) {
             let tmp = el.e_attr(e_cmds.e_fill);
             if (tmp.trim() != ''){
-                let src = tmp.includes('[') && tmp.includes(']');
-                el.e_attr(e_cmds.e_code, e_code());
-                let n = document.createElement('div');
-                n.innerHTML = e_handler.getHtml(el);
-                e_cnts.push({ p: null, e: n.children[0] });
-                let value = tmp.split(':');
-                if(typeof e_data !== 'undefined' && !src){
+                let src = tmp.includes('[') && tmp.includes(']'); // Checking if is the type src tmp
+                el.e_attr(e_cmds.e_code, e_code()); // Adding the code
+                let n = document.createElement('div'); // Creating and aux dix
+                n.innerHTML = e_handler.getHtml(el); // Getting the html
+                e_cnts.push({ p: null, e: n.children[0] }); // Adding to the cnts
+                let value = tmp.split(':'); // Spliting the options
+                if(typeof e_data !== 'undefined' && !src) // Checking if we got e_data
                     await easy.getOne(value[0], value[1], el, value[2]); // Getting data and setting
-                }
 
                 if(src){ // Checking if it must be taken in the source
                     try {
@@ -973,46 +977,44 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     }
+    // Filling the subscribed tmp
     async function fillSubsc(el, p) {
         if(!el) return;
-            let tmp = el.e_attr(e_cmds.e_tmp);
-            let rvs = el.e_attr(e_cmds.e_rvs) == 'true' ? true : false;
-            let src = tmp.includes('[') && tmp.includes(']');
-            
-            if(typeof e_data !== 'undefined' && !src){ // Init filling
-                await easy.read(tmp, function (e) { // Getting data and setting
-                    easy.addHtml(p, e, rvs);
-                }, el.e_attr(e_cmds.e_filter));
+        let tmp = el.e_attr(e_cmds.e_tmp); // Getting the tmp value
+        let rvs = el.e_attr(e_cmds.e_rvs) == 'true' ? true : false; // Checking reverse
+        let src = tmp.includes('[') && tmp.includes(']'); // Checking if is the type src tmp
+        
+        if(typeof e_data !== 'undefined' && !src) // Init filling
+            await easy.read(tmp, function (e) { // Getting data and setting
+                easy.addHtml(p, e, rvs);
+            }, el.e_attr(e_cmds.e_filter));
+        
+        if(src){ // Init filling by source
+            try {
+                let _ds_ = eval(tmp.substr(1, tmp.length - 2)); // Getting the source 
+                if(Array.isArray(_ds_)) // Checking if the source is valid
+                    await easy.source(_ds_).read(tmp, function (e) { // Getting data and setting
+                        easy.addHtml(p, e, rvs);
+                    }, el.e_attr(e_cmds.e_filter));    
+            } catch (er) {
+                e_error(e_error_msg.notFoundedObj(tmp));
             }
-
-            if(src){ // Init filling by source
-                try {
-                    let _ds_ = eval(tmp.substr(1, tmp.length - 2)); // Getting the source 
-                    if(Array.isArray(_ds_)) // Checking if the source is valid
-                        await easy.source(_ds_).read(tmp, function (e) { // Getting data and setting
-                            easy.addHtml(p, e, rvs);
-                        }, el.e_attr(e_cmds.e_filter));    
-                } catch (er) {
-                    e_error(e_error_msg.notFoundedObj(tmp));
-                }
-            }
+        }
     }
     const initEasy = async function () {
         let v = arguments[0] || document;
-        let elems = v.querySelectorAll(`[${e_cmds.e_tmp}]`);
-        let m_elems = v.querySelectorAll(`[${e_cmds.e_m_tmp}]`);
-        let e_fills = v.querySelectorAll(`[${e_cmds.e_fill}]`);
+        let elems = v.querySelectorAll(`[${e_cmds.e_tmp}]`); // Getting the e-tmp
+        let m_elems = v.querySelectorAll(`[${e_cmds.e_m_tmp}]`); // Getting the e-m-tmp
+        let e_fills = v.querySelectorAll(`[${e_cmds.e_fill}]`); // Getting the the e-fills
     
-        subscribeTmp(m_elems, e_cmds.e_m_tmp); // Subscribing manual template
+        subscribeTmp(m_elems, e_cmds.e_m_tmp); // Subscribing e-tmp
         // Subscribing manual template
         subscribeTmp(elems, e_cmds.e_tmp, function (el, p) { fillSubsc(el, p); });
-        subscribeFiller(e_fills); // Subscribing filler
+        subscribeFiller(e_fills); // Subscribing fillers
 
     };
-
     // Running easy default funciton 
     initEasy();
-
     // Easy observer
     const e_observeTmp = function (s, cb) {
         var observer = new MutationObserver(function (ms) {
@@ -1041,5 +1043,4 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     // An Easy observer e-tmp
     e_observeTmp('body', function (m) { initEasy(m); });
-
 });  
