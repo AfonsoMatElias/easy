@@ -358,7 +358,7 @@ easy.fillHtml = function(el) {
         let e_cnt = e_cnts.find(function (x) {
             if(isFill)
             { return x.e.e_attr(e_cmds.e_code) == cnt_code; }
-            else { return x.p.e_attr(e_cmds.e_code) == cnt_code; }
+            else { return x.p ? x.p.e_attr(e_cmds.e_code) == cnt_code : false; }
         }); // Getting the e container
         
         if(isFill) { aux = e_cnt.e; }
@@ -388,7 +388,7 @@ easy.addHtml = function (cnt, el, rvs) {
         return;
     }
 
-    let e_cnt = e_cnts.find(function (x) { return x.p.e_attr(e_cmds.e_code) == cnt_code; }); // Getting the e container
+    let e_cnt = e_cnts.find(function (x) { return x.p ? x.p.e_attr(e_cmds.e_code) == cnt_code : false; }); // Getting the e container
     if (e_cnt == null) {
         e_error('The container "' + cnt + '" must have a template "e-tmp" or "e-m-tmp. And the "template" must have a valid value"');
         return;
@@ -817,7 +817,6 @@ function e(v, ev, cb) {
 function e_sltrAll(v) { try { return document.querySelectorAll(v); } catch(e){} }
 // DOM Selector One helper
 function e_sltr(v) { try { return document.querySelector(v); } catch(e){} }
-
 // Extensions
 if (typeof Object.prototype.fullTyping !== 'function') {
     // Adding into Javascript object
@@ -932,51 +931,24 @@ const e_error_msg = {
 };
 
 document.addEventListener('DOMContentLoaded', function () {
-
-    const initEasy = async function () {
-        let v = arguments[0] || document;
-        let elems = v.querySelectorAll(`[${e_cmds.e_tmp}]`);
-        let m_elems = v.querySelectorAll(`[${e_cmds.e_m_tmp}]`);
-        let e_fills = v.querySelectorAll(`[${e_cmds.e_fill}]`);
-    
-        for (const el of m_elems) {
-            if (el.e_attr(e_cmds.e_m_tmp).trim() != '') {
+    // Template subcriber
+    function subscribeTmp(tmps, name, cb, clear) {
+        for (const el of tmps) {
+            if (el.e_attr(name).trim() != '') {
                 let p = el.parentElement;
-                p.e_attr(e_cmds.e_code, e_code());
-                e_cnts.push({ p: p, e: e_handler.unlinkElem(el) });
+                if(p.e_attr(e_cmds.e_code) == null){
+                    p.e_attr(e_cmds.e_code, e_code());
+                    e_cnts.push({ p: p, e: e_handler.unlinkElem(el) });
+                }else{
+                    p.innerHTML = '';
+                }
+                if(cb != null) cb(el, p); // calling the callback
             }
         }
-
-        for (const el of elems) {
-            let tmp = el.e_attr(e_cmds.e_tmp);
-            if (tmp.trim() != ''){
-                let p = el.parentElement;
-                p.e_attr(e_cmds.e_code, e_code());
-                e_cnts.push({ p: p, e: e_handler.unlinkElem(el) });
-                let rvs = el.e_attr(e_cmds.e_rvs) == 'true' ? true : false;
-                let src = tmp.includes('[') && tmp.includes(']');
-               
-                if(typeof e_data !== 'undefined' && !src){ // Init filling
-                    await easy.read(tmp, function (e) { // Getting data and setting
-                        easy.addHtml(p, e, rvs);
-                    }, el.e_attr(e_cmds.e_filter));
-                }
-
-                if(src){ // Init filling by source
-                    try {
-                        let _ds_ = eval(tmp.substr(1, tmp.length - 2)); // Getting the source 
-                        if(Array.isArray(_ds_)) // Checking if the source is valid
-                            await easy.source(_ds_).read(tmp, function (e) { // Getting data and setting
-                                easy.addHtml(p, e, rvs);
-                            }, el.e_attr(e_cmds.e_filter));    
-                    } catch (er) {
-                        e_error(e_error_msg.notFoundedObj(tmp));
-                    }
-                }
-            }
-        }
-
-        for (const el of e_fills) {
+    }
+    // Filler subcriber
+    async function subscribeFiller(fills) {
+        for (const el of fills) {
             let tmp = el.e_attr(e_cmds.e_fill);
             if (tmp.trim() != ''){
                 let src = tmp.includes('[') && tmp.includes(']');
@@ -1000,6 +972,41 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         }
+    }
+    async function fillSubsc(el, p) {
+        if(!el) return;
+            let tmp = el.e_attr(e_cmds.e_tmp);
+            let rvs = el.e_attr(e_cmds.e_rvs) == 'true' ? true : false;
+            let src = tmp.includes('[') && tmp.includes(']');
+            
+            if(typeof e_data !== 'undefined' && !src){ // Init filling
+                await easy.read(tmp, function (e) { // Getting data and setting
+                    easy.addHtml(p, e, rvs);
+                }, el.e_attr(e_cmds.e_filter));
+            }
+
+            if(src){ // Init filling by source
+                try {
+                    let _ds_ = eval(tmp.substr(1, tmp.length - 2)); // Getting the source 
+                    if(Array.isArray(_ds_)) // Checking if the source is valid
+                        await easy.source(_ds_).read(tmp, function (e) { // Getting data and setting
+                            easy.addHtml(p, e, rvs);
+                        }, el.e_attr(e_cmds.e_filter));    
+                } catch (er) {
+                    e_error(e_error_msg.notFoundedObj(tmp));
+                }
+            }
+    }
+    const initEasy = async function () {
+        let v = arguments[0] || document;
+        let elems = v.querySelectorAll(`[${e_cmds.e_tmp}]`);
+        let m_elems = v.querySelectorAll(`[${e_cmds.e_m_tmp}]`);
+        let e_fills = v.querySelectorAll(`[${e_cmds.e_fill}]`);
+    
+        subscribeTmp(m_elems, e_cmds.e_m_tmp); // Subscribing manual template
+        // Subscribing manual template
+        subscribeTmp(elems, e_cmds.e_tmp, function (el, p) { fillSubsc(el, p); });
+        subscribeFiller(e_fills); // Subscribing filler
 
     };
 
@@ -1015,9 +1022,22 @@ document.addEventListener('DOMContentLoaded', function () {
                     if(obj.attributes)
                         if(obj.e_attr(e_cmds.e_m_tmp) || obj.e_attr(e_cmds.e_tmp)) { cb(obj); }
                 }
+                if(m.type == 'attributes'){ // Checking if an attribute was changed
+                    switch (m.attributeName) {
+                        case e_cmds.e_m_tmp:
+                            subscribeTmp([m.target], e_cmds.e_m_tmp);
+                            break;
+                        case e_cmds.e_tmp:
+                            subscribeTmp([m.target], e_cmds.e_tmp, function (el, p) { fillSubsc(el, p); });
+                            break;
+                        case e_cmds.e_fill:
+                            subscribeFiller([m.target]);
+                            break;
+                    }
+                }
             });
         });
-        observer.observe(e_sltr(s), { childList: true, subtree: true, });
+        observer.observe(e_sltr(s), { childList: true, subtree: true, attributes: true });
     }
     // An Easy observer e-tmp
     e_observeTmp('body', function (m) { initEasy(m); });
