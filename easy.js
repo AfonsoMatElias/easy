@@ -575,8 +575,7 @@ function e_generateObj(input) {
         
         if (res != null) {
             if (mdl) { eval(`obj${str}=value`); } // Updating
-            else
-                writeProp(obj, res, str.substr(1), value, (p.e_attr('e-array') == 'true')); // Writting prop
+            else writeProp(obj, res, str.substr(1), value, (p.e_attr('e-array') == 'true')); // Writting prop
         } else { // Creating or Updating
             eval(`obj${str}=value`);
         }
