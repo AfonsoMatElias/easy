@@ -570,13 +570,13 @@ function e_generateObj(input) {
     // Builder
     function builder(obj, str, p) {
         let res = eval(`obj${str}`);
-        let v = p.e_get('value') == '' ? null : p.e_get('value');
-        if (mdl) { try { v = v ? v : eval(`mdl${str}`); } catch(e){} }
+        let value = p.e_get('value') == '' ? null : p.e_get('value');
+        if (mdl) { try { value = value ? value : eval(`mdl${str}`); } catch(e){} }
         
         if (res != null) {
             if (mdl) { eval(`obj${str}=value`); } // Updating
             else
-                writeProp(obj, res, str.substr(1), v, (p.e_attr('e-array') == 'true')); // Writting prop
+                writeProp(obj, res, str.substr(1), value, (p.e_attr('e-array') == 'true')); // Writting prop
         } else { // Creating or Updating
             eval(`obj${str}=value`);
         }
