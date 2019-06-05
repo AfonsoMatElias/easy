@@ -2,7 +2,7 @@
  * @author Afonso Matumona Elias
  * @version v1.0.0
  * Released under the MIT License.
- * easy.js 'easy and asynchronous js' is a javascript ramework that helps the designer or programmer 
+ * easy.js 'easy and asynchronous js' is a javascript lib that helps the designer or programmer 
  * build an application fast without writting too many lines of js codes.
  * Copyright 2019 Afonso Matumona <afonsomatumona@hotmail.com>
  * # Be Happy ;-)  
