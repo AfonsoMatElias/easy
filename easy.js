@@ -342,6 +342,8 @@ easy.fillHtml = function(el) {
                             o.removeAttribute(a.name); // Removing the easy-repleacer attr
                         }
                     }
+                } else {
+                    if (a.data != null) { a.data = a.data.replace(e, ''); } // Setting Container
                 }
             });
         }
