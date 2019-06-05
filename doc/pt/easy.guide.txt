@@ -2,12 +2,12 @@
  * @author Afonso Matumona Elias
  * @version v1.0.0
  * Released under the MIT License.
- * easy.js 'easy and asynchronous js' is a javascript framework for developing web or mobile app a little bit faster. 
+ * easy.js 'easy and asynchronous js' is a javascript library for developing web or mobile app a little bit faster. 
  * Copyright 2019 Afonso Matumona <afonsomatumona@hotmail.com>
  * # Be Happy ;-)  
  */
 
-Easy js é um javascript framework para auxiliar na criação de aplicações web ou mobile. Ela estende de "Easy and asynchronous js" que em portugues podemos traduzi-lo
+Easy js é um javascript library para auxiliar na criação de aplicações web ou mobile. Ela estende de "Easy and asynchronous js" que em portugues podemos traduzi-lo
 como "Javascript fácil e assíncrono". Ela possibilita e facilita na disposição das informações vindas de um servidor ou uma fonte de dados, ela também possibilita
 criacao de objectos automaticamente conforme o desenvolvedor definir e envia-lo a um servidor. 
 
