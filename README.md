@@ -1,6 +1,5 @@
-
 <p align="center" style="height:120px">
-    <img src="assets/ico/main_ico.png" />
+    <img height="120px" src="assets/ico/main_ico.png" />
 <p>
 
 <h2 align="center"> easy.js </h2>
@@ -211,8 +210,8 @@ Para poder encontrar e disparar eventos a todos os elementos que exitem no DOM, 
 </p>
 <br/>
 
-<p style="text-align:center; height:90px">
-    <img src="assets/ico/sec_ico_desc.png" />
+<p align="center" style="height:90px">
+    <img height="90px" src="assets/ico/sec_ico_desc.png" />
 </p>
 
 <p align="center" style="font-size:11pt; margin:0;"> 
