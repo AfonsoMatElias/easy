@@ -13,9 +13,10 @@
     Porque tal como o nome diz easy js, ela é mesmo muito fácil de usar, e permite separar o máximo possível o HTML do Javascript, com o easy tens a possibilidade de criar objectos estruturados para serem enviados ao servidor ou mesmo gerir uma simples lista de objectos javascript. Com simples comandos (Propriedades HTML ou como denominados Easy Properties) você é capaz de listar dados, preencher campos, postar dados a uma API e muito mais. Só precisas conhecer HTML📃, Javascript📜, e/ou CSS🎫.
     Poderás encontrar a documentação mais detalhada na pasta doc. 
 </p>
-
-###☝ Nota muito importante:
-*Use as funções do easy depois do DOM HTML estar totalmente carregado. Ex.: **window.onload = ()=>{}, document.addEventListener('DOMContentLoaded', ()=>{}), $(document).ready(()=>{}), etc***
+<p>
+    <h2>☝ Nota muito importante:</h2>
+    Use as funções do easy depois do DOM HTML estar totalmente carregado. Ex.: <b>window.onload = ()=>{}, document.addEventListener('DOMContentLoaded', ()=>{}), $(document).ready(()=>{}), etc.</b>
+</p>
 ___
 
 <p style="text-align: justify">
