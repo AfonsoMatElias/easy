@@ -14,6 +14,8 @@
     Poderás encontrar a documentação mais detalhada na pasta doc. 
 </p>
 
+###☝ Nota muito importante:
+*Use as funções do easy depois do DOM HTML estar totalmente carregado. Ex.: **window.onload = ()=>{}, document.addEventListener('DOMContentLoaded', ()=>{}), $(document).ready(()=>{}), etc***
 ___
 
 <p style="text-align: justify">
