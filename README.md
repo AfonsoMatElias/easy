@@ -175,7 +175,7 @@ Para as listas em javascript o controlo é tão simples quanto as api, a diferen
     // Create
     // Defini true no terceiro parametro para gerar um id automático
     easy.source(playlist).create(null, {
-        titulo:'Final Destination',
+        titulo:'Final Episode',
         artista:'Asking Alexandria',
         album:'Stand Up And Scream'
     }, true);
@@ -185,7 +185,7 @@ Para as listas em javascript o controlo é tão simples quanto as api, a diferen
 
     // Update
     easy.source(playlist).update(null, {
-        titulo:'Asking Alexandria - Final Destination'
+        titulo:'Asking Alexandria - Final Episode'
     }, 'KDc12csC8dsdc38vdnt');
 
     // Delete
