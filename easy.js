@@ -86,7 +86,7 @@ const easy = {
             let r = await e_data.update(ref, obj, id, fld); // Calling the function to update in server
             if (r.result == null) throw ({ message: r.msg });
             if (r.status) 
-            { e_handler.getHTMLElems(r.result).forEach(function (el) { easy.fillHtml(el, r.result, true); }); }
+            { e_handler.getEasyElems(r.result).forEach(function (el) { easy.fillHtml(el, r.result, true); }); }
             return r;
         } catch (er) {
             return e_return(false, e_error(er.message != undefined ? er.message : er), null); // Error            
@@ -109,7 +109,7 @@ const easy = {
             
             if (r.result == null) throw ({ message: r.msg });
             if (r.status) {
-                let elems = e_handler.getHTMLElems(r.result);
+                let elems = e_handler.getEasyElems(r.result);
                 elems.forEach(function (el) {
                     if (!el.e_attr(e_cmds.e_fill)) { getParent(el).removeChild(el); }
                 });
@@ -177,7 +177,7 @@ easy.header = function (v) {
     return easy;
 };
 /**
- * easy function that allow the user to pass an array as data source and manage with the main actions (CRUD).
+ * easy function that allows the user to pass an array as data source and manage with the main actions (CRUD).
  * It doesnt modify the main data source
  * @param {Array} ds - the data source 
  */
@@ -360,7 +360,7 @@ easy.fillHtml = function(el) {
         }); // Getting the e container
         
         if(isFill) { aux = e_cnt.e; }
-        else { aux = e_handler.unlinkElem(e_cnt.e); }
+        else { aux = e_handler.cutElem(e_cnt.e); }
     }
 
     let flds = e_handler.e_elems(aux);
@@ -391,8 +391,8 @@ easy.addHtml = function (cnt, el, rvs) {
         return;
     }
 
-    let cnt_tmp = e_cnt.e.e_attr(e_cmds.e_tmp) != null ? e_handler.unlinkElem(e_cnt.e) : null;
-    if (cnt_tmp == undefined) cnt_tmp = e_cnt.e.e_attr(e_cmds.e_m_tmp) ? e_handler.unlinkElem(e_cnt.e) : null;
+    let cnt_tmp = e_cnt.e.e_attr(e_cmds.e_tmp) != null ? e_handler.cutElem(e_cnt.e) : null;
+    if (cnt_tmp == undefined) cnt_tmp = e_cnt.e.e_attr(e_cmds.e_m_tmp) ? e_handler.cutElem(e_cnt.e) : null;
 
     let anm = cnt_tmp.e_attr(e_cmds.e_anm);
     if (anm != null) {
@@ -495,7 +495,7 @@ let e_handler = {
         }
     },
     // Helper to unlink an element from the DOM
-    unlinkElem: function (v) {
+    cutElem: function (v) {
         let aux = document.createElement('tbody');
         aux.appendChild(v);
         let div = document.createElement('tbody');
@@ -503,7 +503,7 @@ let e_handler = {
         return div.children[0]; // # Disconnecting the elem from the DOM
     },
     // Get the elems according the data base elem passed in the parameter
-    getHTMLElems: function (v) {
+    getEasyElems: function (v) {
         try {
             let elems = [].slice.call(e_sltrAll(`[${e_cmds.e_key}]`));
             return elems.filter(function (x) { // Looping them
@@ -535,7 +535,7 @@ function e_formReader(v) {
 }
 /**
  * Helper to create an object according the form and/or fill it in case of update funciton 
- * @param {e_formReader} obj - the expect e_formReader return
+ * @param {e_formReader} f - the expect e_formReader return
  * @return the updated object
  */
 function e_createObj(f) {
@@ -554,8 +554,10 @@ function e_createObj(f) {
  */
 function e_generateObj(input) {    
     if(typeof input['form'] !== 'string') return input['form'];
+    
     let elem = e_sltr(input['form']), gId = input['ident'], mdl = input['model'];
     if (!elem) return input['form'];
+    
     // Helper
     if (typeof Object.prototype.e_get !== 'function') {
         Object.defineProperty(Object.prototype, 'e_get', {
@@ -563,7 +565,8 @@ function e_generateObj(input) {
                 let opts = [], options = input['options']; // Options aux
                 if(options) opts = options[n] ? options[n] : []; // Checking and adding the options
                 for (const l of opts) { // Looping the options
-                    let p = this.e_attr(l); if(p) return p; // Setting and returning
+                    let p = this.e_attr(l); 
+                    if(p) return p; // Setting and returning
                 }
                 return this.e_attr(n); // Returning the default
             }
@@ -584,19 +587,21 @@ function e_generateObj(input) {
     }
     // Element builder getter
     function getBuilders(el, elem) {
-            let els = []; 
-            while (el) {
-                let v = el.e_attr(e_cmds.e_build); // Getting the attr
-                if (v) els.unshift(v); // Adding elements
-                if (elem == el) break; // Breaking the loop
-                el = el.parentNode;
-            }
-            let build = ''; // Building the path
-            els.filter(function (e) {
-                let l = e.split('.');
-                build += '.' + l[l.length - 1];
-            });
-            return build.substr(1); // Removing the . and returning
+        let els = []; 
+        while (el) {
+            let v = el.e_attr(e_cmds.e_build); // Getting the attr
+            if (v) els.unshift(v); // Adding elements
+            if (elem == el) break; // Breaking the loop
+            el = el.parentNode;
+        }
+
+        let build = ''; // Building the path
+        els.filter(function (e) {
+            let l = e.split('.');
+            build += '.' + l[l.length - 1];
+        });
+        
+        return build.substr(1); // Removing the . and returning
     }
     // Write a prop in obj
     function writeProp(obj, res, str, value, arr) {
@@ -615,8 +620,8 @@ function e_generateObj(input) {
             eval(`obj.${str}=value`); // Setting the prop
         }
     }
-    // Object structer
-    function structObj(p_obj, str, value, arr) {
+    // Object designer
+    function designObj(p_obj, str, value, arr) {
 
         let auxStr = '', 
             obj = p_obj, 
@@ -670,7 +675,7 @@ function e_generateObj(input) {
         let value = e_preBuildObj(el, aux);
         el.e_attr(e_cmds.e_build, attr);
         if(mdl){ eval(`obj.${str}=value`); }
-        else { structObj(obj, str, value, (el.e_attr('e-array') == 'true')); }
+        else { designObj(obj, str, value, (el.e_attr('e-array') == 'true')); }
     }
     return obj;
 
@@ -737,26 +742,21 @@ function e_data_filter(v, ft) {
             } //Looking for an operator
         if (!tst) { e_error('Invalid filter compare operator "' + ft + '"'); return v; }
         v = v.filter(function (item) { // Looping and filtering the data
-            let result = true, op = "", exp = [];
+            
+            let op = "", exp = [];
             e_for(_op_, function (o) {
                 if (ft.includes(o)) {
                     op = o; exp = ft.split(op);
                 }
             });
+            
             let left = item[exp[0].trim()];
             if (left == undefined) {
                 throw ({ message: `The field "${exp[0].trim()}" on easy.read filter is not a field Reference or object` });
             }
+            
             let right = exp[1].trim();
-            switch (op) {
-                case '==': result = left == right; break;
-                case '!=': result = left != right; break;
-                case '<': result = left < right; break;
-                case '>': result = left > right; break;
-                case '>=': result = left == right; break;
-                case '<=': result = left == right; break;
-            }
-            return result;
+            return eval(`${left}${op}${right}`);
         });
     }
     return v;
@@ -801,14 +801,14 @@ function e(v, ev, cb) {
         let parent = getParent(elem);
         let html = e_sltr('html');
         do { // Find the elem
-            let _this_ = [];
+            let array = [];
             if (!parent) return undefined;
 
             if(typeof v === 'string')
-            { _this_ = [].slice.call(parent.querySelectorAll(v)); }
-            else { _this_.push(v); }
+            { array = [].slice.call(parent.querySelectorAll(v)); }
+            else { array.push(v); }
 
-            if (_this_.find(function (x) { return x == elem; })) {
+            if (array.find(function (x) { return x == elem; })) {
                 cb(e, elem);
                 return elem;
             } else if (html == elem) {
@@ -829,12 +829,12 @@ if (typeof Object.prototype.fullTyping !== 'function') {
     Object.defineProperty(Object.prototype, "fullTyping", {
         value: function (cb) {
             let el = this;
-            let elems = Array.isArray(el) ? el : [el]; // transforming jquery target element to js
-
+            let elems = Array.isArray(el) || el.toString().includes('NodeList') ? el : [el]; // Making the elements as a list 
             for (const elem of elems) {
                 if (elem.tagName != 'INPUT' && elem.tagName != 'TEXTAREA') {
                     e_error('Element ' + elem.type + ' cannot be applied the fullTyping function'); return;
                 }
+                
                 let delay = 1500, w = false, t_out = null;
                 let enter = false, c = ''; 
                 elem.onkeyup = function (e) {
@@ -845,6 +845,7 @@ if (typeof Object.prototype.fullTyping !== 'function') {
                         cb(e.target); // Executing the callback
                         return;
                     }
+                    
                     if (!w) {
                         w = true; // Assuming that the user is typing            
                         t_out = waitCompleteText(function () { cb(e.target); }, e);
@@ -938,13 +939,13 @@ const e_error_msg = {
 
 document.addEventListener('DOMContentLoaded', function () {
     // Template subcriber
-    function subscribeTmp(tmps, name, cb, clear) {
+    function subscribeTmp(tmps, name, cb) {
         for (const el of tmps) {
             if (el.e_attr(name).trim() != '') {
                 let p = el.parentElement;
                 if(p.e_attr(e_cmds.e_code) == null){
                     p.e_attr(e_cmds.e_code, e_code());
-                    e_cnts.push({ p: p, e: e_handler.unlinkElem(el) });
+                    e_cnts.push({ p: p, e: e_handler.cutElem(el) });
                 }else{
                     p.innerHTML = '';
                 }
@@ -959,9 +960,11 @@ document.addEventListener('DOMContentLoaded', function () {
             if (tmp.trim() != ''){
                 let src = tmp.includes('[') && tmp.includes(']'); // Checking if is the type src tmp
                 el.e_attr(e_cmds.e_code, e_code()); // Adding the code
+                
                 let n = document.createElement('div'); // Creating and aux dix
                 n.innerHTML = e_handler.getHtml(el); // Getting the html
                 e_cnts.push({ p: null, e: n.children[0] }); // Adding to the cnts
+                
                 let value = tmp.split(':'); // Spliting the options
                 if(typeof e_data !== 'undefined' && !src) // Checking if we got e_data
                     await easy.getOne(value[0], value[1], el, value[2]); // Getting data and setting
@@ -1012,7 +1015,6 @@ document.addEventListener('DOMContentLoaded', function () {
         // Subscribing manual template
         subscribeTmp(elems, e_cmds.e_tmp, function (el, p) { fillSubsc(el, p); });
         subscribeFiller(e_fills); // Subscribing fillers
-
     };
     // Running easy default funciton 
     initEasy();
@@ -1027,21 +1029,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 if(m.type == 'attributes'){ // Checking if an attribute was changed
                     switch (m.attributeName) {
-                        case e_cmds.e_m_tmp:
-                            subscribeTmp([m.target], e_cmds.e_m_tmp);
-                            break;
-                        case e_cmds.e_tmp:
-                            subscribeTmp([m.target], e_cmds.e_tmp, function (el, p) { fillSubsc(el, p); });
-                            break;
-                        case e_cmds.e_fill:
-                            subscribeFiller([m.target]);
-                            break;
+                        case e_cmds.e_m_tmp: subscribeTmp([m.target], e_cmds.e_m_tmp); break;
+                        case e_cmds.e_tmp: subscribeTmp([m.target], e_cmds.e_tmp, function (el, p) { fillSubsc(el, p); }); break;
+                        case e_cmds.e_fill: subscribeFiller([m.target]); break;
                     }
                 }
             });
         });
         observer.observe(e_sltr(s), { childList: true, subtree: true, attributes: true });
     }
-    // An Easy observer e-tmp
+    // An Easy template observer
     e_observeTmp('body', function (m) { initEasy(m); });
 });  

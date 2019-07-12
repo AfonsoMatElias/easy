@@ -89,7 +89,9 @@
         <br />
     </div>
     <!-- Single -->
-    <div class="prod-list-item" e-fill="Product:P0001">
+    <div class="prod-list-item" 
+         e-fill="Product:P0001" 
+         style="border:1px solid -e-Color-">
         <div class="img" style="background-color:-e-Color-">
         </div>
         <div class="text-content">
@@ -202,7 +204,7 @@
         });
 
         let cnt = e_sltr('#prod-list');
-        document.querySelector('#Search').fullTyping(function (el) {
+        document.getElementById('Search').fullTyping(function (el) {
             cnt.innerHTML = '';
             easy.read(rootTable, function (e) {
                 easy.addHtml('#prod-list', e);
