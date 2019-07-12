@@ -17,7 +17,7 @@
     <h2>☝ Nota muito importante:</h2>
     Use as funções do easy depois do DOM HTML estar totalmente carregado. Ex.: <b>window.onload = ()=>{}, document.addEventListener('DOMContentLoaded', ()=>{}), $(document).ready(()=>{}), etc.</b>
 </p>
-___
+<hr />
 
 <p style="text-align: justify">
     Para poder usar ele com requisições ajax, deve ser combinado ou importado com o ficheiro <b>easy.ajax.js</b>
