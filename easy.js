@@ -594,14 +594,7 @@ function e_generateObj(input) {
             if (elem == el) break; // Breaking the loop
             el = el.parentNode;
         }
-
-        let build = ''; // Building the path
-        els.filter(function (e) {
-            let l = e.split('.');
-            build += '.' + l[l.length - 1];
-        });
-        
-        return build.substr(1); // Removing the . and returning
+        return els.join('.');
     }
     // Write a prop in obj
     function writeProp(obj, res, str, value, arr) {
