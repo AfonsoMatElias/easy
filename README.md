@@ -171,28 +171,33 @@ O objecto será construído com base o a hierarquia criada no Elemento HTML com 
 Para as listas em javascript o controlo é tão simples quanto as api, a diferença é que deve ser especificado qual é a fonte de dados com a função **source(ds)**
 
 ```javascript
+    (async () =>{
 
-    // Exemplo
-    let playlist = [];
-    
-    // Create
-    // Defini true no terceiro parametro para gerar um id automático
-    easy.source(playlist).create(null, {
-        titulo:'Final Episode',
-        artista:'Asking Alexandria',
-        album:'Stand Up And Scream'
-    }, true);
-    
-    //Read
-    easy.source(playlist).read(null);
-
-    // Update
-    easy.source(playlist).update(null, {
-        titulo:'Asking Alexandria - Final Episode'
-    }, 'KDc12csC8dsdc38vdnt');
-
-    // Delete
-    easy.source(playlist).delete(null, 'KDc12csC8dsdc38vdnt');
+        // Exemplo
+        let playlist = [];
+        
+        // Create
+        await easy.source(playlist).create({
+            titulo:'Final Episode',
+            artista:'Asking Alexandria',
+            album:'Stand Up And Scream'
+        });
+        
+        //Read
+        let a = await easy.source(playlist).read();
+        console.log(a);
+        
+        // Update
+        await easy.source(playlist).update({
+            titulo:'Asking Alexandria - Final Episode',
+            artista:'Asking Alexandria',
+            album:'Stand Up And Scream'
+        }, 0);
+        
+        // Delete
+        await easy.source(playlist).delete(null, 0);
+        
+    })();
 ```
 
 Para poder encontrar e disparar eventos a todos os elementos que exitem no DOM, mesmo aqueles que foram adicionados depois do DOM ser carregado, o easy disponibiliza: **e(...)**, com os parametros: 

@@ -73,7 +73,7 @@ const easy = {
             if (id == null || id == undefined) throw ({ message: e_error_msg.notValidValue('id') });
             
             id = e_handler.e_m(id); // Handlin param id
-            let rg = await easy.getOne(ref, id); // Getting the object to be updated 
+            let rg = await easy.getOne(ref, id, null, fld); // Getting the object to be updated 
             
             if (rg == null) { throw ({ message: e_error_msg.connectorError() }); }
             
@@ -203,14 +203,18 @@ easy.source = function (ds) {
                 if (ref == null || ref == undefined) { throw ({ message: e_error_msg.nullDs() }); }
                 
                 let obj = null;
-                field = field == null ? 'Id' : field;
-                ref.filter(function (item) {
-                    let res = item[field] == id;
-                    if (res) {
-                        obj = item;
-                        ref.splice(ref.indexOf(item), 1);
-                    }
-                });
+                if(field == null){
+                    obj = ref[id];
+                    ref.splice(id, 1);
+                } else {
+                    ref.filter(function (item) {
+                        let res = item[field] == id;
+                        if (res) {
+                            obj = item;
+                            ref.splice(ref.indexOf(item), 1);
+                        }
+                    });
+                }
                 return e_return(true, 'Ok', obj);
             } catch (error) {
                 return e_return(false, error.message, null);
@@ -219,15 +223,17 @@ easy.source = function (ds) {
         update: async function (r, obj, id, field) {
             try {
                 if (id == null || id == undefined) throw ({ message: e_error_msg.notValidValue(id) });
-                
-                let ref = ds;
-                if (ref == null || ref == undefined) { throw ({ message: e_error_msg.nullDs() }); }
-                field = field == null ? 'Id' : field;
-                for (let i = 0; ref.length; i++) {
-                    let o = field ? ref[i][field] : ref[i];
-                    if (o == id) {
-                        o = obj;
-                        break;
+
+                if (ds == null || ds == undefined) { throw ({ message: e_error_msg.nullDs() }); }
+                if(field == null){
+                    ds[id] = obj;
+                } else {
+                    for (let i = 0; ds.length; i++) {
+                        let o = field ? ds[i][field] : ds[i];
+                        if (o == id) {
+                            ds[i] = obj;
+                            break;
+                        }
                     }
                 }
                 return e_return(true, 'Ok', obj);
@@ -256,14 +262,18 @@ easy.source = function (ds) {
                 if (ref == null || ref == undefined) { throw ({ message: e_error_msg.nullDs() }); }
                 
                 let obj = null;
-                field = field == null ? 'Id' : field;
-                for (let i = 0; i < ref.length; i++) {
-                    let o = field ? ref[i][field] : ref[i];
-                    if (o == null || o == undefined)
-                        throw ({ message: e_error_msg.notDefinedField(field) });
-                    if (o == id) {
-                        obj = ref[i];
-                        break;
+                
+                if(field == null){
+                    obj = ref[id];
+                } else {
+                    for (let i = 0; i < ref.length; i++) {
+                        let o = field ? ref[i][field] : ref[i];
+                        if (o == null || o == undefined)
+                            throw ({ message: e_error_msg.notDefinedField(field) });
+                        if (o == id) {
+                            obj = ref[i];
+                            break;
+                        }
                     }
                 }
                 if (obj == null)
@@ -275,28 +285,28 @@ easy.source = function (ds) {
         },
     };
     return {
-        create: async function (r, frm, gId) {
-            let res = await easy.create(r, frm, gId);
+        create: async function (frm, gId) {
+            let res = await easy.create(null, frm, gId);
             e_data = e_data_old;
             return res;
         },
-        read: async function (r, cb, ft, s) {
-            let res = await easy.read(r, cb, ft, s);
+        read: async function (cb, ft, s) {
+            let res = await easy.read(null, cb, ft, s);
             e_data = e_data_old;
             return res;
         },
-        update: async function (r, frm, id, fld) {
-            let res = await easy.update(r, frm, id, fld);
+        update: async function (frm, id, fld) {
+            let res = await easy.update(null, frm, id, fld);
             e_data = e_data_old;
             return res;
         },
-        delete: async function (r, id, fld) {
-            let res = await easy.delete(r, id, fld);
+        delete: async function (id, fld) {
+            let res = await easy.delete(null, id, fld);
             e_data = e_data_old;
             return res;
         },
-        getOne: async function (r, id, elem, fld) {
-            let res = await easy.getOne(r, id, elem, fld);
+        getOne: async function (id, elem, fld) {
+            let res = await easy.getOne(null, id, elem, fld);
             e_data = e_data_old;
             return res;
         },
@@ -958,15 +968,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 n.innerHTML = e_handler.getHtml(el); // Getting the html
                 e_cnts.push({ p: null, e: n.children[0] }); // Adding to the cnts
                 
-                let value = tmp.split(':'); // Spliting the options
+                let value = tmp.substr(1, tmp.length - 2).split(':'); // Spliting the options
                 if(typeof e_data !== 'undefined' && !src) // Checking if we got e_data
                     await easy.getOne(value[0], value[1], el, value[2]); // Getting data and setting
 
                 if(src){ // Checking if it must be taken in the source
                     try {
-                        let _ds_ = eval(value[0].substr(1, value[0].length - 2)); // Getting the source 
+                        let _ds_ = eval(value[0]); // Getting the source 
                         if(Array.isArray(_ds_)) // Checking if its valid
-                            await easy.source(_ds_).getOne(value[0], value[1], el, value[2]); // Getting data and setting
+                            await easy.source(_ds_).getOne(value[1], el, value[2] ? value[2] : 'Id'); // Getting data and setting
                     } catch (er) {
                         e_error(e_error_msg.notFoundedObj(tmp));
                     }
@@ -990,7 +1000,7 @@ document.addEventListener('DOMContentLoaded', function () {
             try {
                 let _ds_ = eval(tmp.substr(1, tmp.length - 2)); // Getting the source 
                 if(Array.isArray(_ds_)) // Checking if the source is valid
-                    await easy.source(_ds_).read(tmp, function (e) { // Getting data and setting
+                    await easy.source(_ds_).read(function (e) { // Getting data and setting
                         easy.addHtml(p, e, rvs);
                     }, el.e_attr(e_cmds.e_filter));    
             } catch (er) {
@@ -1032,5 +1042,5 @@ document.addEventListener('DOMContentLoaded', function () {
         observer.observe(e_sltr(s), { childList: true, subtree: true, attributes: true });
     }
     // An Easy template observer
-    e_observeTmp('body', function (m) { initEasy(m); });
+    e_observeTmp('body', function (m) { initEasy(m); }); 
 });  

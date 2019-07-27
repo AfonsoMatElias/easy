@@ -251,14 +251,13 @@
                 'source' e como parametro deverá
                 ser posto a fonte de dados, depois da função de qualquer manipulador.
                 A sintaxe base é: <b>easy.source(...).[Easy-Function]</b>. Conforme está na sintaxe base, depois de ser
-                adicionado a função source, pode se usar
-                as funções de manipulação citadas em cima.
+                adicionado a função source, pode se usar as funções de manipulação citadas em cima.
             </p>
 
             <p>
-                <b>Nota</b>: No caso de ser usado a função <b>source</b> para poder acessar a raiz da lista deverá ser
-                passado 'null' no parametro '[TableName]', com
-                isso consegue-se referenciar a raiz da lista já que passou-se null no nome da tabela a acessar.
+                <b>Nota</b>: No caso de ser usado a função <b>source</b> para poder acessar a raiz da lista não deverá ser
+                passado o parametro '[TableName]', com isso consegue-se referenciar a raiz da lista.<br/> 
+                Ex.: <b>easy.source(playlist).create({ nome: 'Afonso' });</b> ou <b>easy.source(playlist).read();</b>
             </p>
 
             <p>
@@ -435,7 +434,7 @@
                 <li>
                     <b>e-tmp</b>: Tem como significado <b>easy-template</b> que diz ao easy que pretende-se usar o elemento corrente como o template
                     onde os dados vindo de um servidor serão apresentados, e como o valor do "template" será o nome da tabela na base de dados.<br />
-                    <b>Sintaxe e-tmp="[TableName]"</b>.<br/>
+                    <b>Sintaxe e-tmp="[TableName]".</b> No caso de uma simples lista <b>a sintaxe é e-tmp="[[ListName]]"</b>, O nome da lista dentro de <b>[ ].</b><br/>
                     <b><i>Notas 📑</i></b>:
                     <ul>
                         <li>Usando este comando, a ferramenta automaticamente listará no "template" todos os dados vindo do servidor.</li>
@@ -454,7 +453,7 @@
                 <li>
                     <b>e-m-tmp</b>: Tem como significado <b>easy-manual-template</b> que diz ao easy que pretende-se usar o elemento corrente como o template
                     onde os dados vindo de um servidor serão apresentados, e como o valor do template será o nome da tabela na base de dados.<br />
-                    <b>Sintaxe e-m-tmp="[TableName]".</b>
+                    <b>Sintaxe e-m-tmp="[TableName]". </b> No caso de uma simples lista <b>a sintaxe é e-m-tmp="[[ListName]]"</b>, O nome da lista dentro de <b>[ ].</b>
                     <br/>
                     <b><i>Notas 📑</i></b>:
                     <ul>
@@ -481,6 +480,10 @@
                         });
                     </code></pre>
                 </li>
+
+                <p>
+                    No caso de <b>e-tmp=[[ListName]]</b> ou <b>e-m-tmp=[[ListName]]</b> deve se definir a lista (ListName) em um script antes de usar os templates. 
+                </p>
                 
                 <!-- -e- -->
                 <li>
