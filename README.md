@@ -199,6 +199,22 @@ Para as listas em javascript o controlo é tão simples quanto as api, a diferen
         
     })();
 ```
+<p><b>Como listá-lo de forma rápida no HTML? 🤔, resposta! 👇 👌</b></p>
+```HTML
+
+    <div id="container">
+        <div e-tmp="[playlist]"
+             title="-e-album-">
+            <label>
+                -e-titulo-
+            </label>
+            <label>
+                -e-artista-
+            </label>
+        </div>
+    </div>
+
+```
 
 Para poder encontrar e disparar eventos a todos os elementos que exitem no DOM, mesmo aqueles que foram adicionados depois do DOM ser carregado, o easy disponibiliza: **e(...)**, com os parametros: 
     
