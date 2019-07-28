@@ -168,13 +168,15 @@ O objecto será construído com base o a hierarquia criada no Elemento HTML com 
 
 ```
 
-Para as listas em javascript o controlo é tão simples quanto as api, a diferença é que deve ser especificado qual é a fonte de dados com a função **source(ds)**
+Para as listas em javascript o controlo é tão simples quanto as api, a diferença é que deve ser especificado qual é a fonte de dados com a função **source(ds)**.
+
+<p><b>Dada uma lista de musicas em javascipt, que podemos efectuar as operações básicas do <i>easy</i> 😃...</b></p>
 
 ```javascript
     (async () =>{
 
         // Exemplo
-        let playlist = [];
+        var playlist = [];
         
         // Create
         await easy.source(playlist).create({
@@ -199,7 +201,7 @@ Para as listas em javascript o controlo é tão simples quanto as api, a diferen
         
     })();
 ```
-<p><b>Como listá-lo de forma rápida no HTML? 🤔, resposta! 👇 👌</b></p>
+<p><b>Como listá-la de forma rápida no HTML? 🤔, Resposta! 👇 👌, conforme foi mencionado na descrição do <i>e-tmp & e-m-tmp.</i></b></p>
 
 ```HTML
 
