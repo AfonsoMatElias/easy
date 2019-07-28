@@ -200,6 +200,7 @@ Para as listas em javascript o controlo é tão simples quanto as api, a diferen
     })();
 ```
 <p><b>Como listá-lo de forma rápida no HTML? 🤔, resposta! 👇 👌</b></p>
+
 ```HTML
 
     <div id="container">
