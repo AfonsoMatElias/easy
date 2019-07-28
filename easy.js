@@ -968,12 +968,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 n.innerHTML = e_handler.getHtml(el); // Getting the html
                 e_cnts.push({ p: null, e: n.children[0] }); // Adding to the cnts
                 
-                let value = tmp.substr(1, tmp.length - 2).split(':'); // Spliting the options
+                let value = tmp.split(':'); // Spliting the options
                 if(typeof e_data !== 'undefined' && !src) // Checking if we got e_data
                     await easy.getOne(value[0], value[1], el, value[2]); // Getting data and setting
 
                 if(src){ // Checking if it must be taken in the source
                     try {
+                        value = tmp.substr(1, tmp.length - 2).split(':'); // Spliting the options
                         let _ds_ = eval(value[0]); // Getting the source 
                         if(Array.isArray(_ds_)) // Checking if its valid
                             await easy.source(_ds_).getOne(value[1], el, value[2] ? value[2] : 'Id'); // Getting data and setting

@@ -195,7 +195,7 @@ Para as listas em javascript o controlo é tão simples quanto as api, a diferen
         }, 0);
         
         // Delete
-        await easy.source(playlist).delete(null, 0);
+        await easy.source(playlist).delete(0);
         
     })();
 ```
