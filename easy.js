@@ -182,6 +182,19 @@ easy.header = function (v) {
  * @param {Array} ds - the data source 
  */
 easy.source = function (ds) {
+
+    function addIndex(v) {
+        if(Array.isArray(v)){
+            v = v.map((x, i) => {
+                x._i_ = i;
+                return x;
+            });
+        } else{
+            v._i_ = 0;
+        }
+        return v;
+    } // Helper to add index in a list of items, or in single item.
+
     e_data = {
         add: async function (r, mdl) {
             try {
@@ -236,7 +249,7 @@ easy.source = function (ds) {
                         }
                     }
                 }
-                return e_return(true, 'Ok', obj);
+                return e_return(true, 'Ok', addIndex(obj));
             } catch (error) {
                 return e_return(false, error.message, null);
             }
@@ -249,7 +262,7 @@ easy.source = function (ds) {
                 let _ref = e_data_filter(ref, filter);
                 if (search != null) { _ref = e_data_search(_ref, search); }
                 
-                return e_return(true, 'Ok', _ref);
+                return e_return(true, 'Ok', addIndex(_ref));
             } catch (error) {
                 return e_return(false, error.message, null);
             }
@@ -786,11 +799,12 @@ function e_for(v, cb) {
 }
 // Error msg
 function e_error(v) { console.error('Error:', v); return v; }
-// Get the keys of an object
+
 function getKeys(v) {
     let r = Object.keys(v);
     return r ? r : [];
-}
+}// Get the keys of an object
+
 /**
  * Easy Event handler
  * @param {string} v - the selector 
