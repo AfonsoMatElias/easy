@@ -2,10 +2,10 @@
 
 Easy.ajax.js é uma ferramenta ou ficheiro auxiliar que possibilita o desenvolvedor alcançar um servidor usando ajax.
 
-Tal como o ajax funcitona, para fazer uma requisição de dados deve identificar uma URL ou caminho que fica localizado o servidor, 
+Tal como o ajax funciona, para fazer uma requisição de dados deve identificar uma URL ou caminho que fica localizado o servidor, 
 para isso existe uma variável auxiliar chamada 'e_url', nela deverá ser identificada a URL base do servidor.
 Ex.: http://127.0.0.1/api/ ou https://myapiserver.com/api/.
-Com isso poderá se fazer requisição fácies, simplesmente colocando o nome do Controlador.
+Com isso poderá se fazer requisição fáces, simplesmente colocando o nome do Controlador.
 
 As funções de manipulação de dados são: add, remove, update, list, getOne. todas as funções devem retornar uma outra 
 função chamada "e_return", que contem um estado da requisição, a mensagem da requisição e o objecto em si. 

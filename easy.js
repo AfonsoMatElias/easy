@@ -353,9 +353,9 @@ easy.fillHtml = function(el) {
             if(!Array.isArray(value))
                 value = value[0].split(',');
             
-            value.filter(function (e) {
-                let res = e_propGetter(e, mdl);
-                if(res != null){ 
+            // Inner prop or value setter
+            function e_set(a, e, res) {
+                if(res != null){ // Checking the value
                     if(a.data == null) { a.value = a.value.replace(e, res); } // Setting value
                     else if(a.value == null) { a.data = a.data.replace(e, res); } // Setting Container
                     if(a.name){ // Checking if is valid
@@ -367,6 +367,36 @@ easy.fillHtml = function(el) {
                     }
                 } else {
                     if (a.data != null) { a.data = a.data.replace(e, ''); } // Setting Container
+                }
+            }
+
+            value.filter(function (e) {
+                
+                if(e.includes('[') && e.includes(']')) { // Getting values from a list
+
+                    let aux = e.replace(e_cmds._e_, ''); // Cleaning: -e-[]-
+                    aux = aux.substr(0, aux.length - 1)
+                            .replace('[','').replace(']','');
+                    
+                    let l = aux.split('.'), r = aux.substr(l[0].length); // Getting lis name
+                    let el = a.parentElement; // Getting the element it self
+                    let list = eval(`mdl.${l[0]}`);
+                    
+                    for (let i = 0; i < list.length-1; i++) // Creating clones according the number of the list
+                        el.parentNode.insertBefore(el.cloneNode(true), el.nextSibling);
+
+                    e_for(list, function(d){ // Looping the list of the data
+                        
+                        let res = eval('d' + r); // Getting the value
+                        e_handler.e_elems(el).filter(function (a) { // Getting the e-props fields
+                            e_set(a, e, res);
+                        });
+
+                        el = el.nextElementSibling; // Getting the next elem created
+                    });
+
+                }else{
+                    e_set(a, e, e_propGetter(e, mdl));
                 }
             });
         }
@@ -701,8 +731,8 @@ function e_propGetter(v, m) {
     let value = "";
     if (v.includes(e_cmds._e_)) {
         value += v;
-        value = value.replace(e_cmds._e_, ''); // Removing cmd
-        value = value.substr(0, value.length - 1); // Removing the delimiter 
+        value = value.trim().replace(e_cmds._e_, '');
+        value = value.substr(0, value.length - 1); // Removing cmd
         try 
         { value = eval(`m.${value}`); } // Rebuilding the value
         catch (e) 

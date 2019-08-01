@@ -8,7 +8,7 @@
     <link rel="stylesheet" type="text/css" href="../../assets/css/doc_styles.css" />
     <link rel="stylesheet" href="../../assets/hl/atom-one-light.css">
     <script src="../../assets/hl/highlight.pack.js"></script>
-    <title>Easy Simple Documentation</title>
+    <title>Easy | Simple Documentation</title>
 </head>
 
 <body>
@@ -20,7 +20,7 @@
         <aside>
 
             <p>
-                Easy.js é um javascript library para auxiliar na criação de aplicações web ou mobile. Ela estende de
+                Easy.js é um biblioteca javascript para auxiliar na criação de aplicações web ou mobile. Ela estende de
                 <b>Easy and Asynchronous Javascript</b> que em português podemos traduzi-lo
                 como <b>Javascript fácil e assíncrono</b>. Ela possibilita e facilita na disposição das informações
                 vindas de um servidor ou uma fonte de dados, ela também possibilita
@@ -236,7 +236,7 @@
                 loadData();
     
                 //#2 Exemplo
-                easy.delete('Pessoa', 'Afonso Matumona', 'Nome');
+                easy.getOne('Pessoa', 'P0001');
                 
                 //#3 Exemplo
                 easy.getOne('Pessoa', 'P0001', '#Pessoa');
@@ -515,6 +515,12 @@
                         <img src="assets/default-img.png" e-src="assets/-e-Img-" />
                     </code></pre>
                 </li>
+
+                <p>
+                    No caso de listas dentro de um objecto, deve ser usado a seguinte sintaxe <b>-e-[[ListField.Prop]]-</b>, deste jeito vai permitir o easy saber que o primeiro campo se 
+                    trata de uma lista e o resto é a hierarquia da propriedade que ele deve ir recuperar seu valor. <b>Ex.: -e-[Pessoas.Nome]-</b>. <br/> No caso de listas contendo valores
+                    de tipos primitivos, a sintaxe é <b>-e-[[ListField]]-</b>. Ex.: <b>-e-[Pessoas]-</b>.
+                </p>
 
                 <!-- e-filter -->
                 <li>
