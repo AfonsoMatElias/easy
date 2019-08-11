@@ -29,8 +29,7 @@
             <p>
                 Easy.js possibilita que a página corrente seja uma página <b>realtime</b> ou com dados <b>em tempo real</b>, com
                 isso, podemos dizer que em todas as secções
-                do HTML DOM onde foi usado o <b>callback</b> ou a "função de retorno" ou mesmo de secções usadas a
-                função de preenchimento se torne secção "em tempo real".
+                do HTML DOM onde foi usado o <b>callback</b> ou a <b>função de retorno</b> se torne secção "em tempo real".
             </p>
 
             <p>
@@ -175,33 +174,6 @@
                 //#1 Exemplo 
                 easy.delete('Pessoa', 'P0001');
     
-                //#2 Exemplo
-                easy.delete('Pessoa', 'Afonso Matumona', 'Nome');
-            </code></pre>
-
-            <!-- Delete -->
-            <p>
-                <b>delete</b>: easy.delete([TableName], [String], [TableField{Opcional:Default=Id}])
-            </p>
-
-            <ul>
-                <li><b>[TableName]</b>: O nome da tabela ou a referência na base de dados.</li>
-                <li><b>[String]</b>: O valor do campo que por padrão é Id do objecto a ser removido.</li>
-                <li><b>[TableField{Opcional:Default=Id}]</b>: O campo que deseja ser combinado com [String](Id) para que
-                    o objecto seja removido.</li>
-                <li><b><i>Notas 📑</i>:</b></li>
-                <ul>
-                    <li>
-                        Para esta combinação, deverá ser feita no servidor.<br>
-                        <b>Ex.:</b> Username=AfonsoMatElias
-                    </li>
-                </ul>
-            </ul>
-
-            <pre><code class="js">
-                //#1 Exemplo 
-                easy.delete('Pessoa', 'P0001');
-
                 //#2 Exemplo
                 easy.delete('Pessoa', 'Afonso Matumona', 'Nome');
             </code></pre>
@@ -449,6 +421,34 @@
                     </code></pre>
                 </li>
                 
+                <li style="list-style: none">
+                    <p>
+                        No caso de listas dentro de um objecto, deve ser usado a seguinte sintaxe <b>e-tmp="[this.ListName]"</b>, deste jeito vai permitir o easy saber que trata-se de uma lista
+                        de dados que se encontra dentro do objecto, com isso ele vai criar cópias do template que foi posto e preencher com os dados da lista.
+                        <b>Nota 📑: Quando for para usá-lo, deve-se sempre dizer "this" para referenciar o objecto acima dele e depois o nome da lista pretendida, sem esquecer que deve estar
+                        entre "[ ]", segundo a sintaxe. <br/>Ex.:</b>
+                    </p>
+    
+                    <pre><code class="HTML">
+                        <!-- Pessoa -->
+                        <div e-tmp="Pessoa">
+                            <label>-e-Nome-</label>
+                            <label>-e-Idade-</label>
+                            <!-- Os livros dela -->
+                            <div e-tmp="[this.Livros]">
+                                <label>-e-Titulo-</label>
+                                <label>-e-Ano-</label>
+                                <!-- Os os colaboradores de cada livro -->
+                                <div e-tmp="[this.Colaboradores]">
+                                    <label>-e-Nome-</label>
+                                    <label>-e-Pontuacao-</label>
+                                </div>
+                            </div>
+                        </div>
+    
+                    </code></pre>
+                </li>
+                
                 <!-- e-m-tmp -->
                 <li>
                     <b>e-m-tmp</b>: Tem como significado <b>easy-manual-template</b> que diz ao easy que pretende-se usar o elemento corrente como o template
@@ -515,12 +515,6 @@
                         <img src="assets/default-img.png" e-src="assets/-e-Img-" />
                     </code></pre>
                 </li>
-
-                <p>
-                    No caso de listas dentro de um objecto, deve ser usado a seguinte sintaxe <b>-e-[[ListField.Prop]]-</b>, deste jeito vai permitir o easy saber que o primeiro campo se 
-                    trata de uma lista e o resto é a hierarquia da propriedade que ele deve ir recuperar seu valor. <b>Ex.: -e-[Pessoas.Nome]-</b>. <br/> No caso de listas contendo valores
-                    de tipos primitivos, a sintaxe é <b>-e-[[ListField]]-</b>. Ex.: <b>-e-[Pessoas]-</b>.
-                </p>
 
                 <!-- e-filter -->
                 <li>
@@ -700,6 +694,11 @@
             <p>
                 O <b>easy.js</b> para o acesso externo, não funciona por si só, para que tenha acesso a dados deve ser combinado com outros ficheiros que possibilitam este acesso,
                 os ficheiros podem ser encontrados na mesma secção ou pasta do easy.js, os ficheiros têm a seguinte estrutura: <b>easy.[type].js</b>
+            </p>
+
+            <p>
+                <b>Conselho</b>: Bibliotecas ou Frameworks servem geralmente para ajudar e dinamizar a contrução de aplicações, e isso é uma mais valia para vida de um desenvolvedor, mas
+                <b>Não se torne super dependentes delas!!!</b> Aprenda, sempre que der tempo, como fazer quase as mesmas coisas sem usá-las, isso fará com que tenhas mais domínio e conhecimento.  
             </p>
 
             <hr />

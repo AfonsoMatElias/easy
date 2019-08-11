@@ -371,33 +371,7 @@ easy.fillHtml = function(el) {
             }
 
             value.filter(function (e) {
-                
-                if(e.includes('[') && e.includes(']')) { // Getting values from a list
-
-                    let aux = e.replace(e_cmds._e_, ''); // Cleaning: -e-[]-
-                    aux = aux.substr(0, aux.length - 1)
-                            .replace('[','').replace(']','');
-                    
-                    let l = aux.split('.'), r = aux.substr(l[0].length); // Getting lis name
-                    let el = a.parentElement; // Getting the element it self
-                    let list = eval(`mdl.${l[0]}`);
-                    
-                    for (let i = 0; i < list.length-1; i++) // Creating clones according the number of the list
-                        el.parentNode.insertBefore(el.cloneNode(true), el.nextSibling);
-
-                    e_for(list, function(d){ // Looping the list of the data
-                        
-                        let res = eval('d' + r); // Getting the value
-                        e_handler.e_elems(el).filter(function (a) { // Getting the e-props fields
-                            e_set(a, e, res);
-                        });
-
-                        el = el.nextElementSibling; // Getting the next elem created
-                    });
-
-                }else{
-                    e_set(a, e, e_propGetter(e, mdl));
-                }
+                e_set(a, e, e_propGetter(e, mdl));
             });
         }
     }
@@ -416,7 +390,7 @@ easy.fillHtml = function(el) {
         else { aux = e_handler.cutElem(e_cnt.e); }
     }
 
-    let flds = e_handler.e_elems(aux);
+    let flds = e_handler.e_elems(aux);  
     if (flds.length == 0) { flds = e_handler.e_elem(aux); }
     
     e_for(flds, function (v) {
@@ -425,6 +399,35 @@ easy.fillHtml = function(el) {
     
     aux.e_attr(e_cmds.e_key, value + ':' + mdl[id]);
     if(rep) el.parentElement.replaceChild(aux, el); // Replacing
+    
+    // Filling inner list templates
+    let i_tmps = [].slice.call(aux.querySelectorAll(`[${e_cmds.e_tmp}]`));
+    e_for(i_tmps, function (p) {
+        
+        // Clearing [this. ...] to None
+        let tValue = p.e_attr(e_cmds.e_tmp)
+                        .replace('[this.','')
+                        .replace(']','');
+        
+        // Cloning the main settable child 
+        let c = p.cloneNode(true), setMain = true;
+        let cp = p; // Getting teh current child
+        e_for(eval('mdl.' + tValue), function(v){ // Looping the list of datas
+            
+            if (setMain) // Checking if is the presented page child
+                easy.fillHtml(cp, v);
+            else {
+                // inserting a clone of the cloned child
+                cp.parentElement.insertBefore(c.cloneNode(true), cp.nextSibling);
+                cp = cp.nextElementSibling; // Getting the inserted child
+                easy.fillHtml(cp, v); // Filling the data
+            }
+
+            setMain = false; // Not the present any more
+        });
+
+    });
+    
     return aux;
 }
 // easy aditionnal function
@@ -734,7 +737,7 @@ function e_propGetter(v, m) {
         value = value.trim().replace(e_cmds._e_, '');
         value = value.substr(0, value.length - 1); // Removing cmd
         try 
-        { value = eval(`m.${value}`); } // Rebuilding the value
+        { value = eval(`m${value != '' ? '.' + value : ''}`); } // Rebuilding the value
         catch (e) 
         { try { value = eval(`m.${value.split('.')[0]}`); } catch(e){ value = 'null'; } } // Rebuilding the value
     } else {
@@ -825,7 +828,8 @@ function e_data_search(v, f) {
  * @param {Function} cb - the callback of each items
  */
 function e_for(v, cb) {
-    for (let i = 0; i < v.length; i++){ if (cb) { cb(v[i]); } }
+    if(v != null && cb != null && typeof cb === 'function') 
+        for (let i = 0; i < v.length; i++) cb(v[i]);
 }
 // Error msg
 function e_error(v) { console.error('Error:', v); return v; }
@@ -988,7 +992,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // Template subcriber
     function subscribeTmp(tmps, name, cb) {
         for (const el of tmps) {
-            if (el.e_attr(name).trim() != '') {
+            let aux = el.e_attr(name).trim();  
+            if (aux != '' && !aux.startsWith('[this')) {
                 let p = el.parentElement;
                 if(p.e_attr(e_cmds.e_code) == null){
                     p.e_attr(e_cmds.e_code, e_code());
