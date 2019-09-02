@@ -40,7 +40,7 @@ const easy = {
      * @param {string} ref - The reference / document in db
      * @param {string} ft {optional} - The filter of the returned values
      * @param {Function} cb {optional} - the function / callback that will be passed the returned values
-     * @param {string} s {optional} - The input param (for api and db)
+     * @param {string} s {optional} - The input to search values that matches the him.
      * @return The easy return type with the db result in the prop result  
      */
     read: async function (ref, cb, ft, s) {

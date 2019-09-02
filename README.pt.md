@@ -5,54 +5,54 @@
 <h2 align="center"> easy.js </h2>
 
 <p style="text-align: justify">
-    Easy js is a javascript library to assist in the creation of web💻 or mobile📲 applications (using phonegap, in this case). It extends from <b><i>Easy and Asynchronous Javascript</i></b>. It enables and facilitates the disposition of information from a server or a data source.
+    Easy js é uma javascript library para auxiliar na criação de aplicações web💻 ou mobile📲 (usando phonegap, no caso). Ela estende-se de <b><i>Easy and Asynchronous Javascript</i></b> que em português podemos traduzí-lo como <b><i>Javascript fácil e assíncrono</i></b>. Ela possibilita e facilita na disposição das informações vindas de um servidor ou uma fonte de dados.
 </p>
 
 <p style="text-align: justify">
-    <b>Why use? 🤔</b><br/>
-    Because as the name says easy js, it is very easy to use, and allows you to separate HTML from Javascript as much as possible, with easy you can create structured objects to be sent to the server or even manage a simple list of javascript objects. With simple commands (HTML Properties or as called Easy Properties) you are able to list data, populate fields, post data to an API, and more. You only need to know HTML📃, Javascript📜, and / or CSS🎫.
-     You will find more detailed documentation in the doc folder. 
+    <b>Porquê usar? 🤔</b><br/>
+    Porque tal como o nome diz easy js, ela é mesmo muito fácil de usar, e permite separar o máximo possível o HTML do Javascript, com o easy tens a possibilidade de criar objectos estruturados para serem enviados ao servidor ou mesmo gerir uma simples lista de objectos javascript. Com simples comandos (Propriedades HTML ou como denominados Easy Properties) você é capaz de listar dados, preencher campos, postar dados a uma API e muito mais. Só precisas conhecer HTML📃, Javascript📜, e/ou CSS🎫.
+    Poderás encontrar a documentação mais detalhada na pasta doc. 
 </p>
 <p>
-    <h2>☝ Very important note:</h2>
-    Use the easy functions after the HTML DOM is fully loaded. Ex: <b>window.onload = () => {}, document.addEventListener ('DOMContentLoaded', () => {}), $ (document) .ready (() => {}), etc.</b>
+    <h2>☝ Nota muito importante:</h2>
+    Use as funções do easy depois do DOM HTML estar totalmente carregado. Ex.: <b>window.onload = ()=>{}, document.addEventListener('DOMContentLoaded', ()=>{}), $(document).ready(()=>{}), etc.</b>
 </p>
 <hr />
 
 <p style="text-align: justify">
-    In order to use it with ajax requests, it must be combined or imported with the <b>easy.ajax.js file.</b>
+    Para poder usar ele com requisições ajax, deve ser combinado ou importado com o ficheiro <b>easy.ajax.js</b>
 </p>
 
 <p style="text-align: justify">
-    The first step is to reset <b><i>e_url</b></i> in the file, by default it comes:
+    O primeiro passo é redefinir o <b><i>e_url</i></b> no ficheiro, por padrão ele vem:
 </p>
 
 ```javascript
-    // Default value
+    // Padrão
     let e_url = 'https://jsonplaceholder.typicode.com/'
 ```
 
-Example 👇
+Exemplo 👇
 
 ```javascript
-    // Example
-    // Remember to always use the last backslash
+    // Exemplo
+    // Lembre de usar sempre a última contra-barra
     e_url = 'http://127.0.0.1/api/'
 ```
 
-<h4 align="center"> Dealing with HTML 📃</h4>
+<h4 align="center"> Lidando com o HTML 📃</h4>
 
-Some default commands to control HTML elements:
+Alguns comandos predefinidos para poder controlar os elementos do HTML:
 
     e-tmp, e-m-tmp, e-id, e-filter, e-anm, -e-, e-fill, e-build, e-rvs, e-array.
 
-Listing data from an API
-We will use the commands: **e-tmp, e-anm, e-rvs** 
+Listando dados de um api
+Vai se usar os comandos: **e-tmp, e-anm, e-rvs** 
 ```HTML
-    <!-- e-tmp="Pessoa" -> To list all route data api/Person
-         e-anm="up" -> To animate data entry
-         e-rvs="true" -> To reverse data entry
-         -e- -> To determine where the value of a field will be placed -->
+    <!-- e-tmp="Pessoa" -> Para listar todos os dados da rota api/Pessoa
+         e-anm="up" -> Para animar a entrada dos dados
+         e-rvs="true" -> Para reverter a inserção de dados 
+         -e- -> Para determinar onde vai ser posto o valor de um campo-->
     <div id="container">
         <div e-tmp="Pessoa" e-anm="up" e-rvs="true">
             <label>
@@ -70,7 +70,7 @@ We will use the commands: **e-tmp, e-anm, e-rvs**
 Geração de Objectos Javascript através de um elemento HTML, usando a função do easy **e_generateObj(object)**
 
 ```HTML
-    <!-- One way -->
+    <!-- Uma forma -->
     <form id="PessoaForm">
         <input name="Nome" />
         <div e-build="Endereco">
@@ -85,7 +85,7 @@ Geração de Objectos Javascript através de um elemento HTML, usando a função
         </div>
     </form>
 
-    <!-- Another way -->
+    <!-- Outra forma -->
     <form id="PessoaForm">
         <input name="Nome" />
         <div e-build="Endereco">
@@ -100,7 +100,7 @@ Geração de Objectos Javascript através de um elemento HTML, usando a função
         </div>
     </form>
 ```
-The object will be constructed based on the hierarchy created in the HTML Element with the properties that easy.js offers.
+O objecto será construído com base o a hierarquia criada no Elemento HTML com as propriedades que o easy.js oferece.
 ```javascript
     var obj = e_generateObj({ form: '#PessoaForm' });
     console.log(obj);
@@ -109,32 +109,32 @@ The object will be constructed based on the hierarchy created in the HTML Elemen
     Image Illustration
 ![Png](assets/ico/easy_gen.png)
 
-<h4 align="center"> Main functions </h4>
+<h4 align="center"> Principais funções </h4>
 
 ```javascript
 
     // CRUD - Create, Read, Update and Delete, Extra GetOne
     
-    // ('controller', 'object/selector', 'generateId')
+    // ('controlador', 'objeto/selector', 'gerarId')
     easy.create(string, object/string, boolean);
     
-    // ('controller', 'funcao', 'filtering function', 'search param')
+    // ('controlador', 'funcao', 'filtrador', 'filtro')
     easy.read(string, callback, string, string);
 
-    // ('controller', 'object/selector', 'id', 'campo do id')
+    // ('controlador', 'objeto/selector', 'id', 'campo do id')
     easy.update(string, object/string, string, string);
 
-    // ('controller', 'id', 'id field')
+    // ('controlador', 'id', 'campo do id')
     easy.delete(string, string, string);
 
-    // ('controller', 'id', 'HTML Element to be filled', 'id field')
+    // ('controlador', 'id', 'elemento HTML a ser preenchido', 'campo do id')
     easy.getOne(string, string, string, string);
 
     // Create
-    //#1 Example
+    //#1 Exemplo
     easy.create('Pessoa', '#PessoaForm');
     
-    //#2 Example
+    //#2 Exemplo
     easy.create('Pessoa', { 
         Id:'P0001', 
         Nome:'Afonso Matumona', 
@@ -149,10 +149,10 @@ The object will be constructed based on the hierarchy created in the HTML Elemen
 
     
     // Update
-    //#1 Example
+    //#1 Exemplo
     easy.update('Pessoa', '#PessoaForm', 'P0001');
     
-    //#2 Example
+    //#2 Exemplo
     easy.update('Pessoa', { 
         Nome:'Matumona Elias', 
         Idade: 16 
@@ -168,14 +168,14 @@ The object will be constructed based on the hierarchy created in the HTML Elemen
 
 ```
 
-For javascript lists the control is as simple as api, the difference is that the data source must be specified with **source(ds)** function.
+Para as listas em javascript o controle é tão simples quanto as api, a diferença é que deve ser especificado qual é a fonte de dados com a função **source(ds)**.
 
-<p>Given a javascript list of songs, we can perform the basic operations of <i>easy</i> 😃...</p>
+<p><b>Dada uma lista de musicas em javascipt, que podemos efectuar as operações básicas do <i>easy</i> 😃...</b></p>
 
 ```javascript
     (async () =>{
 
-        // Example
+        // Exemplo
         var playlist = [];
         
         // Create
@@ -201,8 +201,7 @@ For javascript lists the control is as simple as api, the difference is that the
         
     })();
 ```
-<p>How to quickly list it in HTML? 🤔, answer! 👇 👌, As is done in the small example given above of <b><i>e-tmp</i></b>, the small difference is that it must be passed from which list data come from in square brackets, [...].</i></p>
-
+<p>Como listá-la de forma rápida no HTML? 🤔, resposta! 👇 👌, Do mesmo jeito que é feito no pequeno exemplo dado acima do <i>e-tmp</i>, a pequena diferença é que deve ser passado de que lista vêem os dados dentro de parênteses retos, [...].</p>
 
 ```HTML
     <div id="container">
@@ -219,16 +218,15 @@ For javascript lists the control is as simple as api, the difference is that the
 ```
 
 Para poder encontrar e disparar eventos a todos os elementos que exitem no DOM, mesmo aqueles que foram adicionados depois do DOM ser carregado, o easy disponibiliza: **e(...)**, com os parametros: 
-
-To be able to find and fire events for all elements that exist in the DOM, even those that were added after the DOM was loaded, easy provides: **e(...)**, with the parameters:
     
-    e('selector', 'event', callback(element event, element))
+    e('selector', 'evento', callback(evento do elemento, elemento))
 
 ```javascript
-    // Example
+    // Exemplo
     e('#btn1' ,'click', function(e, el){
-        console.log('Hi', e);
+        console.log('Olá', e);
     });
+
 ```
 
 <p align="center" style="font-size:11pt; margin:0;"> 
@@ -242,5 +240,5 @@ To be able to find and fire events for all elements that exist in the DOM, even 
 </p>
 
 <p align="center" style="font-size:11pt; margin:0;"> 
-    © 2019, Afonso Matumona Elias | <b>Translated by Google Translator</b>
+    © 2019, Afonso Matumona Elias 
 </p>
