@@ -290,7 +290,7 @@ easy.source = function (ds) {
                     }
                 }
                 if (obj == null)
-                    throw ({ message: e_error_msg.notFoundedObj() });
+                    throw ({ message: e_error_msg.notfoundObj() });
                 return e_return(true, 'Ok', obj);
             } catch (error) {
                 return e_return(false, error.message, null);
@@ -984,7 +984,7 @@ const e_error_msg = {
         v = v ? v : ''; return `Couldn't prepare the object to be ${v}, please check the 2 parameter of easy.update.
                                 \nNote: The parameter must be a 'element selector' or a 'js object'`;
     },
-    notFoundedObj: function (v) { v = v ? v : ''; return `Obj ${v} not founded`; },
+    notfoundObj: function (v) { v = v ? v : ''; return `Obj ${v} not found`; },
     nullDs: function () { return 'Data Source is NULL, please initialize the it as Array.'; }
 };
 
@@ -1028,7 +1028,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         if(Array.isArray(_ds_)) // Checking if its valid
                             await easy.source(_ds_).getOne(value[1], el, value[2] ? value[2] : 'Id'); // Getting data and setting
                     } catch (er) {
-                        e_error(e_error_msg.notFoundedObj(tmp));
+                        e_error(e_error_msg.notfoundObj(tmp));
                     }
                 }
             }
@@ -1054,7 +1054,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         easy.addHtml(p, e, rvs);
                     }, el.e_attr(e_cmds.e_filter));    
             } catch (er) {
-                e_error(e_error_msg.notFoundedObj(tmp));
+                e_error(e_error_msg.notfoundObj(tmp));
             }
         }
     }

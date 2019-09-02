@@ -225,7 +225,7 @@ let e_data = {
 
             // Checking if the ref has a valid value             
             if(obj == null)
-                throw({message:'Obj not founded'});
+                throw({message:'Obj not found'});
 
             return e_return(true, 'Ok', obj);
 
