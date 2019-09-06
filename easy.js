@@ -40,7 +40,7 @@ const easy = {
      * @param {string} ref - The reference / document in db
      * @param {string} ft {optional} - The filter of the returned values
      * @param {Function} cb {optional} - the function / callback that will be passed the returned values
-     * @param {string} s {optional} - The input to search values that matches the him.
+     * @param {string} s {optional} - The input param (for api and db)
      * @return The easy return type with the db result in the prop result  
      */
     read: async function (ref, cb, ft, s) {
@@ -290,7 +290,7 @@ easy.source = function (ds) {
                     }
                 }
                 if (obj == null)
-                    throw ({ message: e_error_msg.notfoundObj() });
+                    throw ({ message: e_error_msg.notFoundedObj() });
                 return e_return(true, 'Ok', obj);
             } catch (error) {
                 return e_return(false, error.message, null);
@@ -353,9 +353,9 @@ easy.fillHtml = function(el) {
             if(!Array.isArray(value))
                 value = value[0].split(',');
             
-            // Inner prop or value setter
-            function e_set(a, e, res) {
-                if(res != null){ // Checking the value
+            value.filter(function (e) {
+                let res = e_propGetter(e, mdl);
+                if(res != null){ 
                     if(a.data == null) { a.value = a.value.replace(e, res); } // Setting value
                     else if(a.value == null) { a.data = a.data.replace(e, res); } // Setting Container
                     if(a.name){ // Checking if is valid
@@ -368,10 +368,6 @@ easy.fillHtml = function(el) {
                 } else {
                     if (a.data != null) { a.data = a.data.replace(e, ''); } // Setting Container
                 }
-            }
-
-            value.filter(function (e) {
-                e_set(a, e, e_propGetter(e, mdl));
             });
         }
     }
@@ -390,7 +386,7 @@ easy.fillHtml = function(el) {
         else { aux = e_handler.cutElem(e_cnt.e); }
     }
 
-    let flds = e_handler.e_elems(aux);  
+    let flds = e_handler.e_elems(aux);
     if (flds.length == 0) { flds = e_handler.e_elem(aux); }
     
     e_for(flds, function (v) {
@@ -399,35 +395,6 @@ easy.fillHtml = function(el) {
     
     aux.e_attr(e_cmds.e_key, value + ':' + mdl[id]);
     if(rep) el.parentElement.replaceChild(aux, el); // Replacing
-    
-    // Filling inner list templates
-    let i_tmps = [].slice.call(aux.querySelectorAll(`[${e_cmds.e_tmp}]`));
-    e_for(i_tmps, function (p) {
-        
-        // Clearing [this. ...] to None
-        let tValue = p.e_attr(e_cmds.e_tmp)
-                        .replace('[this.','')
-                        .replace(']','');
-        
-        // Cloning the main settable child 
-        let c = p.cloneNode(true), setMain = true;
-        let cp = p; // Getting teh current child
-        e_for(eval('mdl.' + tValue), function(v){ // Looping the list of datas
-            
-            if (setMain) // Checking if is the presented page child
-                easy.fillHtml(cp, v);
-            else {
-                // inserting a clone of the cloned child
-                cp.parentElement.insertBefore(c.cloneNode(true), cp.nextSibling);
-                cp = cp.nextElementSibling; // Getting the inserted child
-                easy.fillHtml(cp, v); // Filling the data
-            }
-
-            setMain = false; // Not the present any more
-        });
-
-    });
-    
     return aux;
 }
 // easy aditionnal function
@@ -734,10 +701,10 @@ function e_propGetter(v, m) {
     let value = "";
     if (v.includes(e_cmds._e_)) {
         value += v;
-        value = value.trim().replace(e_cmds._e_, '');
-        value = value.substr(0, value.length - 1); // Removing cmd
+        value = value.replace(e_cmds._e_, ''); // Removing cmd
+        value = value.substr(0, value.length - 1); // Removing the delimiter 
         try 
-        { value = eval(`m${value != '' ? '.' + value : ''}`); } // Rebuilding the value
+        { value = eval(`m.${value}`); } // Rebuilding the value
         catch (e) 
         { try { value = eval(`m.${value.split('.')[0]}`); } catch(e){ value = 'null'; } } // Rebuilding the value
     } else {
@@ -828,8 +795,7 @@ function e_data_search(v, f) {
  * @param {Function} cb - the callback of each items
  */
 function e_for(v, cb) {
-    if(v != null && cb != null && typeof cb === 'function') 
-        for (let i = 0; i < v.length; i++) cb(v[i]);
+    for (let i = 0; i < v.length; i++){ if (cb) { cb(v[i]); } }
 }
 // Error msg
 function e_error(v) { console.error('Error:', v); return v; }
@@ -984,7 +950,7 @@ const e_error_msg = {
         v = v ? v : ''; return `Couldn't prepare the object to be ${v}, please check the 2 parameter of easy.update.
                                 \nNote: The parameter must be a 'element selector' or a 'js object'`;
     },
-    notfoundObj: function (v) { v = v ? v : ''; return `Obj ${v} not found`; },
+    notFoundedObj: function (v) { v = v ? v : ''; return `Obj ${v} not founded`; },
     nullDs: function () { return 'Data Source is NULL, please initialize the it as Array.'; }
 };
 
@@ -992,8 +958,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Template subcriber
     function subscribeTmp(tmps, name, cb) {
         for (const el of tmps) {
-            let aux = el.e_attr(name).trim();  
-            if (aux != '' && !aux.startsWith('[this')) {
+            if (el.e_attr(name).trim() != '') {
                 let p = el.parentElement;
                 if(p.e_attr(e_cmds.e_code) == null){
                     p.e_attr(e_cmds.e_code, e_code());
@@ -1028,7 +993,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         if(Array.isArray(_ds_)) // Checking if its valid
                             await easy.source(_ds_).getOne(value[1], el, value[2] ? value[2] : 'Id'); // Getting data and setting
                     } catch (er) {
-                        e_error(e_error_msg.notfoundObj(tmp));
+                        e_error(e_error_msg.notFoundedObj(tmp));
                     }
                 }
             }
@@ -1054,7 +1019,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         easy.addHtml(p, e, rvs);
                     }, el.e_attr(e_cmds.e_filter));    
             } catch (er) {
-                e_error(e_error_msg.notfoundObj(tmp));
+                e_error(e_error_msg.notFoundedObj(tmp));
             }
         }
     }
@@ -1079,6 +1044,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     let obj = m.addedNodes[0];
                     if(obj.attributes)
                         if(obj.e_attr(e_cmds.e_m_tmp) || obj.e_attr(e_cmds.e_tmp)) { cb(obj); }
+                        else {
+                            let list = [].slice.call(obj.querySelectorAll(`[${e_cmds.e_tmp}]`));
+                            list.push.apply(list, obj.querySelectorAll(`[${e_cmds.e_m_tmp}]`));
+                            list.push.apply(list, obj.querySelectorAll(`[${e_cmds.e_fill}]`));
+                            if(list.length) cb(obj);
+                        }
                 }
                 if(m.type == 'attributes'){ // Checking if an attribute was changed
                     switch (m.attributeName) {
