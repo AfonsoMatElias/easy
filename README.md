@@ -15,7 +15,7 @@
 </p>
 <p>
     <h2>☝ Very important note:</h2>
-    Use the easy functions after the HTML DOM is fully loaded. Ex: <b>window.onload = () => {}, document.addEventListener ('DOMContentLoaded', () => {}), $ (document) .ready (() => {}), etc.</b>
+    Use the easy functions after the HTML DOM is fully loaded. Eg.: <b>window.onload = () => {}, document.addEventListener ('DOMContentLoaded', () => {}), $ (document) .ready (() => {}), etc.</b>
 </p>
 <hr />
 
