@@ -218,8 +218,6 @@ For javascript lists the control is as simple as api, the difference is that the
     </div>
 ```
 
-Para poder encontrar e disparar eventos a todos os elementos que exitem no DOM, mesmo aqueles que foram adicionados depois do DOM ser carregado, o easy disponibiliza: **e(...)**, com os parametros: 
-
 To be able to find and fire events for all elements that exist in the DOM, even those that were added after the DOM was loaded, easy provides: **e(...)**, with the parameters:
     
     e('selector', 'event', callback(element event, element))
