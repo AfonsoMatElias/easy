@@ -67,7 +67,7 @@ We will use the commands: **e-tmp, e-anm, e-rvs**
     Gif Illustration
 ![Gif](assets/ico/easy_list.gif)
 
-Geração de Objectos Javascript através de um elemento HTML, usando a função do easy **e_generateObj(object)**
+Generating a Javascript Object from an HTML Element using **e_generateObj(object)** easy function
 
 ```HTML
     <!-- One way -->
