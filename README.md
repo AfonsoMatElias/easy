@@ -1,8 +1,8 @@
-<p style="text-align:center; height:120px">
+<p align="center" style="text-align:center; height:120px">
     <img height="120px" src="assets/ico/main_ico.png" />
 <p>
 
-<h2 style="text-align:center;"> easy.js </h2>
+<h2 align="center" style="text-align:center;"> easy.js </h2>
 
 <p style="text-align: justify">
     Easy js is a javascript library to assist in the creation of web💻 or mobile📲 applications (using phonegap, in this case). It extends from <b><i>Easy and Asynchronous Javascript</i></b>. It enables and facilitates the disposition of information from a server or a data source.
@@ -229,16 +229,16 @@ To be able to find and fire events for all elements that exist in the DOM, even 
     });
 ```
 
-<p style="text-align:center; font-size:11pt; margin:0;"> 
+<p align="center" style="text-align:center; font-size:11pt; margin:0;"> 
     Thanks a lot for visiting easy.js repo 🙂, I hope you enjoyed!! 👌<br/>
-    <h4 style="text-align:center;">Salute 😃</h4> 
+    <h4 align="center" style="text-align:center;">Salute 😃</h4> 
 </p>
 <br/>
 
-<p style="text-align:center; height:90px">
+<p align="center" style="text-align:center; height:90px">
     <img height="90px" src="assets/ico/sec_ico_desc.png" />
 </p>
 
-<p style="text-align:center; font-size:11pt; margin:0;"> 
+<p align="center" style="text-align:center; font-size:11pt; margin:0;"> 
     © 2019, Afonso Matumona Elias | <b>Translated by Google Translator</b>
 </p>
