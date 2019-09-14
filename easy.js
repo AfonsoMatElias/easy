@@ -956,7 +956,7 @@ const e_error_msg = {
 
 document.addEventListener('DOMContentLoaded', function () {
     // Template subcriber
-    function subscribeTmp(tmps, name, cb) {
+    const subscribeTmp = function (tmps, name, cb) {
         for (const el of tmps) {
             if (el.e_attr(name).trim() != '') {
                 let p = el.parentElement;
@@ -971,7 +971,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
     // Filler subcriber
-    async function subscribeFiller(fills) {
+    const subscribeFiller = async function (fills) {
         for (const el of fills) {
             let tmp = el.e_attr(e_cmds.e_fill);
             if (tmp.trim() != ''){
@@ -1000,7 +1000,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
     // Filling the subscribed tmp
-    async function fillSubsc(el, p) {
+    const fillSubsc = async function (el, p) {
         if(!el) return;
         let tmp = el.e_attr(e_cmds.e_tmp); // Getting the tmp value
         let rvs = el.e_attr(e_cmds.e_rvs) == 'true' ? true : false; // Checking reverse
