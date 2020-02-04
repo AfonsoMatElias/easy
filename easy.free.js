@@ -1,44 +1,57 @@
 /**
  * @author Afonso Matumona Elias
- * @version Easy.js v1.0.0
- * @version v1.0.0
- * Released under the MIT License.  
+ * @version v2.0.0
+ * Released under the MIT License.
+ * This is easy.js free connector, you may create your own connector. 
+ * 
+ * # Salute 😉
  */
 
-var e_data = {
-    add: async function (r, o) {
-        // TODO insert:
-        // Success
-        // return e_return(true, 'Replace it to success message here', {'Replace it to you returned obj'}); // Setting the
-        // Error 
-        // return e_return(false, 'Replace it to error message here', null);  // Setting the 
-    },
-    remove: async function (r, id, fld) {
-        // TODO remove:
-        // Success
-        // return e_return(true, 'Replace it to success message here', {'Replace it to you returned obj'}); // Setting the
-        // Error 
-        // return e_return(false, 'Replace it to error message here', null);  // Setting the 
-    },
-    update: async function (r, o, id) {
-        // TODO update:
-        // Success
-        // return e_return(true, 'Replace it to success message here', {'Replace it to you returned obj'}); // Setting the
-        // Error 
-        // return e_return(false, 'Replace it to error message here', null);  // Setting the 
-    },
-    list: async function (r, f, s) {
-        // TODO list:
-        // Success
-        // return e_return(true, 'Replace it to success message here', {'Replace it to you returned obj'}); // Setting the
-        // Error 
-        // return e_return(false, 'Replace it to error message here', null);  // Setting the 
-    },
-    getOne: async function (r, id, fld) {
-        // TODO getOne:
-        // Success
-        // return e_return(true, 'Replace it to success message here', {'Replace it to you returned obj'}); // Setting the
-        // Error 
-        // return e_return(false, 'Replace it to error message here', null);  // Setting the 
-    }
-};
+new EasyConnector();
+
+function EasyConnector() {
+    // Checking EasyJs definition
+    if (typeof Easy === undefined) return;    
+    
+    // Easy object
+    const self = Easy.prototype;
+
+    // Easy connector
+    Easy.prototype.conn = {
+        async add(path, obj) {
+            // TODO insert:
+            // Success
+            // return self.return(true, 'Replace this with success message here', {'Replace this with object'})
+            // Error 
+            // return self.return(false, 'Replace this with error message here', null); 
+        },
+        async remove(path, id) {
+            // TODO delete:
+            // Success
+            // return easy.return(true, 'Replace this with success message here', {'Replace this with object'})
+            // Error 
+            // return easy.return(false, 'Replace this with error message here', null); 
+        },
+        async update(path, obj, id) {
+            // TODO update:
+            // Success
+            // return easy.return(true, 'Replace this with success message here', {'Replace this with object'})
+            // Error 
+            // return easy.return(false, 'Replace this with error message here', null); 
+        },
+        async list(path, filter) {
+            // TODO select/list:
+            // Success
+            // return easy.return(true, 'Replace this with success message here', {'Replace this with object'})
+            // Error 
+            // return easy.return(false, 'Replace this with error message here', null); 
+        },
+        async getOne(path, id) {
+            // TODO select one:
+            // Success
+            // return easy.return(true, 'Replace this with success message here', {'Replace this with object'})
+            // Error 
+            // return easy.return(false, 'Replace this with error message here', null); 
+        },
+    };
+}

@@ -8,11 +8,14 @@
     padding: 0;
 }
 
+body {
+    padding: 0 20%;
+}
+
 /* Styling the scroll-bar */
 /* width */
 ::-webkit-scrollbar {
-	width: 8px;
-    
+	width: 8px;    
 }
 
 /* Track */
@@ -431,4 +434,10 @@ textarea{
 
 .bottom-text-content{
     margin: 5px;
+}
+
+@media (max-width: 1220px) {
+    body {
+        padding: 0px 30px;
+    }
 }

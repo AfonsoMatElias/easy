@@ -1,1067 +1,2079 @@
 /**
  * @author Afonso Matumona Elias
- * @version v1.0.0
+ * @version v2.0.0
+ *
+ * # easy.js
  * Released under the MIT License.
- * easy.js 'easy and asynchronous js' is a javascript lib that helps the designer or programmer 
- * build an application fast without writting too many lines of js codes.
+ * Easy.js 'easy and asynchronous js' is a javascript library that helps the designer or programmer
+ * to build web application faster without writting too many lines of js codes.
  * Copyright 2019 Afonso Matumona <afonsomatumona@hotmail.com>
- * # Be Happy ;-)  
+ *
+ * ## Salute 😉
  */
 
-const easy = {
-    /**
-     * Creates an obj and insert it in a source
-     * @param {string} ref - The reference / document in db
-     * @param {object} frm - The html form, { jquery, javascript or js object }
-     * @param {boolean} gId {optional} - flag to generate Id or not {true or false}
-     * @return The easy return type with the db result in the prop result  
-     */
-    create: async function (ref, frm, gId) {
-        try {
-            if (gId == undefined || gId == null) gId = false; // Assuming not to generate an Id value
-            
-            let obj = e_createObj(e_formReader(frm), gId); // Creating an anonymous object
-            if (obj == null) throw ({ message: e_error_msg.notCreated('inserted') });
-            
-            let r = await e_data.add(ref, obj); // Calling the function to add in server
-            if (r == null) throw ({ message: e_error_msg.connectorError() });
-            
-            if (r.result == null) throw ({ message: r.msg });
-            if (r.status) e_calls.forEach(function (c) {
-                if (c.flag == ref && c.meth == 'list') { c.call(r.result); }
-            });
-            return r;
-        } catch (er) {
-            return e_return(false, e_error(er.message != undefined ? er.message : er), null); // Error
-        }
-    },
-    /**
-     * Read or list obj from a source
-     * @param {string} ref - The reference / document in db
-     * @param {string} ft {optional} - The filter of the returned values
-     * @param {Function} cb {optional} - the function / callback that will be passed the returned values
-     * @param {string} s {optional} - The input param (for api and db)
-     * @return The easy return type with the db result in the prop result  
-     */
-    read: async function (ref, cb, ft, s) {
-        try {
-            let r = await e_data.list(ref, ft, s); // Calling the function to read in server
-            if (r == null) throw ({ message: e_error_msg.connectorError() });
-            
-            if (r.result == null) throw ({ message: r.msg });
-            if (cb != undefined && cb != null){
-                if (r.status) {
-                    if (s == null || s == undefined)
-                        e_calls.push({ meth: 'list', flag: ref, call: cb });
-                    r.result.forEach(function (e) { cb(e); });
-                } 
+// Using secure javascript code
+'use strict';
+
+/**
+ * Easy main object
+ * @param {Element} elem The root element where easy.js will have control 
+ * @param {Object} options Options to define data and components of the page 
+ */
+function Easy(elem = '', {
+    data = {},
+    component = {}
+} = {}) {
+
+    const self = this;
+    /** DOM Shortcut */
+    const doc = document;
+    /** Easyjs Variables */
+    const vars = {
+        template: [], // Templates
+        stored: [], // all removed elements on initialization
+        components: {}, // Includer component
+        events: [], // Events
+        hidden: {}, // Hidden
+        calls: [], // UI Calls
+        proxy: [], // Proxies
+        cmds: {
+            e: '-e-',
+            id: 'e-id',
+            tmp: 'e-tmp',
+            rvs: 'e-rvs',
+            anm: 'e-anm',
+            field: 'text',
+            fill: 'e-fill',
+            build: 'e-build',
+            array: 'e-array',
+            filter: 'e-filter',
+            if: 'e-if',
+            for: 'e-for',
+            tag: 'e-tag',
+            data: 'data',
+            def: 'e-def'
+        }, // Commands
+        keyboard: {
+            ENTER: 13,
+            ESC: 27
+        }, // keyboard keys
+        anm: {
+            to: {
+                up: 'to-top',
+                down: 'to-bottom',
+                left: 'to-left',
+                right: 'to-right'
+            },
+            from: {
+                up: 'from-top',
+                down: 'from-bottom',
+                left: 'from-left',
+                right: 'from-right'
+            },
+            reverse: (v) => {
+                switch (v) {
+                    case 'up':
+                        return 'down';
+                    case 'down':
+                        return 'up';
+                    case 'left':
+                        return 'right';
+                    case 'right':
+                        return 'left';
+                    default:
+                        return 'none';
+                }
             }
-            return r;
-        } catch (er) {
-            return e_return(false, e_error(er.message != undefined ? er.message : er), null);
-        }
-    },
-    /**
-     * Updates an obj of a source
-     * @param {string} ref - The reference / document in db
-     * @param {object} form - the html form targeted, can be using jquery or javascript
-     * @param {string} id - The Id of the document in db
-     * @return The easy return type with the db result in the prop result  
-     */
-    update: async function (ref, frm, id, fld) {
-        try {
-            if (id == null || id == undefined) throw ({ message: e_error_msg.notValidValue('id') });
-            
-            id = e_handler.e_m(id); // Handlin param id
-            let rg = await easy.getOne(ref, id, null, fld); // Getting the object to be updated 
-            
-            if (rg == null) { throw ({ message: e_error_msg.connectorError() }); }
-            
-            if (!rg.status) { throw ({ message: rg.msg }); }
-            if (rg.result == null) throw ({ message: e_error_msg.notFoudedElem(id) });
-            
-            let obj = e_createObj(e_formReader(frm), false, rg.result); // Creating an anonymous object
-            if (obj == null) { throw ({ message: e_error_msg.notCreated('updated') }); }
-            
-            let r = await e_data.update(ref, obj, id, fld); // Calling the function to update in server
-            if (r.result == null) throw ({ message: r.msg });
-            if (r.status) 
-            { e_handler.getEasyElems(r.result).forEach(function (el) { easy.fillHtml(el, r.result, true); }); }
-            return r;
-        } catch (er) {
-            return e_return(false, e_error(er.message != undefined ? er.message : er), null); // Error            
-        }
-    },
-    /**
-     * Deletes an obj from a source
-     * @param {string} ref - The reference / document in db
-     * @param {string} id - The Id of the document in db
-     * @param {string} fld {optional} - The field to match the id
-     * @return The easy return type with the db result in the prop result  
-     */
-    delete: async function (ref, id, fld) {
-        try {
-            if (id == null || id == undefined) throw ({ message: e_error_msg.notValidValue(id) });
-            
-            id = e_handler.e_m(id);
-            let r = await e_data.remove(ref, id, fld); // Calling the function to remove in server
-            if (r == null) throw ({ message: e_error_msg.connectorError() });
-            
-            if (r.result == null) throw ({ message: r.msg });
-            if (r.status) {
-                let elems = e_handler.getEasyElems(r.result);
-                elems.forEach(function (el) {
-                    if (!el.e_attr(e_cmds.e_fill)) { getParent(el).removeChild(el); }
+        } // easy animations keys
+    };
+    /** helpers */
+    const helpers = {
+        /**
+         * Active all easy extensions
+         */
+        extensions() {
+
+            // Prevents redefinition of the extensions
+            if(!helpers.isInvalid(doc.node)) return;
+
+            // Extension setter
+            const def = function (key, cb, type) {
+                Object.defineProperty((type || Object).prototype, key, {
+                    value: cb,
+                    writable: true,
+                    configurable: true
                 });
-                e_calls.forEach(async function (c) {
-                    if (c.flag == ref && c.meth == 'get') {
-                        elems.forEach(function (el) {
-                            if (el.e_attr(e_cmds.e_fill)) {
-                                let obj = JSON.parse(JSON.stringify(r.result));
-                                e_for(getKeys(obj), function (v) { obj[v] = `--${v}--`; });
-                                easy.fillHtml(el, obj, true);
+            };
+
+            // Query one element
+            def('node', function (v) {
+                if (helpers.isInvalid(v)) return null;
+
+                const result = v[0] === '#' ?
+                    this.getElementById(v.substr(1)) :
+                    this.querySelector(v);
+                return result;
+
+                //return UI.stored.find(v);
+            });
+            // Query many elements
+            def('nodes', function (v) {
+                if (helpers.isInvalid(v)) return null;
+
+                const result = this.querySelectorAll(v).toArray();
+                return result;
+
+                //return UI.stored.findAll(v);
+            });
+            // get key of an object
+            def('keys', function (cb) {
+                const array = Object.keys(this);
+                // Calling the callback if it needs
+                if (cb) array.filter(e => cb(e, this[e]));
+                return array;
+            });
+            // map values from an object to the current one
+            def('mapObj', function (input, deep = false) {
+                return input.keys((p, v) => {
+                    let destination = this[p];
+                    if (deep && destination instanceof Object) {
+                        if (!Array.isArray(destination)) {
+                            this[p].mapObj(v);
+                        }
+                    } else {
+                        let source = (v ? v : this[p]);
+                        if (source != destination)
+                            this[p] = source;
+                    }
+                });
+            });
+            // transform any static array to a dynamic one
+            def('toArray', function (cb) {
+                let array = [].slice.call(this);
+                // Calling the callback if it needs
+                if (cb) array.filter(cb);
+                return array;
+            });
+            // Get or Set and Get value from an attribute or content value
+            def('valueIn', function (name, set) {
+                // To Set and Get the same value
+                if (set)
+                    return this.setAttribute(name, set) || this.getAttribute(name);
+                // Only get value
+                else
+                    return name != null ? this[name] || this.getAttribute(name) : this.innerText;
+            }, Element);
+            // copy a HTML Node
+            def('copyNode', function () {
+                return this.cloneNode(true);
+            });
+            // get the elem above the current element
+            def('aboveMe', function (selector) {
+                // Parent getter
+                const parent = (elem, name) => {
+                    const parentObject = elem.parentNode;
+                    if (parentObject === doc) return null;
+                    // Checking if the search must
+                    if (name) {
+                        if (parentObject.tagName && parentObject.tagName.toUpperCase() != name.toUpperCase()) {
+                            const normalizedName = name.replace('#', '').replace('.', '');
+                            if (name.startsWith(".")) {
+                                const containClass = parentObject.classList.contains(normalizedName);
+                                if (!containClass) return parent(parentObject, name);
+                            } else if (name.startsWith("#")) {
+                                if (parentObject.valueIn('id') != normalizedName) return parent(parentObject, name);
+                            } else {
+                                // Getting the parent again
+                                return parent(parentObject, name);
+                            }
+                        }
+                    }
+                    return parentObject;
+                }
+                // Getting the parent
+                return parent(this, selector);
+            }, Element);
+            // check if an object has some value, and it returns true or false
+            def('has', function (value) {
+                // Finding any property that matches the input value
+                return this.keys().find(x => this[x] === value);
+            });
+            // Gets any object that matches the value
+            def('get', function (value) {
+                // Finding the object that matches a value or index
+                return this.find(x => x === value || x.has(value)) || this[value];
+            }, Array);
+            // Get the index of an object
+            def('index', function (value) {
+                let index = -1;
+                this.find((x, i) => {
+                    if ((x === value || x.has(value))) {
+                        index = i;
+                        return true;
+                    }
+                    return false;
+                });
+                return index;
+            }, Array);
+            // Get the index of all the ocurrencies of an object
+            def('indexes', function (value, cb) {
+                let array = [];
+                // Finding the object that matches a value or index
+                this.filter((x, i) => {
+                    if ((x === value || x.has(value)))
+                        array.push(i);
+                });
+                // Calling the callback if it needs
+                if (cb) array.filter(e => cb(e));
+                return array;
+            }, Array);
+            // Remove element(s) from an array
+            def('remove', function (value, allWith = false) {
+                try {
+                    // Handling the default pop function if the value is not defined
+                    if (!value && value != 0) {
+                        this.pop();
+                    } else {
+                        // Otherwise, Handling the costumized remove function
+                        // Removing all objects with this value
+                        if (allWith === true) {
+                            const indexes = [...this].indexes(value, i => {
+                                // removing the element
+                                this.splice(i, 1);
+                            });
+
+                            if (indexes.length === 0)
+                                self.log(`Element '${value}' does not exist in the array.`);
+
+                        } else {
+                            let index = this.index(value);
+                            if (index === -1) {
+                                if (Number.isInteger(value * 1))
+                                    index = value * 1;
+                                else
+                                    self.log(`Element '${value}' does not exist in the array.`);
+                            }
+                            // removing the element
+                            this.splice(index, 1);
+                        }
+                    }
+                } catch (error) {
+                    self.log({
+                        msg: 'Remove function error. ',
+                        error
+                    });
+                }
+
+                return this;
+            }, Array);
+            // Animation extension
+            // The main function for the animation extension to be shared between them
+            const niceShared = (elem, direction, key, other) => {
+                // Adding a style elem in the DOM
+                easy.css();
+
+                const anm = vars.anm;
+                const keyNormalized = key.toLowerCase().split(':');
+
+                // the animations keys, defined by the user
+                const keyIn = keyNormalized[0];
+                const keyOut = keyNormalized[1] || anm.reverse(keyIn);
+
+                if (other) {
+                    // TODO: Redefine this peace of code
+                    other.niceOut(keyOut);
+                }
+
+                anm['to'].keys((k, v) => elem.classList.remove(v));
+                anm['from'].keys((k, v) => elem.classList.remove(v));
+
+                // Adding the class in the main element
+                elem.classList.add(anm[direction][keyIn]);
+            }
+            // Execute the nice in animation into an element
+            def('niceIn', function (key, outElem, cb, delay = 80) {
+                // Executing the main function
+                niceShared(this, 'to', key, outElem);
+                // Executing the callback
+                setTimeout(_ => {
+                    if (cb) cb(this, outElem);
+                }, delay);
+            }, HTMLElement);
+            // Adds the nice out animation into an element
+            def('niceOut', function (key, inElem, cb, delay = 80) {
+                // Executing the main function
+                niceShared(this, 'from', key, inElem);
+                // Executing the callback
+                setTimeout(_ => {
+                    if (cb) cb(this, inElem);
+                }, delay);
+            }, HTMLElement);
+            // End Animation Extension
+            // Generate element description. eg.: form#some-id.class1.class2
+            def('desc', function () {
+                let elem = this;
+                return [elem.nodeName.toLowerCase(), (elem.id ? '#' + elem.id : ''), ...elem.classList.toArray().map(x => '.' + x)].join('')
+            }, Element);
+            // Adds Event listener in a object or a list of it
+            def('listen', function (name, cb) {
+                let elems = Array.isArray(this) ? this : [this];
+
+                // Looping the elements
+                for (const elem of elems) {
+                    // Checking if the element is valid
+                    if (!(elem instanceof Element || elem === document|| elem === window))
+                        return self.log(`Cannot apply '${name}' to the element ${elem.nodeName ? elem.nodeName : elem.toString()}.`)
+
+                    // Event object
+                    const evt = {
+                        event: name,
+                        func: cb,
+                        options: false
+                    }
+
+                    elem._events_ = elem._events_ ? [...elem._events_, evt] : [evt];
+                    elem.addEventListener(evt.event, function () {
+                        // base property where will be passed the main object, **not the target**.
+                        arguments[0]['base'] = elem;
+                        evt.func(...arguments);
+                    }, evt.options);
+                }
+            });
+            // Helper to replace every ocurrence of a string or a list of strings
+            def('replaceAll', function (vl, rvl = '') {
+                let count = 0;
+                let curr = this;
+                do { 
+                    if(!Array.isArray(vl))
+                        curr = curr.replace(vl, rvl);
+                    else
+                        vl.filter(el => curr = curr.replaceAll(el, rvl));
+                count++;
+                if(count === 1000) break;
+                } while(curr.includes(vl));
+                return curr;
+            }, String);
+        },
+        /**
+         * Check if a value is null/undefined
+         * @param {*} input The input value
+         */
+        isInvalid: input => (typeof input === 'undefined') || (input === undefined || input === null),
+        /**
+         * Check if a value is a string
+         * @param {String} input The input value
+         */
+        isString: input => (typeof input !== 'undefined') && (typeof input === 'string'),
+        /**
+         * Gets a description 'name, id, classes' of an element
+         * @param {Element} elem The element to get de description
+         */
+        desc: elem => (elem instanceof Element ? elem.desc() : elem),
+        /**
+         * Gets a string template name and normalize it, cleanning [] or :
+         *  Eg.: **[Product]** -> *Product*;
+         *       **Product:Id0011** -> *Product*;
+         *       **[Product:Id0011]** -> *Product*.
+         * @param {String} name - the string to be normalized
+         */
+        tmpNameNormalizer: name => {
+            if (!name) return '';
+            // Product:P0001
+            return name[0] === '[' ? 'scoped' : name.split(':')[0];
+        },
+        /**
+         * Change access type from reference one to index one.
+         * @param {String} path - The path
+         * @param {String} exp - The expression to combined
+         * @param {Object} dt - The data model
+         */
+        fieldPathNormalizer: (path, exp, dt) => {
+                    
+            if(exp.includes('$this'))
+                path = '';
+            
+            if(!helpers.isInvalid(dt.$index))
+                exp = exp.replaceAll(dt.$name, `['${dt.$index}']`); 
+            
+            return helpers.toPath(path, exp);
+        },
+        /**
+         * Execute an expression and returns the value if valid and undefiened is not valid
+         * @param {String} exp The expression to be evaluated
+         * @param {Object} $data The model to get the value if needed, by default is empty object
+         * @param {Object} _return_ Allow to define if the function needs to have a return value or not
+         */
+        eval(exp, $data = {}, _return_ = true) {
+            try {
+                let value = undefined;
+                eval(`let $this = self.data; 
+                      let { ${ $data.keys().join(', ') } } = $data;
+                      ${ _return_ ? 'value =' : '' } ${exp}`);
+                return value;
+            } catch (error) {
+                //console.log(error);
+                return undefined;
+            }
+        },
+        /**
+         * Execute an expression and returns the value if an primitive or a JSON if an object, 
+         * and an empty string if is not valid
+         * @param {String} exp The expression to be evaluated
+         * @param {Object} $data The model to get the value if needed, by default is empty object
+         * @param {Boolean} json Allow to convert the result to json if it's an object, by default is false
+         */
+        exec(exp, $data = {}, json = false) {
+            try {
+                let value = helpers.eval(exp, $data);
+                if (helpers.isInvalid(value)) return '';
+                if (json){
+                    if (value instanceof Object) 
+                        value = JSON.stringify(value);
+                }
+
+                return value;
+            } catch (error) {
+                return '';
+            }
+        },
+        /**
+         * Builds arguments to array accesable one. 
+         *  Eg.: 'Person.Name' => ['Person']['Name']
+         */
+        toPath() {
+            let path = '';
+            for (const key in arguments) {
+                const el = arguments[key];
+                if (!helpers.isInvalid(el) && el !== '') {
+                    if (Array.isArray(el))
+                        path += el.map(m => `['${m}']`).join('');
+                    else if (helpers.isString(el)) {
+                        path += el.split('.')
+                            .filter(f => f)
+                            .map(m => !m.includes('[') && !m.includes('$this') ? `['${m}']` : m)
+                            .join('');
+                    }
+                }
+            }
+            return path;
+        },
+        /**
+         * Get 'toPath' value and clear the first ['...']
+         *  Eg.: ['Person']['Name'] => Person['Name']
+         */
+        fromPath: input => { 
+            let test = input.match(/\['(.*?)'\]/);
+
+            if(test) {
+                if(input.startsWith(test[0]))
+                input = test[1] + input.substr(test[0].length);
+            }
+            return input;
+        },
+        /**
+         * Transform any code to string
+         */
+        codeToString: _ => `(${ _.toString() })()`,
+        /**
+         * Helper to loop an array
+         * @param {Array} array The array to be looped
+         * @param {Function} cb The callback function
+         */
+        for (array, cb) {
+            for (let i = 0; i < array.length; i++)
+                cb(array[i], i);
+        },
+        /**
+         * Get an attribute of an element
+         * @param {Element} elem The element to be searched
+         * @param {Array} attrs The attributes, the order matter 
+         * @param {Boolean} remove Allow to remove the attribute if was found
+         */
+        attr(elem, attrs = [], remove = false) {
+            let attr = elem.attributes.toArray()
+                            .find(at => attrs.find(a => at.name === a) ? true : false);
+
+            if(attr && remove)
+                elem.removeAttribute(attr.name);
+
+            return attr;
+        },
+    };
+    // UI Handler
+    const UI = {
+        // UI observer functions
+        observer: {
+            /**
+             * Subcribe get and read requests
+             * @param {Object} obj - The call object
+             */
+            subscribe(obj) {
+                vars.calls.push(obj);
+                return {
+                    id: obj.id,
+                    run: obj.call
+                };
+            },
+            // emit add action to the UI
+            emitAdd(r, path) {
+                if (r.status)
+                    vars.calls.forEach(function (c) {
+                        if (c.flag === path && c.meth === 'list')
+                            c.call(r.result);
+                    });
+            },
+            // emit update action to the UI
+            emitUpdate(id, model, path) {
+
+                vars.template.filter(m => {
+                    const bool = m.model.has(id) &&
+                        (path === helpers.tmpNameNormalizer(m.tmp.tmpAttr.value));
+                    if (!bool) return;
+
+                    // Mapping the object
+                    m.model.mapObj(model, true);
+
+                    // Filling the element
+                    self.html.fill(m.tmp, m.model);
+                });
+            },
+            // emit remove action to the UI
+            emitRemove(id, path) {
+                [...vars.template.filter(m => m.model.has(id) &&
+                    (path === helpers.tmpNameNormalizer(m.tmp.tmpAttr.value)))]
+                .filter(m => {
+
+                    if (m.tmp.tmpAttr.name === vars.cmds.fill)
+                        // Cleaning the element
+                        self.html.fill(m.tmp);
+                    else
+                        // Removing the child
+                        m.tmp.aboveMe().removeChild(m.tmp);
+                });
+            },
+            // Proxy handler
+            proxy(target, cb, baseKeys = []) {
+                for (const key in target) {
+                    if (typeof target[key] === 'object') {
+                        target[key] = UI.observer.proxy(target[key], cb, [...baseKeys, key])
+                    }
+                }
+
+                return new Proxy(target, {
+                    set(target, key, value) {
+                        if (typeof value === 'object') value = UI.observer.proxy(value, cb, [...baseKeys, key]);
+                        const old = typeof target[key] === 'object' ? { ...target[key] } : target[key];
+                        const curr = target[key] = value;
+                        cb([...baseKeys, key], curr, key, old);
+                        return target;
+                    },
+                    get(target, key) {
+                        if (key === '_isProxy') return true;
+                        return target[key];
+                    }
+                });
+            }
+        },
+        // Handle the stored elements
+        stored: {
+            // Add element to stored array
+            add: (e) => {
+                e._easyId = e._easyId || self.code(10);
+                if (!vars.stored.find(x => x._easyId === e._easyId))
+                    vars.stored.push(e);
+            },
+            // Find if an element is in stored array
+            find: (selector) => {
+                return vars.stored.find(s => {
+                    const body = doc.createElement('body');
+                    body.appendChild(s.copyNode());
+                    return body.querySelector(selector);
+                });
+            },
+            findAll: (selector) => {
+                return vars.stored.filter(s => {
+                    const body = doc.createElement('body');
+                    body.appendChild(s.copyNode());
+                    return body.querySelector(selector);
+                });
+            }
+        },
+        // Comments handler
+        comment: {
+            // Creates a comment with some identifier
+            create: (id) => {
+                const comment = document.createComment(' e ');
+                comment._id_ = id || self.code();
+                return comment;
+            },
+            // Gets a comment from an element
+            get: (elem, id) => {
+                if(!elem) return undefined;
+                
+                const filterNone = () => NodeFilter.FILTER_ACCEPT; 
+                const iterator = document.createNodeIterator(elem, NodeFilter.SHOW_COMMENT, filterNone, false); 
+                
+                let node = undefined; 
+                while (node = iterator.nextNode()){
+                    if(node._id_ === id) 
+                        return node;
+                }
+
+                return undefined; 
+            }
+        },
+        /**
+         * handle a string to see if it gots easy commands written
+         * @param {String} str The input string that needs to be checked
+         */
+        hasField(str) {
+            if (helpers.isInvalid(str) || str === '') return [];
+
+            const res = str.match(/-e-[^-]*-/g) || str.match(/{{(.*?)}}/g);
+            if (!res) return [];
+
+            return res.map(m => {
+                const elem = m.match(/-e-(.*?)-/) || m.match(/{{(.*?)}}/);
+                return {
+                    field: elem[0],
+                    exp: elem[1].trim()
+                };
+            });
+        },
+        /**
+         * Reads an element to find easy commands
+         * @param {HTMLElement} elem The element to be read
+         * @param {Object} data The object model having the data 
+         * @param {Function} cb The callback for each element found
+         * @param {Object} path The path to get the data
+         */
+        read(elem, data = {}, cb, path) {
+            if (helpers.isInvalid(elem)) return [];
+
+            // Defines some reading scopes
+            const cmds = vars.cmds;
+            const scopes = [cmds.tmp, cmds.fill, cmds.data, cmds.for, 'INC', 'inc-src'];
+
+            // Data attribute value
+            path = path || (elem.tmpAttr ? elem.tmpAttr.value : null);
+            
+            const setFields = (attr, elem) => {
+                attr.$oldValue = attr.$oldValue || attr.nodeValue;
+                attr.$baseElement = attr.$baseElement || elem;
+            }
+
+            const addFields = (elem, value) => {
+                if(!elem.$oldFields){
+                    elem.$oldFields = [value]
+                }else{
+                    if(elem.$oldFields.find(x => x == value)) return value;
+                    elem.$oldFields.push(value);
+                }
+                return value;
+            }
+
+            const exec = (elem, dt, path = '') => {
+
+                // Checking if it's a scope element
+                const scope = scopes.find(s => s === elem.nodeName) ? elem : undefined ||
+                    helpers.attr(elem, scopes);
+
+                if (scope) {
+                    // For 'e-tmp' and 'e-fill' scope
+                    if (scope.name === cmds.tmp || scope.name === cmds.fill) {
+                        UI.init(elem);
+                    }
+                    // For 'inc tag' scope
+                    else if (scope.nodeName === 'INC') {
+                        inc.include(elem.valueIn('src'), elem);
+                    }
+                    // For inc
+                    else if (scope.name === 'inc-src' || scope.nodeName === 'INC') {
+                        inc.include(elem.valueIn('inc-src'), elem);
+                    }
+                    // For 'data' scope
+                    else if (scope.name === cmds.data) {
+
+                        // Gettind and removing the attr
+                        elem.tmpAttr = helpers.attr(elem, [cmds.data], true);
+                        let source = null;
+                        // Getting the object
+                        
+                        try {
+                            const dataPath = helpers.toPath(elem.tmpAttr.value);
+                            source = helpers.eval(helpers.fromPath(dataPath), data);
+                            
+                            if(helpers.isInvalid(source)) 
+                                throw ('get other data');
+                        } catch {
+                            // Building the path or getting the getting the object
+                            source = helpers.eval(elem.tmpAttr.value) || data;
+                        }
+                        
+                        let pxy = true;
+                        // Checking if it's inline object build
+                        if(elem.tmpAttr.value && elem.tmpAttr.value.includes('{'))
+                            // Storing the inline build object
+                            pxy = false;
+                        else
+                            path += '.' + elem.tmpAttr.value;
+
+                        self.html.fill(elem, source, pxy);
+                    }
+                    // For 'for' scope
+                    else if (scope.name === cmds.for) {
+
+                        if(helpers.isInvalid(cb)) return;
+
+                        const parts = scope.value.split(' of ');
+                        const left = parts[0];
+                        const right = parts[1];
+                        const array = helpers.eval(right, dt);
+                        if(array) {
+
+                            elem.forId = elem.forId || self.code();
+                            let comment = UI.comment.create(elem.forId);
+
+                            // Checking is not inline array definition
+                            if(!right.includes('['))
+                                path += '.' + right;
+                            
+                            // Removing the current element
+                            elem.aboveMe().replaceChild(comment, elem);
+                            
+                            for (let index = 0; index < array.length; index++) {
+                                const item = array[index];
+                                
+                                let copy = elem.copyNode();
+                                copy.removeAttribute(scope.name);
+                                
+                                const trim = input => {
+                                    if (input) return input.trim();
+                                }
+
+                                // filling all the compontent
+                                const declaration = left.replace('(', '').replace(')', '').split(',');
+
+                                // The object that will be passed 
+                                let obj =  {
+                                    [trim(declaration[0])]: item,
+                                    [trim(declaration[1]) || 'index']: index,
+                                };
+                                
+                                // Property definer
+                                const def = (name, val) => {
+                                    Object.defineProperty(obj, name, {
+                                        configurable: false,
+                                        enumerable: true,
+                                        writable: false,
+                                        value: val
+                                    });
+                                }
+                                
+                                def('$index', index);
+                                def('$name', trim(declaration[0]));
+
+                                if(!helpers.isInvalid(declaration[1])) 
+                                    def(declaration[1], index);
+                                // Defining an index in the element
+                                copy.$index = index;
+                                UI.read(copy, obj, cb, path);
+                                comment.parentElement.insertBefore(copy, comment);
+                            }
+
+                        }
+                    }
+
+                    return;
+                }
+
+                // checkin var definer
+                const vdef = helpers.attr(elem, [cmds.def], true);
+                if(vdef) {
+                    // Evaluating the object that needs to be created
+                    const defs = helpers.eval(vdef.value, dt);
+                    // Defining it in the easy data property
+                    if(defs) defs.keys((k, v) => self.data[k] = v);
+                }
+
+                const callCallback = (attr, fields, type = cmds.field, aditional = {}) => {
+                    fields = fields.map(fl => Object({ ...fl, 
+                        path: helpers.fieldPathNormalizer(path, fl.exp, dt) }));
+                    // Setting the path in field 
+                    attr.$fields = fields;
+                    
+                    if (cb) cb({
+                        elem: attr,
+                        fields: fields,
+                        type: type,
+                        ...aditional
+                    }, dt);
+                }
+
+                // checking attributes
+                [ ...(elem.$oldFields || []), ...elem.attributes.toArray() ]
+                .filter(attr => {
+                    // Event attr
+                    if (attr.name.startsWith('listen:') || attr.name.startsWith('on:')) {
+                        elem.listen(attr.name.split(':')[1], function () {
+                            const __m__ = data, exp = attr.value, args = arguments;
+                            try {
+                                eval(`let { ${ __m__.keys().join(', ') } } = __m__; 
+                                let res = typeof ${exp} === 'function';
+                                if(res) ${exp}.call(${exp}, ...args);`);
+                            } catch (error) {
+                                helpers.eval(`self.data${helpers.toPath(path)}.${exp}`, __m__, false);
                             }
                         });
                     }
+
+                    // if attr
+                    if (attr.name === cmds.if) {
+                        addFields(elem, attr);
+                        elem[cmds.if] = elem[cmds.if] || attr.value;
+                        elem.removeAttribute(cmds.if);
+
+                        if(!helpers.isInvalid(attr.value) && attr.value.trim() === '')
+                            return;
+                        
+                        // Checking if has some properties defined in the attribute 
+                        let fields = attr.value.match(eval(`/${dt.keys().join('|')}/g`)) || [];
+                        
+                        // Buiild the fields
+                        fields = fields.map(f => Object({ exp: f, field: f }));
+
+                        callCallback(elem, fields, cmds.if, { isIf: true });
+                    }
+
+                    // Checking if the it has -e-[Something]- or {{ Something }}
+                    const fields = UI.hasField(attr.$oldValue || attr.value);
+                    if(fields.length > 0){
+                        setFields(attr, elem);
+                        addFields(elem, attr);
+                        callCallback(attr, fields);
+                    }
+                });
+
+                // Checking the textcontent
+                if (elem.firstChild) {
+                    const attr = elem.firstChild;
+                    const fields = UI.hasField(elem.firstChild.$oldValue || elem.firstChild.nodeValue);
+                    if(fields.length > 0) {
+
+                        setFields(attr, elem);
+                        callCallback(attr, fields);
+                    }
+                }
+
+                // Getting in the children
+                elem.children.toArray(child => {
+                    if(child.tagName === 'BR'){
+                        if(child.nextSibling){
+                            const fields = UI.hasField(child.nextSibling.$oldValue || child.nextSibling.nodeValue);
+
+                            if(fields.length > 0 && helpers.isInvalid(attr.$fields)){
+        
+                                setFields(child.nextSibling, elem);
+                                callCallback(child.nextSibling, fields);
+                            }
+                        }
+                    }else{
+                        exec(child, dt, path);
+                    }
+                });
+            };
+
+            if (helpers.isInvalid(vars.template.find(t => t.tmp === elem))) {
+                vars.template.push({
+                    tmp: elem,
+                    model: data
                 });
             }
-            return r;
-        } catch (er) {
-            return e_return(false, e_error(er.message != undefined ? er.message : er), null);
+
+            exec(elem, data, path);
+        },
+        /**
+         * Fills an element field, such as #value, #text, etc.
+         * @param {HTMLComponet} field The field to be filled 
+         * @param {Object} $dt The data object 
+         * @param {HTMLDataElement} copy The original copy of the element having the firat values 
+         */
+        fillField(elem, $dt) {
+
+            const origin = elem.$baseElement;
+            const name = elem.nodeName;
+
+            // Getting the value
+            let value = elem.$oldValue;
+
+            elem.$fields.filter(f => {
+                const val = helpers.exec(helpers.fromPath(f.exp), $dt, true);
+                value = value.replaceAll(f.field, val);
+            });
+
+            if (name === 'value' || name === 'id')
+                // Setup of value and id this way
+                origin[name] = value;
+            else
+                // Other can be this way
+                elem.nodeValue = value;
+            if (name.startsWith('e-') && !vars.cmds.has(name)) {
+
+                origin.valueIn(name.substr(2), elem.nodeValue);
+                origin.removeAttribute(name);
+            }
+        },
+        // Sets the atached to the current element
+        setEvents(element, events) {
+            if (events) events.filter(evt => {
+                element.addEventListener(evt.event, function () {
+                    arguments[0]['base'] = element;
+                    evt.func(...arguments);
+                }, evt.options)
+            });
+        },
+        /**
+         * UI initiator
+         * @param {HTMLElement} element The element to be initialized
+         */
+        async init(element) {
+            const cmds = vars.cmds;
+            const attr = helpers.attr(element, [cmds.fill, cmds.tmp, cmds.data], true);
+            element.tmpAttr = attr;
+            if(attr === undefined) 
+                return;
+
+            // tmp/fill actions
+            const actions = {
+                'e-tmp': {
+                    wait(cb, sec = 1) {
+                        let t = setTimeout(_ => {
+                            cb();
+                            clearTimeout(t);
+                        }, sec * 40);
+                    },
+                    // Main action
+                    async main(e, parts, container) {
+                        let counter = 1;
+                        const rvs = e.valueIn(cmds.rvs) === 'true' ? true : false;
+
+                        await self.read(parts[0], data => {
+                            const insert = _ =>
+                                self.html.add(container, data, {
+                                    reverse: rvs
+                                });
+
+                            // Wait a bit to insert the element to de DOM
+                            if (e.hasAttribute(cmds.anm))
+                                actions[cmds.tmp].wait(_ => insert(), counter++);
+                            else
+                                insert();
+
+                        }, e.valueIn(cmds.filter));
+                    },
+
+                    // Sec action
+                    async sec(e, parts, container) {
+                        let counter = 1;
+                        const rvs = e.valueIn(cmds.rvs) === 'true' ? true : false;
+
+                        await self.source(eval(parts[0])).read(data => {
+                            // Checking if all the content needs to removed
+                            const insert = _ => {
+                                self.html.add(container, data, {
+                                    reverse: rvs
+                                });
+                            }
+
+                            // Wait a bit to insert the element to de DOM
+                            if (e.hasAttribute(cmds.anm))
+                                actions[cmds.tmp].wait(_ => insert(), counter++);
+                            else
+                                insert();
+
+                        }, e.valueIn(cmds.filter));
+                    }
+                },
+                'e-fill': {
+                    // Main action
+                    async main(e, parts) {
+                        await self.getOne(parts[0], parts[1], e, parts[2]);
+                    },
+                    // Secondary action
+                    async sec(e, parts) {
+                        await self.source(eval(parts[0])).getOne(parts[1], e, parts[2]);
+                    }
+                }
+            }
+
+            let container = null;
+            
+            if (attr.name === cmds.data) {
+                const source = helpers.eval(attr.value);
+                self.html.fill(element, source, true);
+            } else {
+
+                switch (attr.name) {
+                    // For fill template 
+                    case cmds.fill:
+                        // In case of fill without value
+                        if (helpers.isInvalid(attr.value) || attr.value === '') {
+                            self.html.fill(element);
+                            return;
+                        }
+                        break;
+                        // For tmp template
+                    case cmds.tmp:
+
+                        container = element.aboveMe();
+
+                        // Setting the template value in the container
+                        container.valueIn(cmds.tmp, attr.value);
+
+                        // Setting his template                
+                        container.$tmp = element;
+                        container.removeChild(element);
+
+                        UI.stored.add(element);
+
+                        if (element.valueIn('e-auto') === 'true') return;
+                        break;
+                }
+
+                // Checking if it matches the brackets
+                const match = attr.value.match(/\[(.*?)\]/);
+
+                if (!match) {
+                    // Product:P001:Code
+                    // Spliting the value
+                    const parts = attr.value.split(':');
+                    // Checking if any connector is available
+                    if (!helpers.isInvalid(self.conn))
+                        await actions[attr.name].main(element, parts, container);
+                    else
+                        self.log(error.conn());
+                } else {
+                    // Product:P001:Code
+                    // Spliting the value
+                    const parts = match[1].split(':');
+
+                    try {
+                        if (!Array.isArray(eval(parts[0]))) throw ({
+                            message: `The obj '${parts[0]}' is not an array.`
+                        });
+                        await actions[name].sec(element, parts, container);
+                    } catch (error) {
+                        self.log(error.message);
+                    }
+                }
+            }
+        },
+    };
+    // Error messages
+    const error = {
+        conn: _ => `It seems that there is not any easy connector available. please check if any easy.[ajax|free|something].js is imported.
+    \nOr instead, use easy.source([MyArray])..., and define e-tmp="[MyArray]" | e-fill="[MyArray:MyId]."`,
+        notFound: (v = '') => `Element '${v}' not found.`,
+        invalid: (v = '') => `Invalid value${ v ? ': ' + v : '' }.`,
+        invalidField: (v = '') => `Invalid field${ v ? ': ' + v : '' }.`,
+        ds: _ => `The Data Source is invalid, please, make sure it is an Array.`,
+        elem: (v = '') => `The selector or object passed for '${v}' is invalid, please check it.`
+    };
+
+    // Store the first connector
+    const conn_temp = !helpers.isInvalid(self.conn) ? {
+        ...self.conn
+    } : undefined;
+
+    /**
+     * HTML Element handler
+     */
+    this.html = {
+        /**
+         * Allow to fill and add an element in the DOM
+         * @param {HTMLElement} container The html element or selector
+         * @param {Object} data The object model to get the values
+         * @param {HTMLElement} elem The element to serve as insertion point
+         * @param {Boolean} reserve Allows to switch the insertion direction, 
+         * **false** for insert after, **true** for insert before.
+         */
+        add: function (container, data = {}, {
+            elem,
+            reverse = false
+        } = {}) {
+            // Filling the element
+            const template = self.html.fill(container.$tmp.copyNode(), data);
+
+            if (helpers.isInvalid(container._callId))
+                container._callId = data._callId;
+
+            // Cleaning the template
+            vars.cmds.keys((k, v) => template.removeAttribute(v));
+
+            // Defining a tmp attr
+            template.tmpAttr = template.tmpAttr || helpers.attr(container, [vars.cmds.tmp]);
+
+            // Setting the events attached to his origin element
+            UI.setEvents(template, container.$tmp._events_);
+
+            if (!elem) {
+                // Default insertion
+                if (reverse) container.insertBefore(template, container.children[0]);
+                else container.appendChild(template);
+            } else {
+                // Insertion in some point
+                if (reverse) container.insertBefore(template, elem);
+                else container.insertBefore(template, elem.nextElementSibling);
+            }
+        },
+        /**
+         * Allow to fill an element
+         * @param {HTMLElement} element The html element or string selector
+         * @param {Object} data The object model to get the values to fill
+         * @returns {HTMLElement} The element filled
+         */
+        fill: function (element, data = {}) {
+            const cmds = vars.cmds;
+            let addProxy = arguments[2] || false;
+
+            // Setting the template name
+            element.tmpAttr = element.tmpAttr ||
+            helpers.attr(element, [cmds.fill, cmds.tmp, cmds.data], true);
+
+            // Reading the UI element
+            UI.read(element, data, function (comp, dt) {
+                
+                switch (comp.type) {
+                    case cmds.field: {
+                        
+                        if(comp.fields.find(x => x.exp.includes('$this')))
+                            addProxy = true;
+                        
+                        if(addProxy) {
+                            comp.base = element;
+                            vars.proxy.push(comp);
+                        }
+
+                        UI.fillField(comp.elem, dt);
+                        break;
+                    }
+
+                    case cmds.if: {
+                        if(comp.elem[cmds.if].includes('$this'))
+                            addProxy = true;
+                        
+                        if(addProxy){
+                            vars.proxy.push(comp);
+                        }
+
+                        self.html.toggle(comp.elem, dt);
+                        break;
+                    }
+                }
+
+            }, element.tmpAttr ? element.tmpAttr.value : undefined);
+
+            const anm = element.valueIn(vars.cmds.anm);
+            // Applying animation if needed
+            if (!helpers.isInvalid(anm)) element.niceIn(anm);
+            return element;
+        },
+        /**
+         * Hides (Or show, if it was used in a model with a model property) an element from the DOM
+         * @param {Element} elem The element to toggled according easy show attribute 
+         * @param {Object} data The object model to get the values
+         */
+        toggle: function (elem, data = {}) {
+            const exp = elem[vars.cmds.if];
+            const res = helpers.exec(exp, data);
+            const prop = vars.cmds.id;
+
+            if (res === false) {
+                const id = easy.code();
+                const above = elem.aboveMe();
+
+                if (helpers.isInvalid(above))
+                    return self.log(`It seems like the element having e-if 
+                    '${helpers.desc(elem)}' does not exist in the DOM anymore.`, 'warn');
+
+                vars.hidden[id] = elem;
+                const comment = UI.comment.create(id);
+
+                above.replaceChild(comment, elem);
+                elem.valueIn(prop, id);
+
+            } else if (res === true) {
+
+                const id = elem.valueIn(prop);
+                if (helpers.isInvalid(id)) return;
+
+                const commet = UI.comment.get(self.elem, id);
+                
+                if (helpers.isInvalid(commet))
+                    return self.log(`It seems like the element having e-if 
+                    '${helpers.desc(elem)}' has been removed manually.`, 'warn');
+
+                // Restoring the
+                elem.removeAttribute(prop);
+                commet.parentElement.replaceChild(elem, commet);
+
+                delete vars.hidden[id];
+            }
         }
-    },
+    }
+    // Helper to add easy css in the DOM
+    this.css = () => {
+        let easyStyle = doc.node('[e-style="true"]');
+        if (easyStyle) return;
+
+        let style = doc.createElement("style");
+        style.valueIn('e-style', 'true');
+
+        const val = {
+            dist: 15,
+            opacity: 1,
+            dur: 0.2
+        };
+
+        // Creates to- animation body
+        const toAnim = (name, dir) => `transform: translate${dir}; -webkit-transform: translate${dir};
+        animation: ${name} ${val.dur}s ease-out forwards; -webkit-animation: ${name} ${val.dur}s ease-out forwards;`;
+        // Creates from- animation body
+        const fromAnim = (name) => `animation: ${name} ${val.dur}s ease-out forwards; -webkit-animation: ${name} ${val.dur}s ease-out forwards;`;
+        // Creates keyframes animation body
+        const keyframes = (name, opacity, dir) => `keyframes ${name} { to { opacity: ${opacity}; transform: translate${dir}; } }`;
+
+        style.textContent = `
+            .hide-it { display: none !important; }
+            .to-top, .to-bottom, .to-right, .to-left { opacity: 0; }
+            .from-top, .from-bottom, .from-right, .from-left
+            { opacity: 1; transform: translateY(0%); -webkit-transform: translateY(0%); }
+
+            .to-top { ${toAnim('to-top', 'Y(' + val.dist +'%)')} }
+            .to-bottom { ${toAnim('to-bottom', 'Y(-' + val.dist +'%)')} }
+            .to-right { ${toAnim('to-right', 'X(-' + val.dist +'%)')} }
+            .to-left { ${toAnim('to-right', 'X(' + val.dist +'%)')} }
+
+            .from-top { ${fromAnim('from-top')} }
+            .from-bottom { ${fromAnim('from-bottom')} }
+            .from-right { ${fromAnim('from-right')} }
+            .from-left { ${fromAnim('from-left')} }
+
+            @${keyframes('to-top', val.opacity, 'Y(0%)')}
+            @${keyframes('to-bottom', val.opacity, 'Y(0%)')}
+            @${keyframes('to-right', val.opacity, 'X(0%)')}
+            @${keyframes('to-left', val.opacity, 'X(0%)')}
+
+            @-webkit-${keyframes('to-top', val.opacity, 'Y(0%)')}
+            @-webkit-${keyframes('to-bottom', val.opacity, 'Y(0%)')}
+            @-webkit-${keyframes('to-right', val.opacity, 'X(0%)')}
+            @-webkit-${keyframes('to-left', val.opacity, 'X(0%)')}
+
+            @${keyframes('from-top', 0, 'Y(' + val.dist +'%)')}
+            @${keyframes('from-bottom', 0, 'Y(-' + val.dist +'%)')}
+            @${keyframes('from-right', 0, 'X(-' + val.dist +'%)')}
+            @${keyframes('from-left', 0, 'X(' + val.dist +'%)')}
+
+            @-webkit-${keyframes('from-top', 0, 'Y(' + val.dist +'%)')}
+            @-webkit-${keyframes('from-bottom', 0, 'Y(-' + val.dist +'%)')}
+            @-webkit-${keyframes('from-right', 0, 'X(-' + val.dist +'%)')}
+            @-webkit-${keyframes('from-left', 0, 'X(' + val.dist +'%)')}`;
+
+        doc.head.appendChild(style);
+    };
+    /**
+     * Creates an obj (if form is a selector) and send it to the available connector
+     * @param {String} path The URL endpoint
+     * @param {HTMLElement | HTMLSelector} form The html element or string selector
+     * @return The easy return type
+     */
+    this.create = async (path, form) => {
+        try {
+            // Checking the connector
+            if (helpers.isInvalid(self.conn)) throw ({
+                message: error.conn()
+            });
+
+            // Getting the object js object
+            let obj = helpers.isString(form) ? self.toJsObj(form) : form;
+            if (!obj) throw ({
+                message: error.elem('create')
+            });
+            // Sending and Getting the data from the data source
+            let r = await self.conn.add(path, obj);
+            if (helpers.isInvalid(r.result)) return r;
+
+            UI.observer.emitAdd(r, path);
+            return r;
+        } catch (error) {
+            return self.return(false, self.log(error), null);
+        }
+    }
+    /**
+     * Get all from a path
+     * @param {String} path The URL endpoint
+     * @param {Function} cb (optional) The callback that will be passed the return
+     * @param {String} filter (optional) The string filter for the returned values
+     * @return The easy return type
+     */
+    this.read = async (path, cb, filter) => {
+        try {
+            // Checking the connector
+            if (helpers.isInvalid(self.conn)) throw ({
+                message: error.conn()
+            });
+
+            // Sending and Getting the data from the data source
+            let r = await self.conn.list(path, filter);
+            if (helpers.isInvalid(r.result)) return r;
+
+            if (!helpers.isInvalid(cb)) {
+                // Subscribing the callback
+                const sub = UI.observer.subscribe({
+                    id: `${helpers.tmpNameNormalizer(path)}:${self.code()}`,
+                    meth: 'list',
+                    flag: path,
+                    call: cb
+                });
+
+                r.result.forEach(e => {
+                    e.callId = sub.id;
+                    sub.run(e);
+                });
+            }
+
+            return r;
+        } catch (error) {
+            return self.return(false, self.log(error), null);
+        }
+    }
+    /**
+     * Creates an obj (if form is a selector) and send to the available connector to updated it
+     * @param {String} path The URL endpoint
+     * @param {HTMLElement | HTMLSelector} form The html element or string selector
+     * @param {string} id The Id of the object that will be updated
+     * @return The easy return type
+     */
+    this.update = async (path, form, id) => {
+        try {
+            // Checking the connector
+            if (helpers.isInvalid(self.conn)) throw ({
+                message: error.conn()
+            });
+
+            // Checking the id parameter is null
+            if (!id) throw ({
+                message: error.invalid('id')
+            });
+
+            // Getting the object js object
+            let obj = helpers.isString(form) ? self.toJsObj(form) : form;
+            // Checking if the object is valid
+            if (!obj) throw ({
+                message: error.elem('updated')
+            });
+            // Sending and Getting the data from the data source
+            let r = await self.conn.update(path, obj, id);
+            if (helpers.isInvalid(r.result)) return r;
+
+            UI.observer.emitUpdate(id, r.result,
+                helpers.tmpNameNormalizer(path));
+            return r;
+        } catch (error) {
+            return self.return(false, self.log(error), null)
+        }
+    }
+    /**
+     * Deletes an obj from a source
+     * @param {String} path The URL endpoint
+     * @param {String} id The Id of the object that will be deleted
+     * @return The easy return type
+     */
+    this.delete = async (path, id) => {
+        try {
+            // Checking the connector
+            if (helpers.isInvalid(self.conn)) throw ({
+                message: error.conn()
+            });
+
+            // Checking the id parameter is null
+            if (!id) throw ({
+                message: error.invalid('id')
+            });
+
+            // Sending and Getting the data from the data source
+            let r = await self.conn.remove(path, id);
+            if (helpers.isInvalid(r.result)) return r;
+
+            // Adding the event to the DOM updater
+            UI.observer.emitRemove(id,
+                helpers.tmpNameNormalizer(path));
+            return r;
+        } catch (error) {
+            return self.return(false, self.log(error), null);
+        }
+    }
     /**
      * getOne obj from a source
-     * @param {string} ref - The reference / document in db
-     * @param {string} id - The Id of the document in db
-     * @param {Function} cb {optional} - the function that will be passed the returned values
-     * @param {string} fld {optional} - The field to match the id
-     * @return The easy return type with the db result in the prop result 
+     * @param {string} path The URL endpoint
+     * @param {string} id The Id of the object
+     * @param {Function} cb (optional) The callback that will be passed the return
+     * @return The easy return type
      */
-    getOne: async function (ref, id, elem, fld) {
+    this.getOne = async (path, id, elem) => {
         try {
-            if (id == null || id == undefined) throw ({ message: e_error_msg.notValidValue(id) });
-            
-            id = e_handler.e_m(id);
-            let r = await e_data.getOne(ref, id, fld); // Calling the function to getOne item in server
-            if (r == null) throw ({ message: e_error_msg.connectorError() });
-            
-            if (r.result == null) throw ({ message: r.msg });
-            if (r.status && r.result != null) {
-                function cb(elem, mdl) {
-                    if (elem) {
-                        let e = typeof elem === 'string' ? e_sltr(elem) : elem;
-                        if (e) easy.fillHtml(e, mdl); // Seting the elem;
-                        else e_error(e_error_msg.notFoudedElem(elem)); // Showing error
-                        return elem;
-                    }
-                }
-                if (cb(elem, r.result)) e_calls.push({
+            // Checking the connector
+            if (helpers.isInvalid(self.conn)) throw ({
+                message: error.conn()
+            });
+
+            // Checking the id parameter is null
+            if (!id) throw ({
+                message: error.invalid('id')
+            });
+
+            // Sending and Getting the data from the data source
+            let r = await self.conn.getOne(path, id);
+            // Checking if the result is not valid
+            if (helpers.isInvalid(r.result)) throw ({
+                message: r.msg
+            });
+
+            if (!helpers.isInvalid(elem)) {
+                // Subscribing the callback
+                const sub = UI.observer.subscribe({
+                    id: `${helpers.tmpNameNormalizer(path)}:${self.code()}`,
                     meth: 'get',
-                    flag: ref,
-                    call: cb
-                })
+                    flag: path,
+                    call: (elem, mdl) => {
+                        if (elem) {
+                            // Getting the element
+                            let mElem = helpers.isString(elem) ? self.elem.node(elem) : elem;
+                            if (mElem) {
+                                mElem._callId = sub.id;
+                                self.html.fill(mElem, mdl);
+                            } else
+                                self.log(error.notFouded(helpers.desc(elem)));
+                        }
+                    }
+                });
+
+                sub.run(elem, r.result);
             }
+
             return r;
-        } catch (er) {
-            return e_return(false, e_error(er.message != undefined ? er.message : er), null); // Error
+        } catch (error) {
+            return self.return(false, self.log(error), null);
         }
     }
-};
-// Easy ajax header setter
-/**
- * @param {Object} v - the header object
- */
-easy.header = function (v) {
-    e_data.header = v ? v : e_data.head;
-    return easy;
-};
-/**
- * easy function that allows the user to pass an array as data source and manage with the main actions (CRUD).
- * It doesnt modify the main data source
- * @param {Array} ds - the data source 
- */
-easy.source = function (ds) {
-
-    function addIndex(v) {
-        if(Array.isArray(v)){
-            v = v.map((x, i) => {
-                x._i_ = i;
-                return x;
-            });
-        } else{
-            v._i_ = 0;
-        }
-        return v;
-    } // Helper to add index in a list of items, or in single item.
-
-    e_data = {
-        add: async function (r, mdl) {
-            try {
-                let ref = ds;
-                if (ref == null || ref == undefined) { throw ({ message: e_error_msg.nullDs() }); }
-                
-                ref.push(mdl);
-                let last = ref[ref.length - 1];
-                return e_return(true, 'Ok', last);
-            } catch (error) {
-                return e_return(false, error.message, null);
-            }
-        },
-        remove: async function (r, id, field) {
-            try {
-                if (id == null || id == undefined) throw ({ message: e_error_msg.notValidValue(id) });
-                
-                let ref = ds;
-                if (ref == null || ref == undefined) { throw ({ message: e_error_msg.nullDs() }); }
-                
-                let obj = null;
-                if(field == null){
-                    obj = ref[id];
-                    ref.splice(id, 1);
-                } else {
-                    ref.filter(function (item) {
-                        let res = item[field] == id;
-                        if (res) {
-                            obj = item;
-                            ref.splice(ref.indexOf(item), 1);
-                        }
+    /**
+     * easy function that allows the user to pass an array as data source and manage with the main actions (CRUD).
+     * It doesnt modify the main data source
+     * @param {Array} ds The data source
+     * @returns {Easy} The main easy object
+     */
+    this.source = (ds) => {
+        const path = 'scoped';
+        self.conn = {
+            async add(r, mdl) {
+                try {
+                    let last = ds[ds.push(mdl) - 1];
+                    return self.return(true, 'Ok', last);
+                } catch (error) {
+                    return self.return(false, error, null)
+                }
+            },
+            async remove(r, id) {
+                try {
+                    if (!id) throw ({
+                        message: error.invalid(id)
                     });
-                }
-                return e_return(true, 'Ok', obj);
-            } catch (error) {
-                return e_return(false, error.message, null);
-            }
-        },
-        update: async function (r, obj, id, field) {
-            try {
-                if (id == null || id == undefined) throw ({ message: e_error_msg.notValidValue(id) });
 
-                if (ds == null || ds == undefined) { throw ({ message: e_error_msg.nullDs() }); }
-                if(field == null){
-                    ds[id] = obj;
-                } else {
-                    for (let i = 0; ds.length; i++) {
-                        let o = field ? ds[i][field] : ds[i];
-                        if (o == id) {
-                            ds[i] = obj;
-                            break;
-                        }
+                    let obj = ds.get(id);
+                    ds.remove(id);
+
+                    return self.return(true, 'Ok', obj);
+                } catch (error) {
+                    return self.return(false, error, null)
+                }
+            },
+            async update(r, obj, id) {
+                try {
+                    let index = ds.index(id);
+                    ds[index].mapObj(obj);
+
+                    return self.return(true, 'Ok', ds[index]);
+                } catch (error) {
+                    return self.return(false, error, null)
+                }
+            },
+            async list(r, filter) {
+                try {
+                    return self.return(true, 'Ok', self.filter(ds, filter));
+                } catch (error) {
+                    return self.return(false, error, null)
+                }
+            },
+            async getOne(r, id) {
+                try {
+                    return self.return(true, 'Ok', ds.get(id));
+                } catch (error) {
+                    return self.return(false, error, null)
+                }
+            },
+        };
+        return {
+            create: async (form) => {
+                let res = await self.create(path, form);
+                self.conn = conn_temp ? {
+                    ...conn_temp
+                } : undefined;
+                return res;
+            },
+            read: async (cb, filter) => {
+                let res = await self.read(path, cb, filter);
+                self.conn = conn_temp ? {
+                    ...conn_temp
+                } : undefined;
+                return res;
+            },
+            update: async (form, id) => {
+                let res = await self.update(path, form, id);
+                self.conn = conn_temp ? {
+                    ...conn_temp
+                } : undefined;
+                return res;
+            },
+            delete: async (id) => {
+                let res = await self.delete(path, id);
+                self.conn = conn_temp ? {
+                    ...conn_temp
+                } : undefined;
+                return res;
+            },
+            getOne: async (id, elem) => {
+                let res = await self.getOne(path, id, elem);
+                self.conn = conn_temp ? {
+                    ...conn_temp
+                } : undefined;
+                return res;
+            },
+        };
+    }
+    /**
+     * Generates an Javascript Object from an HTML Element
+     * Eg.: easy.toJsObj(element, { names: '[name],[nm]', values: '[value],[vl]' })
+     * @param {HTMLElement} input The html element or string selector
+     * @param {Object} name Defines which attribute will be search for. By default is [name], the order matters!
+     * @param {Object} value Defines which attribute will be taken the value. By default is [value], the order matters!
+     * @returns {Object} Javascript object
+     */
+    this.toJsObj = (input, {
+        names = '[name]',
+        values = '[value]'
+    } = {}) => {
+
+        if (!input) return null;
+
+        const elem = helpers.isString(input) ? doc.node(input) : input;
+
+        if (!elem) {
+            self.log(error.notFound(input));
+            return null;
+        }
+
+        // Store the build command name
+        const cmd = vars.cmds.build;
+
+        const buildObj = (element) => {
+            // Elements that it needs to escape on serialization
+            const escapes = ['BUTTON', 'DIV', 'SPAN'];
+            const clear = val => val.split(',').map(el => el.replace('[', '').replace(']', '').trim()); 
+
+            const obj = {};
+
+            const tryGetValue = e => {
+                let val = null;
+                clear(values).find(v => (val = e.valueIn(v)) ? true : false);
+                return val;
+            }
+
+            (function exec(el) {
+
+                const mNames = clear(names);
+                const attr = helpers.attr(el, mNames);
+                if(attr){
+
+                    name = attr.value;
+
+                    if (escapes.find(f => f === el.tagName)) return;
+                    if (el.type === 'checkbox' && el.checked === false) return;
+    
+                    const prop_value = obj[tryGetValue(el)];
+                    const isArray = el.hasAttribute(vars.cmds.array);
+
+                    if (!isArray) {
+                        if (prop_value)
+                            eval(`obj[name] = [ ...prop_value, tryGetValue(el) ]`);
+                        else
+                            obj[name] = tryGetValue(el);
+                    } else {
+                        if (prop_value)
+                            eval(`obj[name] = [ ...prop_value, tryGetValue(el) ]`);
+                        else
+                            eval(`obj[name] = [ tryGetValue(el) ]`);
                     }
                 }
-                return e_return(true, 'Ok', addIndex(obj));
-            } catch (error) {
-                return e_return(false, error.message, null);
-            }
-        },
-        list: async function (r, filter, search) {
-            try {
-                let ref = ds;
-                if (ref == null || ref == undefined) { throw ({ message: e_error_msg.nullDs() }); }
-                
-                let _ref = e_data_filter(ref, filter);
-                if (search != null) { _ref = e_data_search(_ref, search); }
-                
-                return e_return(true, 'Ok', addIndex(_ref));
-            } catch (error) {
-                return e_return(false, error.message, null);
-            }
-        },
-        getOne: async function (r, id, field) {
-            try {
-                if (id == null || id == undefined) throw ({ message: e_error_msg.notDefinedField(id) });
-                
-                let ref = ds;
-                if (ref == null || ref == undefined) { throw ({ message: e_error_msg.nullDs() }); }
-                
-                let obj = null;
-                
-                if(field == null){
-                    obj = ref[id];
-                } else {
-                    for (let i = 0; i < ref.length; i++) {
-                        let o = field ? ref[i][field] : ref[i];
-                        if (o == null || o == undefined)
-                            throw ({ message: e_error_msg.notDefinedField(field) });
-                        if (o == id) {
-                            obj = ref[i];
-                            break;
-                        }
+
+                el.children.toArray(c => (!helpers.attr(c, [cmd]) ? exec(c) : false));
+            })(element);
+
+            return obj;
+        }
+
+        // Building the base form
+        const obj = buildObj(elem);
+
+        // Getting the builds cleaned of inner builds
+        const builds = elem.nodes(`[${cmd}]`);
+
+        // Building builders
+        builds.filter(b => {
+            // Getting the e-build attr value
+            const name = b.valueIn(cmd);
+            // Checking if has an attr defined
+            const isArray = b.hasAttribute(vars.cmds.array);
+            // Building the object
+            const value = buildObj(b);
+
+            if(value.keys().length === 0) return;
+
+            // Build a path to set the value in the main object
+            const pathBuilder = (fullPath, cb) => {
+                let path = '';
+                // Looping the path
+                const sections = fullPath.split('.');
+                for (const sec of sections) {
+                    path += `.${sec}`;
+                    const prop_value = eval(`obj${path}`);
+                    // Checking the path has a null value
+                    if (helpers.isInvalid(prop_value)) {
+                        eval(`obj${path}={}`);
+                        // Checking if it's last section of the path
+                        if (sections[sections.length - 1] === sec)
+                            cb(path);
+                    }
+                    // Otherwise, check if the value is an array
+                    else if (Array.isArray(prop_value)) {
+                        const remainPath = helpers.toPath(fullPath.substr(path.length));
+                        if(remainPath === '')
+                            cb(path, prop_value);
+                        else
+                            prop_value.filter((e, i) => {
+                                // Building new path according the index of the array
+                                pathBuilder(`${path.substr(1)}[${i}]${remainPath}`, cb);
+                            });
+                        // Breaking the main loop, because every work is done
+                        break;
+                    }else{
+                        // Checking if it's last section of the path
+                        if (sections[sections.length - 1] === sec)
+                            cb(path, prop_value);
                     }
                 }
-                if (obj == null)
-                    throw ({ message: e_error_msg.notFoundedObj() });
-                return e_return(true, 'Ok', obj);
-            } catch (error) {
-                return e_return(false, error.message, null);
             }
-        },
-    };
-    return {
-        create: async function (frm, gId) {
-            let res = await easy.create(null, frm, gId);
-            e_data = e_data_old;
-            return res;
-        },
-        read: async function (cb, ft, s) {
-            let res = await easy.read(null, cb, ft, s);
-            e_data = e_data_old;
-            return res;
-        },
-        update: async function (frm, id, fld) {
-            let res = await easy.update(null, frm, id, fld);
-            e_data = e_data_old;
-            return res;
-        },
-        delete: async function (id, fld) {
-            let res = await easy.delete(null, id, fld);
-            e_data = e_data_old;
-            return res;
-        },
-        getOne: async function (id, elem, fld) {
-            let res = await easy.getOne(null, id, elem, fld);
-            e_data = e_data_old;
-            return res;
-        },
-    };
-}
-/**
- * Helper to fill an HTMLElement
- * @param {HTMLElement} el - the html element 
- * @param {Object} mdl - the database model 
- * @returns {HTMLElement} - the elem filled
- */
-easy.fillHtml = function(el) {
-    // Selectiong the elem that matchs the e-field
-    el = typeof el === 'string' ? e_sltr(el) : el;
 
-    if(!el){ e_error(e_error_msg.notFoudedElem()); return null };
-    // Adding some key to the elem
-    let id = el.e_attr(e_cmds.e_id);
-    id = id ? id : 'Id'; // Setting the default value 'Id' if it was not assigned
-    let mdl = arguments[1], rep = arguments[2];
-    let value = el.e_attr(e_cmds.e_tmp);
-    if (!value) { value = el.e_attr(e_cmds.e_m_tmp); }
-    if (!value) { value = el.e_attr(e_cmds.e_fill) ? el.e_attr(e_cmds.e_fill).split(':')[0] : null; }
-    if (!value) { console.log(`You haven't defined: ${e_cmds.e_tmp}, ${e_cmds.e_m_tmp}, or ${e_cmds.e_fill}... the auto update will not work!`); }
-    // Elem setter
-    function e_setter(a) {
-        let v = a.value || a.data; 
-        let value = e_handler.e_checker(v); // Checking the value
-        if(value){
+            pathBuilder(name, (path, prop_value) => {
 
-            if(!Array.isArray(value))
-                value = value[0].split(',');
-            
-            value.filter(function (e) {
-                let res = e_propGetter(e, mdl);
-                if(res != null){ 
-                    if(a.data == null) { a.value = a.value.replace(e, res); } // Setting value
-                    else if(a.value == null) { a.data = a.data.replace(e, res); } // Setting Container
-                    if(a.name){ // Checking if is valid
-                        if(a.name.startsWith('e-')){ // Checking if it's easy-repleacer
-                            let o = a.ownerElement; // Getting the owner
-                            if(a.value) o.e_attr(a.name.substr(2), a.value); // Setting the 
-                            o.removeAttribute(a.name); // Removing the easy-repleacer attr
-                        }
-                    }
-                } else {
-                    if (a.data != null) { a.data = a.data.replace(e, ''); } // Setting Container
-                }
-            });
-        }
-    }
-
-    let aux = el;
-    if(rep){ // Elem must be Replaced 
-        let isFill = el.e_attr(e_cmds.e_fill) ? true : false; // Checking type
-        let cnt_code = isFill ? el.e_attr(e_cmds.e_code) : getParent(el).e_attr(e_cmds.e_code);
-        let e_cnt = e_cnts.find(function (x) {
-            if(isFill)
-            { return x.e.e_attr(e_cmds.e_code) == cnt_code; }
-            else { return x.p ? x.p.e_attr(e_cmds.e_code) == cnt_code : false; }
-        }); // Getting the e container
-        
-        if(isFill) { aux = e_cnt.e; }
-        else { aux = e_handler.cutElem(e_cnt.e); }
-    }
-
-    let flds = e_handler.e_elems(aux);
-    if (flds.length == 0) { flds = e_handler.e_elem(aux); }
-    
-    e_for(flds, function (v) {
-        e_setter(v);
-    });
-    
-    aux.e_attr(e_cmds.e_key, value + ':' + mdl[id]);
-    if(rep) el.parentElement.replaceChild(aux, el); // Replacing
-    return aux;
-}
-// easy aditionnal function
-easy.addHtml = function (cnt, el, rvs) {
-    let _cnt_ = typeof cnt === 'string' ? e_sltr(cnt) : cnt;
-    if (_cnt_ == null) { e_error(e_error_msg.notFoudedElem(cnt)); return; }
-
-    let cnt_code = _cnt_.e_attr(e_cmds.e_code); // Getting the code of the container
-    if (cnt_code == undefined) {
-        e_error('The current element has not the e-code prop. Please, check the selector.');
-        return;
-    }
-
-    let e_cnt = e_cnts.find(function (x) { return x.p ? x.p.e_attr(e_cmds.e_code) == cnt_code : false; }); // Getting the e container
-    if (e_cnt == null) {
-        e_error('The container "' + cnt + '" must have a template "e-tmp" or "e-m-tmp. And the "template" must have a valid value"');
-        return;
-    }
-
-    let cnt_tmp = e_cnt.e.e_attr(e_cmds.e_tmp) != null ? e_handler.cutElem(e_cnt.e) : null;
-    if (cnt_tmp == undefined) cnt_tmp = e_cnt.e.e_attr(e_cmds.e_m_tmp) ? e_handler.cutElem(e_cnt.e) : null;
-
-    let anm = cnt_tmp.e_attr(e_cmds.e_anm);
-    if (anm != null) {
-        e_handler.css(); // Adding a style elem in the DOM
-        cnt_tmp.classList.add(e_animation[anm.toLowerCase()]);
-        cnt_tmp.removeAttribute(e_cmds.e_anm);
-    }
-    // Filling the element
-    let filled = easy.fillHtml(cnt_tmp, el);
-    // Adding into container
-    if(rvs == null) rvs = false;
-    if(rvs){
-        _cnt_.insertBefore(filled, _cnt_.children[0]);
-    }else{
-        _cnt_.appendChild(filled);
-    }
-}
-// Easy html handlers
-let e_handler = {
-    // Easy elems getter
-    e_elems: function (cnt) {
-        let result = [].slice.call(cnt.querySelectorAll('*'));
-        let r = [];
-        let inner = cnt.querySelector(`[${e_cmds.e_tmp}]`);
-
-        if(inner) // Checking if it got a e-tmp inside
-            result = result.filter(function(x) {
-                
-                if(([].slice.call(inner.querySelectorAll('*'))).find(function(y){ return y == x; }))
-                { return false; } // Not to be added
-                else if(x == inner)	{ return false; } // Not to be added
-                else { return true; } // To be Added
-
-            });
-        result.filter(function (x) {  
-            r.push.apply(r, e_handler.e_elem(x)); 
-        });
-        r.push.apply(r, e_handler.e_elem(cnt));
-        return r;
-    },
-    // Easy value checker
-    e_checker(v){
-        return v ? v.match(/-e-[^-]*-/g) : null; // Checker function
-    },
-    // Easy element checker
-    e_elem:function (v) {
-        let r = [];
-        ([].slice.call(v.attributes)).filter(function(y) { 
-            let s = e_handler.e_checker(y.value);
-            if(s) r.push(y);
-            return s;
-        });
-
-        if(v.firstChild){
-            if((e_handler.e_checker(v.firstChild.data)))
-                r.push(v.firstChild); 
-        }       
-        return r;
-    },
-    // Easy key restore
-    e_m: function (v) {
-        try {
-            return v.includes(':') ? v = v.split(':')[1] : v;
-        } catch (e) { return v; }
-    },
-    // Helper to add a css style in the DOM
-    css: function () {
-        var r = e_sltr('[e-style]');
-        if (r == null) {
-            let time = 3, duration = 1,
-                opacity = 1, value = 15;
-            var s = document.createElement("style");
-            s.e_attr("e-style", "true");
-            s.textContent = `.e-toTop, .e-toBottom, .e-toRight, .e-toLeft { opacity: .${opacity}; }
-                .e-toTop{ transform: translateY(${value}%); -webkit-transform: translateY(${value}%);
-                animation: toTop .${time}s .${duration}s ease-out forwards;-webkit-animation: toTop .${time}s .${duration}s ease-out forwards; }
-                .e-toBottom{ transform: translateY(-${value}%); -webkit-transform: translateY(-${value}%); 
-                animation: toBottom .${time}s .${duration}s ease-out forwards;-webkit-animation: toBottom .${time}s .${duration}s ease-out forwards;}
-                .e-toRight{ transform: translateX(-${value}%); -webkit-transform: translateX(-${value}%);
-                animation: toRight .${time}s .${duration}s ease-out forwards; -webkit-animation: toRight .${time}s .${duration}s ease-out forwards; }
-                .e-toLeft{ transform: translateX(${value}%); -webkit-transform: translateX(${value}%); 
-                animation: toLeft .${time}s .${duration}s ease-out forwards;-webkit-animation: toLeft .${time}s .${duration}s ease-out forwards; }
-                @keyframes toTop{ from{ opacity: .${opacity}; transform: translateY(${value}%); }
-                to{ opacity: 1; transform: translateY(0%); } }
-                @keyframes toBottom{ from{ opacity: .${opacity}; transform: translateY(-${value}%); }
-                to{ opacity: 1; transform: translateY(0%); } }
-                @keyframes toRight{ from{ opacity: .${opacity}; transform: translateX(-${value}%); }
-                to{ opacity: 1; transform: translateX(0%); } }
-                @keyframes toLeft{ from{ opacity: .${opacity}; transform: translateX(${value}%); }
-                to{ opacity: 1; transform: translateX(0%); } }
-                @-webkit-keyframes toTop{ from{ opacity: .${opacity}; transform: translateY(${value}%); }
-                to{ opacity: 1; transform: translateY(0%); } }
-                @-webkit-keyframes toBottom{ from{ opacity: .${opacity}; transform: translateY(-${value}%); }
-                to{ opacity: 1; transform: translateY(0%); } } 
-                @-webkit-keyframes toRight{ from{ opacity: .${opacity}; transform: translateX(-${value}%); }
-                to{ opacity: 1; transform: translateX(0%); } }
-                @-webkit-keyframes toLeft{ from{ opacity: .${opacity}; transform: translateX(${value}%); }
-                to{ opacity: 1; transform: translateX(0%); } }`;
-            document.head.appendChild(s);
-        }
-    },
-    // Helper to unlink an element from the DOM
-    cutElem: function (v) {
-        let aux = document.createElement('tbody');
-        aux.appendChild(v);
-        let div = document.createElement('tbody');
-        div.innerHTML = aux.innerHTML;
-        return div.children[0]; // # Disconnecting the elem from the DOM
-    },
-    // Get the elems according the data base elem passed in the parameter
-    getEasyElems: function (v) {
-        try {
-            let elems = [].slice.call(e_sltrAll(`[${e_cmds.e_key}]`));
-            return elems.filter(function (x) { // Looping them
-                let key = 'Id'; // Setting the default Id
-                let id = x.e_attr(e_cmds.e_id); // Getting the e-id value
-                if (id) key = id; // Setting it if it's valid
-                let _v_ = x.e_attr(e_cmds.e_key).split(':')[1]; // Gettting the e-key value
-                return _v_ == v[key]; // Checking the data
-            });
-        } catch (e) { return []; }
-    },
-    getHtml: function(v){ return v.outerHTML; }
-}
-/**
- * Helper to serialize form to an array list
- * @param {object} v - the html form selector 
- * @return the form serialized 
- */
-function e_formReader(v) {
-    let type = typeof v;
-    switch (type) {
-        case 'string':
-            return { result: v, type: e_types.selector };
-        case 'object':
-            return { result: v, type: e_types.obj };
-        default:
-            return { result: v, type: e_types.unknown };
-    }
-}
-/**
- * Helper to create an object according the form and/or fill it in case of update funciton 
- * @param {e_formReader} f - the expect e_formReader return
- * @return the updated object
- */
-function e_createObj(f) {
-    let gId = arguments[1], mdl = arguments[2];
-    if (f.type == e_types.unknown) return f.result; // Unknown obj
-    if (f.type == e_types.obj) {
-        if (gId) f.result["Id"] = e_code();
-        return f.result;
-    } // Js obj
-    return e_generateObj({ form: f.result, ident: gId, model:mdl });
-}
-/**
- * Helper function to serialize and create an object according the form (with or not easy proprerties)
- * @param {HTMLElement} frm - The form selector 
- * @returns {Object} - A structed Object or a simple one
- */
-function e_generateObj(input) {    
-    if(typeof input['form'] !== 'string') return input['form'];
-    
-    let elem = e_sltr(input['form']), gId = input['ident'], mdl = input['model'];
-    if (!elem) return input['form'];
-    
-    // Helper
-    if (typeof Object.prototype.e_get !== 'function') {
-        Object.defineProperty(Object.prototype, 'e_get', {
-            value: function (n) {
-                let opts = [], options = input['options']; // Options aux
-                if(options) opts = options[n] ? options[n] : []; // Checking and adding the options
-                for (const l of opts) { // Looping the options
-                    let p = this.e_attr(l); 
-                    if(p) return p; // Setting and returning
-                }
-                return this.e_attr(n); // Returning the default
-            }
-        });
-    }
-    // Builder
-    function builder(obj, str, p) {
-        let res = eval(`obj${str}`);
-        let value = p.e_get('value') == '' ? null : p.e_get('value');
-        if (mdl) { try { value = value ? value : eval(`mdl${str}`); } catch(e){} }
-        
-        if (res != null) {
-            if (mdl) { eval(`obj${str}=value`); } // Updating
-            else writeProp(obj, res, str.substr(1), value, (p.e_attr('e-array') == 'true')); // Writting prop
-        } else { // Creating or Updating
-            eval(`obj${str}=value`);
-        }
-    }
-    // Element builder getter
-    function getBuilders(el, elem) {
-        let els = []; 
-        while (el) {
-            let v = el.e_attr(e_cmds.e_build); // Getting the attr
-            if (v) els.unshift(v); // Adding elements
-            if (elem == el) break; // Breaking the loop
-            el = el.parentNode;
-        }
-        return els.join('.');
-    }
-    // Write a prop in obj
-    function writeProp(obj, res, str, value, arr) {
-        if (arr == true && eval(`obj.${str}`) == null) eval(`obj.${str}=[]`); // Setting the Object to array
-        if (Array.isArray(res) || arr == true){ // Checking if its an array
-            let aux = ''; 
-            if(!Array.isArray(obj)) // Checking if the isn't an array 
-                aux = '.' + str;
-            eval(`obj${aux}.push(value)`); // pushing the value
-        }else if (res != null){ // Checking the result
-            eval(`obj.${str}=[]`); // Setting the Object to array
-            eval(`obj.${str}.push(res)`);
-            eval(`obj.${str}.push(value)`);
-        }
-        else{
-            eval(`obj.${str}=value`); // Setting the prop
-        }
-    }
-    // Object designer
-    function designObj(p_obj, str, value, arr) {
-
-        let auxStr = '', 
-            obj = p_obj, 
-            lst = str.split('.'), 
-            res = undefined;
-
-        if(lst.length > 1){ // Checking the builder is a complex one
-            lst.filter(function (v) { // Looping the builders
-                auxStr = v;
-                let test = eval(`obj.${v}`);
-                res = test; // Setting the result object
-                if (Array.isArray(test)){ // Checking if it's an array
-                    if(lst[lst.length - 1] == v) // Checking if is the last
-                        obj = test; // Getting the object
+                if (isArray) {
+                    // Checking if it already has properties defined
+                    if (!helpers.isInvalid(prop_value))
+                        eval(`obj${path}=[ ...prop_value, value ]`);
                     else
-                        obj = test[test.length-1]; // Getting the last object of the array
-                }
-                else if (test != null && lst[lst.length - 1] != v){
-                    obj = test; // Getting the obj
-                }
-            });
-        }else{
-            auxStr = str; // Getting the string buider
-            res = eval(`obj.${str}`); // Setting the result object
-        }
-        writeProp(obj, res, auxStr, value, arr); // Writting prop
-    }
-    // Object pre-builder
-    function e_preBuildObj(elem, o) { 
-        if(mdl == null){ if (gId) o["Id"] = e_code(); }
-        let elems = elem.querySelectorAll('[name]');
-        e_for(elems, function (p) {
-            if (getBuilders(p, elem) == '') {
-                builder(o, `.${p.e_get('name')}`, p);                    
-            }
-        });
-        return o;
-    }
-    // Pre-building the object
-    let aux = mdl ? JSON.parse(JSON.stringify(mdl)) : {};
-    let obj = e_preBuildObj(elem, aux);
-    // Looping the builder
-    for (const el of elem.querySelectorAll(`[${e_cmds.e_build}]`)) {
-        let str = getBuilders(el, elem); // Getting the builders
-        let attr = el.e_attr(e_cmds.e_build); // Getting the e-build value
-        el.removeAttribute(e_cmds.e_build);
-
-        if(mdl) { aux = eval(`mdl.${str}`); }
-        else { aux = {}; }
-
-        let value = e_preBuildObj(el, aux);
-        el.e_attr(e_cmds.e_build, attr);
-        if(mdl){ eval(`obj.${str}=value`); }
-        else { designObj(obj, str, value, (el.e_attr('e-array') == 'true')); }
-    }
-    return obj;
-
-}
-// Object value getter
-function e_propGetter(v, m) {
-    let value = "";
-    if (v.includes(e_cmds._e_)) {
-        value += v;
-        value = value.replace(e_cmds._e_, ''); // Removing cmd
-        value = value.substr(0, value.length - 1); // Removing the delimiter 
-        try 
-        { value = eval(`m.${value}`); } // Rebuilding the value
-        catch (e) 
-        { try { value = eval(`m.${value.split('.')[0]}`); } catch(e){ value = 'null'; } } // Rebuilding the value
-    } else {
-        value = eval(`m.${v}`); // Executing the value
-    }
-    return value;
-}
-// Helper to get the parent value
-function getParent(v) { return v.parentElement; }
-/**
- * Helper to generate some random e_code
- * @returns a random e_code
- */
-function e_code() {
-    let a = 65, z = a + 25, zero = 48, 
-    nine = zero + 9, alt = 0; // Default vars
-    function rng(v, b, e) { // Code range chars
-        for (let i = b; i <= e; i++) { v += String.fromCharCode(i); }
-        return v;
-    }
-    let r = rng(rng('', zero, nine), a, z), v = '';
-    for (let i = 0; i < 25; i++) {
-        let p = Math.floor(Math.random() * r.length);
-        v += alt == 1 ? r[p].toLowerCase() : r[p];
-        alt = alt == 1 ? 0 : 1;
-    }
-    return v;
-}
-/**
- * The return type of the easy.js function
- * @param {boolean} s - The status of the operation {true or false}
- * @param {string} m - The message of the operation
- * @param {object} r - The result or result value of the operation
- * @returns The easy return type such as {status:..., msg:..., result:...}
- */
-function e_return(s, m, r) { return { status: s, msg: m, result: r }; }
-/**
- * Helper to filter data according to the string of filter
- * @param {Array} v - The array of data to be filtered
- * @param {string} ft - The string to filter. Ex: Name==easy
- * @returns The data filtered
- */
-function e_data_filter(v, ft) {
-    let _op_ = ["==", "!=", "<", ">", "<=", ">="]; // logic operators
-    if (ft != null && ft != undefined && ft != '') { // Checking if we got filter
-        let tst = false;
-        for (let i = 0; i < _op_.length; i++) //Looping the operators
-            if (ft.includes(_op_[i])) {
-                tst = true;
-                break;
-            } //Looking for an operator
-        if (!tst) { e_error('Invalid filter compare operator "' + ft + '"'); return v; }
-        v = v.filter(function (item) { // Looping and filtering the data
-            
-            let op = "", exp = [];
-            e_for(_op_, function (o) {
-                if (ft.includes(o)) {
-                    op = o; exp = ft.split(op);
+                        eval(`obj${path}=[ value ]`);
+                } else {
+                    // Checking if it already has properties
+                    if (prop_value && prop_value.keys().length > 0)
+                        eval(`obj${path}={ ...prop_value, ...value }`);
+                    else
+                        eval(`obj${path}=value`);
                 }
             });
-            
-            let left = item[exp[0].trim()];
-            if (left == undefined) {
-                throw ({ message: `The field "${exp[0].trim()}" on easy.read filter is not a field Reference or object` });
-            }
-            
-            let right = exp[1].trim();
-            return eval(`${left}${op}${right}`);
         });
+
+        return obj;
     }
-    return v;
-}
-/**
- * Helper to search value that matches the in value
- * @param {Array} v - The array of data to be filtered
- * @param {string} f - The string to search. Ex: Afonso
- * @returns The data according the search
- */
-function e_data_search(v, f) {
-    return v.filter(function (x) {
-        return getKeys(x).find(function(k) 
-        { return x[k].toString().toLowerCase().includes(f.toLowerCase()); });        
-    });
-}
-/**
- * Helper to loop through items
- * @param {Array} v - the list of the items
- * @param {Function} cb - the callback of each items
- */
-function e_for(v, cb) {
-    for (let i = 0; i < v.length; i++){ if (cb) { cb(v[i]); } }
-}
-// Error msg
-function e_error(v) { console.error('Error:', v); return v; }
 
-function getKeys(v) {
-    let r = Object.keys(v);
-    return r ? r : [];
-}// Get the keys of an object
+    /**
+     * Message logger
+     * @param {Object} input The object to console and return
+     * @param {String} fun The console function name, by default is 'error'
+     */
+    this.log = (input, fun = 'error') => {
+        return console[fun]('Easy:', input) || input;
+    }
 
-/**
- * Easy Event handler
- * @param {string} v - the selector 
- * @param {string} ev - the event to be called - 'click, dlbclick, etc'
- * @param {Function} cb - the callback to execute
- */
-function e(v, ev, cb) {
-    if(!ev && !cb) return e_sltrAll(v);
-    document.addEventListener(ev, function (e) {
-        let elem = e.target;
-        let parent = getParent(elem);
-        let html = e_sltr('html');
-        do { // Find the elem
-            let array = [];
-            if (!parent) return undefined;
+    // Includes Handler
+    const inc = {
+        /**
+         * The a file from the server
+         * @param {String} path The of the element 
+         * @param {Function} cb The callback if it is ok
+         */
+        async get(path, cb) {
+            // let base = location.pathname;
+            // let array = base.split("/");
+            // let last = array[array.length - 1];
+            // base = base.replace(last, "");
+            
+            // fetch function to get the file
+            let result = await fetch( `${location.origin}/${path}.html` , {
+                // setting the method
+                method: 'get',
+                // the default header content type
+                headers: {
+                    'Content-Type': 'text/plain'
+                }
+            });
 
-            if(typeof v === 'string')
-            { array = [].slice.call(parent.querySelectorAll(v)); }
-            else { array.push(v); }
-
-            if (array.find(function (x) { return x == elem; })) {
-                cb(e, elem);
-                return elem;
-            } else if (html == elem) {
-                return undefined;
+            // Checking if the response is ok
+            if (result.ok) {
+                // Calling the callback
+                cb(await result.text());
             } else {
-                elem = parent; parent = getParent(parent);
-            } // Getting the parent
-        } while (true);
-    }, false);
-}
-// DOM Selector all helper
-function e_sltrAll(v) { try { return document.querySelectorAll(v); } catch(e){} }
-// DOM Selector One helper
-function e_sltr(v) { try { return document.querySelector(v); } catch(e){} }
-// Extensions
-if (typeof Object.prototype.fullTyping !== 'function') {
-    // Adding into Javascript object
-    Object.defineProperty(Object.prototype, "fullTyping", {
-        value: function (cb) {
-            let el = this;
-            let elems = Array.isArray(el) || el.toString().includes('NodeList') ? el : [el]; // Making the elements as a list 
-            for (const elem of elems) {
-                if (elem.tagName != 'INPUT' && elem.tagName != 'TEXTAREA') {
-                    e_error('Element ' + elem.type + ' cannot be applied the fullTyping function'); return;
-                }
-                
-                let delay = 1500, w = false, t_out = null;
-                let enter = false, c = ''; 
-                elem.onkeyup = function (e) {
-                    enter = false;
-                    if (e.keyCode == e_keys.ENTER) { // Enter key pressed
-                        enter = true; w = false; // Assuming that the user finish to type
-                        if (t_out != null) clearTimeout(t_out);
-                        cb(e.target); // Executing the callback
-                        return;
-                    }
-                    
-                    if (!w) {
-                        w = true; // Assuming that the user is typing            
-                        t_out = waitCompleteText(function () { cb(e.target); }, e);
-                    }
-                }
-                function waitCompleteText(cb, e) { 
-                    let t = setTimeout(function () { // Delaying the execution
-                        if (w) {              
-                            clearTimeout(t); // Clearing the timeout
-                            waitCompleteText(cb, e); // Waitng again because the user is still typing
-                        } else {
-                            if (c != e.target.value) {
-                                if (enter == false) { cb(e.target); return t; }
-                                c = e.target.value;
-                            }
-                            clearTimeout(t); // Clearing the timeout
-                        }
-                        w = false; // Assuming that the user finish to type
-                    }, delay);
-                    return t;
-                }
+                self.log(`Unable to load the file: ${path}. \nDescription: ${ result.statusText }`);
             }
-        }
-    });
-}
+        },
+        /**
+         * Html includer main function
+         * @param {String} name The file Name or Path of the element that will be included. 
+         * @param {HTMLElement} inc The inc element that the content will be included. 
+         */
+        async include(name, elem) {
 
-if (typeof Object.prototype.e_attr !== 'function') {
-    Object.defineProperty(Object.prototype, "e_attr", {
-        value: function(e, v) { // Setter and Getter
-            if (v == null) 
-            { return (e == 'value') ? value = this.value || this.getAttribute(e) : this.getAttribute(e); } 
-            else { this.setAttribute(e, v); return v; }
-        }
-    });
-}
-// Global Variables
-const e_calls = []; // Easy calls
-const e_cnts = []; // Easy containers
-//let e_elems = []; // Easy elements
-const e_types = { 
-    obj: 'object',
-    selector: 'form-array',
-    unknown: 'unknown'
-};// Easy obj types
-const e_cmds = { 
-    e_tmp: "e-tmp",
-    e_m_tmp: "e-m-tmp",
-    e_key: "e-key",
-    e_id: "e-id",
-    e_filter: "e-filter",
-    e_anm: 'e-anm',
-    _e_: "-e-",
-    e_code: 'e-code',
-    e_fill: 'e-fill',
-    e_build: 'e-build',
-    e_rvs: 'e-rvs',
-    e_array: 'e-array' 
-};// Easy controls
-// Helper to store the old e_data
-let e_data_old = typeof e_data !== 'undefined' ? e_data : undefined;
+            // Checking if the name is not Ok 
+            if (helpers.isInvalid(name))
+                return self.log(`Invalid value of attribute 'src' or 'inc-src' of '${elem.desc()}'. Or, it's undefiened. `);
+           
+            // Checking if the name is not Ok 
+            if (helpers.isInvalid(elem))
+                return self.log(`Invalid value element of '${name}'. Or, it's undefiened. `);
 
-const e_animation = {
-    up: 'e-toTop',
-    down: 'e-toBottom',
-    left: 'e-toLeft',
-    right: 'e-toRight'
-}; // Animations keys
-// Keyboard key
-const e_keys = { ENTER: 13, ESC: 27, LEFT: 37, RIGHT: 39 };
-// Error custom messages
-const e_error_msg = {
-    connectorError: function () {
-        return "Something went wrong when I was trying to get data from the server. please check your connection.";
-    },
-    notFoudedElem: function (v) {
-        v = v ? v : ''; return `Element ${v} not found. Please, check the selector.`;
-    },
-    notDefinedField: function (v) {
-        v = v ? v : ''; return `Reference, object or field ${v} not defined`;
-    },
-    notValidValue: function (v) {
-        v = v ? v : ''; return `${v} has invalid value`;
-    },
-    notCreated: function (v) {
-        v = v ? v : ''; return `Couldn't prepare the object to be ${v}, please check the 2 parameter of easy.update.
-                                \nNote: The parameter must be a 'element selector' or a 'js object'`;
-    },
-    notFoundedObj: function (v) { v = v ? v : ''; return `Obj ${v} not founded`; },
-    nullDs: function () { return 'Data Source is NULL, please initialize the it as Array.'; }
-};
+            // Set has includer done
+            elem.idone = true;
 
-document.addEventListener('DOMContentLoaded', function () {
-    // Template subcriber
-    const subscribeTmp = function (tmps, name, cb) {
-        for (const el of tmps) {
-            if (el.e_attr(name).trim() != '') {
-                let p = el.parentElement;
-                if(p.e_attr(e_cmds.e_code) == null){
-                    p.e_attr(e_cmds.e_code, e_code());
-                    e_cnts.push({ p: p, e: e_handler.cutElem(el) });
-                }else{
-                    p.innerHTML = '';
-                }
-                if(cb != null) cb(el, p); // calling the callback
-            }
-        }
-    }
-    // Filler subcriber
-    const subscribeFiller = async function (fills) {
-        for (const el of fills) {
-            let tmp = el.e_attr(e_cmds.e_fill);
-            if (tmp.trim() != ''){
-                let src = tmp.includes('[') && tmp.includes(']'); // Checking if is the type src tmp
-                el.e_attr(e_cmds.e_code, e_code()); // Adding the code
-                
-                let n = document.createElement('div'); // Creating and aux dix
-                n.innerHTML = e_handler.getHtml(el); // Getting the html
-                e_cnts.push({ p: null, e: n.children[0] }); // Adding to the cnts
-                
-                let value = tmp.split(':'); // Spliting the options
-                if(typeof e_data !== 'undefined' && !src) // Checking if we got e_data
-                    await easy.getOne(value[0], value[1], el, value[2]); // Getting data and setting
+            // Checking if the replace attribute is defined
+            const no_replace = elem.hasAttribute('no-replace');
+            // Page Get
+            if (name[0] === '@') {
+                // Normalizing the name, removing @
+                const nameNormalized = name.substr(1);
 
-                if(src){ // Checking if it must be taken in the source
-                    try {
-                        value = tmp.substr(1, tmp.length - 2).split(':'); // Spliting the options
-                        let _ds_ = eval(value[0]); // Getting the source 
-                        if(Array.isArray(_ds_)) // Checking if its valid
-                            await easy.source(_ds_).getOne(value[1], el, value[2] ? value[2] : 'Id'); // Getting data and setting
-                    } catch (er) {
-                        e_error(e_error_msg.notFoundedObj(tmp));
+                let el = vars.components[nameNormalized];
+
+                if (!el) {
+                    // Getting the template
+                    el = self.elem.node(`[inc-tmp='${nameNormalized}']`);
+                    // Storing the inc
+                    if (el) {
+                        const div = doc.createElement('div');
+                        el.removeAttribute('inc-tmp');
+
+                        div.innerHTML = el.outerHTML;
+
+                        el = div.children[0];
+                        vars.components[nameNormalized] = el;
                     }
                 }
+
+                // Checking if the template was found
+                if (!el) return self.log(`No element[inc-tmp] was found with this identifier '@${nameNormalized}'`, 'warn');
+
+                if (helpers.isString(el)) return self.log(`Wrong 'src' or 'inc-src', try to set to outer include removing '@' sign in '${name}'.`, 'warn');
+
+                el = el.copyNode();
+
+                const dt = elem.valueIn('data');
+                const fill = (el) => {
+                    const source = helpers.eval(helpers.fromPath(helpers.toPath(dt))) || helpers.eval(dt);
+                    self.html.fill(el, source, true);
+                }
+
+                if (!no_replace){
+                    elem.aboveMe().replaceChild(el, elem);
+                    fill(el);
+                }
+                else{
+                    elem.innerHTML = el.outerHTML;
+                    fill(elem.children[0]);
+                }
+
+                return;
             }
-        }
-    }
-    // Filling the subscribed tmp
-    const fillSubsc = async function (el, p) {
-        if(!el) return;
-        let tmp = el.e_attr(e_cmds.e_tmp); // Getting the tmp value
-        let rvs = el.e_attr(e_cmds.e_rvs) == 'true' ? true : false; // Checking reverse
-        let src = tmp.includes('[') && tmp.includes(']'); // Checking if is the type src tmp
-        
-        if(typeof e_data !== 'undefined' && !src) // Init filling
-            await easy.read(tmp, function (e) { // Getting data and setting
-                easy.addHtml(p, e, rvs);
-            }, el.e_attr(e_cmds.e_filter));
-        
-        if(src){ // Init filling by source
-            try {
-                let _ds_ = eval(tmp.substr(1, tmp.length - 2)); // Getting the source 
-                if(Array.isArray(_ds_)) // Checking if the source is valid
-                    await easy.source(_ds_).read(function (e) { // Getting data and setting
-                        easy.addHtml(p, e, rvs);
-                    }, el.e_attr(e_cmds.e_filter));    
-            } catch (er) {
-                e_error(e_error_msg.notFoundedObj(tmp));
+
+            // Getting the path
+            let path = self.component[name]
+            if (!path) path = name;
+
+            // Server Get
+            // Inserts the content to the DOM
+            const insert = (content, store = false) => {
+                // Storing the content
+                if (store) vars.components[name] = content;
+
+                // Creating a temporary element to transform the result
+                // to a HTML Node
+                const temp = doc.createElement('body');
+                temp.innerHTML = content;
+
+                const el = temp.children[0];
+                const dt = elem.valueIn('data');
+
+                if (!el) return self.log(`The component '${name}' seems to be empty. Please, check it!`, 'warn');
+
+                el.tmpAttr = dt;
+
+                // Adding inner elements
+                const main = el.node('main');
+                if (main) main.outerHTML = elem.innerHTML;
+
+                const fill = (el) => {
+                    const source = helpers.eval(helpers.fromPath(helpers.toPath(dt))) || helpers.eval(dt);
+                    self.html.fill(el, source, true);
+                }
+
+                if (!no_replace){
+                    elem.aboveMe().replaceChild(el, elem);
+                    fill(el);
+                }
+                else{
+                    elem.innerHTML = el.outerHTML;
+                    fill(elem.children[0]);
+                }
+
+                // Looping the scripts
+                for (let s of temp.nodes('script'))
+                    // Evalueting them
+                    eval(s.innerHTML);
             }
-        }
+
+            let compContent = vars.components[name];
+            // Checking if the component is stored
+            if (compContent) {
+                insert(compContent);
+            }
+            // Otherwise, check if we don't have a web request made to this path
+            // because we don't wan't request again 
+            else if (!inc.webRequest[name]) {
+                // Setting that we have a web request to this path
+                inc.webRequest[name] = true;
+                // Getting the data
+                await inc.get(path, function (content) {
+                    delete inc.webRequest[name];
+                    insert(content, true);
+                });
+            }
+            // Otherwise, wait untill the web request is done 
+            else {
+                let t = setInterval(_ => {
+                    // Checking if the component is configured
+                    const content = vars.components[name];
+                    if (content) {
+                        insert(content);
+                        clearInterval(t);
+                    }
+                }, 0);
+            }
+        },
+        /**
+         * Helper to get the source value a inc value 
+         * @param {HTMLElement} elem The inc element
+         */
+        src: elem => elem.valueIn('src') || elem.valueIn('inc-src'),
+        /**
+         * Helper to check if a request to a path is on.
+         * It Stores temporaty the path untill the is complete
+         */
+        webRequest: {}
     }
-    const initEasy = async function () {
-        let v = arguments[0] || document;
-        let elems = v.querySelectorAll(`[${e_cmds.e_tmp}]`); // Getting the e-tmp
-        let m_elems = v.querySelectorAll(`[${e_cmds.e_m_tmp}]`); // Getting the e-m-tmp
-        let e_fills = v.querySelectorAll(`[${e_cmds.e_fill}]`); // Getting the the e-fills
-    
-        subscribeTmp(m_elems, e_cmds.e_m_tmp); // Subscribing e-tmp
-        // Subscribing manual template
-        subscribeTmp(elems, e_cmds.e_tmp, function (el, p) { fillSubsc(el, p); });
-        subscribeFiller(e_fills); // Subscribing fillers
+
+    /**
+     * A code generator
+     * @param {Number} length The length of chars to generate
+     * @returns Some random code
+     */
+    Easy.prototype.code = (length = 25) => {
+        const alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_01234567890';
+        let alt = false,
+            result = '';
+        for (let i = 0; i < length; i++) {
+            let p = Math.floor(Math.random() * alpha.length);
+            result += alt ? alpha[p].toLowerCase() : alpha[p];
+            alt = !alt;
+        }
+        return result;
+    },
+    /**
+     * Easy return type
+     * @param {Boolean} status The status
+     * @param {String} message The message
+     * @param {Object} result The result
+     */
+    Easy.prototype.return = (status, message, result) => {
+        return new Object({
+            status: status,
+            msg: message,
+            result: result
+        });
+    }
+    /**
+     * Helper function to filter results by string value
+     * @param {Array} array - The array to be filtered
+     * @param {String} expression - The string expression. Eg.: Name=='Afonso'
+     */
+    Easy.prototype.filter = (array, expression) => {
+        try {
+            if (!array || !Array.isArray(array)) throw ({
+                message: 'Bad array definition passed in easy filter function, it seems that is not an Array'
+            });
+            if (!expression) return array;
+        } catch (error) {
+            self.log(error);
+            return array;
+        }
+
+        try {
+            return array.filter(model => {
+                let value = helpers.exec(expression, model) || false;
+                return value;
+            });
+        } catch (error) {
+            self.log('Something is wrong with the expression!: ' + expression, 'warn');
+            return [];
+        }
     };
-    // Running easy default funciton 
-    initEasy();
-    // Easy observer
-    const e_observeTmp = function (s, cb) {
-        var observer = new MutationObserver(function (ms) {
-            ms.forEach(function (m) {
-                if (m.addedNodes && m.addedNodes.length > 0) {
-                    let obj = m.addedNodes[0];
-                    if(obj.attributes)
-                        if(obj.e_attr(e_cmds.e_m_tmp) || obj.e_attr(e_cmds.e_tmp)) { cb(obj); }
-                        else {
-                            let list = [].slice.call(obj.querySelectorAll(`[${e_cmds.e_tmp}]`));
-                            list.push.apply(list, obj.querySelectorAll(`[${e_cmds.e_m_tmp}]`));
-                            list.push.apply(list, obj.querySelectorAll(`[${e_cmds.e_fill}]`));
-                            if(list.length) cb(obj);
-                        }
+    
+    // Initializing Easy
+    try {
+        // Setting all the extensions
+        helpers.extensions();
+
+        // Defining the root elem
+        self.elem = document.node(elem);
+        self.component = component;
+
+        // Setting the proxy
+        self.data = UI.observer.proxy({
+            ...data
+        }, function (props, value) {
+
+            const isObject = (typeof value === 'object');
+            const path = helpers.toPath(props);
+            const rootPath = isObject ? path : helpers.toPath([...props].remove());
+
+            const data = eval(`self.data${ rootPath }`);
+
+            for (const comp of vars.proxy) {
+                if(comp.fields && 
+                   comp.fields.find(p => p.path === path || p.exp.startsWith('$this'))) {
+                    if (comp.isIf === true) {
+                        self.html.toggle(comp.elem, data);
+                        continue;
+                    }
+    
+                    UI.fillField(comp.elem, data);
                 }
-                if(m.type == 'attributes'){ // Checking if an attribute was changed
-                    switch (m.attributeName) {
-                        case e_cmds.e_m_tmp: subscribeTmp([m.target], e_cmds.e_m_tmp); break;
-                        case e_cmds.e_tmp: subscribeTmp([m.target], e_cmds.e_tmp, function (el, p) { fillSubsc(el, p); }); break;
-                        case e_cmds.e_fill: subscribeFiller([m.target]); break;
+                else if(isObject && comp.path.startsWith(rootPath)){
+                    self.html.fill(comp.base, data);
+                }
+            }
+        });
+
+        // Initializing easy animation css
+        if (self.elem.node('[e-anm]')) self.css();
+
+        // Checking if the app element is set
+        if (helpers.isInvalid(self.elem)) {
+            self.log('Root element not found, please check it.', 'warn');
+            return self;
+        }
+
+        // Observing the DOM
+        const observer = cb => new MutationObserver(mutations => {
+            const cmds = vars.cmds;
+            mutations.filter(mut => {
+                // For show attribute changes
+                if (mut.attributeName === cmds.if)
+                    if (helpers.exec(mut.target.valueIn(vars.cmds.if)) === false) {
+                        let above = mut.target.aboveMe();
+                        if (above && !mut.target.attributes.hasAttribute(vars.cmds.id))
+                            above.removeChild(mut.target);
+                    }
+
+                // For added nodes
+                for (let node of mut.addedNodes) {
+                    if (node.hasAttribute && helpers.attr(node, [cmds.tmp, cmds.tmp])){
+                        cb(node);
+                    }
+
+                    if(node.tagName === 'INC' || 
+                    (node.hasAttribute && node.hasAttribute('inc-src'))){
+                        const src = node.valueIn('src') || node.valueIn('inc-src'); 
+                        if(!node.idone)
+                            inc.include(src, node);
                     }
                 }
+
+                // For attributes tmp attribute changes
+                if ((mut.attributeName === cmds.tmp || mut.attributeName === cmds.fill)) {
+                    const target = mut.target;
+                    const attr = helpers.attr(target, [cmds.tmp, cmds.tmp]);
+
+                    if (helpers.isInvalid(attr)) return;
+
+                    switch (mut.attributeName) {
+                        case cmds.tmp:
+                            if (!mut.oldValue) return;
+
+                            // Removing the call attached to this container
+                            vars.calls.remove(target._callId);
+                            target._callId = null;
+                            target.innerHTML = '';
+                            target.$tmp.valueIn(cmds.tmp, attr.value);
+
+                            UI.init(target.$tmp);
+                            break;
+                        case cmds.fill:
+                            // Removing the call attached to this element
+                            vars.calls.remove(target._callId);
+                            UI.init(target);
+                            break;
+                    }
+                }
+
             });
         });
-        observer.observe(e_sltr(s), { childList: true, subtree: true, attributes: true });
+
+        // Init... the observer
+        observer(elem => UI.init(elem))
+        .observe(self.elem, {
+            attributes: true,
+            attributeOldValue: true,
+            attributeFilter: [vars.cmds.tmp, vars.cmds.fill, vars.cmds.if, 'inc-src'],
+            childList: true,
+            subtree: true,
+            characterData: false
+        });
+
+        // Listening the DOM
+        doc.listen('DOMContentLoaded', () => UI.read(self.elem, self.data));
+
+    } catch (error) {
+        self.log({
+            msg: 'Error while initializing.',
+            error
+        });
     }
-    // An Easy template observer
-    e_observeTmp('body', function (m) { initEasy(m); }); 
-});  
+
+    return this;
+}
