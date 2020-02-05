@@ -404,14 +404,16 @@ function Easy(elem = '', {
          * @param {Object} _return_ Allow to define if the function needs to have a return value or not
          */
         eval(exp, $data = {}, _return_ = true) {
+            let fields = $data.keys().join(', ');
             try {
                 let value = undefined;
+                if(helpers.isInvalid(exp) || exp === '') return;
                 eval(`let $this = self.data; 
-                      let { ${ $data.keys().join(', ') } } = $data;
+                      let { ${ fields } } = $data;
                       ${ _return_ ? 'value =' : '' } ${exp}`);
                 return value;
             } catch (error) {
-                //console.log(error);
+                self.log(`${error.message} . \nExpression: {{ ${ exp } }} .\nAvailable variables: { ${fields} }.`);
                 return undefined;
             }
         },
@@ -657,23 +659,24 @@ function Easy(elem = '', {
             // Data attribute value
             path = path || (elem.tmpAttr ? elem.tmpAttr.value : null);
             
-            const setFields = (attr, elem) => {
+            // Sets the old value of the attr and the element where it belongs
+            const setBaseProps = (attr, elem) => {
                 attr.$oldValue = attr.$oldValue || attr.nodeValue;
                 attr.$baseElement = attr.$baseElement || elem;
             }
 
-            const addFields = (elem, value) => {
-                if(!elem.$oldFields){
-                    elem.$oldFields = [value]
+            // Adds attrs having easy definition  
+            const addOldAttrs = (elem, value) => {
+                if(!elem.$oldAttrs){
+                    elem.$oldAttrs = [value]
                 }else{
-                    if(elem.$oldFields.find(x => x == value)) return value;
-                    elem.$oldFields.push(value);
+                    if(elem.$oldAttrs.find(x => x == value)) return value;
+                    elem.$oldAttrs.push(value);
                 }
                 return value;
             }
 
             const exec = (elem, dt, path = '') => {
-
                 // Checking if it's a scope element
                 const scope = scopes.find(s => s === elem.nodeName) ? elem : undefined ||
                     helpers.attr(elem, scopes);
@@ -683,13 +686,9 @@ function Easy(elem = '', {
                     if (scope.name === cmds.tmp || scope.name === cmds.fill) {
                         UI.init(elem);
                     }
-                    // For 'inc tag' scope
-                    else if (scope.nodeName === 'INC') {
-                        inc.include(elem.valueIn('src'), elem);
-                    }
                     // For inc
                     else if (scope.name === 'inc-src' || scope.nodeName === 'INC') {
-                        inc.include(elem.valueIn('inc-src'), elem);
+                        inc.include(elem.valueIn('src') || elem.valueIn('inc-src'), elem);
                     }
                     // For 'data' scope
                     else if (scope.name === cmds.data) {
@@ -701,18 +700,19 @@ function Easy(elem = '', {
                         
                         try {
                             const dataPath = helpers.toPath(elem.tmpAttr.value);
-                            source = helpers.eval(helpers.fromPath(dataPath), data);
+                            source = helpers.eval(helpers.fromPath(dataPath), dt);
                             
-                            if(helpers.isInvalid(source)) 
-                                throw ('get other data');
+                            if(helpers.isInvalid(source)) throw ('get other data');
                         } catch {
                             // Building the path or getting the getting the object
-                            source = helpers.eval(elem.tmpAttr.value) || data;
+                            source = helpers.eval(elem.tmpAttr.value) || dt;
                         }
                         
                         let pxy = true;
                         // Checking if it's inline object build
-                        if(elem.tmpAttr.value && elem.tmpAttr.value.includes('{'))
+                        if(elem.tmpAttr.value && 
+                            ( elem.tmpAttr.value.includes('{') || 
+                              elem.tmpAttr.value.includes('[') ))
                             // Storing the inline build object
                             pxy = false;
                         else
@@ -726,9 +726,9 @@ function Easy(elem = '', {
                         if(helpers.isInvalid(cb)) return;
 
                         const parts = scope.value.split(' of ');
-                        const left = parts[0];
-                        const right = parts[1];
+                        const left = parts[0], right = parts[1];
                         const array = helpers.eval(right, dt);
+
                         if(array) {
 
                             elem.forId = elem.forId || self.code();
@@ -796,7 +796,8 @@ function Easy(elem = '', {
                     if(defs) defs.keys((k, v) => self.data[k] = v);
                 }
 
-                const callCallback = (attr, fields, type = cmds.field, aditional = {}) => {
+                // Calls the default UI.read callback
+                const mainAction = (attr, fields, type = cmds.field, aditional = {}) => {
                     fields = fields.map(fl => Object({ ...fl, 
                         path: helpers.fieldPathNormalizer(path, fl.exp, dt) }));
                     // Setting the path in field 
@@ -811,16 +812,18 @@ function Easy(elem = '', {
                 }
 
                 // checking attributes
-                [ ...(elem.$oldFields || []), ...elem.attributes.toArray() ]
+                [ ...(elem.$oldAttrs || []), ...elem.attributes.toArray() ]
                 .filter(attr => {
                     // Event attr
                     if (attr.name.startsWith('listen:') || attr.name.startsWith('on:')) {
                         elem.listen(attr.name.split(':')[1], function () {
-                            const __m__ = data, exp = attr.value, args = arguments;
+                            path = path.includes('{') || path.includes('[') ? '' : path;
+                            const __m__ = dt || {}, exp = attr.value;
                             try {
-                                eval(`let { ${ __m__.keys().join(', ') } } = __m__; 
+                                eval(`let $this = self.data;
+                                let { ${ __m__.keys().join(', ') } } = __m__; 
                                 let res = typeof ${exp} === 'function';
-                                if(res) ${exp}.call(${exp}, ...args);`);
+                                if(res) ${exp}.call(${exp}, ...arguments);`);
                             } catch (error) {
                                 helpers.eval(`self.data${helpers.toPath(path)}.${exp}`, __m__, false);
                             }
@@ -829,12 +832,12 @@ function Easy(elem = '', {
 
                     // if attr
                     if (attr.name === cmds.if) {
-                        addFields(elem, attr);
+                        addOldAttrs(elem, attr);
+                        // Storing the if value into a field and removing it
                         elem[cmds.if] = elem[cmds.if] || attr.value;
                         elem.removeAttribute(cmds.if);
 
-                        if(!helpers.isInvalid(attr.value) && attr.value.trim() === '')
-                            return;
+                        if(!helpers.isInvalid(attr.value) && attr.value.trim() === '') return;
                         
                         // Checking if has some properties defined in the attribute 
                         let fields = attr.value.match(eval(`/${dt.keys().join('|')}/g`)) || [];
@@ -842,15 +845,15 @@ function Easy(elem = '', {
                         // Buiild the fields
                         fields = fields.map(f => Object({ exp: f, field: f }));
 
-                        callCallback(elem, fields, cmds.if, { isIf: true });
+                        mainAction(elem, fields, cmds.if, { isIf: true });
                     }
 
                     // Checking if the it has -e-[Something]- or {{ Something }}
                     const fields = UI.hasField(attr.$oldValue || attr.value);
                     if(fields.length > 0){
-                        setFields(attr, elem);
-                        addFields(elem, attr);
-                        callCallback(attr, fields);
+                        setBaseProps(attr, elem);
+                        addOldAttrs(elem, attr);
+                        mainAction(attr, fields);
                     }
                 });
 
@@ -860,8 +863,8 @@ function Easy(elem = '', {
                     const fields = UI.hasField(elem.firstChild.$oldValue || elem.firstChild.nodeValue);
                     if(fields.length > 0) {
 
-                        setFields(attr, elem);
-                        callCallback(attr, fields);
+                        setBaseProps(attr, elem);
+                        mainAction(attr, fields);
                     }
                 }
 
@@ -873,8 +876,8 @@ function Easy(elem = '', {
 
                             if(fields.length > 0 && helpers.isInvalid(attr.$fields)){
         
-                                setFields(child.nextSibling, elem);
-                                callCallback(child.nextSibling, fields);
+                                setBaseProps(child.nextSibling, elem);
+                                mainAction(child.nextSibling, fields);
                             }
                         }
                     }else{
@@ -883,13 +886,15 @@ function Easy(elem = '', {
                 });
             };
 
+
+            // Checking if the template is already in the list of it
             if (helpers.isInvalid(vars.template.find(t => t.tmp === elem))) {
                 vars.template.push({
                     tmp: elem,
                     model: data
                 });
             }
-
+            // Begining the reading
             exec(elem, data, path);
         },
         /**
@@ -1220,7 +1225,7 @@ function Easy(elem = '', {
                 delete vars.hidden[id];
             }
         }
-    }
+    };
     // Helper to add easy css in the DOM
     this.css = () => {
         let easyStyle = doc.node('[e-style="true"]');
@@ -1328,7 +1333,7 @@ function Easy(elem = '', {
             if (helpers.isInvalid(r.result)) return r;
 
             if (!helpers.isInvalid(cb)) {
-                // Subscribing the callback
+                // Subscribing the event
                 const sub = UI.observer.subscribe({
                     id: `${helpers.tmpNameNormalizer(path)}:${self.code()}`,
                     meth: 'list',
@@ -1337,7 +1342,7 @@ function Easy(elem = '', {
                 });
 
                 r.result.forEach(e => {
-                    e.callId = sub.id;
+                    e._callId = sub.id;
                     sub.run(e);
                 });
             }
@@ -1350,7 +1355,7 @@ function Easy(elem = '', {
     /**
      * Creates an obj (if form is a selector) and send to the available connector to updated it
      * @param {String} path The URL endpoint
-     * @param {HTMLElement | HTMLSelector} form The html element or string selector
+     * @param {HTMLElement} form The html element or string selector
      * @param {string} id The Id of the object that will be updated
      * @return The easy return type
      */
@@ -1440,7 +1445,7 @@ function Easy(elem = '', {
             });
 
             if (!helpers.isInvalid(elem)) {
-                // Subscribing the callback
+                // Subscribing the event
                 const sub = UI.observer.subscribe({
                     id: `${helpers.tmpNameNormalizer(path)}:${self.code()}`,
                     meth: 'get',
@@ -1920,11 +1925,11 @@ function Easy(elem = '', {
      * @param {Object} result The result
      */
     Easy.prototype.return = (status, message, result) => {
-        return new Object({
+        return {
             status: status,
             msg: message,
             result: result
-        });
+        };
     }
     /**
      * Helper function to filter results by string value
@@ -1958,10 +1963,6 @@ function Easy(elem = '', {
         // Setting all the extensions
         helpers.extensions();
 
-        // Defining the root elem
-        self.elem = document.node(elem);
-        self.component = component;
-
         // Setting the proxy
         self.data = UI.observer.proxy({
             ...data
@@ -1988,15 +1989,6 @@ function Easy(elem = '', {
                 }
             }
         });
-
-        // Initializing easy animation css
-        if (self.elem.node('[e-anm]')) self.css();
-
-        // Checking if the app element is set
-        if (helpers.isInvalid(self.elem)) {
-            self.log('Root element not found, please check it.', 'warn');
-            return self;
-        }
 
         // Observing the DOM
         const observer = cb => new MutationObserver(mutations => {
@@ -2054,19 +2046,37 @@ function Easy(elem = '', {
             });
         });
 
-        // Init... the observer
-        observer(elem => UI.init(elem))
-        .observe(self.elem, {
-            attributes: true,
-            attributeOldValue: true,
-            attributeFilter: [vars.cmds.tmp, vars.cmds.fill, vars.cmds.if, 'inc-src'],
-            childList: true,
-            subtree: true,
-            characterData: false
-        });
-
+        
         // Listening the DOM
-        doc.listen('DOMContentLoaded', () => UI.read(self.elem, self.data));
+        doc.listen('DOMContentLoaded', () => {
+            
+            // Defining the root elem
+            self.elem = document.node(elem);
+            self.component = component;
+
+            // Checking if the app element is set
+            if (helpers.isInvalid(self.elem)) {
+                self.log('Root element not found, please check it.', 'warn');
+                return self;
+            }
+
+            // Initializing easy animation css
+            if (self.elem.node('[e-anm]')) self.css();
+
+            UI.read(self.elem, self.data);
+
+            // Init... the observer
+            observer(elem => UI.init(elem)).
+            observe(self.elem, {
+                attributes: true,
+                attributeOldValue: true,
+                attributeFilter: [vars.cmds.tmp, vars.cmds.fill, vars.cmds.if, 'inc-src'],
+                childList: true,
+                subtree: true,
+                characterData: false
+            });
+
+        });
 
     } catch (error) {
         self.log({
