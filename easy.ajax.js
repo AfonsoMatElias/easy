@@ -20,33 +20,34 @@ new EasyConnector('https://jsonplaceholder.typicode.com/', {
  */
 function EasyConnector(baseUrl, fetchOptions = {}){
     // Checking EasyJs definition
-    if (typeof Easy === undefined) return;    
+    if (typeof Easy === undefined)
+        return console.error(`Easy: Could not found Easy Object, it seems like is not imported. Please, make sure easy.js is imported!.`);
     
     // Easy object
-    const self = Easy.prototype;
+    const $e = Easy.prototype;
 
     // Easy connector
     Easy.prototype.conn = {
         baseUrl: baseUrl,
         fetchOptions: fetchOptions, 
         async add(path, obj) {
-            return await self.ajax(path, obj, 'post');
+            return await $e.ajax(path, obj, 'post');
         },
         async remove (path, id) {
             // you may set as you wish
-            return await self.ajax(path + ( id.endsWith('/') ? id : '/' + id ), null, 'delete');
+            return await $e.ajax(path + ( id.endsWith('/') ? id : '/' + id ), null, 'delete');
         },
         async update (path, obj, id) {
             // you may set as you wish
-            return await self.ajax(path + ( id.endsWith('/') ? id : '/' + id ), obj, 'put');
+            return await $e.ajax(path + ( id.endsWith('/') ? id : '/' + id ), obj, 'put');
         },
         async list (path) {
             // you may set as you wish
-            return await self.ajax(path, null, 'get');
+            return await $e.ajax(path, null, 'get');
         },
         async getOne (path, id) {
             // you may set as you wish
-            return await self.ajax(path + ( id.endsWith('/') ? id : '/' + id ), null, 'get');
+            return await $e.ajax(path + ( id.endsWith('/') ? id : '/' + id ), null, 'get');
         }
     };
 
@@ -56,13 +57,13 @@ function EasyConnector(baseUrl, fetchOptions = {}){
     Easy.prototype.ajax = async function (url, body, method) {
         try {
             // Checking if the base url needs to be ignored
-            const builtUrl = url[0] === '@' ? url.substr(1) : self.conn.baseUrl + url; 
+            const builtUrl = url[0] === '@' ? url.substr(1) : $e.conn.baseUrl + url; 
             // Sending or Retrieving the data
             const response = await fetch(builtUrl, {
                 body: body ? JSON.stringify(body) : null,
                 method: method,
                 //Spreading every options defined for fetch API
-                ...self.conn.fetchOptions
+                ...$e.conn.fetchOptions
             });
 
             // Getting the json
@@ -78,9 +79,9 @@ function EasyConnector(baseUrl, fetchOptions = {}){
             //    and passe it in third parameter of self.return(1, 2, ->'3'<-)
             // Eg.: self.return(true, 'Ok', data.data);
 
-            return self.return(true, 'Ok', data);
+            return $e.return(true, 'Ok', data);
         } catch (error) {
-            return self.return(false, error, null);
+            return $e.return(false, error, null);
         }
     };
 }

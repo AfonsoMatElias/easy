@@ -11,10 +11,11 @@ new EasyConnector();
 
 function EasyConnector() {
     // Checking EasyJs definition
-    if (typeof Easy === undefined) return;    
+    if (typeof Easy === undefined)
+        return console.error(`Easy: Could not found Easy Object, it seems like is not imported. Please, make sure easy.js is imported!.`);  
     
     // Easy object
-    const self = Easy.prototype;
+    const $e = Easy.prototype;
 
     // Easy connector
     Easy.prototype.conn = {

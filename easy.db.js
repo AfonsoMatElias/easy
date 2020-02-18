@@ -55,20 +55,21 @@ new EasyConnector();
 
 function EasyConnector() {
     // Checking EasyJs definition
-    if (typeof Easy === undefined) return;    
+    if (typeof Easy === undefined)
+        return console.error(`Easy: Could not found Easy Object, it seems like is not imported. Please, make sure easy.js is imported!.`); 
     
     // Easy object
-    const self = Easy.prototype;
+    const $e = Easy.prototype;
 
     // Easy connector
     Easy.prototype.conn = {
         async add(r, mdl) {
             try {
-                mdl.Id = mdl.Id || self.code(5);
+                mdl.Id = mdl.Id || $e.code(5);
                 let last = ds[r][ds[r].push(mdl) - 1];
-                return self.return(true, 'Ok', last);
+                return $e.return(true, 'Ok', last);
             } catch (error) {
-                return self.return(false, error, null)
+                return $e.return(false, error, null)
             }
         },
         async remove(r, id) {
@@ -76,9 +77,9 @@ function EasyConnector() {
                 let obj = ds[r].get(id);
                 ds[r].remove(id);
     
-                return self.return(true, 'Ok', obj);
+                return $e.return(true, 'Ok', obj);
             } catch (error) {
-                return self.return(false, error, null)
+                return $e.return(false, error, null)
             }
         },
         async update(r, obj, id) {
@@ -86,23 +87,23 @@ function EasyConnector() {
                 let index = ds[r].index(id);
                 ds[r][index].mapObj(obj);
     
-                return self.return(true, 'Ok', ds[r][index]);
+                return $e.return(true, 'Ok', ds[r][index]);
             } catch (error) {
-                return self.return(false, error, null)
+                return $e.return(false, error, null)
             }
         },
         async list(r, filter) {
             try {
-                return self.return(true, 'Ok', [ ...self.filter(ds[r], filter).map(x => Object({ ...x })) ]);
+                return $e.return(true, 'Ok', [ ...$e.filter(ds[r], filter).map(x => Object({ ...x })) ]);
             } catch (error) {
-                return self.return(false, error, null);
+                return $e.return(false, error, null);
             }
         },
         async getOne(r, id) {
             try {
-                return self.return(true, 'Ok', { ...ds[r].get(id) });
+                return $e.return(true, 'Ok', { ...ds[r].get(id) });
             } catch (error) {
-                return self.return(false, error, null);
+                return $e.return(false, error, null);
             }
         },
     };
