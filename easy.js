@@ -143,7 +143,7 @@ function Easy(elem = '', options = {}) {
             const template = $e.html.fill(container.$tmp.copyNode(), data);
 
             if (funcs.isInvalid(container._callId)) {
-                container._callId = data._callId;
+                template._callId = container._callId = data._callId;
                 // Setting the element in web calls
                 vars.webCalls[data._callId].elem = container;
             }
@@ -246,10 +246,13 @@ function Easy(elem = '', options = {}) {
                     call: cb
                 });
 
-                r.result.forEach(function (e) {
-                    e._callId = sub.id;
-                    sub.run(e);
-                });
+                if(Array.isArray(r.result)) 
+                    r.result.forEach(function (e) {
+                        e._callId = sub.id;
+                        sub.run(e);
+                    });
+                else
+                    $e.log(`The result of ${path} is not an array.`);
             }
 
             return r;
@@ -802,7 +805,7 @@ function Easy(elem = '', options = {}) {
 
             // Get from Server
             // Inserts the content to the DOM
-            const insert = function (content, store = false) {
+            function insert(content, store = false) {
                 // Storing the content
                 if (store) inc.components[name] = content;
 
@@ -833,8 +836,13 @@ function Easy(elem = '', options = {}) {
                 const main = el.node('main');
                 if (main) {
                     let above = main.aboveMe();
-                    main.outerHTML = elem.innerHTML;
-                    scripts.push.apply(scripts, above.nodes('script'));
+                    above.removeChild(main);
+                    elem.children.toArray(function(child) {
+                        if(child.nodeName === 'SCRIPT')
+                            scripts.push(child);
+                        else
+                            above.appendChild(child);
+                    });
                 }
                 let scopedStyles;
                 // Looping the scripts
@@ -1399,8 +1407,10 @@ function Easy(elem = '', options = {}) {
             emitAdd: function (r, path) {
                 if (r.status){
                     vars.webCalls.keys(function (key, value) {
-                        if (value.flag === path && value.meth === 'list')
+                        if (value.flag === path && value.meth === 'list'){
+                            r.result._callId = key;
                             value.call(r.result);
+                        }
                     });
                 }
             },
@@ -1502,7 +1512,12 @@ function Easy(elem = '', options = {}) {
                                     // Removing the call attached to this container
                                     delete vars.webCalls[target._callId];
                                     target._callId = null;
-                                    target.innerHTML = '';
+                                    
+                                    target.children.toArray(function(v) {
+                                        if(v._callId === target._callId)
+                                            target.removeChild(v);
+                                    });
+                                    
                                     target.$tmp.valueIn(cmds.tmp, attr.value);
         
                                     ui.init(target.$tmp);
@@ -1560,11 +1575,11 @@ function Easy(elem = '', options = {}) {
         this.hasField = function (str) {
             if (funcs.isInvalid(str) || str === '') return [];
 
-            const res = str.match(/-e-[^-]*-/g) || str.match(/{{(.*?)}}/g);
+            const res = str.match(/-e-[^-]*-/g) || str.match(/{{[^-]*}}/g);
             if (!res) return [];
 
             return res.map(function(m) {
-                const elem = m.match(/-e-(.*?)-/) || m.match(/{{(.*?)}}/);
+                const elem = m.match(/-e-([\S\s]*?)-/) || m.match(/{{([\S\s]*?)}}/);
                 return {
                     field: elem[0],
                     exp: elem[1].trim()
@@ -1586,9 +1601,7 @@ function Easy(elem = '', options = {}) {
                 cmds.tmp, 
                 cmds.fill, 
                 cmds.data, 
-                cmds.for, 
-                cmds.if, 
-                cmds.show, 
+                cmds.for,
                 'INC', 
                 'inc-src'
             ];
@@ -1660,21 +1673,6 @@ function Easy(elem = '', options = {}) {
                             ui.for.fill(elem, array);
                             return;
 
-                        case cmds.if:
-                        case cmds.show:
-
-                            const name = scope.name,
-                            value = scope.value;
-                            if(!funcs.isInvalid(value) && value.trim() === '') return;
-                            
-                            addOldAttrs(elem, scope);
-                            // Storing the if value into a field and removing it
-                            elem[name] = elem[name] || value;
-                            elem.removeAttribute(name);
-
-                            mainAction(elem, [{ exp: value }]);
-                            return;
-
                         default:
                             // For includers
                             if (scope.name === 'inc-src' || scope.nodeName === 'INC')
@@ -1702,6 +1700,20 @@ function Easy(elem = '', options = {}) {
                                 elem.removeAttribute(attr.name);
                                 elem.innerText = attr.value;
                                 break;
+                            case cmds.if:
+                                case cmds.show:
+        
+                                    const name = attr.name,
+                                    value = attr.value;
+                                    if(!funcs.isInvalid(value) && value.trim() === '') return;
+                                    
+                                    addOldAttrs(elem, scope);
+                                    // Storing the if value into a field and removing it
+                                    elem[name] = elem[name] || value;
+                                    elem.removeAttribute(name);
+        
+                                    mainAction(elem, [{ exp: value }]);
+                                    break;
                         
                             default:
                                 // Event attr
@@ -1909,12 +1921,12 @@ function Easy(elem = '', options = {}) {
                 case c.show:
                     
                     const res = ui.toggle[type.replaceAll('e-')](el, $dt);
-                    
-                    // Reading the elem only if th
-                    if(res === true) ui.read(el, $dt);
 
-                    if(!el.$preventMutation) 
-                        el.$preventMutation = true;
+                    // Reading the elem only if th
+                    if(res === true && type === c.if)
+                        if(!el.$preventMutation) 
+                            el.$preventMutation = true;
+
                     return;
                 default: return;
             }
@@ -2083,7 +2095,7 @@ function Easy(elem = '', options = {}) {
      */
     function ObservableProperty({ object, property }) {
         // Execute when some value changes
-        function emitChanges(el, val, $dt) {         
+        function emitChanges(el, val, $dt) {
             ui.compileElem(el, $dt);
         }
 
