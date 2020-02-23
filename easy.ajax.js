@@ -12,7 +12,6 @@ new EasyConnector('https://jsonplaceholder.typicode.com/', {
         "Content-Type": "application/json"
     }
 });
-
 /**
  * Easy Ajax Connector
  * @param {String} baseUrl The base URL
@@ -20,68 +19,62 @@ new EasyConnector('https://jsonplaceholder.typicode.com/', {
  */
 function EasyConnector(baseUrl, fetchOptions = {}){
     // Checking EasyJs definition
-    if (typeof Easy === undefined)
-        return console.error(`Easy: Could not found Easy Object, it seems like is not imported. Please, make sure easy.js is imported!.`);
+    if (typeof Easy === undefined) return;    
     
     // Easy object
-    const $e = Easy.prototype;
-
+    var $e = Easy.prototype;
+    var normalizeId = function(id){
+        if(id === null || id === undefined) return '';
+        return ( id.endsWith('/') ? id : '/' + id );
+    }
     // Easy connector
     Easy.prototype.conn = {
         baseUrl: baseUrl,
         fetchOptions: fetchOptions, 
-        async add(path, obj) {
+        add: async function(path, obj){
             return await $e.ajax(path, obj, 'post');
         },
-        async remove (path, id) {
+        remove: async function(path, id){
             // you may set as you wish
-            return await $e.ajax(path + ( id.endsWith('/') ? id : '/' + id ), null, 'delete');
+            return await $e.ajax(path + normalizeId(id), null, 'delete');
         },
-        async update (path, obj, id) {
+        update: async function(path, obj, id){
             // you may set as you wish
-            return await $e.ajax(path + ( id.endsWith('/') ? id : '/' + id ), obj, 'put');
+            return await $e.ajax(path + normalizeId(id), obj, 'put');
         },
-        async list (path) {
+        list: async function(path, filter){
             // you may set as you wish
-            return await $e.ajax(path, null, 'get');
+            return await $e.ajax(path + normalizeId(filter), null, 'get');
         },
-        async getOne (path, id) {
+        getOne: async function(path, id){
             // you may set as you wish
-            return await $e.ajax(path + ( id.endsWith('/') ? id : '/' + id ), null, 'get');
+            return await $e.ajax(path + normalizeId(id), null, 'get');
         }
     };
 
     /**
      * Function to make an ajax call 
      */
-    Easy.prototype.ajax = async function (url, body, method) {
+    Easy.prototype.ajax = async function(url, body, method){
         try {
-            // Checking if the base url needs to be ignored
-            const builtUrl = url[0] === '@' ? url.substr(1) : $e.conn.baseUrl + url; 
+            // redefine if as http:// or https://
+            var redefine = url.includes('http://') || url.includes('https://');
+            var builtUrl = redefine ? url : $e.conn.baseUrl + url; 
             // Sending or Retrieving the data
-            const response = await fetch(builtUrl, {
+            var response = await fetch(builtUrl, {
                 body: body ? JSON.stringify(body) : null,
                 method: method,
                 //Spreading every options defined for fetch API
                 ...$e.conn.fetchOptions
             });
-
+            
+            if(!response.ok) throw(response);
             // Getting the json
-            const data = await response.json();
+            var data = await response.json();
 
-            // Checking if the response is ok
-            if (!response.ok) throw (data);
-
-            // Note: Always return the real data from the server!
-            // If the server returns a structure is like this
-            // { data: object, errors: array, sucecess: boolean }
-            // You need to access the 'data' proprierty from the result data 
-            //    and passe it in third parameter of self.return(1, 2, ->'3'<-)
-            // Eg.: self.return(true, 'Ok', data.data);
-
-            return $e.return(true, 'Ok', data);
-        } catch (error) {
-            return $e.return(false, error, null);
+            return Promise.resolve($e.return(true, 'Ok', data));
+        } catch (error){
+            return Promise.reject($e.return(false, error, null));
         }
     };
 }

@@ -15,44 +15,44 @@ function EasyConnector() {
         return console.error(`Easy: Could not found Easy Object, it seems like is not imported. Please, make sure easy.js is imported!.`);  
     
     // Easy object
-    const $e = Easy.prototype;
+    var $e = Easy.prototype;
 
     // Easy connector
     Easy.prototype.conn = {
-        async add(path, obj) {
+        add: function(path, obj) {
             // TODO insert:
             // Success
-            // return self.return(true, 'Replace this with success message here', {'Replace this with object'})
+            // return Promise.resolve($e.return(true, 'Replace this with success message here', {'Replace this with object'}));
             // Error 
-            // return self.return(false, 'Replace this with error message here', null); 
+            // return Promise.reject($e.return(false, 'Replace this with error message here', null)); 
         },
-        async remove(path, id) {
+        remove: function(path, id) {
             // TODO delete:
             // Success
-            // return easy.return(true, 'Replace this with success message here', {'Replace this with object'})
+            // return Promise.resolve($e.return(true, 'Replace this with success message here', {'Replace this with object'}));
             // Error 
-            // return easy.return(false, 'Replace this with error message here', null); 
+            // return Promise.reject($e.return(false, 'Replace this with error message here', null)); 
         },
-        async update(path, obj, id) {
+        update: function(path, obj, id) {
             // TODO update:
             // Success
-            // return easy.return(true, 'Replace this with success message here', {'Replace this with object'})
+            // return Promise.resolve($e.return(true, 'Replace this with success message here', {'Replace this with object'}));
             // Error 
-            // return easy.return(false, 'Replace this with error message here', null); 
+            // return Promise.reject($e.return(false, 'Replace this with error message here', null)); 
         },
-        async list(path, filter) {
+        list: function(path, filter) {
             // TODO select/list:
             // Success
-            // return easy.return(true, 'Replace this with success message here', {'Replace this with object'})
+            // return Promise.resolve($e.return(true, 'Replace this with success message here', {'Replace this with object'}));
             // Error 
-            // return easy.return(false, 'Replace this with error message here', null); 
+            // return Promise.reject($e.return(false, 'Replace this with error message here', null)); 
         },
-        async getOne(path, id) {
+        getOne: function(path, id) {
             // TODO select one:
             // Success
-            // return easy.return(true, 'Replace this with success message here', {'Replace this with object'})
+            // return Promise.resolve($e.return(true, 'Replace this with success message here', {'Replace this with object'}));
             // Error 
-            // return easy.return(false, 'Replace this with error message here', null); 
+            // return Promise.reject($e.return(false, 'Replace this with error message here', null)); 
         },
     };
 }

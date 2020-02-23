@@ -4,8 +4,8 @@
  *
  * # easy.js
  * Released under the MIT License.
- * Easy.js 'easy and asynchronous js' is a javascript library that helps the designer or programmer
- * to build web application faster without writting too many lines of js codes.
+ * Easy.js 'easy and asynchronous js' is a javascript library that helps the (web) developer
+ * build web application faster without writting too many lines of js codes.
  * Copyright 2019 Afonso Matumona <afonsomatumona@hotmail.com>
  *
  * ## Salute 😉
@@ -23,12 +23,10 @@ function Easy(elem, options){
     // The main object reference
     var $e = this;
     if(!options) options = {};
-    
     // Store every objects of the 
     $e.data = {};
     // Defining the $this reference
     var $this = $e.data; 
-
     // Store adddress of every property defined in the 'data' 
     var propertiesAddress = {};
     
@@ -115,7 +113,6 @@ function Easy(elem, options){
             'Symbol'
         ] // String Instantiable classes
     };
-
     function extendObj(){
         var out = {};
         arguments.keys(function(idx, value){
@@ -126,7 +123,6 @@ function Easy(elem, options){
         });
         return out;
     };
-
     function extendArray(){
         var out = [];
         arguments.keys(function(idx, value){
@@ -139,8 +135,7 @@ function Easy(elem, options){
         });
         return out;
     };
-
-    function defineIfUndefined(obj, options){
+    function setDefault(obj, options){
         if(!obj) obj = {};
         if(!options) options = {};
         options.keys(function(k, v){
@@ -149,14 +144,22 @@ function Easy(elem, options){
       });
       return obj;
     };
-
     function toArray(obj, cb){
         if(!obj) return [];
         var array = [].slice.call(obj);
         // Calling the callback if it needs
         if(cb) func.loop(array, cb);
         return array;
-    }
+    };
+    function isSkip(name){
+        switch (name){
+            case "#comment": return true;
+            case "#text": return true;
+            case "SCRIPT": return true;         
+            case "STYLE": return true;
+            default: return false;
+        }
+    };
     
     // Error messages
     var error = {
@@ -182,7 +185,7 @@ function Easy(elem, options){
          */
         add: function(container, data, options){
             if(!data) data = {};
-            options = defineIfUndefined(options, {
+            options = setDefault(options, {
                 elem: null,
                 reverse: false
             });
@@ -235,7 +238,6 @@ function Easy(elem, options){
             return element;
         }
     };
-    
     /**
      * Creates an obj (if form is a selector) and send it to the available connector
      * @param {String} path The URL endpoint
@@ -440,7 +442,7 @@ function Easy(elem, options){
      * @returns {Object} Javascript object
      */
     this.toJsObj = function(input, options){
-        options = defineIfUndefined(options, {
+        options = setDefault(options, {
             names: '[name]',
             values: '[value]'
         });
@@ -598,7 +600,6 @@ function Easy(elem, options){
 
         return obj;
     };
-
     // Helper to add easy css in the DOM
     Easy.prototype.css = function(){
         var easyStyle = doc.node('[e-style="true"]');
@@ -720,7 +721,6 @@ function Easy(elem, options){
             return [];
         }
     };
-
     /**
      * Sets values in the data 
      */
@@ -1001,8 +1001,7 @@ function Easy(elem, options){
             e.innerHTML = func.isString(el) ? el : el.outerHTML;
             return e.children[0];
         }
-    }
-
+    };
     /**
      * Functions and extensions used by easy
      */
@@ -1102,6 +1101,7 @@ function Easy(elem, options){
          * @param {Boolean} remove Allow to remove the attribute if was found
          */
         this.attr = function(elem, attrs, remove){
+            if(!elem) return;
             if(!attrs) return;
             if(func.isInvalid(remove)) remove = false;
             if(func.isInvalid(elem.attributes)) return;
@@ -1127,7 +1127,7 @@ function Easy(elem, options){
             // Getting the value
             var value = str;
 
-            func.loop(ui.hasField(value), function(field){
+            func.loop(ui.hasDelimiter(value), function(field){
                 var val = func.exec(field.exp, $dt, true);
                 value = value.replaceAll(field.field, val);
             });
@@ -1395,20 +1395,17 @@ function Easy(elem, options){
         // Adds Event listener in a object or a list of it
         def('listen', function(name, cb){
             var elems = Array.isArray(this) ? this : [this];
-
             // Looping the elements
             func.loop(elems, function(elem){
                 // Checking if the element is valid
-                if(!(elem instanceof Node))
+                if(!(elem instanceof Node) && (elem !== window))
                     return $e.log("Cannot apply '"+ name +"'to the element" + elem.desc() + ".")
-
                 // Event object
                 var evt = {
                     event: name,
                     func: cb,
                     options: false
                 }
-
                 elem.addEventListener(evt.event, function(){
                     // base property where will be passed the main object, **not the target**.
                     arguments[0]['base'] = elem;
@@ -1452,7 +1449,6 @@ function Easy(elem, options){
             return (this.substr(0, value.length) === value);
         }, String);
     };
-
     /**
      * Handler 
      */
@@ -1541,48 +1537,46 @@ function Easy(elem, options){
                                 if(above && !mut.target.attributes.hasAttribute(vars.cmds.id))
                                     above.removeChild(mut.target);
                             }
-        
                         // For added nodes
                         func.loop(mut.addedNodes, function(node){
                             // Checking if the element needs to be skipped
                             if(node.$preventMutation) return;
 
                             // Skip if it's a comment
-                            if(node.nodeName === "#comment") return;
-
-                            switch (node.nodeName){
-                                case 'SCRIPT':
-                                case 'STYLE':
-                                    return;
-                            
-                                default:
-                                    cb(node);                                    
-                                    return;
-                            }
+                            if(isSkip(node.nodeName)) return;
+ 
+                            cb(node);                                    
                         });
 
                         if(mut.removedNodes.length > 0){
                             maintenance();
                         }
-        
-                        var target = mut.target;
 
+                        var target = mut.target;
                         function tmp() {
+                            if(!target.$tmp) return;
+
                             toArray(target.children, function(child){
-                                if(child._callId === target._callId)
+                                if(child._callId && child._callId === target._callId)
                                     target.removeChild(child);
                             });
+                            
                             // Removing the call attached to this container
                             delete vars.webCalls[target._callId];
                             delete target._callId;
 
                             var attr = func.attr(target, [cmds.tmp]);
                             if(attr) target.$tmp.valueIn(cmds.tmp, attr.value);
+                            // Defining the container in the tmp to be able to find it
+                            // As the tmp as not parentNode
                             target.$tmp.__ctn__ = target;
+                            // Removing the attribute added
+                            target.removeAttribute(cmds.tmp);
                             
                             ui.init(target.$tmp);
                             maintenance();
                         }
+
                         function fill() {
                             // Removing the call attached to this element
                             delete vars.webCalls[target._callId];
@@ -1591,15 +1585,18 @@ function Easy(elem, options){
                             ui.init(target);
                             maintenance();
                         }
-                        switch (mut.attributeName){
-                            case cmds.tmp: tmp(); break;
-                            case cmds.fill: fill(); break;
-                            case cmds.id:
-                                if(target.$tmp) tmp();
-                                else if(target._callId) fill();
-                                break;
-                            default: break;
-                        }
+
+                        // Only fire when the attribute exists
+                        if(target.hasAttribute(mut.attributeName))
+                            switch (mut.attributeName){
+                                case cmds.tmp: tmp(); break;
+                                case cmds.fill: fill(); break;
+                                case cmds.id:
+                                    if(target.$tmp) tmp();
+                                    else if(target._callId) fill();
+                                    break;
+                                default: break;
+                            }
 
                     });
                 });
@@ -1625,31 +1622,28 @@ function Easy(elem, options){
                 }); 
             },
             getAll: function(elem, id){
-                if(!elem) return undefined;
-                
+                if(!elem) return [];
                 var filterNone = function (){ return NodeFilter.FILTER_ACCEPT; }; 
                 var iterator = document.createNodeIterator(elem, NodeFilter.SHOW_COMMENT, filterNone, false); 
-                
                 var nodes = [], node; 
                 while (node = iterator.nextNode()){
                     if(node.$id === id || id === undefined) 
                         nodes.push(node);
                 }
-
                 return nodes;
             }
         };
         /**
-         * handle a string to see if it gots easy commands written
+         * Check if a string has the delimiter
          * @param {String} str The input string that needs to be checked
          */
-        this.hasField = function(str){
+        this.hasDelimiter = function(str){
             if(func.isInvalid(str) || str === '') return [];
 
             var delimiter = {
                 easy: function(text, flag){
                     return text.match(RegExp('-e-([\\S\\s]*?)-', flag));
-                } ,
+                },
                 common: function(text, flag){
                     return text.match(RegExp('{{([\\S\\s]*?)}}', flag));
                 } 
@@ -1671,7 +1665,7 @@ function Easy(elem, options){
          * @param {Object} data The object model having the data 
          * @param {Object} path The path to get the data
          */
-        this.read = function(elem, $data, path){
+        this.read = function(elem, $data){
             if(func.isInvalid(elem)) return [];
             if(!$data) $data = {};
 
@@ -1691,7 +1685,6 @@ function Easy(elem, options){
                 if(!attr.$e.$oldValue) attr.$e.$oldValue = attr.nodeValue;
                 if(!attr.$e.$baseElement) attr.$e.$baseElement = elem;
             }
-
             // Adds attrs having easy definition  
             function addOldAttrs(elem, value){
                 if(!elem.$e.$oldAttrs){
@@ -1703,12 +1696,11 @@ function Easy(elem, options){
                 }
                 return value;
             }
-
             // Skipping the root element
-            // Checking if the template is already in the list of it
             if(elem !== $e.elem){
                 if(!elem.$e) elem.$e = {};
                 var check = elem.$e;
+                // Checking if the template is already in the list of it
                 if(!check.tmpid){
                     check.tmpid = check.tmpid || $e.code();
                     var obj = {
@@ -1721,13 +1713,7 @@ function Easy(elem, options){
 
             (function exec(elem, $iData){
                 // Ignore
-                switch (elem.nodeName){
-                    case "#comment": return;
-                    case "SCRIPT": return;                
-                    case "STYLE": return;                
-                    default: break;
-                }
-
+                if(elem.nodeName === '#comment') return;
                 // Calls the default UI.read callback
                 function mainAction(el, fields){
                     // Setting the path in field
@@ -1737,10 +1723,8 @@ function Easy(elem, options){
                         ui.compileElem(el, $iData);
                     });
                 }
-
                 // Checking if it's a scope element
                 var scope = scopes[elem.nodeName] ? elem : func.attr(elem, scopes.keys());
-
                 if(scope){
                     switch (scope.name){
                         case cmds.tmp:
@@ -1758,14 +1742,13 @@ function Easy(elem, options){
 
                         case cmds.for:
                             if(!scope.value) return $e.log('Invalid value in e-for');
-                            // Spliting the content
                             var body = scope.value.split(' of ');
-                            
                             var array;
+                            // Checking array definition type                            
                             if(body.length === 1) array = body[0];
                             else array = body[1];
 
-                            ui.for.fill(elem, func.eval(array, $iData));
+                            ui.for.run(elem, func.eval(array, $iData));
                             return;
 
                         default:
@@ -1776,8 +1759,7 @@ function Easy(elem, options){
                             return;
                     }
                 }
-
-                // checkin var property definer
+                // Checkind if is a property definer
                 var isDef = func.attr(elem, [cmds.def], true);
                 if(isDef){
                     // Evaluating the object that needs to be created
@@ -1785,31 +1767,30 @@ function Easy(elem, options){
                     // Defining it in the easy data property
                     if(defs) $e.setData(defs);
                 }
-
                 // checking attributes
                 func.loop((elem.$e || {}).$oldAttrs || toArray((elem.attributes || [])),
                 function(attr){
                     if(!attr.$e) attr.$e = {};
-
                     switch (attr.name){
                         case cmds.content:                        
                             elem.innerHTML = func.attr(elem, [attr.name], true).value;
                             break;
+
                         case cmds.if:
                         case cmds.show:
                             if(!elem.$e) elem.$e = {};
                             
-                            var name = attr.name,
-                            value = attr.value;
+                            var name = attr.name, value = attr.value;
                             if(!func.isInvalid(value) && value.trim() === '') return;
                             
                             addOldAttrs(elem, attr);
-                            // Storing the if value into a field and removing it
+                            // Storing the if value of the command and removing it
                             elem.$e[name] = elem.$e[name] || value;
                             elem.removeAttribute(name);
 
                             mainAction(elem, [{ exp: value }]);
                             break;
+
                         default:
                             if(!elem.$e) elem.$e = {};
                             // Event attr
@@ -1820,7 +1801,7 @@ function Easy(elem, options){
                                     attr.value + ".apply(null, $args);", $iData || {}, false, arguments);
                                 });
                             }
-
+                            // Bind attr
                             if(attr.name.beginWith('e-bind')){
                                 var val = attr.name.split(':'), 
                                 field = val.length === 1 ? 'value' : val[1];                                    
@@ -1841,10 +1822,8 @@ function Easy(elem, options){
                                 binding(elem, $iData, function(){
                                     ui.setValue(elem, $iData);
                                 }, { two: true });
-                            }
-                            else {
-                                // Checking if the it has -e-[Something]- or {{ Something }}
-                                var fields = attr.$e.$fields || ui.hasField(attr.value);
+                            } else {
+                                var fields = attr.$e.$fields || ui.hasDelimiter(attr.value);
                                 if(fields.length > 0){
                                     setBaseProps(attr, elem);
                                     addOldAttrs(elem, attr);
@@ -1854,13 +1833,12 @@ function Easy(elem, options){
                             break;
                     }
                 });
-                
                 // Checking the textcontent
                 if(elem.nodeValue){
                     var text = elem, fields;
                     if(!text.$e) text.$e = {};
                     if(text.$e.$fields && text.$e.$fields.length > 0) fields = text.$e.$fields;
-                    else fields = ui.hasField(text.$e.$oldValue || text.nodeValue);
+                    else fields = ui.hasDelimiter(text.$e.$oldValue || text.nodeValue);
                     
                     if(fields.length > 0){
                         setBaseProps(text, elem);
@@ -2004,7 +1982,6 @@ function Easy(elem, options){
                 return res;
             }
         }
-
         /**
          * Get an element/attribute and compile the value based on the data passed
          * @param {Element} elem The element to toggled according easy show attribute 
@@ -2026,9 +2003,7 @@ function Easy(elem, options){
                     return;
                 case c.if: 
                 case c.show:
-                    
                     var res = ui.toggle[type.replaceAll('e-')](el, $dt);
-
                     // Reading the elem only if th
                     if(res === true && type === c.if)
                         if(!el.$preventMutation) 
@@ -2038,10 +2013,9 @@ function Easy(elem, options){
                 default: return;
             }
         };
-
         // Function for 'e-for' scope
         this.for = {
-            fill: function(elem, array, before){
+            run: function(elem, array, before){
                 var name = vars.cmds.for,
                       attr = func.attr(elem, [name]);
 
@@ -2057,7 +2031,7 @@ function Easy(elem, options){
                         message: 'It seems like the array defined in e-for is invalid',
                         elem: elem,
                         expression: attr.value 
-                    });
+                    }, 'warn');
                 }
 
                 var body = attr.value.split(' of '),
@@ -2076,7 +2050,7 @@ function Easy(elem, options){
                     elem.$arrayid = arrayId;
                     // Removing the current element
                     elem.aboveMe().replaceChild(comment, elem);
-                } 
+                }
                 
                 for (var i = 0; i < len; i++){
                     var item = array[i], 
@@ -2099,8 +2073,8 @@ function Easy(elem, options){
                     }
 
                     ui.read(copy, obj);
-
                     copy.$preventMutation = true;
+
                     comment.parentNode.insertBefore(copy, before || comment);
                 }
             }
@@ -2114,7 +2088,6 @@ function Easy(elem, options){
             var attr = func.attr(elem, [cmds.fill, cmds.tmp, cmds.data], true);
             attr = elem.tmpAttr = attr || elem.tmpAttr;
             if(func.isInvalid(elem.tmpAttr)) return;
-
             // tmp/fill actions
             var actions = {
                 'e-tmp': {
@@ -2127,6 +2100,13 @@ function Easy(elem, options){
                     main: function(e, expression, container){
                         var counter = 1;
                         var rvs = e.valueIn(cmds.rvs) === 'true' ? true : false;
+                        
+                        // Getting the value of e-id and defining in properties of the element
+                        var eId, attr = func.attr(e, [cmds.id], true);
+                        if(attr){
+                            eId = func.compile(attr.value, $this);
+                            e[cmds.id] = attr;
+                        }
 
                         $e.read(expression, function(data){
                             var insert = function(){
@@ -2139,42 +2119,43 @@ function Easy(elem, options){
                             else
                                 insert();
 
-                        }, func.compile(e.valueIn(cmds.id), $this));
+                        }, eId);
                     }
                 },
                 'e-fill': {
                     // Main action
                     main: function(e, expression){
-                        $e.getOne(expression, func.compile(e.valueIn(cmds.id), $this), e);
+                        // Getting the value of e-id and defining in properties of the element
+                        var eId, attr = func.attr(e, [cmds.id], true);
+                        if(attr){
+                            eId = func.compile(attr.value, $this);
+                            e[cmds.id] = attr;
+                        }
+                        
+                        $e.getOne(expression, eId, e);
                     }
                 }
             }
 
-            var container = null;
-            
+            var container = null;            
             if(attr.name === cmds.data){
                 var source = func.eval(attr.value);
                 $e.html.fill(elem, source, true);
             } else {
-
                 switch (attr.name){
                     // For fill template 
                     case cmds.fill:
                         // In case of fill without value
-                        if(func.isInvalid(attr.value) || attr.value === ''){
-                            $e.html.fill(elem);
-                            return;
-                        }
+                        if(func.isInvalid(attr.value) || attr.value === '')
+                            return $e.log(error.invalid('In' + attr.name));
                         break;
                         // For tmp template
                     case cmds.tmp:
-
                         if(elem.__ctn__){
-                            container = elem.__ctn__; break; 
+                            container = elem.__ctn__; break;
                         }
-
                         container = elem.aboveMe();
-                        container.valueIn(cmds.tmp, attr.value);
+                        container[cmds.tmp] = attr.value;
                         // Setting the template value in the container
                         container.$tmp = elem;
                         container.removeChild(elem);
@@ -2193,7 +2174,6 @@ function Easy(elem, options){
             }
         }
     };
-
     /**
      * Makes a primitive property reactive on get and set
      * @param {Object} object The object having the property to observe
@@ -2242,8 +2222,7 @@ function Easy(elem, options){
         });
         // Setting the default value
         object[property] = propertiesAddress[address][property].value;
-    }
-
+    };
     /**
      * Makes some array methods reactive on the calls
      * @param {Object} object The object having the property to observe
@@ -2291,7 +2270,7 @@ function Easy(elem, options){
             ui.comment.getAll($e.elem, currArray._lid).
             filter(function(com){
                 removeAll(getListedElements(com));
-                ui.for.fill(com.$tmp, currArray);
+                ui.for.run(com.$tmp, currArray);
             });
         }
 
@@ -2349,7 +2328,6 @@ function Easy(elem, options){
         });
         return this;
     }
-
     /**
      * Makes an object Reactive , it already includes 'ReactiveProperty' and 'ReactiveArray'  
      * @param {Object} object The object to observe
@@ -2383,7 +2361,6 @@ function Easy(elem, options){
         }
         return obj;
     }
-
     /**
      * Binds a value to an element and/or element to a value and vice-versa
      * @param {Object} options Bind configuration properties
@@ -2439,7 +2416,6 @@ function Easy(elem, options){
             }
         }
     }
-
     /**
      * Bind properties that was read
      * @param {Node} el The element to be binded
@@ -2481,7 +2457,6 @@ function Easy(elem, options){
             default: break;
         }
     }
-
     // Global Object functions
     $e.global.$e = function(selector){
         if(!selector) return $e.log('Invalid selector');
@@ -2509,7 +2484,7 @@ function Easy(elem, options){
         return result;
     }
 
-    // Browser compatibility
+    // Classes for Browser compatibility
     if(typeof Promise === 'undefined'){
         $e.global.Promise = function(promise) {
             var self = this;
@@ -2599,5 +2574,7 @@ function Easy(elem, options){
         });
     }
 
+    // Exports
+    $e.setDefault = setDefault;
     return $e;
 }
