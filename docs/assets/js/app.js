@@ -9,20 +9,17 @@ document.addEventListener('DOMContentLoaded', function () {
             themeIco: 'fa-moon-o'
         },
         components: {
-            config:{
-                base: '/docs/'
-            },
             elements: {
-                top: "/docs/components/top",
-                editor: "/docs/components/editor",
+                top: "/components/top",
+                editor: "/components/editor",
                 main: {
-                    url: "/docs/components/main",
+                    url: "/components/main",
                     title: 'Easy',
                     route: '/',
                     isDefault: true
                 },
                 tutorial: {
-                    url: "/docs/components/tutorial",
+                    url: "/components/tutorial",
                     title: 'Documentation',
                     route: '/tutorial'
                 }
