@@ -8,7 +8,7 @@
     }
 </style>
 <p class="center" style="height:120px">
-    <img height="120px" src="assets/ico/main_ico.png" />
+    <img height="120px" src="assets/web/img/main_ico.png" />
 <p>
 
 <h2 class="center"> easy.js </h2>

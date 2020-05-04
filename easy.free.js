@@ -1,58 +1,82 @@
-/**
+﻿/**
  * @author Afonso Matumona Elias
  * @version v2.0.0
  * Released under the MIT License.
- * This is easy.js free connector, you may create your own connector. 
- * 
- * # Salute 😉
+ * This is easy.js free connector..
+ * The user can create his own connector based on this one.
  */
 
 new EasyConnector();
 
+/** Easy Connector */
 function EasyConnector() {
+    this.name = "Easy Connector";
+    this.version = '2.0.0';
     // Checking EasyJs definition
-    if (typeof Easy === undefined)
-        return console.error(`Easy: Could not found Easy Object, it seems like is not imported. Please, make sure easy.js is imported!.`);  
-    
-    // Easy object
-    var $e = Easy.prototype;
+    if (typeof Easy === undefined) return;
+    var $easy = Easy.prototype;
+
+    // $easy.return(Boolean, Message, Response);
+    //
+    // $easy.return(  
+    //        -> Response Status (Boolean) <- , 
+    //        -> Some Message (String) <-, 
+    //        -> Response Data <- 
+    //     );
+    //
+    // Return: { status: (...), msg: (...), result: (...) }
 
     // Easy connector
-    Easy.prototype.conn = {
-        add: function(path, obj) {
-            // TODO insert:
-            // Success
-            // return Promise.resolve($e.return(true, 'Replace this with success message here', {'Replace this with object'}));
-            // Error 
-            // return Promise.reject($e.return(false, 'Replace this with error message here', null)); 
+    $easy.conn = {
+        add: function (path, obj) {
+            // TODO: Code here...
+
+            return new Promise(function(resolve, reject) {
+                // Resolve data
+                resolve($easy.return(true, Message, Response));
+                // Reject data
+                reject($easy.return(false, Message, Response));
+            });
         },
-        remove: function(path, id) {
-            // TODO delete:
-            // Success
-            // return Promise.resolve($e.return(true, 'Replace this with success message here', {'Replace this with object'}));
-            // Error 
-            // return Promise.reject($e.return(false, 'Replace this with error message here', null)); 
+        remove: function (path, id) {
+            // TODO: Code here...
+
+            return new Promise(function(resolve, reject) {
+                // Resolve data
+                resolve($easy.return(true, Message, Response));
+                // Reject data
+                reject($easy.return(false, Message, Response));
+            });
         },
-        update: function(path, obj, id) {
-            // TODO update:
-            // Success
-            // return Promise.resolve($e.return(true, 'Replace this with success message here', {'Replace this with object'}));
-            // Error 
-            // return Promise.reject($e.return(false, 'Replace this with error message here', null)); 
+        update: function (path, obj, id) {
+            // TODO: Code here...
+
+            return new Promise(function(resolve, reject) {
+                // Resolve data
+                resolve($easy.return(true, Message, Response));
+                // Reject data
+                reject($easy.return(false, Message, Response));
+            });
         },
-        list: function(path, filter) {
-            // TODO select/list:
-            // Success
-            // return Promise.resolve($e.return(true, 'Replace this with success message here', {'Replace this with object'}));
-            // Error 
-            // return Promise.reject($e.return(false, 'Replace this with error message here', null)); 
+        list: function (path, extra) {
+            // TODO: Code here...
+
+            return new Promise(function(resolve, reject) {
+                // Resolve data
+                resolve($easy.return(true, Message, Response));
+                // Reject data
+                reject($easy.return(false, Message, Response));
+            });
         },
-        getOne: function(path, id) {
-            // TODO select one:
-            // Success
-            // return Promise.resolve($e.return(true, 'Replace this with success message here', {'Replace this with object'}));
-            // Error 
-            // return Promise.reject($e.return(false, 'Replace this with error message here', null)); 
-        },
+        getOne: function (path, id) {
+            // TODO: Code here...
+
+            return new Promise(function(resolve, reject) {
+                // Resolve data
+                resolve($easy.return(true, Message, Response));
+                // Reject data
+                reject($easy.return(false, Message, Response));
+            });
+        }
     };
 }

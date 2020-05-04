@@ -1,0 +1,133 @@
+<div class="main-view tutorial-page">
+
+    <aside class="tutorial-menu">
+        <div class="top">
+            <div class="prev">
+                <a href="/prev" class="center-icon fa fa-angle-left"></a>
+            </div>
+            <div class="menu-btn-container">
+                <div class="menu-btn">
+                    <span></span>
+                </div>
+            </div>
+            <div class="dir">
+                <h4 class="current-menu"> Introduction </h4>
+            </div>
+            <div class="next">
+                <a href="/next" class="center-icon fa fa-angle-right"></a>
+            </div>
+        </div>
+        <div class="content nice-scroll">
+            <div class="menu hide-it">
+                <ul>
+                    <li>Introduction</li>
+                    <li>Get Started</li>
+                </ul>
+            </div>
+
+            <div class="text">
+
+                <h3> What is Easy.js? </h3>
+
+                <p>
+                    Easy.js, short for <span style="color:var(--easy-yellow)">Easy</span>
+                    and <span style="color:var(--easy-black)">Asyncronous Javascript</span>,
+                    is a javascript library for building user interfaces and that helps in the
+                    development of web applications, providing a synchronous interaction
+                    between user interfaces and Javascript data.
+                </p>
+
+                <p>
+                    It is a very easy library to get the hang of, with a simple command so you can
+                    see the results on the screen, it is totally focused on front-end development,
+                    it can be used to create the entire application as in specific parts of it.
+                    It is also good at building Single Page Applications, as it has the concept
+                    of web components.
+                </p>
+
+                <h3> No Virtual DOM? 🤔 </h3>
+
+                <p>
+                    Easy does not use the Virtual DOM concept to update data in the UI, for this
+                    reason it associates each property of the current instance with the fields
+                    where it was requested in the UI, and whenever an update of the property in
+                    question occurs, it updates all the fields associated with it the property.
+                </p>
+
+                <h3> About the Tutorial </h3>
+
+                <p>
+                    These docs assume that you are already familiar with <a title="Learn HTML" target="_blank"
+                        href="https://developer.mozilla.org/docs/Learn/HTML/Introduction_to_HTML">HTML</a>,
+                    <a title="Learn Javascript" target="_blank"
+                        href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/A_re-introduction_to_JavaScript">JavaScript</a>
+                    and <a title="Learn CSS" target="_blank"
+                        href="https://developer.mozilla.org/docs/Learn/CSS/First_steps">CSS</a> (Optional). <b></b>
+                    For each chapter of the tutorial you will have an example code associated to help
+                    you understand the things step by step.
+                </p>
+
+                <p>
+                    The structure and style of the Tutorial pages were based on that of
+                    <a href="https://svelte.dev">Svelte</a>, as it fits perfectly in the the kind we need to explain
+                    things.
+                </p>
+
+                <h3> Browsers Compatibility </h3>
+
+                <p>
+                    Easy was tested in almost every popular browsers like:
+                </p>
+                <ul>
+                    <li>Chrome</li>
+                    <li>Firefox</li>
+                    <li>Opera</li>
+                    <li>Brave</li>
+                    <li>IE (11) </li>
+                </ul>
+                <p>
+                    <span class="app-note"> Easy does not suport IE 10 and below. </span>
+                </p>
+
+                <h3>Scale of Projects</h3>
+
+                <p>
+                    A web application fully developed with easy.js was tested only with small projects,
+                    larger projects was not tested yet.
+                </p>
+
+                <h3> How to add into my project? </h3>
+
+                <p>
+                    Let us show to you how, <a i:href="/installation" class="redirector">Click Me</a>!
+                </p>
+
+                <p>
+                    Or, you can copy the complete HTML code and accompany us to see the code click the
+                    <b>eye</b> that is on top of the editor, close to <b>Live Editor</b>.
+                </p>
+
+            </div>
+        </div>
+    </aside>
+    <div class="tutorial-presentation">
+        <inc src="editor" wait-data="hello-word"></inc>
+    </div>
+
+</div>
+<script>
+    this.loaded = function (el) {
+        // Load hello word example
+        this.Easy.expose('hello-word', {
+            name: 'Hello Word',
+            style: {
+                flex: 1,
+                width: 'auto',
+                height: 'auto',
+                'flex-flow': 'column'
+            },
+            resizable: 'y',
+            content: '<h2> Hello From Easy! <\/h2>'
+        });
+    }
+</script>
