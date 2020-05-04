@@ -10,19 +10,19 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         components: {
             config:{
-                base: '/assets/web/'
+                base: '/docs/'
             },
             elements: {
-                top: "/assets/web/components/top",
-                editor: "/assets/web/components/editor",
+                top: "/docs/components/top",
+                editor: "/docs/components/editor",
                 main: {
-                    url: "/assets/web/components/main",
+                    url: "/docs/components/main",
                     title: 'Easy',
                     route: '/',
                     isDefault: true
                 },
                 tutorial: {
-                    url: "/assets/web/components/tutorial",
+                    url: "/docs/components/tutorial",
                     title: 'Documentation',
                     route: '/tutorial'
                 }
