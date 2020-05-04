@@ -1,0 +1,180 @@
+<div class="main-view">
+
+    <div class="main-divider section-space">
+        <div class="center-content high-element">
+            <div class="main-icon">
+                <img src="/web/contents/img/main_ico.png">
+            </div>
+            <div class="main-text">
+                <p class="high-text"> v2.0.0 </p>
+                <p class="high-text"> Simpler & Cooler </p>
+                <a href="#" class="high-btn"> Get Started </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-divider card-section">
+        <div class="card-container">
+
+            <div class="card">
+                <div class="head">
+                    <p class="title"> Write in HTML file </p>
+                </div>
+                <div class="body">
+                    <p>
+                        Create your component with the styles (scoped or not) and
+                        scripts, embedded in a single pure HTML file.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="head">
+                    <p class="title"> No Virtual DOM </p>
+                </div>
+                <div class="body">
+                    <p>
+                        Easy listens to each property (made available by the instance)
+                        in the application, when the property changes, it updates the
+                        element.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="head">
+                    <p class="title"> Reuse elements </p>
+                </div>
+                <div class="body">
+                    <p>
+                        Easy gives you the opportunity to reuse elements already defined
+                        in the application, as if it were a copy and paste.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="main-divider middle-content editor-divider">
+        <div class="center-content">
+            <div class="main-page-editor-container">
+                <div class="description">
+                    <div>
+                        <h2>Hello World Example</h2>
+                        <p>To begin showing some data in the UI is simple
+                            as you can see now...
+                            Some directives can be similar to Vue but, belive me,
+                            there are diferentes by the inside.</p>
+                    </div>
+                </div>
+                <inc src="editor" wait-data="hello-word"></inc>
+            </div>
+
+            <div class="main-page-editor-container">
+                <div class="description">
+                    <div>
+                        <h2>Simple Sum Example</h2>
+                        <p>Let's Two Way Data Bind now...</p>
+                        <p>We are using dynamic data property definition 'e-def'.
+                            In type of bind When some value changes, it updates
+                            the specific field in the element, it means that
+                            your element will be always the same.</p>
+                    </div>
+                </div>
+                <inc src="editor" wait-data="sum-eg"></inc>
+            </div>
+
+            <div class="main-page-editor-container">
+                <div class="description">
+                    <div>
+                        <h2>Todo List Example</h2>
+                        <p>Let's make a TODO List App</p>
+                        <p>You can manage your list as you expect</p>
+                    </div>
+                </div>
+                <inc src="editor" wait-data="todo-eg"></inc>
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="main-divider middle-content">
+        <div class="center-content">
+            <div class="main-text">
+                <h3> Want to Learn more? </h3>
+                <a href="#" class="high-btn"> Get Started </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-divider botton-content">
+        <div class="center-content">
+            <div class="text-center">
+                <p> Released under the <a href="https://opensource.org/licenses/MIT"> <b>MIT License</b>
+                    </a> </p>
+                <p>Copyright © 2019-Present, Afonso Matumona</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script>
+    this.loaded = function (el) {
+        // Load hello word example
+        this.Easy.expose('hello-word', {
+            name: 'Hello Word',
+            content: '<div id="app">\n' +
+                $tabs() + '<h3> {{ message }} <\/h3>\n' +
+                '<\/div>\n' +
+                '<script>\n' +
+                $tabs() + 'var app = new Easy("#app", {\n' +
+                $tabs(2) + 'data: {\n' +
+                $tabs(3) + 'message: "Hello World!"\n' +
+                $tabs(2) + '}\n' +
+                $tabs() + '});\n' +
+                '<\/script>'
+        });
+
+        // Load calc example
+        this.Easy.expose('sum-eg', {
+            name: 'Simple Sum',
+            content: '<div id="app" e-def="{ first: 1, second: 2 }">\n' +
+                $tabs() + '<input type="number" e-bind="first">\n' +
+                $tabs() + '<input type="number" e-bind="second">\n' +
+                $tabs() + '<h3> {{ first }} + {{ second }} = {{ first + second }} <\/h3>\n' +
+                '<\/div>\n' +
+                '<script>\n' +
+                $tabs() + 'var app = new Easy("#app");\n' +
+                '<\/script>'
+        });
+
+        // Load bind example
+        this.Easy.expose('todo-eg', {
+            name: 'Todo List',
+            content: '<div id="app">\n' +
+                $tabs() + '<input type="text" e-bind="task">\n' +
+                $tabs() + '<br>\n' +
+                $tabs() + '<button on:click="addTodo()">Add</button>\n' +
+                $tabs() + '<label> {{ task }} <\/label>\n' +
+                $tabs() + '<ol>\n' +
+                $tabs(1) + '<li e-for="todo in todos"> {{ todo }} </li>\n' +
+                $tabs() + '</ol>\n' +
+                $tabs() + '<button on:click="todos = []">Clear</button>\n' +
+                '<\/div>\n' +
+                '<script>\n' +
+                $tabs() + 'var app = new Easy("#app", {\n' +
+                $tabs(2) + 'data: {\n' +
+                $tabs(3) + 'task: "",\n' +
+                $tabs(3) + 'todos: [ "Get Up", "Eat", "Code" ],\n' +
+                $tabs(3) + 'addTodo: function(){\n' +
+                $tabs(4) + 'this.data.todos.push(task);\n' +
+                $tabs(4) + 'this.data.task = "";\n' +
+                $tabs(3) + '}\n' +
+                $tabs(2) + '}\n' +
+                $tabs() + '});\n' +
+                '<\/script>'
+        });
+    }
+</script>
