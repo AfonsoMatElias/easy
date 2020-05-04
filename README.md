@@ -1,5 +1,5 @@
 <p style="width: 100%; text-align:center;">
-    <img height="120px" src="/web/contents/img/main_ico.png" />
+    <img height="120px" src="/docs/assets/img/main_ico.png" />
 <p>
 
 <h2 style="width: 100%; text-align:center;">  Easy </h2>
@@ -24,7 +24,7 @@ It was tested in almost every popular browsers and IE 11, below that is not supo
 ### Scale of Projects
 A web application fully developed with easy.js was tested only with small projects, larger projects was not tested yet.
 
-Learn more about at [Easy Guide Page](https://afonsomatelias.github.com/easy/web).
+Learn more about at [Easy Guide Page](https://afonsomatelias.github.com/easy).
 
 ## Prerequisites
 
