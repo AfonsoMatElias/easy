@@ -1,13 +1,13 @@
-<p class="center">
-    <img height="120px" src="assets/web/contents/img/main_ico.png" />
+<p style="width: 100%; text-align:center;">
+    <img height="120px" src="/web/contents/img/main_ico.png" />
 <p>
 
-<h2 class="center">  Easy </h2>
+<h2 style="width: 100%; text-align:center;">  Easy </h2>
 
 ## Introduction
 
-Easy.js, short for <span style="color:var(--easy-yellow)">Easy</span> 
-and <span style="color:var(--easy-black)" >Asyncronous Javascript</span>, 
+Easy.js, short for <span style="color:#F0DB4F">Easy</span> 
+and <span style="color:#494a47" >Asyncronous Javascript</span>, 
 is a javascript library for building user interfaces and that helps in the 
 development of web applications, providing a synchronous interaction 
 between user interfaces and Javascript data.
@@ -24,7 +24,7 @@ It was tested in almost every popular browsers and IE 11, below that is not supo
 ### Scale of Projects
 A web application fully developed with easy.js was tested only with small projects, larger projects was not tested yet.
 
-Learn more about at [Easy Guide Page](https://easy.afonsomatelias.github.com/).
+Learn more about at [Easy Guide Page](https://afonsomatelias.github.com/easy/web).
 
 ## Prerequisites
 
@@ -75,7 +75,7 @@ Check the browser console, if no error or warning message is there, congratulati
 
 ## Check the documentation
 
-[Click Me](https://easy.afonsomatelias.github.com/docs/) to see the documentation and some live examples!
+[Click Me](https://afonsomatelias.github.io/easy/docs.html) to see the documentation and some live examples!
 
 
 ## Contributing
@@ -93,17 +93,3 @@ See also the list of [contributors](https://github.com/your/project/contributors
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
 Copyright (c) 2019-Present, Afonso Matumona.
-
-<style>
-    :root {
-        --easy-yellow: #F0DB4F;
-        --easy-black: #494a47;
-    }
-    .justify {
-        text-align: justify;
-    }
-    .center {
-        width: 100%;
-        text-align:center;
-    }
-</style>
