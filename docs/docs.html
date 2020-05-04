@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" class="nice-scroll light-theme">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/docs/assets/img/main_ico.png" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="/docs/assets/css/styles.css">
+    <link rel="stylesheet" type="text/css" href="/docs/assets/css/font-awesome.min.css">
+    <link rel="font" href="/docs/assets/fonts/gadugi.ttf">
+
+    <link editor-hl rel="stylesheet" href="/docs/assets/highlights/atom-one-light.css">
+    <script src="/docs/assets/highlights/highlight.pack.js"></script>
+    <script src="/docs/assets/js/shared.js"></script>
+    <script src="/easy.js"></script>
+
+    <title>Documentation</title>
+</head>
+
+<body>
+    <div id="app-page">
+        <header>
+            <inc src="top"></inc>
+        </header>
+
+        <main>
+            <div class="main-view doc-page">
+
+                <aside class="doc-menu">
+                    <div class="content nice-scroll">
+                        <!-- The Menu Will be placed here -->
+                        <div>
+                            <ul class="items">
+                                <li> <a href="#intro">
+                                        <h3> Introduction </h3>
+                                    </a> </li>
+                                <li> <a href="#what"> What...? </a> </li>
+                                <li> <a href="#why"> Why...? </a> </li>
+                                <li> <a href="#compatibility"> Compatibility </a> </li>
+                                <li> <a href="#scale"> Scale </a> </li>
+                                <li> <a href="#installation">
+                                        <h3> Installation </h3>
+                                    </a>
+                                    <ul>
+                                        <li> <a href="#install_local"> Locally </a> </li>
+                                        <li> <a href="#install_cdn"> CDN </a> </li>
+                                    </ul>
+                                </li>
+                                <li> <a href="#instance">
+                                        <h3> Instance </h3>
+                                    </a>
+                                    <ul>
+                                        <li> <a href="#inst_options"> Options </a> </li>
+                                        <li> <a href="#properties"> Properties </a> </li>
+                                        <li> <a href="#data_property"> Data Property </a> </li>
+                                        <li> <a href="#reactive_props"> Reactive Props </a> </li>
+                                    </ul>
+                                </li>
+
+                                <li> <a href="#delimiters"> Delimiters </a> </li>
+                                <li> <a href="#bindings"> Bindings </a> </li>
+                                <li> <a href="#commands"> Commands </a>
+                                    <ul>
+                                        <li> <a href="#cmd_data"> data </a> </li>
+                                        <li> <a href="#cmd_wait_data"> wait-data </a> </li>
+                                        <li> <a href="#cmd_e_def"> e-def </a> </li>
+                                        <li> <a href="#cmd_e_if"> e-if </a> </li>
+                                        <li> <a href="#cmd_e_show"> e-show </a> </li>
+                                        <li> <a href="#cmd_e_for"> e-for </a> </li>
+                                        <li> <a href="#cmd_e_order"> e-order </a> </li>
+                                        <li> <a href="#cmd_e_toggle"> e-toggle </a> </li>
+                                        <li> <a href="#cmd_e_content"> e-content </a> </li>
+                                        <li> <a href="#cmd_e"> e-[something] </a> </li>
+                                        <li> <a href="#cmd_e_build"> e-buid </a> </li>
+                                        <li> <a href="#cmd_e_array"> e-array </a> </li>
+                                    </ul>
+                                </li>
+                                <li> <a href="#methods"> Methods </a> </li>
+                                <li> <a href="#events"> Events </a> </li>
+                                <li> <a href="#comps_incs">
+                                        <h3>Components / Includers</h3>
+                                    </a> </li>
+                                <li> <a href="#registering"> Registering </a> </li>
+                                <li> <a href="#comp_options"> Options </a> </li>
+                                <li> <a href="#comp_format"> Component Format </a> </li>
+                                <li> <a href="#comp_elems"> Elements </a> </li>
+                                <li> <a href="#comp_style"> style </a> </li>
+                                <li> <a href="#comp_root"> Root Element </a> </li>
+                                <li> <a href="#comp_script"> script </a> </li>
+                                <li> <a href="#comp_l_cyles"> Lifecycles Hooks </a> </li>
+                                <li> <a href="#connectors">
+                                        <h3> Connectors </h3>
+                                    </a>
+                                    <ul>
+                                        <li> <a href="#conn_ajax"> Ajax </a> </li>
+                                        <li> <a href="#comp_free"> Free </a> </li>
+                                    </ul>
+                                </li>
+
+                                <li> <a href="#comp_commands"> Commands </a>
+                                    <ul>
+                                        <li> <a href="#comp_c_req"> e-req </a> </li>
+                                        <li> <a href="#comp_c_tmp"> e-tmp </a> </li>
+                                        <li> <a href="#comp_c_fill"> e-fill </a> </li>
+                                        <li> <a href="#comp_c_id"> e-id </a> </li>
+                                        <li> <a href="#comp_c_use"> e-use </a> </li>
+                                        <li> <a href="#comp_c_filter"> e-filter </a> </li>
+                                    </ul>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </div>
+                </aside>
+                <div class="doc-presentation nice-scroll">
+                    <!-- The Content Will be placed here -->
+                    <div class="content">
+
+                        <section class="section">
+                            <h1> <a href="#intro"> Introduction </a> </h1>
+
+                            <h3> <a href="#what"> What is Easy.js? </a> </h3>
+                            <p>
+                                Easy.js, short for <span style="color:var(--easy-yellow)">Easy</span>
+                                and <span style="color:var(--easy-black)">Asyncronous Javascript</span>,
+                                is a javascript library for building user interfaces and that helps in the
+                                development of web applications, providing a synchronous interaction
+                                between user interfaces and Javascript data.
+                            </p>
+
+                            <h3> <a href="#what"> So, Why Easy.js? </a> </h3>
+                            <p>
+                                As the name says, it is a javascript library really easy to use that provides
+                                to you a simple way to interact with your HTML by using Reactive Properties,
+                                Scoping data in the HTML, reusable components written in pure HTML,
+                                api calls using only attributes, and so on... It's very good and simple to
+                                build Single Page Application. No Virtual DOM is used, it uses the Real
+                                DOM to handle all the data changes.
+                            </p>
+
+                            <h3> <a href="#compatibility"> Browsers Compatibility </a> </h3>
+                            <p>
+                                It was tested in almost every popular browsers and IE 11, below that is not suported,
+                                because it uses some comcepts of <a href="https://caniuse.com/#feat=es6" class="mark-a">
+                                    ECMAScript 2015 (ES6) </a>.
+                            </p>
+
+                            <h3> <a href="#scale"> Scale of Projects </a> </h3>
+                            <p>
+                                A web application fully developed with easy.js was tested only with small projects,
+                                larger projects was not tested yet.
+                            </p>
+
+                        </section>
+
+                        <section class="section">
+                            <h1> <a href="#intro"> Installation </a> </h1>
+                            <p>
+                                It is easily added to a web project, just like the other libraries and framework, and
+                                for that there are two ways.
+                            </p>
+
+                            <h3> <a href="#install_local"> Locally </a> </h3>
+                            <p>
+                                To use it locally, you need to download the file and import it
+                            </p>
+
+                            <p>
+                                <a class="button-like" href="#"> Download </a>
+                            </p>
+
+                            <pre><code class="HTML hljs">
+    &lt;script src="/js/easy.js"&gt;&lt;/script&gt;
+                            </code></pre>
+
+                            <p> Or, you can use... </p>
+
+                            <h3> <a href="#install_cdn"> CDN </a> </h3>
+                            <p>
+                                Using <a href="https://www.cloudflare.com/learning/cdn/what-is-a-cdn/" target="_blank"
+                                    rel="noopener noreferrer">CDN</a>
+                                is a little bit simpler because the only thing that needs to be done is to import it
+                            </p>
+
+                            <pre><code class="HTML hljs">
+    &lt;script src="https://cdn.jsdeliv.com/gh/afonsomatelias/2.0.0/easy.js"&gt;&lt;/script&gt;
+                            </code></pre>
+
+                        </section>
+                        <br>
+                        <section class="section">
+                            <h1> <a href="#instance"> Instance </a> </h1>
+
+                            <p>
+                                When you import <span class="mark-it">Easy</span> it will added a function to the global
+                                object,
+                                so, to begin using it you need to create a new instance of Easy Class:
+                            </p>
+
+                            <pre><code class="javascript hljs">
+    var app = new Easy(rootElement, options);
+                            </code></pre>
+                        </section>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <script src="/docs/assets/js/app.js"></script>
+    <script>
+        hljs.initHighlightingOnLoad();
+    </script>
+</body>
+
+</html>
