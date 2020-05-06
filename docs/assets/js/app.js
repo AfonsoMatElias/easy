@@ -1,11 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
-
-    var $start = '';
-    // Disable it when using locally 
-    $start = '/easy';
     var $$page = new Easy('#app-page', {
         config: {
-            useDOMLoadEvent: false
+            useDOMLoadEvent: false,
+            deepIgnore: true, 
         },
         data: {
             darkMode: false,
@@ -13,19 +10,20 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         components: {
             config: {
+                // Disable it when using locally 
                 base: '/easy/'
             },
             elements: {
-                top:  $start + "/components/top",
-                editor: $start + "/components/editor",
+                top: "/components/top",
+                editor: "/components/editor",
                 main: {
-                    url: $start + "/components/main",
+                    url: "/components/main",
                     title: 'Easy',
                     route: '/',
                     isDefault: true
                 },
                 tutorial: {
-                    url: $start + "/components/tutorial",
+                    url: "/components/tutorial",
                     title: 'Documentation',
                     route: '/tutorial'
                 }

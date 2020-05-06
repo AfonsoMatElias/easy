@@ -162,9 +162,6 @@
     function $propDescriptor(obj, prop) {
         return Object.getOwnPropertyDescriptor(obj, prop); 
     }
-    function $deleteProps(list) {
-        forEach(list, function(item) { delete item.obj[item.key]; })
-    }
     function isIgnore(v) {
         switch (v) {
             case "#comment": case "SCRIPT": case "#text": case "STYLE":
@@ -1213,7 +1210,7 @@
                 var base = el.$e.$base;
                 var val = $name.split(':'),
                     // By default bind the value property
-                    field = val.length === 1 ? ( base['value'] === undefined ? 'innerText' : 'value' ) : val[1];
+                    field = val.length === 1 ? 'value' : val[1];
 
                 base.$e.b = { data: field };
 
@@ -1412,11 +1409,11 @@
         instance.data = {};
 
         // Setting the default values in options
-        options = $objDesigner(options, { data: {}, components: {} });
-        options.data = $objDesigner(options.data, { $mounted: fn.empty, $loaded: fn.empty });
+        options = $objDesigner(options, { config: {}, data: {}, components: {}, mounted: fn.empty, loaded: fn.empty });
+        options.data = $objDesigner(options.data, {});
         options.components = $objDesigner(options.components, { elements: {}, config: {} });
         options.components.config = $objDesigner(options.components.config, { usehash: true, base: '/', storeData: false });
-        options.config = $objDesigner(options.config, { log: true, useDOMLoadEvent: true, skeleton: { background: '#E2E2E2' , wave: '#ffffff5d' } });
+        options.config = $objDesigner(options.config, { deepIgnore: false, log: true, useDOMLoadEvent: true, skeleton: { background: '#E2E2E2' , wave: '#ffffff5d' } });
         instance.options = options;
         
         $$delimiters = [ // Default delimiters
@@ -1434,9 +1431,6 @@
             instance.setData(options.data);
             instance.data = options.data;
             inc.setComponent(options.components.elements);
-            var $mounted = options.data.$mounted, $loaded = options.data.$loaded;
-
-            $deleteProps([ { obj: instance.data, key: '$loaded' }, { obj: instance.data, key: '$mounted' } ]);
             
             function $$init(){
                 // Defining the root elem
@@ -1447,15 +1441,14 @@
         
                 // Initializing easy animation css
                 instance.css();
-                $mounted.call(instance, instance.data);
+                options.mounted.call(instance, instance.el);
                 
                 // Base element compilation
                 Compiler.compile({
                     el: instance.el,
                     data: instance.data,
                     done: function () {
-                        $loaded.call(this, instance.data);
-
+                        options.loaded.call(instance, instance.el);
                         // Setting the ui observer
                         ui.observer.mutation(function (elem) {
                             Compiler.compile({
@@ -1553,7 +1546,7 @@
         /** * Get a HTML file from the server, according to a path */
         this.get = function (path, cb, fail) {
             // fetch function to get the file
-            new Fetch(location.origin + '/' + path, {
+            new Fetch(location.origin + componentConfig.base + path, {
                 method: 'get',
                 headers: { 'Content-Type': 'text/plain' }
             }).then(function (data) {
@@ -2396,7 +2389,11 @@
                         // For added nodes
                         forEach(mut.addedNodes, function (node) {
                             // Ignored node
-                            if ( node.aboveMe && node.hasAttribute('e-ignore') ) return;
+                            if ( node.aboveMe && node.hasAttribute('e-ignore')) 
+                                return;
+                            if ( ( $easy.options.config.deepIgnore === true && node.aboveMe && node.aboveMe('[e-ignore]') ) ) 
+                                return;
+
                             // Checking if the element needs to be skipped
                             if ( node.$preventMutation ) return;
                             // Skip if it's a comment
@@ -3176,23 +3173,22 @@
 
         if (!isNull(this.property)) {
             // One Way Data Binding
-            if ( this.two !== true ) {
-                // Avoiding twice binds
-                if (!config.property.binds.findOne(function (bind) {
-                        return bind.el === config.el;
-                    })) {
-                    // In case of * layer1.layer2.prop * -> lastLayer == layer2
-                    // But, actually we need layer1, the base bound layer
-                    obj = {
-                        obj: this.layer,
-                        el: this.el,
-                        bind: this
-                    };
-                    this.property.binds.push(obj);
-                }
-            } 
+            // Avoiding twice binds
+            if (!config.property.binds.findOne(function (bind) {
+                    return bind.el === config.el;
+                })) {
+                // In case of * layer1.layer2.prop * -> lastLayer == layer2
+                // But, actually we need layer1, the base bound layer
+                obj = {
+                    obj: this.layer,
+                    el: this.el,
+                    bind: this
+                };
+                this.property.binds.push(obj);
+            }
+
             // Two Way Data Binding
-            else {
+            if ( this.two === true ) {
                 // Configuring the property
                 $propDefiner(this.el.$e.b, 'val',
                     $propDescriptor(this.lastLayer, this.property.property))
@@ -3218,7 +3214,6 @@
                 this.el.addEventListener('propertychange', callback, false);
                 this.el.addEventListener('change', callback, false);
             }
-            
         }
 
         this.destroy = function () {

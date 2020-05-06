@@ -26,6 +26,7 @@
         <main>
             <div class="main-view doc-page">
 
+                <!-- Side menu -->
                 <aside class="doc-menu">
                     <div class="content nice-scroll">
                         <!-- The Menu Will be placed here -->
@@ -50,15 +51,29 @@
                                         <h3> Instance </h3>
                                     </a>
                                     <ul>
+                                        <li> <a href="#inst_el"> Element </a> </li>
                                         <li> <a href="#inst_options"> Options </a> </li>
-                                        <li> <a href="#properties"> Properties </a> </li>
-                                        <li> <a href="#data_property"> Data Property </a> </li>
-                                        <li> <a href="#reactive_props"> Reactive Props </a> </li>
+                                        <li> <a href="#properties"> Properties </a>
+                                            <ul>
+                                                <li> <a href="#prop_config"> Config Property </a> </li>
+                                                <li> <a href="#prop_data"> Data Property </a> </li>
+                                                <li> <a href="#prop_hooks"> Instance Hooks </a> </li>
+                                            </ul>
+                                        </li>
                                     </ul>
                                 </li>
-
-                                <li> <a href="#delimiters"> Delimiters </a> </li>
-                                <li> <a href="#bindings"> Bindings </a> </li>
+                                <li> <a href="#delimiters"> <h3> Delimiters </h3> </a>
+                                    <ul>
+                                        <li> <a href="#dlm_easy"> Easy </a> </li>
+                                        <li> <a href="#dlm_common"> Common </a> </li>
+                                    </ul>
+                                </li>
+                                <li> <a href="#bindings"> <h3>Bindings</h3> </a>
+                                    <ul>
+                                        <li> <a href="#bind_one_way"> One Way </a> </li>
+                                        <li> <a href="#bind_two_way"> Two Way </a> </li>
+                                    </ul>
+                                </li>
                                 <li> <a href="#commands"> Commands </a>
                                     <ul>
                                         <li> <a href="#cmd_data"> data </a> </li>
@@ -68,6 +83,7 @@
                                         <li> <a href="#cmd_e_show"> e-show </a> </li>
                                         <li> <a href="#cmd_e_for"> e-for </a> </li>
                                         <li> <a href="#cmd_e_order"> e-order </a> </li>
+                                        <li> <a href="#cmd_e_anm"> e-amn </a> </li>
                                         <li> <a href="#cmd_e_toggle"> e-toggle </a> </li>
                                         <li> <a href="#cmd_e_content"> e-content </a> </li>
                                         <li> <a href="#cmd_e"> e-[something] </a> </li>
@@ -112,14 +128,17 @@
                         </div>
                     </div>
                 </aside>
+
+                <!-- Documentation container -->
                 <div class="doc-presentation nice-scroll">
                     <!-- The Content Will be placed here -->
                     <div class="content">
 
+                        <!-- Introduction -->
                         <section class="section">
-                            <h1> <a href="#intro"> Introduction </a> </h1>
+                            <h1> <a id="intro" href="#intro" > Introduction </a> </h1>
 
-                            <h3> <a href="#what"> What is Easy.js? </a> </h3>
+                            <h3> <a id="what" href="#what"> What is Easy.js? </a> </h3>
                             <p>
                                 Easy.js, short for <span style="color:var(--easy-yellow)">Easy</span>
                                 and <span style="color:var(--easy-black)">Asyncronous Javascript</span>,
@@ -128,7 +147,7 @@
                                 between user interfaces and Javascript data.
                             </p>
 
-                            <h3> <a href="#what"> So, Why Easy.js? </a> </h3>
+                            <h3> <a id="why" href="#why"> So, Why Easy.js? </a> </h3>
                             <p>
                                 As the name says, it is a javascript library really easy to use that provides
                                 to you a simple way to interact with your HTML by using Reactive Properties,
@@ -138,14 +157,14 @@
                                 DOM to handle all the data changes.
                             </p>
 
-                            <h3> <a href="#compatibility"> Browsers Compatibility </a> </h3>
+                            <h3> <a id="compatibility" href="#compatibility"> Browsers Compatibility </a> </h3>
                             <p>
                                 It was tested in almost every popular browsers and IE 11, below that is not suported,
                                 because it uses some comcepts of <a href="https://caniuse.com/#feat=es6" class="mark-a">
                                     ECMAScript 2015 (ES6) </a>.
                             </p>
 
-                            <h3> <a href="#scale"> Scale of Projects </a> </h3>
+                            <h3> <a id="scale" href="#scale"> Scale of Projects </a> </h3>
                             <p>
                                 A web application fully developed with easy.js was tested only with small projects,
                                 larger projects was not tested yet.
@@ -153,14 +172,15 @@
 
                         </section>
 
+                        <!-- Installation -->
                         <section class="section">
-                            <h1> <a href="#intro"> Installation </a> </h1>
+                            <h1> <a id="installation" href="#installation"> Installation </a> </h1>
                             <p>
                                 It is easily added to a web project, just like the other libraries and framework, and
                                 for that there are two ways.
                             </p>
 
-                            <h3> <a href="#install_local"> Locally </a> </h3>
+                            <h3> <a id="install_local" href="#install_local"> Locally </a> </h3>
                             <p>
                                 To use it locally, you need to download the file and import it
                             </p>
@@ -175,7 +195,7 @@
 
                             <p> Or, you can use... </p>
 
-                            <h3> <a href="#install_cdn"> CDN </a> </h3>
+                            <h3> <a id="install_cdn" href="#install_cdn"> CDN </a> </h3>
                             <p>
                                 Using <a href="https://www.cloudflare.com/learning/cdn/what-is-a-cdn/" target="_blank"
                                     rel="noopener noreferrer">CDN</a>
@@ -187,31 +207,375 @@
                             </code></pre>
 
                         </section>
-                        <br>
-                        <section class="section">
-                            <h1> <a href="#instance"> Instance </a> </h1>
+
+                        <!-- Instance -->
+                        <section class="section" e-ignore>
+                            <h1> <a id="instance" href="#instance"> Instance </a> </h1>
 
                             <p>
-                                When you import <span class="mark-it">Easy</span> it will added a function to the global
+                                When you import <span class="note">Easy</span> it will added a function to the
+                                global
                                 object,
-                                so, to begin using it you need to create a new instance of Easy Class:
+                                so, to begin using it you need to create a new instance of Easy Class, this instance
+                                expects two parameters:
                             </p>
 
                             <pre><code class="javascript hljs">
-    var app = new Easy(rootElement, options);
+    var app = new Easy(element, options);
                             </code></pre>
+
+                            <h3> <a id="inst_el" href="#inst_el"> Element </a> </h3>
+                            <p>
+                                The element is the mandatory parameter that represents the section that the instance
+                                will
+                                control in the application, it must be passed as a String in the format of a CSS
+                                Selector.
+                                <span class="note">#myId</span>, <span class="note">.myClass</span> or
+                                <span class="note">body</span>.
+                            </p>
+
+                            <h3> <a id="inst_options" href="#inst_options"> Options </a> </h3>
+                            <p>
+                                Options is the optional parameter, which can be used to define initial data, instance
+                                configuration, components (we'll talk about this later), etc. If passed, it must be
+                                an object containing all the information you need when the instance is created.
+                            </p>
+
+                            <p>
+                                This property can be accessed from the instance object: <span class="note">instance.options</span>.
+                            </p>
+
+                            <h3> <a id="properties" href="#properties"> Properties</a> </h3>
+                            <p>
+                                As previously stated, in the options parameter several properties can be defined which
+                                are:
+                            </p>
+
+                            <pre><code class="javascript hljs">
+    var app = new Easy('body', {
+        // The configuration of the instance
+        config: { ... },
+
+        // The initial data of the instance
+        data: { ... },
+
+        // The function that will be call when the DOM is loaded
+        mounted: function (el) { ... },
+        
+        // The function that will be call when the Easy compile the code
+        loaded: function (el) { ... },
+
+        // The components that the instance will inject in your app (we'll talk about this later)
+        components: { ... }
+    });
+                            </code></pre>
+
+                            <h3> <a id="prop_config" href="#prop_config">Config Property</a> </h3>
+                            <p>
+                                With config property you may set:
+                            </p>
+
+                            <ul>
+                                <li>
+                                    <span class="note">{ Boolean } log</span> &ndash; Allows the logs
+                                    (logs, errors and warning) to be shown. Default value is <span
+                                        class="note mark-a">true</span>.
+                                </li>
+                                <li>
+                                    <span class="note">{ Boolean } deepIgnore</span> &ndash; 
+                                    Allows you to ignore all elements that are inside a container 
+                                    (even those that are added later) when using the command <span class="note">e-ignore</span>
+                                    (We'll talk about that in the <a href="#commands" class=" mark-a">Commands</a> section). <br>
+                                    <span class="note warn-bg">Be careful, this can slow down your application.</span>
+                                </li>
+                                <li>
+                                    <span class="note">{ Boolean } useDOMLoadEvent</span> &ndash; Allows the
+                                    instance to use the 'DOMContentLoaded' event when loading the page.
+                                    Default value is <span class="note mark-a">true</span>.
+                                </li>
+                                <li>
+                                    <span class="note">{ Object } skeleton</span> &ndash; Defines color of the
+                                    skeleton while the
+                                    content is being loaded. Is structured as follows: <br>
+                                    <span class="note mark-a"> { background: 'color', wave: 'color' } </span>
+                                    <br>
+                                    By default the skeleton is light gray with the lightest wave.
+                                </li>
+                            </ul>
+
+                            <h3> <a id="prop_data" href="#prop_data">Data</a> </h3>
+                            <p>
+                                As already mentioned, the data property allows you to define the data that the
+                                application will have
+                                when it starts, however there is a way to add data while it is already running with the
+                                <span class="note">app.setData(...)</span> method. (We'll talk about that in the
+                                <a href="#methods" class=" mark-a">methods</a> section).
+                                <br>
+                                Data or properties defined on <span class="note">date</span> are not normal
+                                properties,
+                                they are reactive, this means that they react to changes made to them.
+                            </p>
+
+                            <pre><code class="example html hljs">
+    &lt;div id="app1"&gt;
+        &lt;h4&gt; {{ message }} &lt;/h4&gt;
+    &lt;/div&gt;
+                            </code></pre>
+
+                            <pre><code class="javascript hljs">
+    var app1 = new Easy('#app1', {
+        data: {
+            message: 'Hello World!'
+        }
+    });
+                            </code></pre>
+
+                            <div class="result"></div>
+
+                            <p>
+                                This property can be accessed from the instance object: <span class="note">instance.data</span>, 
+                                You can open the browser console and type <span class="note">app1.data</span>.
+                            </p>
+
+                            <h3> <a id="prop_hooks" href="#prop_hooks"> Instance Hooks </a> </h3>
+                            <p>
+                                There are only two main hooks in the Easy instance, which are:
+                            </p>
+
+                            <ul>
+                                <li>
+                                    <span class="note">{ Function } mounted</span> &ndash; this hook is called when
+                                    the
+                                    DOMContentLoaded event is raised (It works this way if the <a
+                                        href="#prop_config" id="prop_config" class="mark-a">useDOMLoadedEvent</a>
+                                    property is true, otherwise, it will be called as soon as the Class is
+                                    instantiated).
+                                </li>
+                                <li>
+                                    <span class="note">{ Function } loaded</span> &ndash; this hook is called when
+                                    the root element was compiled.
+                                </li>
+                            </ul>
+
+                            <p>
+
+                            </p>
+
+                            <pre><code class="example html hljs">
+    &lt;div id="app2"&gt;
+        &lt;h4&gt; Mounted at: {{ mountedHook }} &lt;/h4&gt;
+        &lt;h4&gt; Loaded at: {{ loadedHook }} &lt;/h4&gt;
+    &lt;/div&gt;
+                            </code></pre>
+
+                            <pre><code class="javascript hljs">
+    var app2 = new Easy('#app2', {
+        data: {
+            mountedHook: '',
+            loadedHook: '',
+        },
+        mounted: function(){
+            this.data.mountedHook = getDateTime()
+        },
+        loaded: function(){
+            this.data.loadedHook = getDateTime()
+        }
+    });
+                            </code></pre>
+
+                            <div class="result"></div>
+
+                            <div class="block-note warn">
+                                <p>
+                                    The context of these hooks is the current instance and the root element is 
+                                    passed as an argument.   
+                                </p>
+                            </div>
+                            
+                            <div class="block-note info">
+                                <p>
+                                    You can create an instance without a variable, this means that your data 
+                                    cannot be accessed by the browser console.  
+                                </p>
+                            </div>
+
+                        </section>
+
+                        <!-- Delimiters -->
+                        <section class="section" e-ignore>
+                            <h1> <a id="delimiters" href="#delimiters"> Delimiters </a> </h1>
+
+                            <p>
+                                By default Easy brings two types of delimiters, which are the <span class="note">easy delimiter</span> 
+                                and the <span class="note">common delimiter</span> that is used by Vue.js, Angular.js, etc.
+                            </p>
+
+                            <p>
+                                The delimiters open a space in HTML to execute some javascript code, it means that you can execute any
+                                pure js code variables, function, ternary operatiors, etc. I only need to return a value. 
+                            </p>
+                            
+                            <p>
+                                Whenever data is an Object it turn it to <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/JSON" 
+                                class="note mark-a">JSON</a>.
+                            </p>
+
+                            <h3> <a id="dlm_easy" href="#dlm_easy"> Easy </a> </h3>
+
+                            <p>
+                                To use this delimiter just do the following: <span class="note"> -e- [Content] - </span>
+                            </p>
+                            
+                            <h3> <a id="dlm_easy" href="#dlm_common"> Common </a> </h3>
+
+                            <p>
+                                To use this delimiter just do the following: <span class="note"> {{ [Content] }} </span>
+                            </p>
+
+                            <div class="block-note info">
+                                <p>
+                                    You can define your own delimiter, has you wish (we'll talk about this later).
+                                </p>
+                            </div>                            
+
+                        </section>
+                        
+                        <!-- Bindings -->
+                        <section class="section" e-ignore>
+                            <h1> <a id="bindings" href="#bindings"> Bindings </a> </h1>
+
+                            <p>
+                                
+                            </p>
+
+                            <h3> <a id="bind_one_way" href="#bind_one_way"> One Way </a> </h3>
+                            <p>
+                                You can achieve One Way Data Binding simply by defining the delimiter in the space or attribute you need 
+                                the value to be.
+                            </p>
+
+                            <pre><code class="example html hljs">
+    &lt;div id="app3"&gt;
+        &lt;input type="text" value="{{ value }}" /&gt; 
+        &lt;h4&gt; {{ value }} &lt;/h4&gt;
+    &lt;/div&gt;
+                            </code></pre>
+
+                            <pre><code class="javascript hljs">
+    var app3 = new Easy('#app3', {
+        data: {
+            value: 'Change me!'
+        },
+        loaded: function(el) {
+            var self = this;
+            el.node('input').onkeyup = function(evt) {
+                self.data.value = evt.target.value;
+            }
+        }
+    });
+                            </code></pre>
+
+                            <div class="result"></div>
+
+                            <p>
+                                If you don't want to do it this way, you can still use the command 
+                                <span class="note">e-[<i>property</i>]="{{ dataProperty }}"</span>, 
+                                it creates the property after being compiled. This property is very versatile, 
+                                we will go into details about it in the <a href="#cmd_e" class="note mark-a">commands</a> section.
+                            </p>
+
+                            <pre><code class="html hljs">
+    &lt;div id="app3"&gt;
+        &lt;input type="text" e-value="{{ value }}" /&gt; 
+        &lt;h4 e-title="{{ value }}" &gt; Hi &lt;/h4&gt;
+    &lt;/div&gt;
+                            </code></pre>                        
+                            
+                            <h3> <a id="bind_two_way" href="#bind_two_way"> Two Way </a> </h3>
+                            <p>
+                                You can achieve Two Way Data Binding using the command <span class="note">e-bind:<i>property</i>="dataProperty"</span>,
+                                by default it binds <span class="note">value</span> property, it means that if you want to bind the property value of 
+                                an input you can define like this <span class="note">e-bind="dataProperty"</span>.
+                            </p>
+
+                            <pre><code class="example html hljs">
+    &lt;div id="app4"&gt;
+        &lt;input type="text" e-bind:value="value" /&gt; &lt;br&gt; 
+        &lt;input type="text" e-bind="value" /&gt; 
+        &lt;h4&gt; {{ value }} &lt;/h4&gt;
+    &lt;/div&gt;
+                            </code></pre>
+
+                            <pre><code class="javascript hljs">
+    var app4 = new Easy('#app4', {
+        data: {
+            value: 'Change me!'
+        }
+    });
+                            </code></pre>
+
+                            <div class="result"></div>                      
+
+                        </section>
+
+                        <section class="section">
+                            <h1> <a id="commands" href="#commands"> Commands </a> </h1>
+                            <p>
+                                Easy has some commands that are used as attributes in elements, each one has its peculiarity and way of using it, 
+                                we will explain each step by step how and where it can be used.
+                            </p>
+                            
                         </section>
 
                     </div>
                 </div>
 
             </div>
-
         </main>
 
     </div>
 
     <script src="assets/js/app.js"></script>
+
+    <script>
+        function createEl(appNode) {
+            var el = document.createElement('div');
+            el.innerHTML = appNode.innerText;
+            var $el = el.children[0];
+            $el.$preventMutation = true;
+            return $el;
+        }
+
+        function getDateTime() {
+            return new Date().toJSON().split('T').map(function (v, i) {
+                if ( i == 1 )
+                    return v.substr(0, v.length - 1);
+                return v;
+            }).join(' ');
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.nodes('code').listen('click', function (e) {
+                // Pseudo 52 x 25
+                // Calculating the position of the curson
+                if ((e.layerX >= e.base.clientWidth - 52) && (e.layerY > 0 && 25 >= e.layerY)) {
+                    // TODO: text copy here
+                }
+            });
+        }, false);
+
+        // Executing app1
+        var $ad = 'config: { useDOMLoadedEvent: false }, data:';
+        var $codes = document.querySelectorAll('.example');
+        for (var i = 0; i < $codes.length; i++) {
+            var html = $codes[i].parentNode;
+            var script = html.nextElementSibling;
+            var result = script.nextElementSibling;
+            result.appendChild(createEl(html));
+
+            eval(script.innerText.replace('data:', $ad));
+        }
+    </script>
     <script>
         hljs.initHighlightingOnLoad();
     </script>
