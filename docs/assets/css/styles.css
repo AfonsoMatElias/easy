@@ -15,6 +15,11 @@ a {
     cursor: pointer;
 }
 
+button {
+    cursor: pointer;
+    font-size: 11pt;
+}
+
 h1,
 h2,
 h3,
@@ -74,7 +79,7 @@ h5 {
     --color-scroll-thumb: #888;
     --color-scroll-track: #f0f0f080;
 
-    --color-note: #ededed;
+    --color-note: #f2f2f2;
 
     --color-footer: #2e323b;
 }
@@ -604,7 +609,7 @@ nav ul>li:hover {
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 40px 45px;
+    padding: 40px 80px;
 }
 
 .doc-page .doc-presentation .section p,
@@ -634,10 +639,20 @@ nav ul>li:hover {
     line-height: 30px;
 }
 
-.doc-page .doc-presentation .section input {
+.doc-page .doc-presentation .section .result input,
+.doc-page .doc-presentation .section .result button {
     border: 1px solid var(--color-border);
     padding: 4px 10px;
     border-radius: 4px;
+    margin: 4px 0;
+}
+
+.doc-page .doc-presentation .section .result ul {
+    list-style: disc;
+}
+
+.doc-page .doc-presentation .section .result ul li {
+    margin: 0;
 }
 
 .mark-a {
@@ -735,7 +750,8 @@ pre code::after,
 .block-note.warn { border-color: var(--note-yellow); }
 .block-note.dont { border-color: var(--note-red); }
 
-.warn-bg.note { border: 2px solid var(--note-red); }
+.att-bg.note { border: 2px solid var(--note-red); }
+.warn-bg.note { border: 2px solid var(--note-yellow); }
 
 @media (max-width: 600px) {
     .high-element {
