@@ -99,13 +99,42 @@
                                             </ul>
                                         </li>
                                         <li> <a href="#cmd_e_order"> e-order </a> </li>
-                                        <li> <a href="#cmd_e_anm"> e-amn </a> </li>
+                                        <li> <a href="#cmd_e_anm"> e-anm </a> </li>
                                         <li> <a href="#cmd_e_toggle"> e-toggle </a> </li>
                                         <li> <a href="#cmd_e"> e-[something] </a> </li>
                                     </ul>
                                 </li>
-                                <li> <a href="#methods"> Methods </a> </li>
-                                <li> <a href="#events"> Events </a> </li>
+                                <li> <a href="#events">
+                                        <h3>Events</h3>
+                                    </a>
+                                    <ul>
+                                        <li> <a href="#events_standard"> Standard </a> </li>
+                                        <li> <a href="#events_easy"> Easy </a> </li>
+                                        <li> <a href="#events_custom"> Custom </a> </li>
+                                        <li> <a href="#events_modifiers"> Modifiers </a> </li>
+                                    </ul>
+                                </li>
+                                <li> <a href="#methods"> <h3> Methods </h3> </a>
+                                    <ul>
+                                        <li><a href="#method_setData"> setData </a></li>
+                                        <li><a href="#method_emit"> emit </a></li>
+                                        <li><a href="#method_expose"> expose </a></li>
+                                        <li><a href="#method_retrieve"> retrieve </a></li>
+                                        <li><a href="#method_tojsobj"> <b>toJsObj</b> </a>
+                                            <ul>
+                                                <li> <a href="#method_tojsobj_build"> e-build </a> </li>
+                                                <li> <a href="#method_tojsobj_array"> e-array </a> </li>
+                                            </ul>
+                                        </li>
+                                        <li><a href="#method_watch"> watch </a></li>
+                                        <li><a href="#method_on"> on </a></li>
+                                        <li><a href="#method_off"> off </a></li>
+                                        <li><a href="#method_set"> set </a></li>
+                                        <li><a href="#method_css"> css </a></li>
+                                        <li><a href="#method_code"> code </a> </li>
+                                    </ul>
+                                </li>
+                                </li>
                                 <li> <a href="#comps_incs">
                                         <h3>Components / Includers</h3>
                                     </a> </li>
@@ -286,7 +315,7 @@
 
                             <h3> <a id="prop_config" href="#prop_config">Config Property</a> </h3>
                             <p>
-                                With config property you may set:
+                                Is an object containing Easy’s global configurations. With config property you can set:
                             </p>
 
                             <ul>
@@ -302,7 +331,8 @@
                                         class="note">e-ignore</span>
                                     (We'll talk about that in the <a href="#commands" class=" mark-a">Commands</a>
                                     section). <br>
-                                    <span class="note att-bg">Be careful, this can slow down your application.</span>
+                                    <span class="note att-border">Be careful, this can slow down your
+                                        application.</span>
                                 </li>
                                 <li>
                                     <span class="note">{ Boolean } useDOMLoadEvent</span> &ndash; Allows the
@@ -541,6 +571,7 @@
 
                         </section>
 
+                        <!-- Commands -->
                         <section class="section" e-ignore>
                             <h1> <a id="commands" href="#commands"> Commands </a> </h1>
                             <p>
@@ -558,8 +589,8 @@
 
                             <p>
                                 If you define an <a href="https://www.dyn-web.com/tutorials/object-literal/"
-                                    class="mark-a">Object Literal</a>, kwow that
-                                these properties are temporary and by default <span class="note warn-bg">they are not
+                                    class="mark-a">Object Literal</a>, kwow that these properties are
+                                temporary and by default <span class="note warn-border">they are not
                                     reactive</span>, unless an object that
                                 is already reactive is passedby itself or if you passe the object in the <span
                                     class="note">this.reactive( ... )</span>
@@ -944,8 +975,7 @@
                             <h4> <a id="cmd_e_for_filter" href="#cmd_e_for_filter"> Using Array filter </a> </h4>
                             <p>
                                 Easy array filter is a way to filter data while it is being rendered. To add the filter
-                                we use pipe character
-                                ( <span class="note mark-a">|</span> ) after <a href="#cmd_e_for"
+                                we use <span class="note mark-a">|</span> after <a href="#cmd_e_for"
                                     class="note mark-a">e-for</a> expression.
                                 <span class="note mark-a">item of items | filterExpression</span>. There is four ways to
                                 use this filter,
@@ -1051,7 +1081,7 @@
                             <p>
                                 Performs the filter of the items based on a function, the context (<span
                                     class="mark-a">this</span>)
-                                of the funciton is the instance, the array is the first argument of the funciton. It
+                                of the function is the instance, the array is the first argument of the function. It
                                 expects an array as return value.
                                 The filter need to be defined as following: <br>
                                 <span class="note mark-a">| :myFunction</span>
@@ -1106,8 +1136,8 @@
 
                             <div class="block-note dont">
                                 <p>
-                                    Easy cannot detect changes when you modify the length of the array. eg.: <span
-                                        class="note att-bg"> array.length = newLength </span>.
+                                    Easy cannot detect changes when you modify the length of the array. e.g.: <span
+                                        class="note att-border"> array.length = newLength </span>.
                                     If will not have effects in to the user interface.
                                 </p>
                             </div>
@@ -1132,27 +1162,31 @@
                             <div class="block-note info">
                                 <p>
                                     The command accepts delimiters, this means that it can be defined like this,
-                                    eg: <span class="note mark-a">e-order="{{orderType}}:{{orderBy}}"</span>
+                                    e.g.: <span class="note mark-a">e-order="{{orderType}}:{{orderBy}}"</span>
                                 </p>
                             </div>
 
-                            <h3> <a id="cmd_e_anm" href="#cmd_e_anm"> e-amn </a> </h3>
+                            <h3> <a id="cmd_e_anm" href="#cmd_e_anm"> e-anm </a> </h3>
                             <p>
                                 It is a simple way to animate the insertion of an element in the DOM. Its syntax is
                                 <span class="note mark-a">e-anm="<i>direction</i>"</span>.
                             </p>
 
                             <ul>
-                                <li> <span class="note mark-a"> up </span>, Performs the animation starting from the
+                                <li> <span class="note mark-a"> up </span> &ndash; Performs the animation starting from
+                                    the
                                     bottom to the top, ascending
                                     and gradually increasing the opacity. </li>
-                                <li> <span class="note mark-a"> down </span>, Performs the animation starting from the
+                                <li> <span class="note mark-a"> down </span> &ndash; Performs the animation starting
+                                    from the
                                     top to the bottom, descending
                                     and gradually increasing the opacity.</li>
-                                <li> <span class="note mark-a"> left </span>, Performs the animation starting from the
+                                <li> <span class="note mark-a"> left </span> &ndash; Performs the animation starting
+                                    from the
                                     right to the left, scrolling
                                     and gradually increasing the opacity. </li>
-                                <li> <span class="note mark-a"> right </span>, Performs the animation starting from the
+                                <li> <span class="note mark-a"> right </span> &ndash; Performs the animation starting
+                                    from the
                                     left to the right, scrolling
                                     and gradually increasing the opacity. </li>
                             </ul>
@@ -1169,7 +1203,7 @@
                             <p>
                                 Allows you to toggle a property on an element, setting the value to <span
                                     class="note mark-a">true</span> when set.
-                                Its syntax is <span class="note mark-a">e-toggle:<i>property</i>="dataProperty"</span>,
+                                Its syntax is <span class="note mark-a">e-toggle:<i>property</i>="dataProperty"</span>.
                             </p>
 
                             <pre><code class="example html hljs">
@@ -1194,11 +1228,536 @@
                             <h3> <a id="cmd_e" href="#cmd_e"> e-[something] </a> </h3>
                             <p>
                                 As we said above, it is the most versatile command according to the defined expression,
-                                because on the one hand it
-                                creates a property after being compiled and on the other it creates the property and
-                                toggles a value on it.
+                                because on the one hand it creates a property after being compiled and on the other it
+                                creates the property and toggles a value on it.
                             </p>
 
+                            <p>
+                                The sintax for simply property creation is <span
+                                    class="note mark-a">e-<i>property</i>="expression"</span>.
+                                In this case the expression must contaim delimiter, otherwise it will not be compiled.
+                            </p>
+
+                            <pre><code class="html hljs">
+    &lt;div id="app19"&gt;
+        &lt;img e-src="{{ imgUrl }}" src="default.png" srcset="fail-onload.png" /&gt;
+    &lt;/div&gt;
+                            </code></pre>
+
+                            <p>
+                                The sintax for property creation (if it does not exists) and toggleable value is
+                                <span class="note mark-a">e-<i>property</i>="{ valueToToggle : condition }"</span>. <br>
+                                <span class="note att-border">Do not use delimiters in the expression</span>.
+                            </p>
+
+                            <pre><code class="example html hljs">
+    &lt;div id="app20"&gt;        
+        &lt;style&gt; 
+        .yellow-class {
+            background-color: yellow;
+        } 
+    &lt;/style&gt;
+
+        &lt;button on:click="isYellow = !isYellow" 
+                    e-class="{ 'yellow-class' : isYellow }"&gt; 
+            Click Me
+        &lt;/button&gt;
+    &lt;/div&gt;
+                            </code></pre>
+
+                            <pre><code class="javascript hljs">
+    var app20 = new Easy('#app20', {
+        data: {
+            isYellow: false
+        }
+    });
+                            </code></pre>
+
+                            <div class="result"></div>
+
+                        </section>
+
+                        <!-- Events -->
+                        <section class="section" e-ignore>
+                            <h1> <a id="events" href="#events"> Events </a> </h1>
+                            <p>
+                                We can use <span class="note mark-a">on:</span> to listen for DOM events and run some
+                                javascript code when it is emitted. In some examples above we use the click event so we
+                                imagine that you must be a little familiar with it.
+                            </p>
+
+                            <p>
+                                Easy events can be categorized into 3 types, which are:
+                                <span class="note">Standard</span> DOM, <span class="note">Easy</span> and
+                                <span class="note">Custom</span> events. For all of them, they can be heard
+                                with the following syntax:
+                                <span class="note mark-a">on:<i>eventName</i>="function/expression"</span>.
+                            </p>
+
+                            <p>
+                                When Standard and Easy events are issued, the event object can be accessed in the
+                                <span class="note">event</span> variable. It contains the <span
+                                    class="note mark-a">base</span>
+                                property, which is passed to the element that is associated with the event, and the
+                                <span class="note">data</span> property, having the object of the current scope, this
+                                is divided into: { $model:{ <i class="mark-a">In case of e-for</i> }, $scope: { <i
+                                    class="mark-a">It has the scope object it self</i> } }
+                            </p>
+
+                            <h3> <a id="events_standard" href="#events_standard"> Standard</a> </h3>
+                            <p>
+                                These are standard DOM events, such as onclick, ondblclick, onkeyup, etc.
+                            </p>
+
+                            <pre><code class="example html hljs">
+    &lt;div id="app21"&gt;        
+        &lt;button on:click="count++"&gt; 
+            Clicked {{ count }} {{ count > 1 ? 'times' : 'time' }}
+        &lt;/button&gt;
+
+        &lt;button on:click="resetCounter()" e-toggle:disabled="!count" &gt; 
+            {{ count === 0 ? 'Setted ' :  'Click to reset' }}
+        &lt;/button&gt;
+    &lt;/div&gt;
+                            </code></pre>
+
+                            <pre><code class="javascript hljs">
+    var app21 = new Easy('#app21', {
+        data: {
+            count: 0,
+            resetCounter: function(){
+                this.data.count = 0;
+            }
+        }
+    });
+                            </code></pre>
+
+                            <div class="result"></div>
+
+                            <h3> <a id="events_easy" href="#events_easy"> Easy </a> </h3>
+                            <p>
+                                These are Easy's internal events, which we can mention:
+                            </p>
+
+                            <ul>
+                                <li> <span class="note mark-a">data</span> &ndash; this event is dispatched when an
+                                    element
+                                    containing the data command is compiled. </li>
+                                <li> <span class="note mark-a">add</span> &ndash; this event is emitted when an element
+                                    of
+                                    the e-for command is inserted into the DOM. It works with
+                                    <a href="#connectors" class="note mark-a">connectors</a> (we will talk about this
+                                    later). </li>
+                                <li> <span class="note mark-a">empty</span> &ndash; this event is emitted when the array
+                                    passed in the e-for command is empty. It works with
+                                    <a href="#connectors" class="note mark-a">connectors</a>. </li>
+                                </li>
+                                <li> <span class="note mark-a">response</span> &ndash; this event is emitted when we get
+                                    some
+                                    response
+                                    to a request made using a <a href="#connectors" class="note mark-a">connector</a>.
+                                </li>
+                                <li> <span class="note mark-a">fail</span> &ndash; this event is emitted when a request
+                                    made
+                                    using a
+                                    <a href="#connectors" class="note mark-a">connector</a> fails. </li>
+                            </ul>
+
+                            <pre><code class="example html hljs">
+    &lt;div id="app22"&gt;
+        &lt;ul&gt; 
+            &lt;li e-for="food of foods" on:add="addEmoji"&gt; 
+                {{ food.name }} 
+            &lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/div&gt;
+                            </code></pre>
+
+                            <pre><code class="javascript hljs">
+    var app22 = new Easy('#app22', {
+        data: {
+            foods: [ { name: 'Rice' }, { name: 'Meat' } ],
+            addEmoji: function(evt){
+                switch(evt.data.$model.food.name) {
+                    case 'Rice':
+                        evt.target.innerHTML += ' 🍚';
+                        break;
+                    case 'Meat':
+                        evt.target.innerHTML += ' 🥩';
+                        break;
+                }
+            }
+        }
+    });
+                            </code></pre>
+
+                            <div class="result"></div>
+
+                            <h3> <a id="events_custom" href="#events_custom"> Custom </a> </h3>
+                            <p>
+                                These are the events that we can freely set the names according to our liking. <span
+                                    class="note att-border">Do not use reserved names</span>, which are event names
+                                mentioned above. To emit these events we use the <span
+                                    class="note mark-a">this.emit(eventName, someData)</span> method.
+                            </p>
+
+                            <p>
+                                The callback of this event has as the <span class="mark-a">first argument</span> the
+                                data is issued and as the <span class="mark-a">second argument</span> the element
+                                associated with the event.
+                            </p>
+
+                            <pre><code class="example html hljs">
+    &lt;div id="app23"&gt;
+        &lt;input on:keyup="emitEvent(event.target.value)" 
+                type="text" placeholder="Type to change" /&gt;
+
+        &lt;p on:changetext="changeTextCallback"&gt; Type something in the input! &lt;/p&gt;
+    &lt;/div&gt;
+                            </code></pre>
+
+                            <pre><code class="javascript hljs">
+    var app23 = new Easy('#app23', {
+        data: {
+            emitEvent: function(value){
+                this.emit('changetext', value);
+            },
+            changeTextCallback: function(text, target){
+                target.innerText = text; 
+            }
+        }
+    });
+                            </code></pre>
+
+                            <div class="result"></div>
+
+                            <div class="block-note warn">
+                                <p>
+                                    Please skip this explanation if you understand the example above, because it can be
+                                    tedious!
+                                </p>
+                            </div>
+
+                            <p>
+                                Let's explain what is happening in this example: <br> Whenever a key is pressed inside
+                                the input, this will call the function <span class="note">emitEvent</span> passing the
+                                value of the input where it calls the method <span class="note">this.emit(...)</span>
+                                passing the <span class="note">value</span> in the emission, this calls the function
+                                <span class="note">changeTextCallback</span> which changes the target text to the
+                                issued value.
+                            </p>
+
+                            <div class="block-note warn">
+                                <p>
+                                    Always remember to write the names of the events in lower cases.
+                                </p>
+                            </div>
+
+                            <h3> <a id="events_modifiers" href="#events_modifiers"> Modifiers </a> </h3>
+                            <p>
+                                To add modifiers to the events use <span class="note mark-a">.</span> (dot) after the
+                                eventName. The sintax is <span
+                                    class="note mark-a">on:eventName.modifier1.modifier2="expression"</span>
+                            </p>
+
+                            <p>
+                                The following modifiers are available:
+                            </p>
+
+                            <ul>
+                                <li> <span class="note mark-a">preventDefault</span> &ndash; calls <span
+                                        class="note">event.preventDefault()</span> before running the handler. </li>
+                                <li> <span class="note mark-a">stoPropagation</span> &ndash; calls <span
+                                        class="note">event.stopPropagation()</span>, preventing the event reaching the
+                                    next element. </li>
+                                <li> <span class="note mark-a">once</span> &ndash; remove the event after the first time
+                                    it runs. </li>
+                            </ul>
+
+                            <p>
+                                Modifiers can be chained together, e.g.:
+                                <span class="note mark-a">on:click.stopPropagation.once="doSomeThing"</span>
+                            </p>
+
+                            <pre><code class="example html hljs">
+    &lt;div id="app24"&gt;        
+        &lt;button on:click.once="count++"&gt; 
+            Clicked {{ count }}
+        &lt;/button&gt;
+    &lt;/div&gt;
+                            </code></pre>
+
+                            <pre><code class="javascript hljs">
+    var app24 = new Easy('#app24', {
+        data: {
+            count: 0
+        }
+    });
+                            </code></pre>
+
+                            <div class="result"></div>
+
+                        </section>
+
+                        <section class="section" e-ignore>
+                            <h1><a id="methods" href="#methods"> Methods </a></h1>
+                            <p>
+                                There are some built-in methods that can be used in the application, which are:
+                            </p>
+
+                            <h3><a id="method_setData" href="#method_setData">setData</a></h3>
+                            <p>
+                                It is used to define properties in the data scope. Its sintax is
+                                <span class="note mark-a">instance.setData(object, targetObject)</span>.
+                            </p>
+                            <ul>
+                                <li> <span class="note mark-a">{ Object } object</span> &ndash; represents object a
+                                    containing the properties that must be added to the scope. </li>
+                                <li> <span class="note mark-a">{ Object } targetObject</span> &ndash; represents the
+                                    target scope to be added to the properties. It is optional, if not defined the
+                                    properties will be in the <span class="note mark-a">main scope</span>. </li>
+                                <li> <span class="note mark-a">{ Object } returns</span> &ndash; the scope object. </li>
+                            </ul>
+
+                            <pre><code class="javascript hljs">
+    var app = new Easy('#my-app', {
+        data: {
+            firstName: 'Maria',
+        }
+    });
+
+    app.setData({
+        lastName: 'Matumona',
+        country: 'Angola'
+    });
+                            </code></pre>
+
+
+                            <h3><a id="method_on" href="#method_on">on</a></h3>
+                            <p>
+                                It allows adding an event to the instance so that it can be used anywhere in the
+                                application.
+                                The method expects two parameters: <span class="note mark-a">instance.on(eventName,
+                                    callback)</span>.
+                            </p>
+
+                            <ul>
+                                <li> <span class="note mark-a">{ String } eventName</span> &ndash; the name of the event
+                                    to be added. </li>
+                                <li> <span class="note mark-a">{ Function } callback</span> &ndash; the callback having
+                                    your code. </li>
+                                <li> <span class="note mark-a">{ Object } returns</span> &ndash; an object having the
+                                    event name and the callback we can use to remove the event.
+                                    <span class="note">{ event: <i class="mark-a">String</i>, callback: <i
+                                            class="mark-a">Function</i> }</span>. </li>
+                            </ul>
+
+                            <pre><code class="javascript hljs">
+    var app = new Easy('#my-app');
+
+    app.on('changeName', function(data) {
+        // Todo: your code here...
+    });
+                            </code></pre>
+
+                            <h3><a id="method_off" href="#method_off">off</a></h3>
+                            <p>
+                                Allows you to remove an event added to the instance.
+                                The method expects two parameters: <span class="note mark-a">instance.off(eventName,
+                                    callback)</span>.
+                            </p>
+
+                            <ul>
+                                <li> <span class="note mark-a">{ String } eventName</span> &ndash; The name of the event
+                                    to be removed. </li>
+                                <li> <span class="note mark-a">{ Function } callback</span> &ndash; The callback
+                                    returned from <span class="note mark-a">on</span> method. </li>
+                                <li> <span class="note mark-a">{ Object } returns</span> &ndash; an object having the
+                                    event name and the callback. <span class="note">{ event: <i
+                                            class="mark-a">String</i>, callback: <i class="mark-a">Function</i>
+                                        }</span>. </li>
+                            </ul>
+
+                            <pre><code class="javascript hljs">
+    var app = new Easy('#my-app');
+
+    var event = app.on('changeName', function(data) {
+        // Todo: your code here...
+    });
+
+    app.off('changeName', event.callback);
+                            </code></pre>
+
+                            <h3><a id="method_emit" href="#method_emit">emit</a></h3>
+                            <p>
+                                Allows you to issue a specific item, whether customized (events added in elements) or
+                                added in the instance.
+                                The method expects three parameters: <span class="note mark-a">instance.emit(eventName,
+                                    data, once)</span>.
+                            </p>
+
+                            <ul>
+                                <li> <span class="note mark-a">{ String } eventName</span> &ndash; the name of the event
+                                    to be emitted. </li>
+                                <li> <span class="note mark-a">{ Object } data</span> &ndash; a data to be added to the
+                                    event callback. </li>
+                                <li> <span class="note mark-a">{ Boolean } once</span> &ndash; allows you to remove the
+                                    event after being called the first time. </li>
+                            </ul>
+
+                            <pre><code class="javascript hljs">
+    var app = new Easy('#my-app');
+
+    var event = app.on('changeName', function(data) {
+        // Todo: your code here...
+    });
+    
+    app.emit('changeName', { name: 'transfered data' });
+                            </code></pre>
+
+                            <h3><a id="method_expose" href="#method_expose">expose</a></h3>
+                            <p>
+                                It allows exposing an object, allowing it to be retrieved anywhere in the application.
+                                By default, Easy uses to transfer data to a component.
+                                The method expects three parameters: <span class="note mark-a">instance.expose(name,
+                                    data, force)</span>.
+                            </p>
+
+                            <ul>
+                                <li> <span class="note mark-a">{ String } name</span> &ndash; the unique name (Or,
+                                    component name). </li>
+                                <li> <span class="note mark-a">{ Object } data</span> &ndash; the object to be exposed.
+                                </li>
+                                <li> <span class="note mark-a">{ Boolean } force</span> &ndash; allows you to force the
+                                    exposition if there is already some exposed data with the same name. </li>
+                            </ul>
+
+                            <pre><code class="javascript hljs">
+    var app = new Easy('#my-app');
+
+    app.expose('userInfo', { name: 'Maria', roles: ['admin', 'manager'] });
+                            </code></pre>
+
+                            <h3><a id="method_retrieve" href="#method_retrieve">retrieve</a></h3>
+                            <p>
+                                It allows to retrieve the exposed data. The method expects two parameters: <span
+                                    class="note mark-a">instance.remove(name, remove)</span>.
+                            </p>
+
+                            <ul>
+                                <li> <span class="note mark-a">{ String } name</span> &ndash; the name of the exposed a
+                                    object. </li>
+                                <li> <span class="note mark-a">{ Boolean } force</span> &ndash; Allows to remove the
+                                    exposed data after being retrieved. </li>
+                                <li> <span class="note mark-a">{ Object } force</span> &ndash; the exposed object. </li>
+                            </ul>
+
+                            <pre><code class="javascript hljs">
+    var app = new Easy('#my-app');
+
+    app.expose('userInfo', { name: 'Maria', roles: ['admin', 'manager'] });
+    
+    var data = app.retrive('userInfo');
+                            </code></pre>
+
+                            <h3><a id="method_tojsobj" href="#method_toJsObj">toJsObj</a></h3>
+                            <p>
+                                It allows creating a structured javascript object based on the structure of the HTML
+                                element. Object that can be sent to a server.
+                            </p>
+
+                            <p>
+                                To be able to generate the struture, this method depends of some commands, whitch are:
+                            </p>
+
+                            <ul>
+                                <li> <a id="method_tojsobj_build" href="#method_tojsobj_build" class="note mark-a">
+                                        e-build </a> &ndash; allows you to build one object within another. The syntax
+                                    is <span class="note mark-a">e-build="<i>path</i>"</span>. </li>
+                                <li> <a id="method_tojsobj_array" href="#method_tojsobj_array" class="note mark-a">
+                                        e-array </a> &ndash; allows to build a array of the element where it is defined.
+                                    Even if it is not defined by default it creates an array if the elements repeats.
+                                </li>
+                            </ul>
+
+                            <p>
+                                The method expects three parameters: <span
+                                    class="note mark-a">instance.toJsObj(selector, options, onset)</span>.
+                            </p>
+
+                            <ul>
+                                <li> <span class="note mark-a">{ String|Element } selector</span> &ndash; the selector
+                                    of the element to be generated or the element it self. </li>
+                                <li> <span class="note mark-a">{ Object } options</span> &ndash; options that indicates
+                                    properties it needs to look and from this ones which property it needs to get the
+                                    value. Its sintax is <span class="note mark-a">{ names: '[property1],[property2]',
+                                        values: '[property1],[property2]' }</span>. The order really matters, it takes
+                                    what it finds first. The default value is <span class="note">{ names: '[name]',
+                                        values: '[value]' }</span>. </li>
+                                <li> <span class="note mark-a">{ Function} onset</span> &ndash; a function that will be
+                                    called whenever a property is setted. </li>
+                            </ul>
+
+                            <pre><code class="example html hljs">
+    &lt;div id="app25"&gt;        
+        &lt;form on:submit.preventDefault="generate"&gt;
+            
+            &lt;label&gt; First Name &lt;/label&gt; &lt;br&gt;
+            &lt;input type="text" name="firstName" /&gt; &lt;br&gt;
+            
+            &lt;label&gt; Last Name &lt;/label&gt; &lt;br&gt;
+            &lt;input type="text" name="lastName" /&gt; &lt;br&gt;
+            
+            &lt;div e-build="phones" e-array&gt; 
+                &lt;label&gt; Country Code &lt;/label&gt; &lt;br&gt;
+                &lt;input type="text" name="code" /&gt; &lt;br&gt;
+                
+                &lt;label&gt; Number &lt;/label&gt; &lt;br&gt;
+                &lt;input type="text" name="number" /&gt;
+            &lt;/div&gt;
+            
+            &lt;div e-build="identification"&gt;
+                &lt;label&gt; Type &lt;/label&gt; &lt;br&gt;
+                &lt;select name="type"&gt; 
+                    &lt;option&gt; Id Card &lt;/option&gt;
+                    &lt;option&gt; Passport &lt;/option&gt;
+                &lt;/select&gt; &lt;br&gt;
+
+                &lt;label&gt; Code &lt;/label&gt; &lt;br&gt;
+                &lt;input type="text" name="code" /&gt;
+            &lt;/div&gt;
+        
+            &lt;button type="submit"&gt; Submit &lt;/button&gt;    
+
+        &lt;/form&gt;
+        &lt;br&gt; &lt;br&gt;
+
+        &lt;label&gt; Result &lt;/label&gt; &lt;br&gt;
+        &lt;div&gt; 
+            {{ object }}
+        &lt;/div&gt;
+    &lt;/div&gt;
+                            </code></pre>
+
+                            <pre><code class="javascript hljs">
+    var app25 = new Easy('#app25', {
+        data: {
+            object: {},
+            generate: function(evt){
+                this.data.object = this.toJsObj(evt.base);
+            }
+        }
+    });
+                            </code></pre>
+
+                            <div class="result"></div>
+
+
+
+                            <h3><a href="#method_watch">watch</a></h3>
+                            <h3><a href="#method_set">set</a></h3>
+                            <h3><a href="#method_css">css</a></h3>
+                            <h3><a href="#method_code">code</a> </h3>
                         </section>
 
                     </div>
@@ -1206,17 +1765,15 @@
 
             </div>
         </main>
-
     </div>
 
     <script src="assets/js/app.js"></script>
-
     <script>
         function createEl(appNode) {
             var el = document.createElement('div');
             el.innerHTML = appNode.innerText;
             var $el = el.children[0];
-            $el.$preventMutation = true;
+            $el.$prevent = true;
             return $el;
         }
 
@@ -1249,8 +1806,7 @@
 
             eval(script.innerText.replace('data:', $ad));
         }
-    </script>
-    <script>
+
         hljs.initHighlightingOnLoad();
     </script>
 </body>

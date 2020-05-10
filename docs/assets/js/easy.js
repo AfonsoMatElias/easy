@@ -9,7 +9,7 @@
     (global.Easy = factory());
 }(window, (function(){ 'use strict';
     // Shared variables
-    var defaultEvents = {};
+    var standardEvents = {}, eventModifiers = {};
     var getter; // Store getter function
     var $global = window, doc = $global.document;
     delete $global.name; // Removing window.name property
@@ -22,9 +22,16 @@
     // Get all default events registed in the DOM Elements
     for ( var key in doc.createElement('input') ) {
         if( key[0] === 'o' && key[1] === 'n' )
-            defaultEvents[key.substr(2)] = true;
+            standardEvents[key.substr(2)] = true;
     }
-    
+
+    // Get all modifier functions
+    var $$evt = new Event('e');
+    for (const key in $$evt) {
+        if ( typeof $$evt[key] === 'function' )
+        eventModifiers[key.toLowerCase()] = key
+    }
+
     var vars = {
         cmds: {
             id: 'e-id',
@@ -844,23 +851,12 @@
         }
         /** Sets values in the data */
         prototype.setData = function (input, target) {
-            if (isNull(input)) 
-                return;
-            if (isNull(target)) {
-                target = $easy.data;
-            }
-            if (typeof input === 'function') {
-                var data = input.call(null, target);
-                if (isNull(data)) 
-                    Easy.log('Returned object is needed to set it as reactive one', 'warn'); 
-                else 
-                    new ReactiveObject(data);
-            } else {
-                var data = new ReactiveObject(input);
-                data.keys(function (k) {
-                    $propTransfer(target, data, k);
-                });
-            }        
+            if (isNull(input)) return;
+            if (isNull(target)) target = $easy.data;
+            var data = new ReactiveObject(input);
+            data.keys(function (k) {
+                $propTransfer(target, data, k);
+            });       
             return target;
         }
         /** Exposes data to be retrived anywhere */
@@ -952,7 +948,7 @@
         prototype.emit = function (evt, data, once) {
             if(isNull(once)) once = false;
             forEach(extend.array(customEvents[evt]), function (event) {
-                event.call(this, data);
+                event.call(this, data, event.$target);
                 if (once === true)
                     this.off(evt, event);
             }, $easy);
@@ -1292,37 +1288,36 @@
                 }
 
                 if ($name.startsWith('on:') || $name.startsWith('listen:')) {
-                    var evtExpression = $name.split(':')[1].split('.');
-                    var event = evtExpression[0], base = el.$e.$base;
+                    var evtExpression = $name.split(':')[1].split('.'); // click.preventdefault
+                    var eventName = evtExpression[0], base = el.$e.$base;
 
-                    if ( defaultEvents[event] === true ){
-                        var $on = base.listen(event, function () {
+                    if ( standardEvents[eventName] === true ){
+                        var $on = base.listen(eventName, function (evtObject) {
                             if(evtExpression.indexOf('once') !== -1) // If once                        
-                                base.removeEventListener(event, $on[0].callback, false);
-                            
-                            if(evtExpression.indexOf('prevent') !== -1) // If Prevent default
-                                event.preventDefault();
+                                base.removeEventListener(eventName, $on[0].callback, false);
+                            // Applying the modifier
+                            forEach(evtExpression,function (modifier) {
+                                var $modName = eventModifiers[modifier];
+                                if ($modName) evtObject[$modName]();
+                            });
 
                             arguments[0].data = { $scope: $scope }
                             // Calling the callback function
-                            fn.eval("if (typeof (" + $value + ") === 'function') " +
-                                $value + ".apply(this, arguments);", 
+                            fn.eval("if (typeof (("+ $value+")) === 'function') ("+$value +").apply(this, arguments);", 
                                 extend.obj($scope, $$methods) || {}, false, arguments);
                         });
 
                     } else {
-                        if( !isNull(vars.events[event]) ) return;
-
-                        var $on = $easy.on(event, function() {
-                            // If once
-                            if(evtExpression.indexOf('once') !== -1) {
-                                base.removeEvent(event, $on.callback);
-                            } 
+                        if( !isNull(vars.events[eventName]) ) return;
+                        var callback = function() {
+                            if(evtExpression.indexOf('once') !== -1) // If once
+                                $easy.off(eventName, $on.callback);
                             // Calling the callback function
-                            fn.eval("if (typeof (" + $value + ") === 'function') " +
-                                $value + ".apply(this, arguments);", 
+                            fn.eval("if (typeof (("+$value+")) === 'function') ("+$value+").apply(this, arguments);", 
                                 extend.obj($scope, $$methods) || {}, false, arguments);
-                        });
+                        }
+                        callback.$target = base;
+                        var $on = $easy.on(eventName, callback);
                     }
 
                     remAttr(base, $name);
@@ -1645,7 +1640,7 @@
                     el = temp.children[0];
 
                     // Generating new element
-                    el.$preventMutation = true;
+                    el.$prevent = true;
 
                     if (!noReplace) {
                         // Defining the name
@@ -1798,7 +1793,7 @@
                         }
         
                         el.$e = $inc.$e;
-                        el.$preventMutation = true;
+                        el.$prevent = true;
                         // Defining attributes from the inc element 
                         transferAttributes($inc, el);
                         
@@ -2439,7 +2434,7 @@
                                     return;
 
                                 // Checking if the element needs to be skipped
-                                if ( node.$preventMutation ) return;
+                                if ( node.$prevent ) return;
                                 // Skip if it's a comment
                                 if ( isIgnore(node.nodeName) ) return;
                                 
@@ -2592,7 +2587,7 @@
                                     scope: extend.obj($scope)
                                 });
 
-                                copy.$preventMutation = true;
+                                copy.$prevent = true;
                                 // interting the DOM
                                 comment.parentNode.insertBefore(copy, obj.neighbor || comment);
                             });
@@ -2794,7 +2789,7 @@
                                     chainObj.$elseValue = true;
 
                                 instance.cmd.if(cond.el, $dt);
-                                cond.el.$preventMutation = true;
+                                cond.el.$prevent = true;
                             }
                         });
                         return;
@@ -2844,7 +2839,7 @@
                             var el = $request.$el;
                             var above = el.$e.com.parentNode;
                             if(el && el.$e.com){
-                                el.$preventMutation = true;
+                                el.$prevent = true;
                                 forEach(el.$e.$oldAttrs, function (at) { 
                                     el.valueIn(at.name, at.value); 
                                 });

@@ -619,6 +619,10 @@ nav ul>li:hover {
     margin: 26px 0;
 }
 
+.doc-page .doc-presentation .section h3 {
+    font-weight: bold;
+}
+
 .doc-page .doc-presentation .section {
     color: var(--color-text);
     max-width: 950px;
@@ -639,7 +643,8 @@ nav ul>li:hover {
     line-height: 30px;
 }
 
-.doc-page .doc-presentation .section .result input,
+.doc-page .doc-presentation .section .result input, 
+.doc-page .doc-presentation .section .result select, 
 .doc-page .doc-presentation .section .result button {
     border: 1px solid var(--color-border);
     padding: 4px 10px;
@@ -750,8 +755,8 @@ pre code::after,
 .block-note.warn { border-color: var(--note-yellow); }
 .block-note.dont { border-color: var(--note-red); }
 
-.att-bg.note { border: 2px solid var(--note-red); }
-.warn-bg.note { border: 2px solid var(--note-yellow); }
+.att-border.note { border: 2px solid var(--note-red); }
+.warn-border.note { border: 2px solid var(--note-yellow); }
 
 @media (max-width: 600px) {
     .high-element {
