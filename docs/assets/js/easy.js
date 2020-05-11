@@ -490,11 +490,11 @@
         options = $objDesigner(options, { config: {}, data: {}, components: {}, mounted: fn.empty, loaded: fn.empty });
         options.data = $objDesigner(options.data, {});
         options.components = $objDesigner(options.components, { elements: {}, config: {} });
-        options.components.config = $objDesigner(options.components.config, { usehash: true, base: '/', storeData: false });
+        options.components.config = $objDesigner(options.components.config, { usehash: true, base: '/', keepData: false });
         options.config = $objDesigner(options.config, { deepIgnore: false, log: true, useDOMLoadEvent: true, skeleton: { background: '#E2E2E2' , wave: '#ffffff5d' } });
         this.options = options;
         
-        skeletonConfig = options.config.skeleton;
+        skeletonConfig = extend.obj(options.config.skeleton);
         componentConfig = options.components.config;
         this.delimiters = Object.freeze($$delimiters);
 
@@ -1682,7 +1682,7 @@
                     } else {
                         // If the data isn't defined take data from scope data 
                         this.data = (this.scope ? this.scope : this.scope = {});
-                        if ($config.storeData) $path.data = this.data; 
+                        if ($config.keepData) $path.data = this.data; 
                     }
 
                     this.export = function (data) {
@@ -1719,8 +1719,8 @@
                         });
         
                         if (!el) return Easy.log("The component '" + src +
-                            "' seems to be empty or it has not a root element" +
-                            "Eg.: <div></div>, to include. Please, check it!", 'warn');
+                            "' seems to be empty or it has not a root element, " +
+                            "eg.: <div></div>, to included. Please, check it!");
                         
                         // Helper to get content elements
                         function findContents(el) {
@@ -1763,7 +1763,7 @@
                             // For scoped styles
                             if (style.hasAttribute('scoped')) {
                                 // Generating some class name for the selectors
-                                var value = 'scope-s' + $easy.code(4), $newContent = '';
+                                var value = 'easy-s' + $easy.code(4), $newContent = '';
                                 styleIds.push(value);
                                 // Changing each selector to avoid conflit
                                 forEach(style.sheet.cssRules, function (rule) {

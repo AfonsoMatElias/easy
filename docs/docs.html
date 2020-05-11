@@ -114,9 +114,13 @@
                                         <li> <a href="#events_modifiers"> Modifiers </a> </li>
                                     </ul>
                                 </li>
-                                <li> <a href="#methods"> <h3> Methods </h3> </a>
+                                <li> <a href="#methods">
+                                        <h3> Methods </h3>
+                                    </a>
                                     <ul>
                                         <li><a href="#method_setData"> setData </a></li>
+                                        <li><a href="#method_on"> on </a></li>
+                                        <li><a href="#method_off"> off </a></li>
                                         <li><a href="#method_emit"> emit </a></li>
                                         <li><a href="#method_expose"> expose </a></li>
                                         <li><a href="#method_retrieve"> retrieve </a></li>
@@ -127,42 +131,49 @@
                                             </ul>
                                         </li>
                                         <li><a href="#method_watch"> watch </a></li>
-                                        <li><a href="#method_on"> on </a></li>
-                                        <li><a href="#method_off"> off </a></li>
                                         <li><a href="#method_set"> set </a></li>
-                                        <li><a href="#method_css"> css </a></li>
-                                        <li><a href="#method_code"> code </a> </li>
                                     </ul>
                                 </li>
                                 </li>
                                 <li> <a href="#comps_incs">
                                         <h3>Components / Includers</h3>
-                                    </a> </li>
-                                <li> <a href="#registering"> Registering </a> </li>
-                                <li> <a href="#comp_options"> Options </a> </li>
-                                <li> <a href="#comp_format"> Component Format </a> </li>
-                                <li> <a href="#comp_elems"> Elements </a> </li>
-                                <li> <a href="#comp_style"> style </a> </li>
-                                <li> <a href="#comp_root"> Root Element </a> </li>
-                                <li> <a href="#comp_script"> script </a> </li>
-                                <li> <a href="#comp_l_cyles"> Lifecycles Hooks </a> </li>
+                                    </a>
+                                    <ul>
+                                        <li> <a href="#comp_cloned"> Cloned </a> </li>
+                                        <li> <a href="#comp_registered"> Registered </a> </li>
+                                        <li> <a href="#comp_registering"> Registering </a> </li>
+                                        <li> <a href="#comp_handing"> Handling Components </a> </li>
+                                        <li> <a href="#comp_format"> Component Format </a> </li>
+                                        <li> <a href="#comp_style"> Styles </a> </li>
+                                        <li> <a href="#comp_root"> Root Element </a> </li>
+                                        <li> <a href="#comp_script"> Scripts </a> </li>
+                                        <li> <a href="#comp_life_cycles"> <b>Lifecycles Hooks</b> </a>
+                                            <ul>
+                                                <li> <a href="#comp_life_cycles_created"> Created </a> </li>
+                                                <li> <a href="#comp_life_cycles_mounted"> Mounted </a> </li>
+                                                <li> <a href="#comp_life_cycles_loaded"> Loaded </a> </li>
+                                                <li> <a href="#comp_life_cycles_destroyed"> Destroyed </a> </li>
+                                            </ul>
+                                        </li>
+                                        <li> <a href="#comp_exporting"> Exporting </a> </li>
+                                    </ul>
+                                </li>
                                 <li> <a href="#connectors">
                                         <h3> Connectors </h3>
                                     </a>
                                     <ul>
                                         <li> <a href="#conn_ajax"> Ajax </a> </li>
                                         <li> <a href="#comp_free"> Free </a> </li>
-                                    </ul>
-                                </li>
-
-                                <li> <a href="#comp_commands"> Commands </a>
-                                    <ul>
-                                        <li> <a href="#comp_c_req"> e-req </a> </li>
-                                        <li> <a href="#comp_c_tmp"> e-tmp </a> </li>
-                                        <li> <a href="#comp_c_fill"> e-fill </a> </li>
-                                        <li> <a href="#comp_c_id"> e-id </a> </li>
-                                        <li> <a href="#comp_c_use"> e-use </a> </li>
-                                        <li> <a href="#comp_c_filter"> e-filter </a> </li>
+                                        <li> <a href="#comp_commands"> <b>Commands</b> </a>
+                                            <ul>
+                                                <li> <a href="#comp_c_req"> e-req </a> </li>
+                                                <li> <a href="#comp_c_tmp"> e-tmp </a> </li>
+                                                <li> <a href="#comp_c_fill"> e-fill </a> </li>
+                                                <li> <a href="#comp_c_id"> e-id </a> </li>
+                                                <li> <a href="#comp_c_use"> e-use </a> </li>
+                                                <li> <a href="#comp_c_filter"> e-filter </a> </li>
+                                            </ul>
+                                        </li>
                                     </ul>
                                 </li>
 
@@ -202,7 +213,8 @@
                             <h3> <a id="compatibility" href="#compatibility"> Browsers Compatibility </a> </h3>
                             <p>
                                 It was tested in almost every popular browsers and IE 11, below that is not suported,
-                                because it uses some comcepts of <a href="https://caniuse.com/#feat=es6" class="mark-a">
+                                because it uses some comcepts of <a href="https://caniuse.com/#feat=es6"
+                                    class="mark-el">
                                     ECMAScript 2015 (ES6) </a>.
                             </p>
 
@@ -322,14 +334,14 @@
                                 <li>
                                     <span class="note">{ Boolean } log</span> &ndash; Allows the logs
                                     (logs, errors and warning) to be shown. Default value is <span
-                                        class="note mark-a">true</span>.
+                                        class="note mark-el">true</span>.
                                 </li>
                                 <li>
                                     <span class="note">{ Boolean } deepIgnore</span> &ndash;
                                     Allows you to ignore all elements that are inside a container
                                     (even those that are added later) when using the command <span
                                         class="note">e-ignore</span>
-                                    (We'll talk about that in the <a href="#commands" class=" mark-a">Commands</a>
+                                    (We'll talk about that in the <a href="#commands" class=" mark-el">Commands</a>
                                     section). <br>
                                     <span class="note att-border">Be careful, this can slow down your
                                         application.</span>
@@ -337,13 +349,13 @@
                                 <li>
                                     <span class="note">{ Boolean } useDOMLoadEvent</span> &ndash; Allows the
                                     instance to use the 'DOMContentLoaded' event when loading the page.
-                                    Default value is <span class="note mark-a">true</span>.
+                                    Default value is <span class="note mark-el">true</span>.
                                 </li>
                                 <li>
                                     <span class="note">{ Object } skeleton</span> &ndash; Defines color of the
                                     skeleton while the
                                     content is being loaded. Is structured as follows: <br>
-                                    <span class="note mark-a"> { background: 'color', wave: 'color' } </span>
+                                    <span class="note mark-el"> { background: 'color', wave: 'color' } </span>
                                     <br>
                                     By default the skeleton is light gray with the lightest wave.
                                 </li>
@@ -355,7 +367,7 @@
                                 application will have
                                 when it starts, however there is a way to add data while it is already running with the
                                 <span class="note">app.setData(...)</span> method. (We'll talk about that in the
-                                <a href="#methods" class=" mark-a">methods</a> section).
+                                <a href="#methods" class=" mark-el">methods</a> section).
                                 <br>
                                 Data or properties defined on <span class="note">date</span> are not normal
                                 properties,
@@ -394,7 +406,7 @@
                                     <span class="note">{ Function } mounted</span> &ndash; this hook is called when
                                     the
                                     DOMContentLoaded event is raised (It works this way if the <a href="#prop_config"
-                                        id="prop_config" class="mark-a">useDOMLoadEvent</a>
+                                        id="prop_config" class="mark-el">useDOMLoadEvent</a>
                                     property is true, otherwise, it will be called as soon as the Class is
                                     instantiated).
                                 </li>
@@ -469,7 +481,7 @@
                             <p>
                                 Whenever data is an Object it turn it to <a
                                     href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/JSON"
-                                    class="note mark-a">JSON</a>.
+                                    class="note mark-el">JSON</a>.
                             </p>
 
                             <h3> <a id="dlm_easy" href="#dlm_easy"> Easy </a> </h3>
@@ -528,10 +540,10 @@
 
                             <p>
                                 If you don't want to do it this way, you can still use the command
-                                <span class="note mark-a">e-<i>property</i>="{{ dataProperty }}"</span>,
+                                <span class="note mark-el">e-<i>property</i>="{{ dataProperty }}"</span>,
                                 it creates the property after being compiled. This commands is very versatile,
                                 we will go into details about it in the <a href="#cmd_e"
-                                    class="note mark-a">commands</a> section.
+                                    class="note mark-el">commands</a> section.
                             </p>
 
                             <pre><code class="html hljs">
@@ -544,11 +556,11 @@
                             <h3> <a id="bind_two_way" href="#bind_two_way"> Two Way </a> </h3>
                             <p>
                                 You can achieve Two Way Data Binding using the command <span
-                                    class="note mark-a">e-bind:<i>property</i>="dataProperty"</span>,
+                                    class="note mark-el">e-bind:<i>property</i>="dataProperty"</span>,
                                 by default it binds <span class="note">value</span> property, it means that if you want
                                 to bind the property value of
                                 an input you can define like this <span
-                                    class="note mark-a">e-bind="dataProperty"</span>.
+                                    class="note mark-el">e-bind="dataProperty"</span>.
                             </p>
 
                             <pre><code class="example html hljs">
@@ -583,13 +595,13 @@
                             <h3> <a id="cmd_data" href="#cmd_data"> data </a> </h3>
                             <p>
                                 It allows defining a data scope for a certain element, the syntax is
-                                <span class="note mark-a">data="{ ... }"</span>, if it is defined to be
+                                <span class="note mark-el">data="{...}"</span>, if it is defined to be
                                 content the element will have the data of the main scope, instance.data.
                             </p>
 
                             <p>
                                 If you define an <a href="https://www.dyn-web.com/tutorials/object-literal/"
-                                    class="mark-a">Object Literal</a>, kwow that these properties are
+                                    class="mark-el">Object Literal</a>, kwow that these properties are
                                 temporary and by default <span class="note warn-border">they are not
                                     reactive</span>, unless an object that
                                 is already reactive is passedby itself or if you passe the object in the <span
@@ -673,7 +685,7 @@
                                 Allows the element where it is defined to be skipped in the compilation, waiting for its
                                 data to be provided. It is defined as follows:
                                 <span class="note">wait-data="dataID"</span>. In order to make the element
-                                data available, we use the <a href="" class="note mark-a">expose</a> method.
+                                data available, we use the <a href="" class="note mark-el">expose</a> method.
                             </p>
 
                             <pre><code class="example html hljs">
@@ -689,7 +701,10 @@
                             <pre><code class="javascript hljs">
     var app7 = new Easy('#app7', {
         data: {
+            /* Variables */
             message: 'Hello',
+
+            /* Methods */
             load: function(){
                 this.expose('waitForMe', { message: 'how are you? 😀' });
             }
@@ -702,7 +717,7 @@
                             <div class="block-note info">
                                 <p>
                                     The data passed it the expose method for wait-data, automatically become reactive,
-                                    then it is no longer necessary to use the <span class="note mark-a">reactive</span>
+                                    then it is no longer necessary to use the <span class="note mark-el">reactive</span>
                                     method
                                     in this command.
                                 </p>
@@ -728,16 +743,20 @@
     &lt;div id="app8"&gt;
         &lt;button on:click="load" &gt; Load Remain &lt;/button&gt;
         
-        &lt;h4&gt;
-            {{ message }}! &lt;span wait-data="waitForMe" e-content="{{ message }}"&gt; ... &lt;/span&gt;
-        &lt;/h4&gt;
+        &lt;div&gt;
+            &lt;h4&gt; {{ message }}! &lt;/h4&gt;
+            &lt;h4 wait-data="waitForMe" e-content="{{ message }}"&gt; ... &lt;/h4&gt;
+        &lt;/div&gt;
     &lt;/div&gt;
                             </code></pre>
 
                             <pre><code class="javascript hljs">
     var app8 = new Easy('#app8', {
         data: {
+            /* Variables */
             message: 'Hello',
+
+            /* Methods */
             load: function(){
                 this.expose('waitForMe', { message: 'how are you? 😀' });
             }
@@ -775,17 +794,20 @@
     &lt;div id="app9"&gt;
         &lt;button on:click="load" &gt; Load Remain &lt;/button&gt;
         
-        &lt;h4&gt;
-            {{ message }}! 
-            &lt;span wait-data="waitForMe" e-skeleton e-content="{{ message }}" &gt; Waiting &lt;/span&gt;
-        &lt;/h4&gt;
+        &lt;div&gt;
+            &lt;h4&gt; {{ message }}! &lt;/h4&gt;
+            &lt;h4 wait-data="waitForMe" e-skeleton e-content="{{ message }}" &gt; Waiting &lt;/h4&gt;
+        &lt;/div&gt;
     &lt;/div&gt;
                             </code></pre>
 
                             <pre><code class="javascript hljs">
     var app9 = new Easy('#app9', {
         data: {
+            /* Variables */
             message: 'Hello',
+
+            /* Methods */
             load: function(){
                 this.expose('waitForMe', { message: 'how are you? 😀' });
             }
@@ -824,7 +846,10 @@
                             <pre><code class="javascript hljs">
     var app10 = new Easy('#app10', {
         data: {
+            /* Variables */
             message: 'Hello',
+
+            /* Methods */
             removeSkeleton: function(){
                 this.el.clearSkeleton('skeleton1');
             }
@@ -838,8 +863,8 @@
                             <p>
                                 It is a short name of <span class="note">e-definer</span>, it allows to dynamically
                                 define properties (Reactives) in the current scope. Its syntax is
-                                <span class="note mark-a">e-def="{...}"</span>, it expects
-                                <a href="https://www.dyn-web.com/tutorials/object-literal/" class="mark-a">Object
+                                <span class="note mark-el">e-def="{...}"</span>, it expects
+                                <a href="https://www.dyn-web.com/tutorials/object-literal/" class="mark-el">Object
                                     Literal</a>.
                             </p>
 
@@ -869,7 +894,7 @@
                             <h3> <a id="cmd_e_if" href="#cmd_e_if"> e-if </a> </h3>
                             <p>
                                 The <span class="note">e-if</span> command is very similar to the <span
-                                    class="mark-a">Vue.js</span> <span class="note">v-if</span> directive...
+                                    class="mark-el">Vue.js</span> <span class="note">v-if</span> directive...
                                 it is used to conditionally render a block (element). The block will only be shown if
                                 the command expression returns a truthy value. It is accompanied with the e-else-if and
                                 e-else commands.
@@ -904,9 +929,9 @@
                             <h3> <a id="cmd_e_show" href="#cmd_e_show"> e-show </a> </h3>
                             <p>
                                 The <span class="note">e-show</span> command is very similar to the
-                                <span class="mark-a">Vue.js</span> <span class="note">v-show</span> directive... it is
+                                <span class="mark-el">Vue.js</span> <span class="note">v-show</span> directive... It is
                                 used to conditionally
-                                show an block (element), it toggles CSS <span class="note mark-a">display</span>
+                                show an block (element), it toggles CSS <span class="note mark-el">display</span>
                                 property.
                                 The block will be visible if the command expression returns a truthy value.
                             </p>
@@ -934,15 +959,16 @@
                             <h3> <a id="cmd_e_for" href="#cmd_e_for"> e-for </a> </h3>
                             <p>
                                 The <span class="note">e-for</span> command is very similar to the
-                                <span class="mark-a">Vue.js</span> <span class="note">v-for</span> directive...
+                                <span class="mark-el">Vue.js</span> <span class="note">v-for</span> directive...
                                 It is used to render a list of items based an array. Can be used in two ways,
                                 with declared variable(s) or not.
                             </p>
 
                             <p>
                                 There are two syntaxes for its use, the simple <span
-                                    class="note mark-a">e-for="myArray"</span> normally used when it is
-                                an array of object literal, and the complete <span class="note mark-a">e-for="item of/in
+                                    class="note mark-el">e-for="myArray"</span> normally used when it is
+                                an array of object literal, and the complete <span class="note mark-el">e-for="item
+                                    of/in
                                     myArray"</span> used mandatorily
                                 when it is an array of primitives and optional when they are object literal.
                             </p>
@@ -975,9 +1001,10 @@
                             <h4> <a id="cmd_e_for_filter" href="#cmd_e_for_filter"> Using Array filter </a> </h4>
                             <p>
                                 Easy array filter is a way to filter data while it is being rendered. To add the filter
-                                we use <span class="note mark-a">|</span> after <a href="#cmd_e_for"
-                                    class="note mark-a">e-for</a> expression.
-                                <span class="note mark-a">item of items | filterExpression</span>. There is four ways to
+                                we use <span class="note mark-el">|</span> after <a href="#cmd_e_for"
+                                    class="note mark-el">e-for</a> expression.
+                                <span class="note mark-el">item of items | filterExpression</span>. There are four ways
+                                to
                                 use this filter,
                                 which are:
                             </p>
@@ -1019,7 +1046,7 @@
                             <p>
                                 Performs the filter on specific properties of the items containing the value of the data
                                 property set.
-                                The filter need to be defined as following: <span class="note mark-a">|
+                                The filter need to be defined as following: <span class="note mark-el">|
                                     dataProperty:property1,property2...</span>
                             </p>
 
@@ -1053,7 +1080,7 @@
                             <p>
                                 Performs the filter on specific property of the items to a value set.
                                 The filter need to be defined as following: <br>
-                                <span class="note mark-a">| :property1 === someValue</span>
+                                <span class="note mark-el">| :property1 === someValue</span>
                             </p>
 
                             <pre><code class="example html hljs">
@@ -1080,11 +1107,11 @@
                                 </a> </h4>
                             <p>
                                 Performs the filter of the items based on a function, the context (<span
-                                    class="mark-a">this</span>)
+                                    class="mark-el">this</span>)
                                 of the function is the instance, the array is the first argument of the function. It
                                 expects an array as return value.
                                 The filter need to be defined as following: <br>
-                                <span class="note mark-a">| :myFunction</span>
+                                <span class="note mark-el">| :myFunction</span>
                             </p>
 
                             <pre><code class="example html hljs">
@@ -1100,7 +1127,10 @@
                             <pre><code class="javascript hljs">
     var app18 = new Easy('#app18', {
         data: {
+            /* Variables */
             foods: [ { name: 'Rice', price: 10 }, { name: 'Beans', price: 15 }, { name: 'Meat', price: 20 } ],
+            
+            /* Methods */
             foodFilter: function(array){
                 return array.filter(function(item){
                     return item.price <= 15;
@@ -1119,11 +1149,11 @@
                             </p>
 
                             <ul>
-                                <li> <span class="note mark-a"> push() </span> </li>
-                                <li> <span class="note mark-a"> pop() </span> </li>
-                                <li> <span class="note mark-a"> unshift() </span> </li>
-                                <li> <span class="note mark-a"> shift() </span> </li>
-                                <li> <span class="note mark-a"> splice() </span> </li>
+                                <li> <span class="note mark-el"> push() </span> </li>
+                                <li> <span class="note mark-el"> pop() </span> </li>
+                                <li> <span class="note mark-el"> unshift() </span> </li>
+                                <li> <span class="note mark-el"> shift() </span> </li>
+                                <li> <span class="note mark-el"> splice() </span> </li>
                             </ul>
 
                             <div class="block-note info">
@@ -1146,9 +1176,9 @@
                             <p>
                                 Sorts a list according to the condition passed in the command's expression. Its syntax
                                 is
-                                <span class="note mark-a">e-order="<i>OrderType</i>:<i>PropertyToBeOrdered</i>"</span>.
-                                The order types are: <span class="note mark-a">asc</span>, for ascending and
-                                <span class="note mark-a">des</span>, for descending.
+                                <span class="note mark-el">e-order="<i>OrderType</i>:<i>PropertyToBeOrdered</i>"</span>.
+                                The order types are: <span class="note mark-el">asc</span>, for ascending and
+                                <span class="note mark-el">des</span>, for descending.
                             </p>
 
                             <pre><code class="html hljs">
@@ -1162,30 +1192,30 @@
                             <div class="block-note info">
                                 <p>
                                     The command accepts delimiters, this means that it can be defined like this,
-                                    e.g.: <span class="note mark-a">e-order="{{orderType}}:{{orderBy}}"</span>
+                                    e.g.: <span class="note mark-el">e-order="{{orderType}}:{{orderBy}}"</span>
                                 </p>
                             </div>
 
                             <h3> <a id="cmd_e_anm" href="#cmd_e_anm"> e-anm </a> </h3>
                             <p>
                                 It is a simple way to animate the insertion of an element in the DOM. Its syntax is
-                                <span class="note mark-a">e-anm="<i>direction</i>"</span>.
+                                <span class="note mark-el">e-anm="<i>direction</i>"</span>.
                             </p>
 
                             <ul>
-                                <li> <span class="note mark-a"> up </span> &ndash; Performs the animation starting from
+                                <li> <span class="note mark-el"> up </span> &ndash; Performs the animation starting from
                                     the
                                     bottom to the top, ascending
                                     and gradually increasing the opacity. </li>
-                                <li> <span class="note mark-a"> down </span> &ndash; Performs the animation starting
+                                <li> <span class="note mark-el"> down </span> &ndash; Performs the animation starting
                                     from the
                                     top to the bottom, descending
                                     and gradually increasing the opacity.</li>
-                                <li> <span class="note mark-a"> left </span> &ndash; Performs the animation starting
+                                <li> <span class="note mark-el"> left </span> &ndash; Performs the animation starting
                                     from the
                                     right to the left, scrolling
                                     and gradually increasing the opacity. </li>
-                                <li> <span class="note mark-a"> right </span> &ndash; Performs the animation starting
+                                <li> <span class="note mark-el"> right </span> &ndash; Performs the animation starting
                                     from the
                                     left to the right, scrolling
                                     and gradually increasing the opacity. </li>
@@ -1202,8 +1232,8 @@
                             <h3> <a id="cmd_e_toggle" href="#cmd_e_toggle"> e-toggle </a> </h3>
                             <p>
                                 Allows you to toggle a property on an element, setting the value to <span
-                                    class="note mark-a">true</span> when set.
-                                Its syntax is <span class="note mark-a">e-toggle:<i>property</i>="dataProperty"</span>.
+                                    class="note mark-el">true</span> when set.
+                                Its syntax is <span class="note mark-el">e-toggle:<i>property</i>="dataProperty"</span>.
                             </p>
 
                             <pre><code class="example html hljs">
@@ -1234,8 +1264,8 @@
 
                             <p>
                                 The sintax for simply property creation is <span
-                                    class="note mark-a">e-<i>property</i>="expression"</span>.
-                                In this case the expression must contaim delimiter, otherwise it will not be compiled.
+                                    class="note mark-el">e-<i>property</i>="expression"</span>.
+                                In this case the expression must contain delimiter, otherwise it will not be compiled.
                             </p>
 
                             <pre><code class="html hljs">
@@ -1246,7 +1276,8 @@
 
                             <p>
                                 The sintax for property creation (if it does not exists) and toggleable value is
-                                <span class="note mark-a">e-<i>property</i>="{ valueToToggle : condition }"</span>. <br>
+                                <span class="note mark-el">e-<i>property</i>="{ valueToToggle : condition }"</span>.
+                                <br>
                                 <span class="note att-border">Do not use delimiters in the expression</span>.
                             </p>
 
@@ -1281,7 +1312,7 @@
                         <section class="section" e-ignore>
                             <h1> <a id="events" href="#events"> Events </a> </h1>
                             <p>
-                                We can use <span class="note mark-a">on:</span> to listen for DOM events and run some
+                                We can use <span class="note mark-el">on:</span> to listen for DOM events and run some
                                 javascript code when it is emitted. In some examples above we use the click event so we
                                 imagine that you must be a little familiar with it.
                             </p>
@@ -1291,17 +1322,17 @@
                                 <span class="note">Standard</span> DOM, <span class="note">Easy</span> and
                                 <span class="note">Custom</span> events. For all of them, they can be heard
                                 with the following syntax:
-                                <span class="note mark-a">on:<i>eventName</i>="function/expression"</span>.
+                                <span class="note mark-el">on:<i>eventName</i>="function/expression"</span>.
                             </p>
 
                             <p>
                                 When Standard and Easy events are issued, the event object can be accessed in the
                                 <span class="note">event</span> variable. It contains the <span
-                                    class="note mark-a">base</span>
+                                    class="note mark-el">base</span>
                                 property, which is passed to the element that is associated with the event, and the
                                 <span class="note">data</span> property, having the object of the current scope, this
-                                is divided into: { $model:{ <i class="mark-a">In case of e-for</i> }, $scope: { <i
-                                    class="mark-a">It has the scope object it self</i> } }
+                                is divided into: { $model:{ <i class="mark-el">In case of e-for</i> }, $scope: { <i
+                                    class="mark-el">It has the scope object it self</i> } }
                             </p>
 
                             <h3> <a id="events_standard" href="#events_standard"> Standard</a> </h3>
@@ -1324,7 +1355,10 @@
                             <pre><code class="javascript hljs">
     var app21 = new Easy('#app21', {
         data: {
+            /* Variables */
             count: 0,
+
+            /* Methods */
             resetCounter: function(){
                 this.data.count = 0;
             }
@@ -1340,27 +1374,29 @@
                             </p>
 
                             <ul>
-                                <li> <span class="note mark-a">data</span> &ndash; this event is dispatched when an
+                                <li> <span class="note mark-el">data</span> &ndash; this event is dispatched when an
                                     element
                                     containing the data command is compiled. </li>
-                                <li> <span class="note mark-a">add</span> &ndash; this event is emitted when an element
+                                <li> <span class="note mark-el">add</span> &ndash; this event is emitted when an element
                                     of
                                     the e-for command is inserted into the DOM. It works with
-                                    <a href="#connectors" class="note mark-a">connectors</a> (we will talk about this
+                                    <a href="#connectors" class="note mark-el">connectors</a> (we will talk about this
                                     later). </li>
-                                <li> <span class="note mark-a">empty</span> &ndash; this event is emitted when the array
+                                <li> <span class="note mark-el">empty</span> &ndash; this event is emitted when the
+                                    array
                                     passed in the e-for command is empty. It works with
-                                    <a href="#connectors" class="note mark-a">connectors</a>. </li>
+                                    <a href="#connectors" class="note mark-el">connectors</a>. </li>
                                 </li>
-                                <li> <span class="note mark-a">response</span> &ndash; this event is emitted when we get
+                                <li> <span class="note mark-el">response</span> &ndash; this event is emitted when we
+                                    get
                                     some
                                     response
-                                    to a request made using a <a href="#connectors" class="note mark-a">connector</a>.
+                                    to a request made using a <a href="#connectors" class="note mark-el">connector</a>.
                                 </li>
-                                <li> <span class="note mark-a">fail</span> &ndash; this event is emitted when a request
+                                <li> <span class="note mark-el">fail</span> &ndash; this event is emitted when a request
                                     made
                                     using a
-                                    <a href="#connectors" class="note mark-a">connector</a> fails. </li>
+                                    <a href="#connectors" class="note mark-el">connector</a> fails. </li>
                             </ul>
 
                             <pre><code class="example html hljs">
@@ -1376,7 +1412,10 @@
                             <pre><code class="javascript hljs">
     var app22 = new Easy('#app22', {
         data: {
+            /* Variables */
             foods: [ { name: 'Rice' }, { name: 'Meat' } ],
+            
+            /* Methods */
             addEmoji: function(evt){
                 switch(evt.data.$model.food.name) {
                     case 'Rice':
@@ -1398,12 +1437,12 @@
                                 These are the events that we can freely set the names according to our liking. <span
                                     class="note att-border">Do not use reserved names</span>, which are event names
                                 mentioned above. To emit these events we use the <span
-                                    class="note mark-a">this.emit(eventName, someData)</span> method.
+                                    class="note mark-el">this.emit(eventName, someData)</span> method.
                             </p>
 
                             <p>
-                                The callback of this event has as the <span class="mark-a">first argument</span> the
-                                data is issued and as the <span class="mark-a">second argument</span> the element
+                                The callback of this event has as the <span class="mark-el">first argument</span> the
+                                data is issued and as the <span class="mark-el">second argument</span> the element
                                 associated with the event.
                             </p>
 
@@ -1455,9 +1494,9 @@
 
                             <h3> <a id="events_modifiers" href="#events_modifiers"> Modifiers </a> </h3>
                             <p>
-                                To add modifiers to the events use <span class="note mark-a">.</span> (dot) after the
+                                To add modifiers to the events use <span class="note mark-el">.</span> (dot) after the
                                 eventName. The sintax is <span
-                                    class="note mark-a">on:eventName.modifier1.modifier2="expression"</span>
+                                    class="note mark-el">on:eventName.modifier1.modifier2="expression"</span>
                             </p>
 
                             <p>
@@ -1465,18 +1504,19 @@
                             </p>
 
                             <ul>
-                                <li> <span class="note mark-a">preventDefault</span> &ndash; calls <span
+                                <li> <span class="note mark-el">preventDefault</span> &ndash; calls <span
                                         class="note">event.preventDefault()</span> before running the handler. </li>
-                                <li> <span class="note mark-a">stoPropagation</span> &ndash; calls <span
+                                <li> <span class="note mark-el">stoPropagation</span> &ndash; calls <span
                                         class="note">event.stopPropagation()</span>, preventing the event reaching the
                                     next element. </li>
-                                <li> <span class="note mark-a">once</span> &ndash; remove the event after the first time
+                                <li> <span class="note mark-el">once</span> &ndash; remove the event after the first
+                                    time
                                     it runs. </li>
                             </ul>
 
                             <p>
                                 Modifiers can be chained together, e.g.:
-                                <span class="note mark-a">on:click.stopPropagation.once="doSomeThing"</span>
+                                <span class="note mark-el">on:click.stopPropagation.once="doSomeThing"</span>
                             </p>
 
                             <pre><code class="example html hljs">
@@ -1508,15 +1548,16 @@
                             <h3><a id="method_setData" href="#method_setData">setData</a></h3>
                             <p>
                                 It is used to define properties in the data scope. Its sintax is
-                                <span class="note mark-a">instance.setData(object, targetObject)</span>.
+                                <span class="note mark-el">instance.setData(object, targetObject)</span>.
                             </p>
                             <ul>
-                                <li> <span class="note mark-a">{ Object } object</span> &ndash; represents object a
+                                <li> <span class="note mark-el">{ Object } object</span> &ndash; represents object a
                                     containing the properties that must be added to the scope. </li>
-                                <li> <span class="note mark-a">{ Object } targetObject</span> &ndash; represents the
+                                <li> <span class="note mark-el">{ Object } targetObject</span> &ndash; represents the
                                     target scope to be added to the properties. It is optional, if not defined the
-                                    properties will be in the <span class="note mark-a">main scope</span>. </li>
-                                <li> <span class="note mark-a">{ Object } returns</span> &ndash; the scope object. </li>
+                                    properties will be in the <span class="note mark-el">main scope</span>. </li>
+                                <li> <span class="note mark-el">{ Object } returns</span> &ndash; the scope object.
+                                </li>
                             </ul>
 
                             <pre><code class="javascript hljs">
@@ -1537,19 +1578,20 @@
                             <p>
                                 It allows adding an event to the instance so that it can be used anywhere in the
                                 application.
-                                The method expects two parameters: <span class="note mark-a">instance.on(eventName,
+                                The method expects two parameters: <span class="note mark-el">instance.on(eventName,
                                     callback)</span>.
                             </p>
 
                             <ul>
-                                <li> <span class="note mark-a">{ String } eventName</span> &ndash; the name of the event
+                                <li> <span class="note mark-el">{ String } eventName</span> &ndash; the name of the
+                                    event
                                     to be added. </li>
-                                <li> <span class="note mark-a">{ Function } callback</span> &ndash; the callback having
+                                <li> <span class="note mark-el">{ Function } callback</span> &ndash; the callback having
                                     your code. </li>
-                                <li> <span class="note mark-a">{ Object } returns</span> &ndash; an object having the
+                                <li> <span class="note mark-el">{ Object } returns</span> &ndash; an object having the
                                     event name and the callback we can use to remove the event.
-                                    <span class="note">{ event: <i class="mark-a">String</i>, callback: <i
-                                            class="mark-a">Function</i> }</span>. </li>
+                                    <span class="note">{ event: <i class="mark-el">String</i>, callback: <i
+                                            class="mark-el">Function</i> }</span>. </li>
                             </ul>
 
                             <pre><code class="javascript hljs">
@@ -1563,18 +1605,19 @@
                             <h3><a id="method_off" href="#method_off">off</a></h3>
                             <p>
                                 Allows you to remove an event added to the instance.
-                                The method expects two parameters: <span class="note mark-a">instance.off(eventName,
+                                The method expects two parameters: <span class="note mark-el">instance.off(eventName,
                                     callback)</span>.
                             </p>
 
                             <ul>
-                                <li> <span class="note mark-a">{ String } eventName</span> &ndash; The name of the event
+                                <li> <span class="note mark-el">{ String } eventName</span> &ndash; The name of the
+                                    event
                                     to be removed. </li>
-                                <li> <span class="note mark-a">{ Function } callback</span> &ndash; The callback
-                                    returned from <span class="note mark-a">on</span> method. </li>
-                                <li> <span class="note mark-a">{ Object } returns</span> &ndash; an object having the
+                                <li> <span class="note mark-el">{ Function } callback</span> &ndash; The callback
+                                    returned from <span class="note mark-el">on</span> method. </li>
+                                <li> <span class="note mark-el">{ Object } returns</span> &ndash; an object having the
                                     event name and the callback. <span class="note">{ event: <i
-                                            class="mark-a">String</i>, callback: <i class="mark-a">Function</i>
+                                            class="mark-el">String</i>, callback: <i class="mark-el">Function</i>
                                         }</span>. </li>
                             </ul>
 
@@ -1592,16 +1635,17 @@
                             <p>
                                 Allows you to issue a specific item, whether customized (events added in elements) or
                                 added in the instance.
-                                The method expects three parameters: <span class="note mark-a">instance.emit(eventName,
+                                The method expects three parameters: <span class="note mark-el">instance.emit(eventName,
                                     data, once)</span>.
                             </p>
 
                             <ul>
-                                <li> <span class="note mark-a">{ String } eventName</span> &ndash; the name of the event
+                                <li> <span class="note mark-el">{ String } eventName</span> &ndash; the name of the
+                                    event
                                     to be emitted. </li>
-                                <li> <span class="note mark-a">{ Object } data</span> &ndash; a data to be added to the
+                                <li> <span class="note mark-el">{ Object } data</span> &ndash; a data to be added to the
                                     event callback. </li>
-                                <li> <span class="note mark-a">{ Boolean } once</span> &ndash; allows you to remove the
+                                <li> <span class="note mark-el">{ Boolean } once</span> &ndash; allows you to remove the
                                     event after being called the first time. </li>
                             </ul>
 
@@ -1619,16 +1663,16 @@
                             <p>
                                 It allows exposing an object, allowing it to be retrieved anywhere in the application.
                                 By default, Easy uses to transfer data to a component.
-                                The method expects three parameters: <span class="note mark-a">instance.expose(name,
+                                The method expects three parameters: <span class="note mark-el">instance.expose(name,
                                     data, force)</span>.
                             </p>
 
                             <ul>
-                                <li> <span class="note mark-a">{ String } name</span> &ndash; the unique name (Or,
+                                <li> <span class="note mark-el">{ String } name</span> &ndash; the unique name (Or,
                                     component name). </li>
-                                <li> <span class="note mark-a">{ Object } data</span> &ndash; the object to be exposed.
+                                <li> <span class="note mark-el">{ Object } data</span> &ndash; the object to be exposed.
                                 </li>
-                                <li> <span class="note mark-a">{ Boolean } force</span> &ndash; allows you to force the
+                                <li> <span class="note mark-el">{ Boolean } force</span> &ndash; allows you to force the
                                     exposition if there is already some exposed data with the same name. </li>
                             </ul>
 
@@ -1641,15 +1685,16 @@
                             <h3><a id="method_retrieve" href="#method_retrieve">retrieve</a></h3>
                             <p>
                                 It allows to retrieve the exposed data. The method expects two parameters: <span
-                                    class="note mark-a">instance.remove(name, remove)</span>.
+                                    class="note mark-el">instance.remove(name, remove)</span>.
                             </p>
 
                             <ul>
-                                <li> <span class="note mark-a">{ String } name</span> &ndash; the name of the exposed a
+                                <li> <span class="note mark-el">{ String } name</span> &ndash; the name of the exposed a
                                     object. </li>
-                                <li> <span class="note mark-a">{ Boolean } force</span> &ndash; Allows to remove the
+                                <li> <span class="note mark-el">{ Boolean } force</span> &ndash; Allows to remove the
                                     exposed data after being retrieved. </li>
-                                <li> <span class="note mark-a">{ Object } force</span> &ndash; the exposed object. </li>
+                                <li> <span class="note mark-el">{ Object } force</span> &ndash; the exposed object.
+                                </li>
                             </ul>
 
                             <pre><code class="javascript hljs">
@@ -1671,30 +1716,35 @@
                             </p>
 
                             <ul>
-                                <li> <a id="method_tojsobj_build" href="#method_tojsobj_build" class="note mark-a">
+                                <li> <a id="method_tojsobj_build" href="#method_tojsobj_build" class="note mark-el">
                                         e-build </a> &ndash; allows you to build one object within another. The syntax
-                                    is <span class="note mark-a">e-build="<i>path</i>"</span>. </li>
-                                <li> <a id="method_tojsobj_array" href="#method_tojsobj_array" class="note mark-a">
+                                    is <span class="note mark-el">e-build="<i>path</i>"</span>. The path always need to
+                                    be complete, from the base object untill the property it needs to create. When you
+                                    need to create an object inside of an array you don't need to put the property and
+                                    the index (property[0]) of the array, just property name, by the default it maps all
+                                    the array.</li>
+                                <li> <a id="method_tojsobj_array" href="#method_tojsobj_array" class="note mark-el">
                                         e-array </a> &ndash; allows to build a array of the element where it is defined.
                                     Even if it is not defined by default it creates an array if the elements repeats.
+
                                 </li>
                             </ul>
 
                             <p>
                                 The method expects three parameters: <span
-                                    class="note mark-a">instance.toJsObj(selector, options, onset)</span>.
+                                    class="note mark-el">instance.toJsObj(selector, options, onset)</span>.
                             </p>
 
                             <ul>
-                                <li> <span class="note mark-a">{ String|Element } selector</span> &ndash; the selector
+                                <li> <span class="note mark-el">{ String|Element } selector</span> &ndash; the selector
                                     of the element to be generated or the element it self. </li>
-                                <li> <span class="note mark-a">{ Object } options</span> &ndash; options that indicates
+                                <li> <span class="note mark-el">{ Object } options</span> &ndash; options that indicates
                                     properties it needs to look and from this ones which property it needs to get the
-                                    value. Its sintax is <span class="note mark-a">{ names: '[property1],[property2]',
+                                    value. Its sintax is <span class="note mark-el">{ names: '[property1],[property2]',
                                         values: '[property1],[property2]' }</span>. The order really matters, it takes
                                     what it finds first. The default value is <span class="note">{ names: '[name]',
                                         values: '[value]' }</span>. </li>
-                                <li> <span class="note mark-a">{ Function} onset</span> &ndash; a function that will be
+                                <li> <span class="note mark-el">{ Function} onset</span> &ndash; a function that will be
                                     called whenever a property is setted. </li>
                             </ul>
 
@@ -1708,6 +1758,7 @@
             &lt;label&gt; Last Name &lt;/label&gt; &lt;br&gt;
             &lt;input type="text" name="lastName" /&gt; &lt;br&gt;
             
+            &lt;!--  Build an phones property as an array --&gt;
             &lt;div e-build="phones" e-array&gt; 
                 &lt;label&gt; Country Code &lt;/label&gt; &lt;br&gt;
                 &lt;input type="text" name="code" /&gt; &lt;br&gt;
@@ -1716,6 +1767,7 @@
                 &lt;input type="text" name="number" /&gt;
             &lt;/div&gt;
             
+            &lt;!--  Build an identification property as an object --&gt;
             &lt;div e-build="identification"&gt;
                 &lt;label&gt; Type &lt;/label&gt; &lt;br&gt;
                 &lt;select name="type"&gt; 
@@ -1731,10 +1783,10 @@
 
         &lt;/form&gt;
         &lt;br&gt; &lt;br&gt;
-
+        
         &lt;label&gt; Result &lt;/label&gt; &lt;br&gt;
         &lt;div&gt; 
-            {{ object }}
+            {{ resultObj }}
         &lt;/div&gt;
     &lt;/div&gt;
                             </code></pre>
@@ -1742,9 +1794,12 @@
                             <pre><code class="javascript hljs">
     var app25 = new Easy('#app25', {
         data: {
-            object: {},
+            /* Variables */
+            resultObj: {},
+
+            /* Methods */
             generate: function(evt){
-                this.data.object = this.toJsObj(evt.base);
+                this.data.resultObj = this.toJsObj(evt.base);
             }
         }
     });
@@ -1752,12 +1807,489 @@
 
                             <div class="result"></div>
 
-
+                            <div class="block-note info">
+                                <p>
+                                    We can build complex objects with using this method, simply create the structure you
+                                    need.
+                                </p>
+                            </div>
 
                             <h3><a href="#method_watch">watch</a></h3>
+                            <p>
+                                It is used to watch changes in specific property in the data scope. Its sintax is
+                                <span class="note mark-el">instance.watch(propertyName, callback, targetObject)</span>.
+                            </p>
+                            <ul>
+                                <li> <span class="note mark-el">{ String } propertyName</span> &ndash; represents the
+                                    name of the property in the data scope. </li>
+                                <li> <span class="note mark-el">{ Object } callback</span> &ndash; represents the
+                                    callback where all the logic will be fired when the property changes. The first
+                                    argument is the new value and the second is the old value of the property. </li>
+                                <li> <span class="note mark-el">{ Object } targetObject</span> &ndash; represents the
+                                    target scope having tje property to watch. It is optional, if not defined the
+                                    properties will be in the <span class="note mark-el">main scope</span>. </li>
+                                <li> <span class="note mark-el">{ Object } returns</span> &ndash; the watch object, that
+                                    can be used to destroy the watch listern. </li>
+                            </ul>
+
+                            <pre><code class="javascript hljs">
+    var app = new Easy('#my-app', {
+        data: {
+            firstName: 'Neves',
+            lastName: 'Manuel'
+        }
+    });
+
+    var watch = app.watch('firstName', function(newValue, oldValue){
+        // Todo: your code here...
+        watch.destroy();
+    });
+                            </code></pre>
+
                             <h3><a href="#method_set">set</a></h3>
-                            <h3><a href="#method_css">css</a></h3>
-                            <h3><a href="#method_code">code</a> </h3>
+                            <p>
+                                It is used to set some <span class="mark-el">Easy</span> configuration. The method
+                                expects two parameters, the first is the property to set and the second is the value
+                                (Object Literal) to be setted. The available configurations are:
+                            </p>
+
+                            <h4><b>skeleton</b></h4>
+                            <p>
+                                allow to modify the background and/or wave of the skeleton values. Its sintax is
+                                <i class="note mark-el">instance.set('skeleton', object)</i>.
+                            </p>
+
+                            <ul>
+                                <li> <span class="note mark-el">{ Object } object</span> &ndash; the object having the
+                                    value(s) it needs to modify.
+                                    <span class="note">{ background: <i class="mark-el">color</i>, wave: <i
+                                            class="mark-el">color</i> }</span>
+                                </li>
+                            </ul>
+
+                            <pre><code class="javascript hljs">
+    /*
+    As all the apps share the same Easy.js Style you can use any app to
+    make this change.
+
+    Open the browser console and run first code
+    */
+    app1.set('skeleton', {
+        background: '#444546',
+        wave: '#747576'
+    });
+
+    /* Run this one to restore the values */
+    app1.set('skeleton');
+                            </code></pre>
+
+                            <h4><b>delimiter</b></h4>
+                            <p>
+                                allow to add a delimiter into the Easy compiler. Its sintax is
+                                instance.set('delimiter', object).
+                            </p>
+
+                            <ul>
+                                <li> <span class="note mark-el">{ Object } object</span> &ndash; the object having the
+                                    value(s) it needs to be added. The struture of the object is:
+                                </li>
+                            </ul>
+
+                            <pre><code class="javascript hljs">
+    app1.set('delimiter, {
+        name: 'myDelimiter',
+        delimiter: {
+            open: '',
+            close: ''
+        }
+    });
+                            </code></pre>
+
+                            <p>
+                                We can check all the available delimiters in property <span
+                                    class="note mark-el">instance.delimiters</span>.
+                                The values is unalterable by this property.
+                            </p>
+
+                            <div class="block-note info">
+                                <p>
+                                    Remind to the escape the open and close if its need, because it passes in Regular
+                                    Expression check.
+                                </p>
+                            </div>
+
+                        </section>
+
+                        <section class="section" e-ignore>
+                            <h1><a id="comps_incs" href="#comps_incs"> Components / Includers</a></h1>
+                            <p>
+                                It is a concept that allows the reuse of HTML code. Easy creates and handles components
+                                in a different way, we will see in the chapters below...
+                            </p>
+
+                            <p>
+                                There are two types of components, <span class="note mark-el">Cloned</span> and <span
+                                    class="note-mark-el">Registered</span>, and these two forms can be imported/included
+                                in the
+                                same way, using the tag <span class="note mark-el">inc</span> or using a <span
+                                    class="note mark-el">Official DOM element</span> (a container type).
+                            </p>
+
+                            <pre><code class="HTML hljs">
+    &lt;!-- Inc tag --&gt;
+    &lt;inc src="nameId"&gt; &lt;/inc&gt;
+    
+    &lt;!-- Official DOM tag --&gt;
+    &lt;div inc-src="nameId"&gt; &lt;/div&gt;
+                            </code></pre>
+
+                            <h3> <a id="comp_cloned" href="#comp_cloned"> Cloned </a> </h3>
+                            <p>
+                                These are components that is based on a copy of an element during compilation, it is
+                                like a copy and paste. It can be achived by defining <span
+                                    class="note mark-el">inc-tmp="<i>nameId</i>"</span> (means include template) to the
+                                element that needs to be
+                                copied and include it where it needs to pasted, but define <span
+                                    class="note mark-el">@</span> before the nameId value,
+                                it tells <span class="note">Easy</span> that it's Cloned One.
+                            </p>
+
+                            <pre><code class="example HTML hljs">
+    &lt;div id="app26"&gt;
+        &lt;!-- Copying --&gt;
+        &lt;div inc-tmp="app-logo"&gt;
+            &lt;label&gt; Logo &lt;/label&gt;
+        &lt;/div&gt;
+        
+        &lt;!-- Pasting --&gt;
+        &lt;inc src="@app-logo"&gt; &lt;/inc&gt;
+        
+        &lt;!-- Pasting --&gt;
+        &lt;div inc-src="@app-logo"&gt; &lt;/div&gt;
+    &lt;/div&gt;
+                            </code></pre>
+
+                            <pre><code class="javascript hljs">
+    new Easy('#app26', {
+        data: {}
+    });
+                            </code></pre>
+
+                            <div class="result"></div>
+
+                            <h3> <a id="comp_registed" href="#comp_registed"> Registered</a> </h3>
+                            <p>
+                                These are the components that are registered directly in the instance, it can be done
+                                when the <span class="note mark-el">Easy Class</span> or using the component manager
+                                object in <span class="note mark-el">instance.components</span>.
+                            </p>
+
+                            <h3> <a id="comp_registering" href="#comp_registering"> Registering </a> </h3>
+                            <p>
+                                There are two ways to register a component, which are: <span class="note mark-el">Short
+                                    Way</span>, where we define the <i class="note mark-el">nameId</i> with the <i
+                                    class="note mark-el">componentPath</i> and <span class="note mark-el">Complete
+                                    Way</span>,
+                                where we define the <i class="note mark-el">nameId</i> with the <i
+                                    class="note mark-el">optionsObject</i>.
+                            </p>
+
+                            <pre><code class="javascript hljs">
+    var app = new Easy('#app', {
+        // Registering directly in the instance
+        components: {
+            elements: {
+                // Short Way
+                'header': 'header.html',
+
+                // Complete Way
+                'footer': {
+                    url: 'footer.html'
+                }
+            }
+        }
+    });
+
+    // Adding or Registering new component
+    // This function adds directly the elements property
+    app.components.add({
+        'left-side-bar': {
+            url: 'left-side-bar.html'
+        }
+    });
+                            </code></pre>
+
+                            <p>
+                                In Easy Options the component object has the following struture:
+                            </p>
+
+                            <pre><code class="javascript hljs">
+    {
+        components : {
+            config: {
+                base : String,
+                usehash : Boolean,
+                keepData : Boolean
+            },
+            elements: {
+                /* For Short Way */
+                String : String,
+
+                /* For Complete Way */
+                String : {
+                    url : String,
+                    title : String,
+                    route : String, 
+                    template : String,
+                    data : Object,
+                    store : Boolean,
+                    restrictions : [ Function ],
+
+                    /* This is for Routing Section */
+                    isDefault : Boolean,
+                    isNotFound : Boolean,
+                }
+            }
+        }
+    }
+                            </code></pre>
+
+                            <ul>
+                                <li> <span class="note mark-el">config.base</span> &ndash; used to define the adicionar
+                                    expression from the base. e.g.: www.domain.com<span
+                                        class="mark-el">/folder/app/</span>
+                                    index.html . The default value is <span class="note mark-el">'/'</span>.
+                                </li>
+
+                                <li> <span class="note mark-el">config.usehash</span> &ndash; used to allow page
+                                    navegation with hash. The default value is <span class="note mark-el">true</span>.
+                                </li>
+
+                                <li> <span class="note mark-el">config.keepData</span> &ndash; used to allow to kept all
+                                    the changes made in the component data. The default value is <span
+                                        class="note mark-el">false</span>.</li>
+
+                                <li> <span class="note mark-el">elements</span> &ndash; used to define all the
+                                    components elements. On the left side goes the <i class="note mark-el">nameId</i>,
+                                    an
+                                    the right side goes the <span class="mark-el">String componentPath</span>
+                                    (From the server) or the <span class="mark-el">Options Object</span>.</li>
+
+                                <li> <span class="note mark-el">nameId.url</span> &ndash; represents the component path.
+                                    It uses the <span class="note mark-el">config.base</span> to request the file from
+                                    the server. <span class="note">The extension .html is optional</span>. </li>
+
+                                <li> <span class="note mark-el">nameId.title</span> &ndash; represents the title that
+                                    will be setted to the page after the component has been added to the DOM (It is
+                                    optional).</li>
+
+                                <li> <span class="note mark-el">nameId.route</span> &ndash; represents the route that
+                                    will be setted to the page after the component has been added to the DOM (It is
+                                    optional). To use without <span class="note mark-el">Routing</span> you need to set
+                                    <span class="note mark-el">config.usehash</span> to <span
+                                        class="note mark-el">false</span>. </li>
+
+                                <li> <span class="note mark-el">nameId.template</span> &ndash; represents hardcode html
+                                    template. <span class="note att-border"> Do not use together with <i
+                                            class="mark-el">nameId.url</i> </span> </li>
+
+                                <li> <span class="note mark-el">nameId.data</span> &ndash; represents data that wll be
+                                    injected in the component when it loads. </li>
+
+                                <li> <span class="note mark-el">nameId.store</span> &ndash; allow to store the component
+                                    when it request in the first time. The default value is <span
+                                        class="note mark-el">true</span>. </li>
+
+                                <li> <span class="note mark-el">nameId.restrictions</span> &ndash; allow to add check
+                                    conditions
+                                    before the component request. It expects an array of functions that retuns
+                                    a <span class="note mark-el">Boolean</span>, <span class="mark-el">true</span> for
+                                    checked and <span class="mark-el">false</span> for unchecked. </li>
+                            </ul>
+
+                            <h3> <a id="comp_handing" href="#comp_handing"></a> Handling Components </h3>
+                            <p>
+                                The object <span class="note mark-el">instance.components</span> allow us to manage
+                                components. It is structured as following:
+                            </p>
+
+                            <ul>
+                                <li> <span class="note mark-el">add</span> &ndash; it is a method that allow to add
+                                    components to the instance. It expects an object having the component element: <span
+                                        class="note mark-el">add({...})</span>. </li>
+
+                                <li> <span class="note mark-el">get</span> &ndash; it is a method that allow to get a
+                                    component options value. It expects the <span class="note mark-el">nameId</span> of
+                                    the component: <span class="note mark-el">get(nameId)</span>. </li>
+
+                                <li> <span class="note mark-el">restrictions</span> &ndash; it is an object that allow
+                                    to
+                                    manage restrictions of a component. </li>
+
+                                <li> <span class="note mark-el">restrictions.add</span> &ndash; it is a method that
+                                    allow
+                                    to add a restrictions to a component. It expects two parameter:
+                                    <span class="note mark-el">restrictions.add(componentName,
+                                        restrictionsArray)</span>.
+                                </li>
+
+                                <li> <span class="note mark-el">restrictions.get</span> &ndash; it is a method that
+                                    allow
+                                    to get a restrictions of a component. It expects the <span
+                                        class="note mark-el">nameId</span> of the component: <span
+                                        class="note mark-el">restrictions.get(nameId)</span>. </li>
+
+                                <li> <span class="note mark-el">restrictions.remove</span> &ndash; it is a method that
+                                    allow
+                                    to remove a restriction from a component. It expects two parameter:
+                                    <span class="note mark-el">restrictions.add(componentName,
+                                        restrictionFunction)</span>. </li>
+                            </ul>
+
+                            <h3> <a id="comp_format" href="#comp_format"> Component Format </a> </h3>
+                            <p>
+                                They are written into .html files, containing styles (optional), scripts (optional) and
+                                a root element (required).
+                            </p>
+
+                            <h3> <a id="comp_style" href="#comp_style"> Styles </a> </h3>
+                            <p>
+                                The style tag here works as expected, by default the styles is global to define it has a
+                                scope one just add the <i class="note mark-el">scoped</i> attribute. This adds a class
+                                like (<i class="note">easy-sAb12</i>) to the rules of the style.
+                            </p>
+
+                            <pre><code class="HTML hljs">
+    &lt;!-- Global Style --&gt;    
+    &lt;style&gt;
+        .p {
+            color: red;
+        }
+    &lt;/style&gt;
+        
+    &lt;!-- Scoped Style --&gt;    
+    &lt;style scoped&gt;    
+        .p {
+            color: red;
+        }
+    &lt;/style&gt;
+                            </code></pre>
+
+                            <h3> <a id="comp_root" href="#comp_root"> Root Element </a> </h3>
+                            <p>
+                                A block element like a div that will contain the html template of the component. If it
+                                was not defined an error will be showing say:
+                                <b>The component 'nameId' seems to be empty or it has not a root element eg.:
+                                    &lt;div&gt;&lt;/div&gt;, to included.</b>
+                            </p>
+
+                            <h3> <a id="comp_script" href="#comp_script"> Scripts </a> </h3>
+                            <p>
+                                A block containing the JavaScript code that runs when the component is created a scrips
+                                are imported. The context (<i class="mark-el">this</i>) the component instance.
+                            </p>
+
+                            <div class="block-note-mark-el">
+                                <p>
+                                    The <i class="note">Easy</i> instance of this component can be accessed in <i
+                                        class="note mark-el">this.Easy</i>.
+                                </p>
+                            </div>
+
+                            <h3> <a id="comp_life_cycles" href="#comp_life_cycles"> Lifecycles Hooks </a> </h3>
+                            <p>
+                                These are functions that are called at some stages in the component's life, They
+                            </p>
+
+                            <h4> <a id="comp_life_cycles_created" href="#comp_life_cycles_created"> Created </a> </h4>
+                            <p>
+                                This is the hook that is called when the component was created. It can be define as
+                                following:
+                                <i class="note mark-el">this.created = function(element){...}</i>. The component root
+                                element is passed as first parameter.
+                            </p>
+
+                            <h4> <a id="comp_life_cycles_mounted" href="#comp_life_cycles_mounted"> Mounted </a> </h4>
+                            <p>
+                                This is the hook that is called when the component was mounted or added to the DOM. It
+                                can be define as following:
+                                <i class="note mark-el">this.mounted = function(element){...}</i>. The component root
+                                element is passed as first parameter.
+                            </p>
+
+                            <h4> <a id="comp_life_cycles_loaded" href="#comp_life_cycles_loaded"> Loaded </a> </h4>
+                            <p>
+                                This is the hook that is called when the component was loaded or compiled. It can be
+                                define as following:
+                                <i class="note mark-el">this.loaded = function(element){...}</i>. The component root
+                                element is passed as first parameter.
+                            </p>
+
+                            <h4> <a id="comp_life_cycles_destroyed" href="#comp_life_cycles_destroyed"> Destroyed </a>
+                            </h4>
+                            <p>
+                                This is the hook that is called when the component was destroyed or removed from the
+                                DOM. It can be define as following:
+                                <i class="note mark-el">this.destroyed = function(element){...}</i>. The component root
+                                element is passed as first parameter.
+                            </p>
+
+                            <div class="block-note warn">
+                                <p>
+                                    It is recommended to put any data request (<i class="note">fetch</i>) in 
+                                    <i class="note mark-el">created</i> or <i class="note mark-el">mounted</i> hooks, 
+                                    according to speed of the response, the component will be shown with data 
+                                    already.
+                                </p>
+                            </div>
+
+                            <h4> <a id="comp_exporting" href="#comp_exporting"> Exporting </a> </h4>
+                            <p>
+                                The function that is used to export data from the script to the template. To be able to
+                                export the data, it needs to be defined as following: <i
+                                    class="note mark-el">this.export({...})</i>.
+                            </p>
+
+                            <div class="block-note info">
+                                <p>
+                                    All data becomes reactive after being exported.
+                                </p>
+                            </div>
+
+                            <p>
+                                Hooks are not mandatory as it may possibly appear in the example.
+                                At the end a component has the following form:
+                            </p>
+
+                            <pre><code class="HTML hljs">
+    &lt;div&gt;
+        &lt;h3 on:click="doSomeThing" &gt; {{ message }} &lt;/h3&gt;
+    &lt;/div&gt;
+
+    &lt;script&gt;
+        var easy = this.Easy;
+
+        this.created = function(el){}
+        this.mounted = function(el){}
+        this.loaded = function(el){}
+        this.destroyed = function(el){}
+        
+        this.export({
+            /* Variables */
+            message: 'Hello from Easy!',
+
+            /* Methods */
+            doSomeThing: function(){}
+        });
+    &lt;/script&gt;
+
+    &lt;style scoped&gt;    
+        h3 {
+            color: gray;
+        }
+    &lt;/style&gt;
+                            </code></pre>
+
                         </section>
 
                     </div>
@@ -1800,11 +2332,11 @@
         var $codes = document.querySelectorAll('.example');
         for (var i = 0; i < $codes.length; i++) {
             var html = $codes[i].parentNode;
-            var script = html.nextElementSibling;
-            var result = script.nextElementSibling;
-            result.appendChild(createEl(html));
+            var $script = html.nextElementSibling;
+            var $result = $script.nextElementSibling;
+            $result.appendChild(createEl(html));
 
-            eval(script.innerText.replace('data:', $ad));
+            eval($script.innerText.replace('data:', $ad));
         }
 
         hljs.initHighlightingOnLoad();

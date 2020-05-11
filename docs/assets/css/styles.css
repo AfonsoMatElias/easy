@@ -29,6 +29,10 @@ h5 {
     color: var(--color-text);
 }
 
+i{
+    font-style: normal;
+}
+
 :root {
     --easy-yellow: #F0DB4F;
 
@@ -565,6 +569,7 @@ nav ul>li:hover {
     font-size: 12pt;
     padding: 2px 6px;
     border-radius: 3px;
+    word-break: break-word;
 }
 
 .doc-page .doc-presentation,
@@ -619,7 +624,9 @@ nav ul>li:hover {
     margin: 26px 0;
 }
 
-.doc-page .doc-presentation .section h3 {
+.doc-page .doc-presentation .section h3,
+.doc-page .doc-presentation .section h4
+ {
     font-weight: bold;
 }
 
@@ -635,7 +642,7 @@ nav ul>li:hover {
 }
 
 .doc-page .doc-presentation .section ul {
-    list-style: none;
+    list-style: circle;
     margin-left: 2%;
 }
 .doc-page .doc-presentation .section ul li {
@@ -660,7 +667,7 @@ nav ul>li:hover {
     margin: 0;
 }
 
-.mark-a {
+.mark-el {
     color: var(--color-blue);
 }
 
@@ -708,6 +715,11 @@ pre code {
 pre code * {
     font-family: Consolas, 'Courier New', monospace;
 }
+
+code .hljs-built_in {
+    color: #23aa51;
+}
+
 
 pre code::after, 
 .result::after,
