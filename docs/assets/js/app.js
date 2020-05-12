@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
         components: {
             config: {
                 // Disable it when using locally 
-                base: '/easy/'
+                // base: '/easy/'
             },
             elements: {
                 top: "/components/top",
@@ -26,7 +26,18 @@ document.addEventListener('DOMContentLoaded', function () {
                     url: "/components/tutorial",
                     title: 'Documentation',
                     route: '/tutorial'
-                }
+                },
+
+                // Documentation compoments
+                'introduction': '/doc-sections/en/introduction',
+                'installation': '/doc-sections/en/installation',
+                'instance': '/doc-sections/en/instance',
+                'delimiters': '/doc-sections/en/delimiters',
+                'bindings': '/doc-sections/en/bindings',
+                'commands': '/doc-sections/en/commands',
+                'events': '/doc-sections/en/events',
+                'methods': '/doc-sections/en/methods',
+                'components': '/doc-sections/en/components',
             }
         }
     });
@@ -64,5 +75,11 @@ document.addEventListener('DOMContentLoaded', function () {
     $$page.watch('darkMode', function (v) {
         themeHandler(v);
     });
+
+    window.onhashchange = function () {
+        if ($$page.data.hasOwnProperty('sMenuOpened'))
+            $$page.data.sMenuOpened = false;
+        
+    }
 
 }, false);

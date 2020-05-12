@@ -1,61 +1,69 @@
 <div style="flex: 1; display: flex;">
-    <div class="editor">
-        <div class="modal hide-it">
-            <div class="head">
-                <div class="name">
-                    <h4> {{ name }} Example</h4>
+    <div class="editor" e-class="{ 'show-result' : showResult }">
+        <div class="main">
+            <div class="editor-aside editor-html">
+                <div class="top">
+                    <div>
+                        <span class="fa fa-eye" title="Click to see whole the HTML code"></span>
+                        <label> Live Editor </label>
+                    </div>
                 </div>
-                <div class="action">
-                    <span class="fa fa-remove" on:click="(function(){
-                        event.base.aboveMe('.modal').classList.add('hide-it');
-                    })()"></span>
+                <div class="screen editor-screen" e-ignore>
+                    <div class="screen-view html hljs nice-scroll" tabindex="-1" spellcheck="false"></div>
+                    <div class="screen-write nice-scroll" tabindex="-1" spellcheck="false" contenteditable="true"></div>
                 </div>
-            </div>
-            <div class="body nice-scroll" tabindex="-1"></div>
-            <span class="popup hide-it" e-anm="up">
-                <span>  </span>
-            </span>
-        </div>
-        <div class="editor-aside editor-html">
-            <div class="top">
-                <div>
-                    <span class="fa fa-eye" title="Click to see whole the HTML code"></span>
-                    <label> Live Editor </label>
-                </div>
-            </div>
-            <div class="screen editor-screen" e-ignore>
-                <div class="screen-view html hljs nice-scroll" tabindex="-1" spellcheck="false"></div>
-                <div class="screen-write nice-scroll" tabindex="-1" spellcheck="false" contenteditable="true"></div>
-            </div>
-            <div class="extra-area">
-                <span class="info">
-                    <span>
-                        <span class="fa fa-info-circle"></span>
-                        <span class="text"> ' Ctrl + Enter ' to compile your code. </span>
+                <div class="extra-area">
+                    <span class="info">
+                        <span>
+                            <span class="fa fa-info-circle"></span>
+                            <span class="text"> ' Ctrl + Enter ' to compile your code. </span>
+                        </span>
                     </span>
+                </div>
+            </div>
+            <span class="resizable"></span>
+            <div class="editor-aside editor-result" e-ignore>
+                <div class="top">
+                    <div>
+                        <label> Result </label>
+                    </div>
+                </div>
+                <div class="screen">
+                    <!-- <object type="text/html" style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; width: 100%;height: 100%;"></object> -->
+                    <iframe frameBorder="0"
+                        style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; width: 100%;height: 100%;"></iframe>
+                </div>
+                <div class="extra-area nice-scroll">
+                    <span class="info console">
+                        <span>
+                            <span class="fa fa-check-circle"></span>
+                            <span class="text"> Console </span>
+                        </span>
+                    </span>
+                    <span class="message"></span>
+                </div>
+            </div>
+        </div>
+        <div class="extra">
+            <div class="modal hide-it">
+                <div class="head">
+                    <div class="name">
+                        <h4> {{ name }} Example</h4>
+                    </div>
+                    <div class="action">
+                        <span class="fa fa-remove" on:click="(function(){
+                            event.base.aboveMe('.modal').classList.add('hide-it');
+                        })()"></span>
+                    </div>
+                </div>
+                <div class="body nice-scroll" tabindex="-1"></div>
+                <span class="popup hide-it" e-anm="up">
+                    <span> </span>
                 </span>
             </div>
-        </div>
-        <span class="resizable"></span>
-        <div class="editor-aside editor-result" e-ignore>
-            <div class="top">
-                <div>
-                    <label> Result </label>
-                </div>
-            </div>
-            <div class="screen">
-                <!-- <object type="text/html" style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; width: 100%;height: 100%;"></object> -->
-                <iframe frameBorder="0"
-                    style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; width: 100%;height: 100%;"></iframe>
-            </div>
-            <div class="extra-area nice-scroll">
-                <span class="info console">
-                    <span>
-                        <span class="fa fa-check-circle"></span>
-                        <span class="text"> Console </span>
-                    </span>
-                </span>
-                <span class="message"></span>
+            <div class="alternator">
+                <button on:click="showResult = false" e-class="{ 'active-side' : !showResult }">Code</button>
+                <button on:click="runCodeShowResult" e-class="{ 'active-side' : showResult }">Result</button>
             </div>
         </div>
     </div>
@@ -64,9 +72,28 @@
     var $comp = this;
     var $easy = this.Easy;
     var id = 'live-' + $easy.code();
-    var watch;
+    var watch, evtResize, MOBILE_SIZE = 645;
+    var $editorInstance;
     this.created = function (element) {
         element.id = id;
+    }
+    this.mounted = function (element) {
+        var editor = element.children[0];
+        var $classes = editor.classList;
+        var exec = $easy.lazy(function (width) {
+            var has = $classes.contains('mobile');
+            if (MOBILE_SIZE >= width) {
+                if (!has) $classes.add('mobile');
+            } else {
+                if (has) $classes.remove('mobile');
+            }
+        }, 250);
+
+        evtResize = window.listen('resize', function (evt) {
+            exec(element.clientWidth);
+        });
+
+        exec(element.clientWidth);
     }
     this.loaded = function (element) {
         // Editor config 
@@ -78,7 +105,7 @@
                 return console.error('[Editor]: Editor element not found!');
             }
 
-            var instance = {};
+            var instance = this;
 
             var eye = editor.querySelector('.fa-eye');
             var modal = editor.querySelector('.modal');
@@ -125,14 +152,13 @@
                 }
             };
 
-            if (typeof instance.style === 'object') {
-                options.style.keys(function (k, v) {
-                    editor.children[0].style[k] = v;
-                });
+            if (instance.type) {
+                editor.children[0].classList.add(instance.type);
             }
 
             if (instance.resizable) {
                 var resizable = instance.el.node('.resizable');
+                resizable.style.cursor = 'n-resize';
 
                 function dragElement(element, first, second, dir) {
                     var md; // remember mouse down info
@@ -186,7 +212,7 @@
 
             write.onkeyup = write.oninput = function () {
                 updateView();
-            }            
+            }
 
             write.onkeydown = function (evt) {
                 if (evt.keyCode === 9) {
@@ -287,7 +313,6 @@
                 idoc.open();
                 idoc.write(content);
                 idoc.close();
-
             }
 
             function setConsoleIcon(name) {
@@ -305,7 +330,7 @@
                     Editor.tabs() + '\n<meta charset="UTF-8">' +
                     Editor.tabs() + '\n<title>Live Editor page<\/title>' +
                     Editor.tabs() + '\n<script src="assets/js/easy.js"><\/script>' +
-                    Editor.tabs() + '\n<style> * { font-family: Arial, Helvetica, sans-serif; } ' +
+                    Editor.tabs() + '\n<style> * html,body { padding:0; } { font-family: Arial, Helvetica, sans-serif; } ' +
                     'input, button { border: 1px solid lightgray; border-radius: 3px; } button { padding: 3px 10px; } </style>' +
                     extra +
                     '\n<\/head>' +
@@ -341,7 +366,7 @@
                     textArea.select();
 
                     try {
-                        if ( !document.execCommand('copy') ) throw({});
+                        if (!document.execCommand('copy')) throw ({});
                         showPopup(successful);
                     } catch (err) {
                         showPopup(fail);
@@ -363,13 +388,14 @@
             }
 
             function showPopup(msg) {
-                modalPopup.children[0].innerText = msg; 
+                modalPopup.children[0].innerText = msg;
                 modalPopup.classList.remove('hide-it');
                 var t = setTimeout(function () {
                     modalPopup.classList.add('hide-it');
                 }, 3000);
             }
 
+            instance.runCode = runCode;
             return instance;
         }
 
@@ -382,7 +408,7 @@
         }
 
         // Editor initialization
-        element.$editor = Editor(element,
+        $editorInstance = element.$editor = new Editor(element,
             this.Easy.extend.obj(this.scope, {
                 run: true
             }));
@@ -390,19 +416,36 @@
     }
     this.destroyed = function (element) {
         if (watch) watch.destroy();
+        if (evtResize) window.removeEventListener(evtResize.event, evtResize.callback, false);
     }
+
+    this.export({
+        showResult: false,
+        runCodeShowResult: function () {
+            if ($editorInstance) {
+                $editorInstance.runCode();
+                $comp.scope.showResult = true;
+            }
+        }
+    });
 </script>
 <style scoped>
     /* Editor style */
     .editor {
+        flex: 1;
         display: flex;
-        flex-flow: row;
-        width: 930px;
+        flex-flow: column;
         height: 420px;
         border-radius: 6px;
         background-color: var(--color-bg-lighter);
         border: 1px solid var(--color-editor-border);
         position: relative;
+    }
+
+    .editor .main {
+        display: flex;
+        flex-flow: row;
+        flex: 1;
     }
 
     .editor .editor-html {
@@ -606,8 +649,8 @@
 
     .editor .modal .head .action .fa {
         font-size: 9pt;
-        width: 22px;
-        height: 22px;
+        width: 18px;
+        height: 18px;
         background-color: var(--color-red);
         position: relative;
         border-radius: 50%;
@@ -642,7 +685,6 @@
 
     .resizable {
         flex: 0.01;
-        cursor: n-resize;
         -moz-user-select: none;
         -ms-user-select: none;
         user-select: none;
@@ -650,4 +692,57 @@
     }
 
     /* Editor */
+
+    /* Mobile type */
+    .editor.mobile>.main>span,
+    .editor.mobile .editor-result {
+        display: none;
+    }
+
+    .editor.mobile .editor-aside {
+        flex: 1 !important;
+    }
+
+    .editor.mobile .editor-html .extra-area {
+        display: none;
+    }
+
+    .alternator {
+        display: none;
+    }
+
+    .editor.mobile .alternator {
+        text-align: center;
+        display: block;
+    }
+
+    .editor.mobile .alternator>button {
+        width: 100px;
+        height: 28px;
+        border: 1px solid var(--color-border);
+        background-color: var(--color-bg);
+        margin: 5px 8px;
+        border-radius: 5px;
+        color: var(--color-text);
+    }
+
+    .editor.mobile.show-result .editor-result {
+        display: flex;
+    }
+
+    .editor.mobile.show-result .editor-html {
+        display: none;
+    }
+
+    .editor.expanded {
+        height: auto;
+    }
+
+    .editor.expanded .main {
+        flex-flow: column;
+    }
+
+    .active-side {
+        border-color: var(--note-green) !important;
+    }
 </style>

@@ -1,0 +1,54 @@
+<section class="section" e-ignore>
+    <h1> <a id="delimiters" href="#delimiters"> Delimiters </a> </h1>
+
+    <p>
+        By default Easy brings two types of delimiters, which are the 
+        <span class="note">easy</span> delimiter and the 
+        <span class="note">common</span> delimiter that is used by Vue.js, 
+        Angular.js, and others.
+    </p>
+
+    <p>
+        The delimiters open a space in HTML to execute some javascript code, it means that you
+        can execute any pure js code variables, function, ternary operatiors, etc. I only need
+        to
+        return a value.
+    </p>
+
+    <p>
+        Whenever data is an Object it turn it to <a
+            href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/JSON"
+            class="note mark-el">JSON</a>.
+    </p>
+
+    <h3> <a id="dlm_easy" href="#dlm_easy"> Easy </a> </h3>
+
+    <p>
+        To use this delimiter just do the following: <span class="note"> -e- [Content] - </span>
+    </p>
+
+    <h3> <a id="dlm_easy" href="#dlm_common"> Common </a> </h3>
+
+    <p>
+        To use this delimiter just do the following: <span class="note"> {{ [Content] }} </span>
+    </p>
+
+    <p>
+        We can check all the available delimiters in property <span
+            class="note mark-el">instance.delimiters</span>.
+            These values is unalterable by this property.
+    </p>
+
+    <div class="block-note info">
+        <p>
+            You can define your own delimiter, has you wish (we'll talk about this later).
+        </p>
+    </div>
+</section>
+<script>
+    this.mounted = function (el) {
+        appExector(el);
+
+        scrollByAnchor(el);
+    }
+</script>

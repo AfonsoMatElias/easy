@@ -1,5 +1,5 @@
 @font-face {
-    font-family: "Gadugi";
+    font-family: Gadugi, Geneva, Tahoma;
     src: url(../fonts/gadugi.ttf) format("truetype");
 }
 
@@ -68,7 +68,7 @@ i{
     --color-bg: #fafafb;
     --color-light-grey: #efefef;
     --color-logo-text: #444;
-    --color-shadow: #ececec;
+    --color-shadow: #e5e5e5;
     --color-menu: #343842;
     --color-disable: #efefef;
     --color-soft-transparency: #f0f0f080;
@@ -150,13 +150,19 @@ body {
 
 /* Top bar */
 nav {
-    height: 60px;
     position: relative;
     box-shadow: 0px 1px 3px .1px var(--color-shadow);
+    display: flex;
 }
 
-nav img {
-    height: 36px;
+nav>a {
+    width: 120px;
+}
+
+nav>div {
+    flex: 1;
+    display: flex;
+    flex-flow: column;
 }
 
 nav ul>li {
@@ -167,40 +173,24 @@ nav ul>li {
     cursor: pointer;
 }
 
+nav ul {
+    right: 25px;
+    font-size: 12pt;
+    list-style: none;
+    margin: auto 20px auto auto;
+}
+
 nav ul>li .dot {
     font-size: 9pt !important;
     margin: 0 2px;
 }
 
-nav .logo,
-nav ul {
-    display: inline-block;
-    vertical-align: middle;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-nav .logo {
-    top: 42%;
-    left: 30px;
-    font-size: 15.8pt;
-}
-
-nav .logo>h2 {
-    margin: auto;
-    font-weight: 900;
-    color: var(--easy-black);
+nav>div>* {
+    margin: auto 20px auto auto;
 }
 
 nav .logo .yellow {
     color: var(--easy-yellow);
-}
-
-nav ul {
-    right: 25px;
-    font-size: 12pt;
-    list-style: none;
 }
 
 nav ul>li .fa {
@@ -212,9 +202,39 @@ nav ul>li>span {
     color: var(--color-text);
 }
 
+nav .logo {
+    position: relative;
+    left: 10px;
+    font-size: 15.8pt;
+    height: 60px;
+    display: flex;
+}
+
+nav .logo>h2 {
+    margin: auto;
+    font-weight: 900;
+    color: var(--easy-black);
+    position: relative;
+    top: -3px;
+}
+
 nav ul>li:hover {
     background-color: var(--color-row);
     transition: background-color .4s;
+}
+
+nav>div .top-menu-handler {
+    height: 60px;
+    display: flex;
+    display: none;
+}
+
+nav>div .top-menu-handler .menu-btn-container {
+    margin: auto;
+}
+
+.menu-container {
+    position: relative;
 }
 
 .active-link {
@@ -342,10 +362,12 @@ nav ul>li:hover {
 
 .editor-divider {
     background-color: var(--color-soft-transparency);
+    flex-flow: column;
+    padding: 0 60px;
 }
 
 .main-page-editor-container {
-    padding: 65px 0;
+    padding: 65px;
     display: flex;
 }
 
@@ -385,11 +407,12 @@ nav ul>li:hover {
 .tutorial-page {
     display: flex;
     flex: 1;
+    position: relative;
 }
 
 .doc-page .doc-menu,
 .tutorial-page .tutorial-menu {
-    background-color: var(--color-soft-transparency);
+    background-color: var(--color-note);
     width: 520px;
     display: flex;
     flex-flow: column;
@@ -397,7 +420,7 @@ nav ul>li:hover {
 }
 
 .doc-page .doc-menu {
-    width: 320px;
+    width: 335px;
     box-shadow: 0 1px 2px 0.1px var(--color-soft-border);
 }
 
@@ -502,7 +525,7 @@ nav ul>li:hover {
 }
 
 .doc-page .doc-menu .content .items {
-    padding: 15px 38px;
+    padding: 15px 50px;
     list-style: none;
 }
 
@@ -564,6 +587,32 @@ nav ul>li:hover {
     margin: 10px 0;
 }
 
+.side-menu-handler {
+    position: fixed;
+    display: none;
+    bottom: 30px;
+    right: 11px;
+    z-index: 110;
+}
+
+.side-menu-handler .menu-btn {
+    background-color: var(--color-light-grey);
+    border-color:transparent!important;
+    box-shadow: 1px 2px 3px .2px var(--color-border);
+}
+
+aside.side-menu-opened {
+    left: 0!important;
+}
+
+ul.top-menu-opened {
+    display: unset!important;
+}
+
+.side-menu-handler .menu-btn {
+    border-color: var(--color-border);
+}
+
 .note {
     background-color: var(--color-note);
     font-size: 12pt;
@@ -577,6 +626,7 @@ nav ul>li:hover {
     flex: 1;
     display: flex;
     flex-flow: column;
+    z-index: 90;
 }
 
 .tutorial-page .tutorial-presentation .editor .modal {
@@ -625,8 +675,7 @@ nav ul>li:hover {
 }
 
 .doc-page .doc-presentation .section h3,
-.doc-page .doc-presentation .section h4
- {
+.doc-page .doc-presentation .section h4 {
     font-weight: bold;
 }
 
@@ -663,6 +712,10 @@ nav ul>li:hover {
     list-style: disc;
 }
 
+.doc-page .doc-presentation .section .result h4 {
+    font-weight: 500;
+}
+
 .doc-page .doc-presentation .section .result ul li {
     margin: 0;
 }
@@ -685,6 +738,12 @@ nav ul>li:hover {
     position: relative;
     max-width: 740px;
     margin: 25px 0;
+    border-radius: 2px;
+}
+
+pre {
+    padding: 0!important;
+    background-color: transparent!important;
 }
 
 pre code {
@@ -719,7 +778,6 @@ pre code * {
 code .hljs-built_in {
     color: #23aa51;
 }
-
 
 pre code::after, 
 .result::after,
@@ -770,6 +828,26 @@ pre code::after,
 .att-border.note { border: 2px solid var(--note-red); }
 .warn-border.note { border: 2px solid var(--note-yellow); }
 
+@media (max-width: 450px) {
+    .card-container {
+        display: flex;
+        flex-flow:column;
+    }
+    .card-container .card {
+        width: unset;
+    }
+}
+
+@media (max-width: 530px) {
+    .doc-page .doc-menu,
+    .tutorial-page .tutorial-menu {
+        width: 100%!important;   
+    }
+    .main-page-editor-container {
+        padding: 65px 30px; 
+    }
+}
+
 @media (max-width: 600px) {
     .high-element {
         flex-flow: column;
@@ -777,6 +855,74 @@ pre code::after,
 
     .high-element .main-text {
         text-align: center;
+    }
+}
+
+@media (max-width: 700px) {
+    .editor-divider {
+        padding: 0; 
+    }
+}
+
+@media (max-width: 900px) {
+    nav>div>ul>li {
+        display: block;
+        text-align: center;
+        margin: 5px auto;
+    }
+
+    nav>div .top-menu-handler {
+        display: flex;
+    }
+
+    .menu-container>ul {
+        position: absolute;
+        background-color: var(--color-bg-lighter);
+        z-index: 300;
+        top: 65px;
+        right: 0;
+        border-radius: 6px;
+        box-shadow: var(--set-shadow);
+        display: none;
+    }
+    
+    .menu-container>ul>li {
+        margin: 8px;
+        padding: 6px 14px;
+    }
+}
+
+
+@media (max-width: 1000px) {
+    .doc-page .doc-presentation .content {
+        padding: 15px 46px;
+    }
+    
+    .side-menu-handler {
+        display: unset;
+    }
+
+    .doc-page .doc-menu,
+    .tutorial-page .tutorial-menu {
+        position: absolute;
+        z-index: 100;
+        height: 100%;
+        transition: left .4s;
+        left: -100%;
+    }
+    
+    .doc-page .doc-menu {
+        width: 335px;   
+    }
+}
+
+@media (max-width: 1275px) {
+    .editor-divider .main-page-editor-container .description {
+        width: unset;
+        margin: 20px auto;
+    }
+    .editor-divider .main-page-editor-container {
+        flex-flow: column;
     }
 }
 
@@ -791,6 +937,7 @@ pre code,
 /* For Chrome and Others */
 ::-webkit-scrollbar {
     width: 6px;
+    height: 6px;
 }
 
 /* Track */

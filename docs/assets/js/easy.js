@@ -1453,20 +1453,17 @@
                 if( $name === ':href' || $name === 'i:href' ) {
                     var base = el.$e.$base;
                     remAttr(base, $name);
-                    var $val = componentConfig.usehash === false ? $value : ('/#/' + $value);
-                    $val = (componentConfig.base + $val).replaceAll('//', '/');
-                    el.$e.$base.valueIn('href', $val);
-
+                    base.valueIn('href', RouteHandler.normalizePath($value));
                     base.addEventListener('click', function (evt) {
                         if ( isNull(RouteHandler.handleLink) ) return;
                         if(componentConfig.usehash === false) {
                             evt.preventDefault();
                             RouteHandler.navegate(evt.target.href);
                         }
-                        
-                        if ( $name === ':href' )
-                            RouteHandler.handleLink(evt.target); 
                     });
+
+                    if ( $name === ':href' )
+                        base.$markable = true;
                 }
 
                 // Getting in the children
@@ -1763,7 +1760,7 @@
                             // For scoped styles
                             if (style.hasAttribute('scoped')) {
                                 // Generating some class name for the selectors
-                                var value = 'easy-s' + $easy.code(4), $newContent = '';
+                                var value = 'easy-s' + $easy.code(7), $newContent = '';
                                 styleIds.push(value);
                                 // Changing each selector to avoid conflit
                                 forEach(style.sheet.cssRules, function (rule) {
@@ -1913,8 +1910,7 @@
                             }
                         } catch (error) {
                             error.fileName = this.name;
-                            error.message += " in " + error.fileName + ', in line ' +
-                            ((el.outerHTML.match(/\r\n|\r|\n/gmi) || '').length + 3 + error.lineNumber ) + ' or near'; 
+                            error.message += " in " + error.fileName; 
                             Easy.log(error);
                             clearInterval(tId);
                         }
@@ -2052,23 +2048,39 @@
              *  call the main callback and then restore the old properties.
              */
             this.spreadData = function (callback, $dt) {
-                var keys = [], oldVars = {};
+                var keys = [], oldVars = {}, nonConfigurable = {};
                 if (isObj($dt)) keys = $dt.keys();
                 try {
                     // Defining 
                     forEach(keys, function (k) {
-                        if ($global.hasOwnProperty(k))
-                            $propTransfer(oldVars, $global, k);
-                        $propTransfer($global, $dt, k);
+                        if ($global.hasOwnProperty(k)) {
+                            if ( $propDescriptor($global, k).configurable === true )
+                                $propTransfer(oldVars, $global, k);
+                            else
+                                nonConfigurable[k] = $global[k]; // In case of noo-configurable props
+                        }
+
+                        if (nonConfigurable.hasOwnProperty(k))
+                            $global[k] = $dt[k];
+                        else
+                            $propTransfer($global, $dt, k);
                     });
                     callback.call($easy);
-                }catch(error) {
+                } catch(error) {
                     throw (error);
-                }finally{
+                } finally {
+                    nonConfigurable.keys(function (k, v) {
+                        // Changing the value if they are diferents
+                        if ($dt[k] !== $global[k]) $dt[k] = $global[k];
+                        // Restoring the non configs props
+                        $global[k] = v;
+                    });
                     // Cleaning
-                    forEach(keys, function (k) { delete $global[k]; });
+                    forEach(keys, function (k) {
+                        if (!nonConfigurable.hasOwnProperty(k)) delete $global[k]; 
+                    });
                     // Redefining the old values
-                    forEach(oldVars.keys(), function (k) {
+                    oldVars.keys(function(k) {
                         $propTransfer($global, oldVars, k);
                     });
                 }
@@ -2083,7 +2095,7 @@
             // Query one element
             def('node', function (v) {
                 if (!v) return null;
-                return (v[0] === '#' ? this.getElementById(v.substr(1)) : this.querySelector(v));
+                return (v[0] === '#' && this.getElementById ? this.getElementById(v.substr(1)) : this.querySelector(v));
             }, Node);
             // Query many elements
             def('nodes', function (v) {
@@ -3445,7 +3457,6 @@
         
         /** Helper to handle the Routes. Dependencies: Easy, Includer */
         function RouteHandler(config) {
-            this.currentRoute = null;
             this.routeView = config.el;
             this.routeView.removeAttribute('route-view');
             var msg = function(n, f, s) {
@@ -3474,7 +3485,7 @@
             this.clear = function () {
                 this.routeView.innerHTML = '';
             }
-            this.getPath = function(url) {
+            var getPath = function(url) {
                 var $url = urlResolve(url);
                 var value = inc.config.usehash === true ? $url.hash : $url.pathname; 
                 value = value.split('?')[0]; // Clearing the queryStrings
@@ -3492,30 +3503,52 @@
             }
             this.navegate = function (url) {
                 this.clear();
-                var path = this.getPath(url);
+                var path = getPath.call(this, url);
                 if (!path) return Easy.log('🛸 404 Page not found!!!');
 
                 var el = doc.createElement('inc');
                 el.valueIn('src', path.name);
                 //el.valueIn('keep-alive', '');
                 this.routeView.appendChild(el);
+                this.markActive(path.route);
             }
 
-            this.navegate(location.href);
+             // mark 
+             this.markActive = function (route) {
+                // Marking the active-link
+                RouteHandler.handleLink(); // unmark the current
+                route = route || location.href.substr(location.origin.length);
+                var currentUrl = RouteHandler.normalizePath(route);
+                var $anchor = $easy.el.node('a[href="'+currentUrl+'"]');
+                if($anchor && $anchor.$markable) RouteHandler.handleLink($anchor);
+            }
+
             $global.addEventListener('hashchange', (function () {
                 this.navegate(location.href);
             }).bind(this));
-            
-            RouteHandler.handleLink = function (a) {
-                var cls = 'active-link';
-                if (this.activeLink) 
-                    this.activeLink.classList.remove(cls);
-                
-                this.activeLink = a;
-                this.activeLink.classList.add(cls);
-            }
+
+            this.navegate(location.href);
             RouteHandler.navegate = this.navegate.bind(this);
         }
+
+        RouteHandler.handleLink = function (a) {
+            var cls = 'active-link', $instance = RouteHandler.instance;
+            if (!$instance) return;
+            if ($instance.activeLink){
+                $instance.activeLink.classList.remove(cls);
+            }
+            if(a) {
+                a.classList.add(cls);
+                $instance.activeLink = a;
+            }
+        }
+
+        RouteHandler.normalizePath = function($value) {
+            if ( $value.includes('#') ) return $value;
+            var $val = componentConfig.usehash === false ? $value : ('/#/' + $value);
+            return (componentConfig.base + $val).replaceAll('//', '/');
+        }
+
         //#endregion
 
         //#region Static functions
@@ -3696,7 +3729,7 @@
                 // Initialize routes if needed
                 var rv = this.el.node('[route-view]');
                 if(rv){
-                    new RouteHandler({
+                    $easy.routing = RouteHandler.instance = new RouteHandler({
                         el: rv, 
                         includer: inc
                     });

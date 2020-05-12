@@ -111,21 +111,16 @@
         </div>
     </aside>
     <div class="tutorial-presentation">
-        <inc src="editor" wait-data="hello-word"></inc>
+        <inc src="editor" wait-data="tutorial"></inc>
     </div>
 
 </div>
 <script>
     this.loaded = function (el) {
         // Load hello word example
-        this.Easy.expose('hello-word', {
-            name: 'Hello Word',
-            style: {
-                flex: 1,
-                width: 'auto',
-                height: 'auto',
-                'flex-flow': 'column'
-            },
+        this.Easy.expose('tutorial', {
+            name: 'Tutorial',
+            type: 'expanded',
             resizable: 'y',
             content: '<h2> Hello From Easy! <\/h2>'
         });

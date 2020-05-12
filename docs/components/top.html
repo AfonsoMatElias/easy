@@ -2,13 +2,30 @@
     <a i:href="/">
         <div class="logo"><h2><span class="yellow">e</span><span>asy.js</span></h2></div>
     </a>
-    <ul>
-        <li> <a :href="/tutorial"> Tutorial </a> </li>
-        <li> <a href="docs.html"> Docs </a> </li>
-        <li> <span class="text"> Translations </span> <span class="fa fa-dot-circle-o dot"></span> </li>
-        <li> <span class="text"> Download </span> <span class="fa fa-dot-circle-o dot"></span> </li>
-        <li> <a href="https://github.com/AfonsoMatElias/easy" class="fa fa-github"></a> </li>
-        <li> <a target="blank" href="https://www.facebook.com/easyjs" class="fa fa-facebook"></a> </li>
-        <li on:click="darkMode = !darkMode"> <span class="fa {{ themeIco }}"></span> </li>
-    </ul>
+    <div class="menu-container">
+        <div class="top-menu-handler" e-def="{ menuOpened: false }">
+            <div class="menu-btn-container">
+                <div class="menu-btn" on:click="menuOpened = !menuOpened">
+                    <span></span>
+                </div>
+            </div>
+        </div>
+        <ul e-class="{ 'top-menu-opened': menuOpened }">
+            <li> <a :href="/tutorial"> Tutorial </a> </li>
+            <li> <a href="docs.html"> Docs </a> </li>
+            <li> <a href="connectors.html"> Connectors </a> </li>
+            <li> <span class="text"> Translations </span> <span class="fa fa-dot-circle-o dot"></span> </li>
+            <li> <a :href="/download">Download</a> </li>
+            <li> <a href="https://github.com/AfonsoMatElias/easy" class="fa fa-github"></a> </li>
+            <li> <a target="blank" href="https://www.facebook.com/easyjs" class="fa fa-facebook"></a> </li>
+            <li on:click="darkMode = !darkMode"> <span class="fa {{ themeIco }}"></span> </li>
+        </ul>
+    </div>
 </nav>
+<script>
+    this.loaded = function (el) {
+        if (this.Easy.routing) {
+            this.Easy.routing.markActive();
+        } else {}
+    }
+</script>

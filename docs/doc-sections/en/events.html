@@ -1,0 +1,231 @@
+<section class="section" e-ignore>
+    <h1> <a id="events" href="#events"> Events </a> </h1>
+    <p>
+        We can use <span class="note mark-el">on:</span> to listen for DOM events and run some
+        javascript code when it is emitted. In some examples above we use the click event so we
+        imagine that you must be a little familiar with it.
+    </p>
+
+    <p>
+        Easy events can be categorized into 3 types, which are:
+        <span class="note">Standard</span> DOM, <span class="note">Easy</span> and
+        <span class="note">Custom</span> events. For all of them, they can be heard
+        with the following syntax:
+        <span class="note mark-el">on:<i>eventname</i>="function/expression"</span>.
+    </p>
+
+    <p>
+        When Standard and Easy events are issued, the event object can be accessed in the
+        <span class="note">event</span> variable. It contains the <span
+            class="note mark-el">base</span>
+        property, which is passed to the element that is associated with the event, and the
+        <span class="note">data</span> property, having the object of the current scope, this
+        is divided into: <span class="note">{ $model:{ <i class="mark-el">In case of e-for</i> 
+        }, $scope: { <i class="mark-el">It has the scope object it self</i> } }</span>
+    </p>
+
+    <h3> <a id="events_standard" href="#events_standard"> Standard</a> </h3>
+    <p>
+        These are standard DOM events, such as onclick, ondblclick, onkeyup, etc.
+    </p>
+
+    <pre><code class="example html hljs">
+    &lt;div id="app21"&gt;        
+        &lt;button on:click="count++"&gt; 
+            Clicked {{ count }} {{ count > 1 ? 'times' : 'time' }}
+        &lt;/button&gt;
+
+        &lt;button on:click="resetCounter()" e-toggle:disabled="!count" &gt; 
+            {{ count === 0 ? 'Setted ' :  'Click to reset' }}
+        &lt;/button&gt;
+    &lt;/div&gt;
+    </code></pre>
+
+    <pre><code class="javascript hljs">
+    var app21 = new Easy('#app21', {
+        data: {
+            /* Variables */
+            count: 0,
+
+            /* Methods */
+            resetCounter: function(){
+                this.data.count = 0;
+            }
+        }
+    });
+    </code></pre>
+
+    <div class="result"></div>
+
+    <h3> <a id="events_easy" href="#events_easy"> Easy </a> </h3>
+    <p>
+        These are Easy's internal events, which we can mention:
+    </p>
+
+    <ul>
+        <li> <span class="note mark-el">data</span> &ndash; this event is dispatched when an
+            element
+            containing the data command is compiled. </li>
+        <li> <span class="note mark-el">add</span> &ndash; this event is emitted when an element
+            of
+            the e-for command is inserted into the DOM. It works with
+            <a href="connectors.html" class="note mark-el">connectors</a>. </li>
+        <li> <span class="note mark-el">empty</span> &ndash; this event is emitted when the
+            array
+            passed in the e-for command is empty. It works with
+            <a href="connectors.html" class="note mark-el">connectors</a>. </li>
+        </li>
+        <li> <span class="note mark-el">response</span> &ndash; this event is emitted when we
+            get some response to a request made using a 
+            <a href="connectors.html" class="note mark-el">connector</a>.
+        </li>
+        <li> <span class="note mark-el">fail</span> &ndash; this event is emitted when a request
+            made using a <a href="connectors.html" class="note mark-el">connector</a> fails. </li>
+    </ul>
+
+    <pre><code class="example html hljs">
+    &lt;div id="app22"&gt;
+        &lt;ul&gt; 
+            &lt;li e-for="food of foods" on:add="addEmoji"&gt; 
+                {{ food.name }} 
+            &lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/div&gt;
+    </code></pre>
+
+    <pre><code class="javascript hljs">
+    var app22 = new Easy('#app22', {
+        data: {
+            /* Variables */
+            foods: [ { name: 'Rice' }, { name: 'Meat' } ],
+            
+            /* Methods */
+            addEmoji: function(evt){
+                switch(evt.data.$model.food.name) {
+                    case 'Rice':
+                        evt.target.innerHTML += ' 🍚';
+                        break;
+                    case 'Meat':
+                        evt.target.innerHTML += ' 🥩';
+                        break;
+                }
+            }
+        }
+    });
+    </code></pre>
+
+    <div class="result"></div>
+
+    <h3> <a id="events_custom" href="#events_custom"> Custom </a> </h3>
+    <p>
+        These are the events that we can freely set the names according to our liking. <span
+            class="note att-border">Do not use reserved names</span>, which are event names
+        mentioned above. To emit these events we use the <span
+            class="note mark-el">this.emit(eventName, someData)</span> method.
+    </p>
+
+    <p>
+        The callback of this event has as the <span class="mark-el">first argument</span> the
+        data is issued and as the <span class="mark-el">second argument</span> the element
+        associated with the event.
+    </p>
+
+    <pre><code class="example html hljs">
+    &lt;div id="app23"&gt;
+        &lt;input on:keyup="emitEvent(event.target.value)" 
+                type="text" placeholder="Type to change" /&gt;
+
+        &lt;p on:changetext="changeTextCallback"&gt; Type something in the input! &lt;/p&gt;
+    &lt;/div&gt;
+    </code></pre>
+
+    <pre><code class="javascript hljs">
+    var app23 = new Easy('#app23', {
+        data: {
+            emitEvent: function(value){
+                this.emit('changetext', value);
+            },
+            changeTextCallback: function(text, target){
+                target.innerText = text; 
+            }
+        }
+    });
+    </code></pre>
+
+    <div class="result"></div>
+
+    <div class="block-note warn">
+        <p>
+            Please skip this explanation if you understand the example above, because it can be
+            tedious!
+        </p>
+    </div>
+
+    <p>
+        Let's explain what is happening in this example: <br> Whenever a key is pressed inside
+        the input, this will call the function <span class="note">emitEvent</span> passing the
+        value of the input where it calls the method <span class="note">this.emit(...)</span>
+        passing the <span class="note">value</span> in the emission, this calls the function
+        <span class="note">changeTextCallback</span> which changes the target text to the
+        issued value.
+    </p>
+
+    <div class="block-note warn">
+        <p>
+            Always remember to write the names of the events in lower cases.
+        </p>
+    </div>
+
+    <h3> <a id="events_modifiers" href="#events_modifiers"> Modifiers </a> </h3>
+    <p>
+        To add modifiers to the events use <span class="note mark-el">.</span> (dot) after the
+        eventName. The sintax is <span
+            class="note mark-el">on:eventName.modifier1.modifier2="expression"</span>
+    </p>
+
+    <p>
+        The following modifiers are available:
+    </p>
+
+    <ul>
+        <li> <span class="note mark-el">preventDefault</span> &ndash; calls <span
+                class="note">event.preventDefault()</span> before running the handler. </li>
+        <li> <span class="note mark-el">stoPropagation</span> &ndash; calls <span
+                class="note">event.stopPropagation()</span>, preventing the event reaching the
+            next element. </li>
+        <li> <span class="note mark-el">once</span> &ndash; remove the event after the first
+            time
+            it runs. </li>
+    </ul>
+
+    <p>
+        Modifiers can be chained together, e.g.:
+        <span class="note mark-el">on:click.stopPropagation.once="doSomeThing"</span>
+    </p>
+
+    <pre><code class="example html hljs">
+    &lt;div id="app24"&gt;        
+        &lt;button on:click.once="count++"&gt; 
+            Clicked {{ count }}
+        &lt;/button&gt;
+    &lt;/div&gt;
+    </code></pre>
+
+    <pre><code class="javascript hljs">
+    var app24 = new Easy('#app24', {
+        data: {
+            count: 0
+        }
+    });
+    </code></pre>
+
+    <div class="result"></div>
+
+</section>
+<script>
+    this.mounted = function (el) {
+        appExector(el);
+
+        scrollByAnchor(el);
+    }
+</script>

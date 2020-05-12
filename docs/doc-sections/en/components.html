@@ -1,0 +1,535 @@
+<section class="section" e-ignore>
+    <h1><a id="comps_incs" href="#comps_incs"> Components / Includers </a></h1>
+    <p>
+        It is a concept that allows the reuse of HTML code. Easy creates and handles components
+        in a different way, we will see in the chapters below...
+    </p>
+
+    <p>
+        There are two types of components, <span class="note mark-el">Cloned</span> and <span
+            class="note-mark-el">Registered</span>, and these two forms can be imported/included
+        in the
+        same way, using the tag <span class="note mark-el">inc</span> or using a <span
+            class="note mark-el">Official DOM element</span> (a container type).
+    </p>
+
+    <pre><code class="HTML hljs">
+    &lt;!-- Inc tag --&gt;
+    &lt;inc src="nameId"&gt; &lt;/inc&gt;
+    
+    &lt;!-- Official DOM tag --&gt;
+    &lt;div inc-src="nameId"&gt; &lt;/div&gt;
+    </code></pre>
+
+    <h3> <a id="comp_cloned" href="#comp_cloned"> Cloned </a> </h3>
+    <p>
+        These are components that is based on a copy of an element during compilation, it is
+        like a copy and paste. It can be achived by defining <span
+            class="note mark-el">inc-tmp="<i>nameId</i>"</span> (means include template) to the
+        element that needs to be
+        copied and include it where it needs to pasted, but define <span
+            class="note mark-el">@</span> before the nameId value,
+        it tells <span class="note">Easy</span> that it's Cloned One.
+    </p>
+
+    <pre><code class="example HTML hljs">
+    &lt;div id="app26"&gt;
+        &lt;!-- Copying --&gt;
+        &lt;div inc-tmp="app-logo"&gt;
+            &lt;label&gt; Logo &lt;/label&gt;
+        &lt;/div&gt;
+        
+        &lt;!-- Pasting --&gt;
+        &lt;inc src="@app-logo"&gt; &lt;/inc&gt;
+        
+        &lt;!-- Pasting --&gt;
+        &lt;div inc-src="@app-logo"&gt; &lt;/div&gt;
+    &lt;/div&gt;
+    </code></pre>
+
+    <pre><code class="javascript hljs">
+    new Easy('#app26', {
+        data: {}
+    });
+    </code></pre>
+
+    <div class="result"></div>
+
+    <h3> <a id="comp_registed" href="#comp_registed"> Registered</a> </h3>
+    <p>
+        These are the components that are registered directly in the instance, it can be done
+        when the <span class="note mark-el">Easy Class</span> or using the component manager
+        object in <span class="note mark-el">instance.components</span>.
+    </p>
+
+    <h3> <a id="comp_registering" href="#comp_registering"> Registering </a> </h3>
+    <p>
+        There are two ways to register a component, which are: <span class="note mark-el">Short
+            Way</span>, where we define the <i class="note mark-el">nameId</i> with the <i
+            class="note mark-el">componentPath</i> and <span class="note mark-el">Complete
+            Way</span>,
+        where we define the <i class="note mark-el">nameId</i> with the <i
+            class="note mark-el">optionsObject</i>.
+    </p>
+
+    <pre><code class="javascript hljs">
+    var app = new Easy('#app', {
+        // Registering directly in the instance
+        components: {
+            elements: {
+                // Short Way
+                'header': 'header.html',
+
+                // Complete Way
+                'footer': {
+                    url: 'footer.html'
+                }
+            }
+        }
+    });
+
+    // Adding or Registering new component
+    // This function adds directly the elements property
+    app.components.add({
+        'left-side-bar': {
+            url: 'left-side-bar.html'
+        }
+    });
+    </code></pre>
+
+    <p>
+        In Easy Options the component object has the following struture:
+    </p>
+
+    <pre><code class="javascript hljs">
+    {
+        components : {
+            config: {
+                base : String,
+                usehash : Boolean,
+                keepData : Boolean
+            },
+            elements: {
+                /* For Short Way */
+                String : String,
+
+                /* For Complete Way */
+                String : {
+                    url : String,
+                    title : String,
+                    route : String, 
+                    template : String,
+                    data : Object,
+                    store : Boolean,
+                    restrictions : [ Function ],
+
+                    /* This is for Routing Section */
+                    isDefault : Boolean,
+                    isNotFound : Boolean,
+                }
+            }
+        }
+    }
+    </code></pre>
+
+    <ul>
+        <li> <span class="note mark-el">config.base</span> &ndash; used to define the adicionar
+            expression from the base. e.g.: www.domain.com<span
+                class="mark-el">/folder/app/</span>
+            index.html . The default value is <span class="note mark-el">'/'</span>.
+        </li>
+
+        <li> <span class="note mark-el">config.usehash</span> &ndash; used to allow page
+            navegation with hash. The default value is <span class="note mark-el">true</span>.
+        </li>
+
+        <li> <span class="note mark-el">config.keepData</span> &ndash; used to allow to kept all
+            the changes made in the component data. The default value is <span
+                class="note mark-el">false</span>.</li>
+
+        <li> <span class="note mark-el">elements</span> &ndash; used to define all the
+            components elements. On the left side goes the <i class="note mark-el">nameId</i>,
+            an
+            the right side goes the <span class="mark-el">String componentPath</span>
+            (From the server) or the <span class="mark-el">Options Object</span>.</li>
+
+        <li> <span class="note mark-el">nameId.url</span> &ndash; represents the component path.
+            It uses the <span class="note mark-el">config.base</span> to request the file from
+            the server. <span class="note">The extension .html is optional</span>. </li>
+
+        <li> <span class="note mark-el">nameId.title</span> &ndash; represents the title that
+            will be setted to the page after the component has been added to the DOM (It is
+            optional).</li>
+
+        <li> <span class="note mark-el">nameId.route</span> &ndash; represents the route that
+            will be setted to the page after the component has been added to the DOM (It is
+            optional). To use without <span class="note mark-el">Routing</span> you need to set
+            <span class="note mark-el">config.usehash</span> to <span
+                class="note mark-el">false</span>. </li>
+
+        <li> <span class="note mark-el">nameId.template</span> &ndash; represents hardcode html
+            template. <span class="note att-border"> Do not use together with <i
+                    class="mark-el">nameId.url</i> </span> </li>
+
+        <li> <span class="note mark-el">nameId.data</span> &ndash; represents data that wll be
+            injected in the component when it loads. </li>
+
+        <li> <span class="note mark-el">nameId.store</span> &ndash; allow to store the component
+            when it request in the first time. The default value is <span
+                class="note mark-el">true</span>. </li>
+
+        <li> <span class="note mark-el">nameId.restrictions</span> &ndash; allow to add check
+            conditions
+            before the component request. It expects an array of functions that retuns
+            a <span class="note mark-el">Boolean</span>, <span class="mark-el">true</span> for
+            checked and <span class="mark-el">false</span> for unchecked. </li>
+    </ul>
+
+    <h3> <a id="comp_handing" href="#comp_handing"></a> Handling Components </h3>
+    <p>
+        The object <span class="note mark-el">instance.components</span> allow us to manage
+        components. It is structured as following:
+    </p>
+
+    <ul>
+        <li> <span class="note mark-el">add</span> &ndash; it is a method that allow to add
+            components to the instance. It expects an object having the component element: <span
+                class="note mark-el">add({...})</span>. </li>
+
+        <li> <span class="note mark-el">get</span> &ndash; it is a method that allow to get a
+            component options value. It expects the <span class="note mark-el">nameId</span> of
+            the component: <span class="note mark-el">get(nameId)</span>. </li>
+
+        <li> <span class="note mark-el">restrictions</span> &ndash; it is an object that allow
+            to
+            manage restrictions of a component. </li>
+
+        <li> <span class="note mark-el">restrictions.add</span> &ndash; it is a method that
+            allow
+            to add a restrictions to a component. It expects two parameter:
+            <span class="note mark-el">restrictions.add(componentName,
+                restrictionsArray)</span>.
+        </li>
+
+        <li> <span class="note mark-el">restrictions.get</span> &ndash; it is a method that
+            allow
+            to get a restrictions of a component. It expects the <span
+                class="note mark-el">nameId</span> of the component: <span
+                class="note mark-el">restrictions.get(nameId)</span>. </li>
+
+        <li> <span class="note mark-el">restrictions.remove</span> &ndash; it is a method that
+            allow
+            to remove a restriction from a component. It expects two parameter:
+            <span class="note mark-el">restrictions.add(componentName,
+                restrictionFunction)</span>. </li>
+    </ul>
+
+    <h3> <a id="comp_format" href="#comp_format"> Component Format </a> </h3>
+    <p>
+        They are written into .html files, containing styles (optional), scripts (optional) and
+        a root element (required).
+    </p>
+
+    <h3> <a id="comp_style" href="#comp_style"> Styles </a> </h3>
+    <p>
+        The style tag here works as expected, by default the styles is global to define it has a
+        scope one just add the <i class="note mark-el">scoped</i> attribute. This adds a class
+        like (<i class="note">easy-sAb_c123</i>) to the rules of the style.
+    </p>
+
+    <pre><code class="HTML hljs">
+    &lt;!-- Global Style --&gt;    
+    &lt;style&gt;
+        .p {
+            color: red;
+        }
+    &lt;/style&gt;
+        
+    &lt;!-- Scoped Style --&gt;    
+    &lt;style scoped&gt;    
+        .p {
+            color: red;
+        }
+    &lt;/style&gt;
+    </code></pre>
+
+    <h3> <a id="comp_root" href="#comp_root"> Root Element </a> </h3>
+    <p>
+        A block element like a div that will be added to de DOM. If it was not defined an error
+        will be showing say:
+        <b>The component 'nameId' seems to be empty or it has not a root element eg.:
+            &lt;div&gt;&lt;/div&gt;, to included.</b>
+    </p>
+
+    <h3> <a id="comp_script" href="#comp_script"> Scripts </a> </h3>
+    <p>
+        A block containing the JavaScript code that runs when the component is created a scrips
+        are imported. The context (<i class="mark-el">this</i>) the component instance.
+    </p>
+
+    <div class="block-note-mark-el">
+        <p>
+            The <i class="note">Easy</i> instance of this component can be accessed in <i
+                class="note mark-el">this.Easy</i>.
+        </p>
+    </div>
+
+    <h3> <a id="comp_life_cycles" href="#comp_life_cycles"> Lifecycles Hooks </a> </h3>
+    <p>
+        These are functions that are called at some stages in the component's life, They
+    </p>
+
+    <h4> <a id="comp_life_cycles_created" href="#comp_life_cycles_created"> Created </a> </h4>
+    <p>
+        This is the hook that is called when the component was created. It can be define as
+        following:
+        <i class="note mark-el">this.created = function(element){...}</i>. The component root
+        element is passed as first parameter.
+    </p>
+
+    <h4> <a id="comp_life_cycles_mounted" href="#comp_life_cycles_mounted"> Mounted </a> </h4>
+    <p>
+        This is the hook that is called when the component was mounted or added to the DOM. It
+        can be define as following:
+        <i class="note mark-el">this.mounted = function(element){...}</i>. The component root
+        element is passed as first parameter.
+    </p>
+
+    <h4> <a id="comp_life_cycles_loaded" href="#comp_life_cycles_loaded"> Loaded </a> </h4>
+    <p>
+        This is the hook that is called when the component was loaded or compiled. It can be
+        define as following:
+        <i class="note mark-el">this.loaded = function(element){...}</i>. The component root
+        element is passed as first parameter.
+    </p>
+
+    <h4> <a id="comp_life_cycles_destroyed" href="#comp_life_cycles_destroyed"> Destroyed </a>
+    </h4>
+    <p>
+        This is the hook that is called when the component was destroyed or removed from the
+        DOM. It can be define as following:
+        <i class="note mark-el">this.destroyed = function(element){...}</i>. The component root
+        element is passed as first parameter.
+    </p>
+
+    <div class="block-note warn">
+        <p>
+            It is recommended to put any data request (<i class="note">fetch</i>) in
+            <i class="note mark-el">created</i> or <i class="note mark-el">mounted</i> hooks,
+            according to speed of the response, the component will be shown with data
+            already.
+        </p>
+    </div>
+
+    <h3> <a id="comp_exporting" href="#comp_exporting"> Exporting </a> </h3>
+    <p>
+        The function that is used to export data from the script to the template. To be able to
+        export the data, it needs to be defined as following: <i
+            class="note mark-el">this.export({...})</i>.
+    </p>
+
+    <div class="block-note info">
+        <p>
+            All data becomes reactive after being exported.
+        </p>
+    </div>
+
+    <p>
+        Hooks are not mandatory as it may possibly appear in the example.
+        At the end a component has the following form:
+    </p>
+
+                            <pre><code class="HTML hljs">
+    &lt;div&gt;
+        &lt;h3 on:click="doSomeThing" &gt; {{ message }} &lt;/h3&gt;
+    &lt;/div&gt;
+
+    &lt;script&gt;
+        var easy = this.Easy;
+
+        this.created = function(el){}
+        this.mounted = function(el){}
+        this.loaded = function(el){}
+        this.destroyed = function(el){}
+        
+        this.export({
+            /* Variables */
+            message: 'Hello from Easy!',
+
+            /* Methods */
+            doSomeThing: function(){}
+        });
+    &lt;/script&gt;
+
+    &lt;style scoped&gt;    
+        h3 {
+            color: gray;
+        }
+    &lt;/style&gt;
+    </code></pre>
+
+    <h3> <a id="comp_data" href="#comp_data"> Inc with data </a> </h3>
+    <p>
+        An includer can be combined with <i class="note mark-el">data command</i> to pass data
+        in the component. This data can be accessed in the property
+        <i class="note mark-el">this.scope</i> inside of the component's script.
+    </p>
+
+    <div class="block-note info">
+        <p>
+            The attributes defined in includer element (<i class="note mark-el">inc</i>) are
+            transfered to the template element (e.g.: <i class="note mark-el">div</i>) of the
+            component.
+        </p>
+    </div>
+
+    <pre><code class="HTML hljs">
+    &lt;inc data="{ appName: 'My App' }" src="myComponent"&gt; &lt;/inc&gt;
+    </code></pre>
+
+    <h3> <a id="comp_delimiter" href="#comp_delimiter"> Inc with Delimiter </a> </h3>
+    <p>
+        An includer can be combined with a delimiter, giving you dynamic changes when the values
+        of the property changes.
+        <i class="note warn-border">Only one delimiter can be passed</i>.
+    </p>
+
+    <pre><code class="HTML hljs">
+    &lt;inc src="{{ currentTab }}"&gt; &lt;/inc&gt;
+    </code></pre>
+
+    <h3> <a id="comp_keep_alive" href="#comp_keep_alive"> Keep Alive </a> </h3>
+    <p>
+        By default, the components are re-created when they are requested to be included, to
+        keep the element with it information just define keep-alive.
+        <i class="note warn-border">The data from script will be reloaded</i>.
+    </p>
+
+    <pre><code class="HTML hljs">
+    &lt;inc src="registration-form" keep-alive &gt; &lt;/inc&gt;
+    </code></pre>
+
+    <h3> <a id="comp_nesting_content" href="#comp_nesting_content"> Nesting Content </a> </h3>
+    <p>
+        Content can be easily nested, just define a <i class="note mark-el">content</i>
+        tag into the inc body and define a <i class="note mark-el">content</i> into the
+        component template (where the content needs to placed).
+    </p>
+
+    <h4>DOM</h4>
+    <pre><code class="HTML hljs">
+    &lt;inc src="app-input" data="{ 
+        field: 'name'
+        label: 'Name', 
+        msg: 'Field cannot be empty' 
+    }" &gt; 
+        &lt;content&gt;
+            &lt;input type="text" name="{{ field }}" /&gt;
+        &lt;/content&gt;
+    &lt;/inc&gt;
+    </code></pre>
+
+    <h4>Component</h4>
+    <pre><code class="HTML hljs">
+    &lt;div&gt;
+        &lt;label&gt; {{ label }} &lt;/label&gt;
+        &lt;content&gt;&lt;/content&gt;
+        &lt;span&gt; {{ msg }} &lt;/span&gt;
+    &lt;/div&gt;
+    </code></pre>
+
+    <b> What about multiple contents</b>
+    <p>
+        In this we add <i class="note mark-el">ident</i> property in the <i
+            class="note mark-el">content</i> tag, it makes
+        Easy identify where each content will be placed.
+    </p>
+
+    <h4>DOM</h4>
+    <pre><code class="HTML hljs">
+    &lt;inc src="table" data="{ users: users }" &gt; 
+        &lt;content ident="head"&gt;
+            &lt;label&gt; First Name &lt;/label&gt;
+            &lt;label&gt; Last Name &lt;/label&gt;
+            &lt;label&gt; Country &lt;/label&gt;
+        &lt;/content&gt;
+        &lt;content ident="body"&gt;
+            &lt;div e-for="users"&gt;
+                &lt;label&gt; {{ firstName }} &lt;/label&gt;
+                &lt;label&gt; {{ lastName }} &lt;/label&gt;
+                &lt;label&gt; {{ country}} &lt;/label&gt;
+            &lt;/div&gt;
+        &lt;/content&gt;
+    &lt;/inc&gt;
+    </code></pre>
+
+    <h4>Component</h4>
+    <pre><code class="HTML hljs">
+    &lt;div&gt;
+        &lt;div class="app-table"&gt;
+            &lt;div class="head"&gt;
+                &lt;content ident="head"&gt;&lt;/content&gt;
+            &lt;/div&gt;
+            &lt;div class="body"&gt;
+                &lt;content ident="body"&gt;&lt;/content&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;                        
+    &lt;/div&gt;
+    </code></pre>
+
+    <div class="block-note info">
+        <p>
+            For live usage, you may it in Tutorial Page. <a class="mark-el">Take me there</a>!
+        </p>
+    </div>
+
+    <h3> <a id="comp_nesting_includers" href="#comp_nesting_includers"> Nesting Includers</a>
+    </h3>
+    <p>
+        Includers can be easily nested, following the same line of thought with <a
+            href="#comp_nesting_content" class="mark-el">Nesting Content</a>, just put <i
+            class="note mark-el">inc</i> tag inside the <i class="note mark-el">content</i> tag.
+    </p>
+
+
+
+    <h4>DOM</h4>
+    <pre><code class="HTML hljs">
+    &lt;inc src="modal" data="{ 
+                modalName: 'Person Registration', 
+                body: 'modal-registration' 
+            }" &gt;
+        &lt;content&gt;
+            &lt;inc src="{{ body }}"&gt;&lt;/inc&gt;
+        &lt;/content&gt;
+    &lt;/inc&gt;
+    </code></pre>
+
+    <h4>Component</h4>
+    <pre><code class="HTML hljs">
+    &lt;div&gt;
+        &lt;div class="app-modal"&gt;
+            &lt;div class="head"&gt;
+                &lt;span&gt; {{ modalName }} &lt;/span&gt;
+                &lt;span class="close-modal"&gt; x &lt;/span&gt;
+            &lt;/div&gt;
+            &lt;div class="body"&gt;
+                &lt;content ident="body"&gt;&lt;/content&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;                        
+    &lt;/div&gt;
+    </code></pre>
+
+    <div class="block-note info">
+        <p>
+            All the includer are auto compiled, it means that after being added to the DOM it will be compiled.
+        </p>
+    </div>
+
+</section>
+<script>
+    this.mounted = function (el) {
+        appExector(el);
+        scrollByAnchor(el);
+    }
+</script>
