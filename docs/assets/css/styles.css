@@ -153,6 +153,7 @@ nav {
     position: relative;
     box-shadow: 0px 1px 3px .1px var(--color-shadow);
     display: flex;
+    z-index: 100;
 }
 
 nav>a {
@@ -403,25 +404,98 @@ nav>div .top-menu-handler .menu-btn-container {
 
 
 /* Documentation page */
+
+.menu-btn-container .menu-btn {
+    border-radius: 50%;
+    border: 2.5px solid var(--color-light-grey);
+    position: relative;
+    cursor: pointer;
+    height: 30px;
+    width: 30px;
+    margin: auto;
+}
+
+.menu-btn-container .menu-btn span,
+.menu-btn-container .menu-btn span::after,
+.menu-btn-container .menu-btn span::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: inline-block;
+    background-color: var(--color-menu-text-color);
+    height: 2px;
+    width: 10px;
+    border-radius: 8px;
+    transition: width .4s;
+}
+
+.menu-btn-container .menu-btn span::before {
+    margin-top: -6px;
+}
+
+.menu-btn-container .menu-btn span::after {
+    margin-top: 6px;
+}
+
 .doc-page,
 .tutorial-page {
     display: flex;
-    flex: 1;
     position: relative;
+    flex: 1;
 }
 
 .doc-page .doc-menu,
 .tutorial-page .tutorial-menu {
-    background-color: var(--color-note);
+    background-color: var(--color-bg-lighter);
     width: 520px;
     display: flex;
     flex-flow: column;
     position: relative;
 }
 
+.doc-page .doc-menu .content,
+.tutorial-page .tutorial-menu .content {
+    overflow-y: auto;
+    position: relative;
+    flex: 1;
+}
+
+.doc-page .doc-menu .content .items,
+.tutorial-page .tutorial-menu .content .text {
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 0; right: 0;
+    padding: 20px 30px;
+    color: var(--color-text);
+}
+
 .doc-page .doc-menu {
     width: 335px;
     box-shadow: 0 1px 2px 0.1px var(--color-soft-border);
+}
+
+.doc-page .doc-menu .content .menu .items {
+    padding: 15px 40px;
+    list-style: none;
+}
+
+.doc-page .doc-menu .content .items h3 {
+    font-weight: 600;
+}
+
+.doc-page .doc-menu .content .items li {
+    margin: 10px 0;
+}
+
+.doc-page .doc-menu .content .items>li:last-child {
+    margin-bottom: 30px;
+}
+
+.doc-page .doc-menu .content .menu .items li ul {
+    list-style: none;
+    margin-left: 20px;
 }
 
 .tutorial-page .tutorial-menu .top {
@@ -459,40 +533,6 @@ nav>div .top-menu-handler .menu-btn-container {
     display: flex;
 }
 
-.menu-btn-container .menu-btn {
-    border-radius: 50%;
-    border: 2.5px solid var(--color-light-grey);
-    position: relative;
-    cursor: pointer;
-    height: 30px;
-    width: 30px;
-    margin: auto;
-}
-
-.menu-btn-container .menu-btn span,
-.menu-btn-container .menu-btn span::after,
-.menu-btn-container .menu-btn span::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: inline-block;
-    background-color: var(--color-menu-text-color);
-    height: 2px;
-    width: 10px;
-    border-radius: 8px;
-    transition: width .4s;
-}
-
-.menu-btn-container .menu-btn span::before {
-    margin-top: -6px;
-}
-
-.menu-btn-container .menu-btn span::after {
-    margin-top: 6px;
-}
-
 .tutorial-page .tutorial-menu .top .fa:hover {
     background-color: var(--color-light-grey);
 }
@@ -504,47 +544,6 @@ nav>div .top-menu-handler .menu-btn-container {
 
 .tutorial-page .tutorial-menu .top .dir * {
     margin: auto 0;
-}
-
-.doc-page .doc-menu .content,
-.tutorial-page .tutorial-menu .content {
-    overflow-y: auto;
-    position: relative;
-    flex: 1;
-}
-
-.doc-page .doc-menu .content .items,
-.tutorial-page .tutorial-menu .content .text {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 20px 30px;
-    color: var(--color-text);
-}
-
-.doc-page .doc-menu .content .items {
-    padding: 15px 50px;
-    list-style: none;
-}
-
-.doc-page .doc-menu .content .items h3 {
-    font-weight: 600;
-    margin: 15px 0;
-}
-
-.doc-page .doc-menu .content .items li {
-    margin: 10px 0;
-}
-
-.doc-page .doc-menu .content .items>li:last-child {
-    margin-bottom: 30px;
-}
-
-.doc-page .doc-menu .content .items li ul {
-    list-style: none;
-    margin-left: 20px;
 }
 
 .tutorial-page .tutorial-menu .content .text a {
@@ -584,19 +583,25 @@ nav>div .top-menu-handler .menu-btn-container {
     list-style: none;
 }
 
-.tutorial-page .tutorial-menu ul li {
-    margin: 5px 0;
+.doc-page .doc-menu .menu ul li,
+.tutorial-page .tutorial-menu .menu ul li {
     padding: 5px 8px;
     border-radius: 4px;
 }
 
-.tutorial-page .tutorial-menu ul li:hover {
+.tutorial-page .tutorial-menu .menu ul li {
+    margin: 5px 0;
+}
+
+.tutorial-page .tutorial-menu .menu ul li:hover,
+.doc-page .doc-menu .menu ul li:hover {
     background-color: var(--color-soft-transparency);
     cursor: pointer;
 }
+
 .tutorial-page .tutorial-menu .alternator {
     text-align: center;
-    background-color: var(--color-border);
+    background-color: var(--color-note);
     position: fixed;
     bottom: 0;
     width: 100%;
@@ -665,9 +670,12 @@ ul.top-menu-opened {
 .note {
     background-color: var(--color-note);
     font-size: 12pt;
-    padding: 2px 6px;
+    padding: 1px 6px;
     border-radius: 3px;
     word-break: break-word;
+    display: inline flow-root;
+    border: 2px solid transparent;
+    margin: 1px 0;
 }
 
 .doc-page .doc-presentation,
@@ -987,7 +995,7 @@ pre code::after,
         left: 0;
     }
 
-    .tutorial-page .tutorial-menu .content .text p:last-child {
+    .tutorial-page .tutorial-menu>.content .section:last-child {
         margin-bottom: 55px!important;
     }
 

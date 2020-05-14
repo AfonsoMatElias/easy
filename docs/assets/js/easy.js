@@ -1974,7 +1974,7 @@
                     });
                 }
                 // Otherwise, wait untill the web request is done 
-                else{
+                else {
                     var t = setInterval(function () {
                         // Checking if the component is configured
                         var component = instance.components[src];

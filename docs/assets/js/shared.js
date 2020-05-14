@@ -41,7 +41,7 @@ function appExector(element, noApp) {
             window[$resultEl.id] = eval($resultEl.id); 
         }
     }
-
+    
     var codes = element.querySelectorAll('code');
     for (var i = 0; i < codes.length; i++)
         hljs.highlightBlock(codes[i]);
