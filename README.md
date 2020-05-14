@@ -84,7 +84,7 @@ Will be listed! 😁
 
 ## Authors
 
-* **Afonso Matumona** - *Initial work* - [PurpleBooth](https://github.com/AfonsoMatumona)
+* **Afonso Matumona** - *Initial work* - [AfonsoMaElias](https://github.com/AfonsoMatumona)
 
 ## License
 
