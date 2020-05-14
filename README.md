@@ -1,12 +1,6 @@
-<p align="center">
-    <a href="https://afonsomatelias.github.io/easy" target="_blank" rel="noopener noreferrer">
-        <img height="120px" src="/docs/assets/img/main_ico.png" />
-    </a>
-</p>
+<p align="center"><a href="https://afonsomatelias.github.io/easy" target="_blank" rel="noopener noreferrer"><img height="120px" src="/docs/assets/img/main_ico.png" /></a></p>
 
-<p align="center">
-    <h2> Easy </h2>
-</p>
+<h2 align="center"> Easy </h2>
 
 ## Introduction
 
