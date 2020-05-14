@@ -22,22 +22,30 @@ document.addEventListener('DOMContentLoaded', function () {
                     route: '/',
                     isDefault: true
                 },
-                tutorial: {
-                    url: "/components/tutorial",
-                    title: 'Documentation',
-                    route: '/tutorial'
-                },
 
                 // Documentation compoments
-                'introduction': '/doc-sections/en/introduction',
-                'installation': '/doc-sections/en/installation',
-                'instance': '/doc-sections/en/instance',
-                'delimiters': '/doc-sections/en/delimiters',
-                'bindings': '/doc-sections/en/bindings',
-                'commands': '/doc-sections/en/commands',
-                'events': '/doc-sections/en/events',
-                'methods': '/doc-sections/en/methods',
-                'components': '/doc-sections/en/components',
+                'introduction': '/components/doc-sections/en/introduction',
+                'installation': '/components/doc-sections/en/installation',
+                'instance': '/components/doc-sections/en/instance',
+                'delimiters': '/components/doc-sections/en/delimiters',
+                'bindings': '/components/doc-sections/en/bindings',
+                'commands': '/components/doc-sections/en/commands',
+                'events': '/components/doc-sections/en/events',
+                'methods': '/components/doc-sections/en/methods',
+                'components': '/components/doc-sections/en/components',
+                
+                // Tutorial components
+                'page': '/components/tutorial/en/structure/page',
+                'tutorial-index': {
+                    title: 'Tutorial',
+                    url: "/components/tutorial/en/introduction",
+                    route: '/tutorial'
+                },
+                'tutorial-instance': {
+                    title: 'Instance',
+                    url: '/components/tutorial/en/instance',
+                    route: '/tutorial/instance'
+                },
             }
         }
     });

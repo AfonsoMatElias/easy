@@ -29,7 +29,7 @@ h5 {
     color: var(--color-text);
 }
 
-i{
+i {
     font-style: normal;
 }
 
@@ -565,26 +565,69 @@ nav>div .top-menu-handler .menu-btn-container {
     margin-bottom: 25px;
 }
 
-.tutorial-page .tutorial-menu .content .menu {
+.tutorial-page .tutorial-menu .menu {
     position: absolute;
-    top: 10px;
+    top: 60px;
     bottom: 10px;
-    left: 10px;
-    right: 10px;
+    left: 30px;
+    right: 30px;
     background-color: var(--color-bg-lighter);
     box-shadow: var(--set-shadow);
     border-radius: 4px;
-    z-index: 3;
+    z-index: 5;
     padding: 15px;
+    overflow: auto;
 }
 
 .tutorial-page .tutorial-menu ul {
     margin: 20px;
-    list-style: circle;
+    list-style: none;
 }
 
-.tutorial-page .tutorial-menu>ul>li {
-    margin: 10px 0;
+.tutorial-page .tutorial-menu ul li {
+    margin: 5px 0;
+    padding: 5px 8px;
+    border-radius: 4px;
+}
+
+.tutorial-page .tutorial-menu ul li:hover {
+    background-color: var(--color-soft-transparency);
+    cursor: pointer;
+}
+.tutorial-page .tutorial-menu .alternator {
+    text-align: center;
+    background-color: var(--color-border);
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: none;
+}
+
+.tutorial-page .tutorial-menu .alternator>button {
+    width: 100px;
+    height: 28px;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-bg);
+    margin: 5px 8px;
+    border-radius: 5px;
+    color: var(--color-text);
+}
+
+.tutorial-page .tutorial-menu .menu+div {
+    -webkit-filter: blur(3px);
+    -moz-filter: blur(3px);
+    -o-filter: blur(3px);
+    -ms-filter: blur(3px);
+    filter: blur(3px);
+    transition: filter .4s;
+}
+
+.tutorial-page .tutorial-menu .menu.hide-it+div {
+    -webkit-filter: unset;
+    -moz-filter: unset;
+    -o-filter: unset;
+    -ms-filter: unset;
+    filter: unset;
 }
 
 .side-menu-handler {
@@ -597,16 +640,22 @@ nav>div .top-menu-handler .menu-btn-container {
 
 .side-menu-handler .menu-btn {
     background-color: var(--color-light-grey);
-    border-color:transparent!important;
+    border-color: transparent !important;
     box-shadow: 1px 2px 3px .2px var(--color-border);
 }
 
+/* For documentation menu */
 aside.side-menu-opened {
-    left: 0!important;
+    left: 0 !important;
+}
+
+/* For tutorial menu */
+aside.side-menu-closed {
+    left: -100% !important;
 }
 
 ul.top-menu-opened {
-    display: unset!important;
+    display: unset !important;
 }
 
 .side-menu-handler .menu-btn {
@@ -694,13 +743,14 @@ ul.top-menu-opened {
     list-style: circle;
     margin-left: 2%;
 }
+
 .doc-page .doc-presentation .section ul li {
     margin: 10px 0;
     line-height: 30px;
 }
 
-.doc-page .doc-presentation .section .result input, 
-.doc-page .doc-presentation .section .result select, 
+.doc-page .doc-presentation .section .result input,
+.doc-page .doc-presentation .section .result select,
 .doc-page .doc-presentation .section .result button {
     border: 1px solid var(--color-border);
     padding: 4px 10px;
@@ -734,7 +784,8 @@ ul.top-menu-opened {
     cursor: pointer;
 }
 
-.result, pre {
+.result,
+pre {
     position: relative;
     max-width: 740px;
     margin: 25px 0;
@@ -742,8 +793,8 @@ ul.top-menu-opened {
 }
 
 pre {
-    padding: 0!important;
-    background-color: transparent!important;
+    padding: 0 !important;
+    background-color: transparent !important;
 }
 
 pre code {
@@ -779,7 +830,7 @@ code .hljs-built_in {
     color: #23aa51;
 }
 
-pre code::after, 
+pre code::after,
 .result::after,
 .block-note::after {
     content: "Copy";
@@ -816,35 +867,51 @@ pre code::after,
     position: relative;
 }
 
-.block-note>*{
+.block-note>* {
     display: block;
-    margin: 28px 15px!important;
+    margin: 28px 15px !important;
 }
 
-.block-note.info { border-color: var(--note-green); }
-.block-note.warn { border-color: var(--note-yellow); }
-.block-note.dont { border-color: var(--note-red); }
+.block-note.info {
+    border-color: var(--note-green);
+}
 
-.att-border.note { border: 2px solid var(--note-red); }
-.warn-border.note { border: 2px solid var(--note-yellow); }
+.block-note.warn {
+    border-color: var(--note-yellow);
+}
+
+.block-note.dont {
+    border-color: var(--note-red);
+}
+
+.att-border.note {
+    border: 2px solid var(--note-red);
+}
+
+.warn-border.note {
+    border: 2px solid var(--note-yellow);
+}
 
 @media (max-width: 450px) {
     .card-container {
         display: flex;
-        flex-flow:column;
+        flex-flow: column;
     }
+
     .card-container .card {
         width: unset;
     }
 }
 
 @media (max-width: 530px) {
+
     .doc-page .doc-menu,
     .tutorial-page .tutorial-menu {
-        width: 100%!important;   
+        width: 100% !important;
     }
+
     .main-page-editor-container {
-        padding: 65px 30px; 
+        padding: 65px 30px;
     }
 }
 
@@ -860,7 +927,7 @@ pre code::after,
 
 @media (max-width: 700px) {
     .editor-divider {
-        padding: 0; 
+        padding: 0;
     }
 }
 
@@ -885,7 +952,7 @@ pre code::after,
         box-shadow: var(--set-shadow);
         display: none;
     }
-    
+
     .menu-container>ul>li {
         margin: 8px;
         padding: 6px 14px;
@@ -897,7 +964,7 @@ pre code::after,
     .doc-page .doc-presentation .content {
         padding: 15px 46px;
     }
-    
+
     .side-menu-handler {
         display: unset;
     }
@@ -910,9 +977,26 @@ pre code::after,
         transition: left .4s;
         left: -100%;
     }
-    
+
     .doc-page .doc-menu {
-        width: 335px;   
+        width: 335px;
+    }
+
+    .tutorial-page .tutorial-menu {
+        width: 100%;
+        left: 0;
+    }
+
+    .tutorial-page .tutorial-menu .content .text p:last-child {
+        margin-bottom: 55px!important;
+    }
+
+    .tutorial-page .tutorial-menu .alternator {
+        display: block;
+    }
+
+    aside.tutorial-menu.side-menu-closed+div .alternator>button:first-child {
+        display: unset!important;
     }
 }
 
@@ -921,6 +1005,7 @@ pre code::after,
         width: unset;
         margin: 20px auto;
     }
+
     .editor-divider .main-page-editor-container {
         flex-flow: column;
     }

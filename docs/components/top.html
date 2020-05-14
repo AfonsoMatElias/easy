@@ -24,8 +24,17 @@
 </nav>
 <script>
     this.loaded = function (el) {
-        if (this.Easy.routing) {
+        if ( this.Easy.routing && location.hash != '' ) {
             this.Easy.routing.markActive();
-        } else {}
+        } else {
+            var anchors = el.nodes('a');
+            for (var i = 0; i < anchors.length; i++) {
+                var e = anchors[i];
+                if ( e.pathname === location.pathname ) {
+                    e.classList.add('active-link');
+                    break;
+                }
+            }
+        }
     }
 </script>

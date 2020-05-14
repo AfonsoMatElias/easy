@@ -1,12 +1,10 @@
-<section class="section" e-ignore>
+<section class="section">
     <h1> <a id="instance" href="#instance"> Instance </a> </h1>
 
     <p>
-        When you import <span class="note">Easy</span> it will added a function to the
-        global
-        object,
-        so, to begin using it you need to create a new instance of Easy Class, this instance
-        expects two parameters:
+        When you import <span class="note">Easy</span> it will added a function to the global 
+        object, so, to begin using it you need to create a new instance of Easy Class, this 
+        instance expects two parameters:
     </p>
 
     <pre><code class="javascript hljs">
@@ -16,10 +14,8 @@
     <h3> <a id="inst_el" href="#inst_el"> Element </a> </h3>
     <p>
         The element is the mandatory parameter that represents the section that the instance
-        will
-        control in the application, it must be passed as a String in the format of a CSS
-        Selector.
-        <span class="note">#myId</span>, <span class="note">.myClass</span> or
+        will control in the application, it must be passed as a String in the format of a 
+        CSS Selector. <span class="note">#myId</span>, <span class="note">.myClass</span> or
         <span class="note">body</span>.
     </p>
 
@@ -109,21 +105,25 @@
         they are reactive, this means that they react to changes made to them.
     </p>
 
-    <pre><code class="example html hljs">
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+            <pre><code class="example html hljs">
     &lt;div id="app1"&gt;
         &lt;h4&gt; {{ message }} &lt;/h4&gt;
     &lt;/div&gt;
-    </code></pre>
-
-    <pre><code class="javascript hljs">
+            </code></pre>
+        
+            <pre><code class="javascript hljs">
     var app1 = new Easy('#app1', {
         data: {
             message: 'Hello World!'
         }
     });
-    </code></pre>
-
-    <div class="result"></div>
+            </code></pre>
+        
+            <div class="result"></div>
+        </div>
+    </div>
 
     <p>
         This property can be accessed from the instance object: <span
@@ -153,18 +153,16 @@
         </li>
     </ul>
 
-    <p>
-
-    </p>
-
-    <pre><code class="example html hljs">
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+            <pre><code class="example html hljs">
     &lt;div id="app2"&gt;
         &lt;h4&gt; Mounted at: {{ mountedHook }} &lt;/h4&gt;
         &lt;h4&gt; Loaded at: {{ loadedHook }} &lt;/h4&gt;
     &lt;/div&gt;
-    </code></pre>
-
-    <pre><code class="javascript hljs">
+            </code></pre>
+        
+            <pre><code class="javascript hljs">
     var app2 = new Easy('#app2', {
         data: {
             mountedHook: '',
@@ -177,9 +175,11 @@
             this.data.loadedHook = getDateTime()
         }
     });
-    </code></pre>
-
-    <div class="result"></div>
+            </code></pre>
+        
+            <div class="result"></div>
+        </div>
+    </div>
 
     <div class="block-note warn">
         <p>
@@ -197,8 +197,9 @@
 
 </section>
 <script>
-    this.mounted = function (el) {
-        appExector(el);
+    this.mounted = function (el) {        
+        // Execute only if noApp is invalid
+        appExector(el, this.scope.noApp);
         scrollByAnchor(el);
     }
 </script>

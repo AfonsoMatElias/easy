@@ -24,7 +24,7 @@ It was tested in almost every popular browsers and IE 11, below that is not supo
 ### Scale of Projects
 A web application fully developed with easy.js was tested only with small projects, larger projects was not tested yet.
 
-Learn more about at [Easy Guide Page](https://afonsomatelias.github.com/easy).
+Learn more about at, visit our site [Easy Site](https://afonsomatelias.github.com/easy).
 
 ## Prerequisites
 
@@ -39,6 +39,7 @@ To start using it, you need to know:
 To use into your project you may import via cdn 🌍:
 
 ``` HTML
+<!-- Attention: this url is not working yet -->
 <script src="https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.0.0/easy.js"></script>
 ```
 
@@ -77,19 +78,16 @@ Check the browser console, if no error or warning message is there, congratulati
 
 [Click Me](https://afonsomatelias.github.io/easy/docs.html) to see the documentation and some live examples!
 
-
 ## Contributing
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+Will be listed! 😁
 
 ## Authors
 
-* **Afonso Matumona** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+* **Afonso Matumona** - *Initial work* - [PurpleBooth](https://github.com/AfonsoMatumona)
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 Copyright (c) 2019-Present, Afonso Matumona.

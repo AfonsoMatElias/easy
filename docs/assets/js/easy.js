@@ -80,7 +80,8 @@
         // String Instantiable classes, for UI prints
         types: [ 'String', 'Number', 'BigInt', 'Symbol' ],
         // Easy Own Events 
-        events:{ 
+        events:{
+            compiled: 'compiled',
             add: 'add',
             empty: 'empty',
             response: 'response', 
@@ -1118,7 +1119,6 @@
                 }
 
                 setEasy(el); // setting $e property in the element
-
                 // Getting and Checking condition: if or show
                 if( hasAttr(el, cmds.if) || hasAttr(el, cmds.show) ) {
                     var attr = fn.attr(el, [cmds.if, cmds.show], true);
@@ -1476,6 +1476,13 @@
                         walker.call($easy, child, $scope);
                     });
                 }
+
+                
+                EasyEvent.emit({ // Emitting the event
+                    elem: el,
+                    type: vars.events.compiled,
+                    scope: extend.obj($scope)
+                });
             }
 
             // Setting the data function
@@ -1793,7 +1800,7 @@
                         el.$prevent = true;
                         // Defining attributes from the inc element 
                         transferAttributes($inc, el);
-                        
+
                         var dataAttribute = fn.attr(el, [ vars.cmds.data ], true);
                         if (dataAttribute) {
                             var data = fn.eval(dataAttribute.value, this.data);
@@ -1909,9 +1916,10 @@
                                 });
                             }
                         } catch (error) {
-                            error.fileName = this.name;
-                            error.message += " in " + error.fileName; 
-                            Easy.log(error);
+                            var $error = { fileName: this.name };
+                            for (const $k in error) $error[$k] = error[$k]; 
+                            $error.message += " in " + error.fileName;
+                            Easy.log($error);
                             clearInterval(tId);
                         }
                     }).bind(this), 0);
@@ -3177,7 +3185,7 @@
                             break;
                         default: break;
                     }
-                    // Emiting the changes
+                    // Emitting the changes
                     emitChanges({
                         array: $array,
                         oldArray: oldArray,
@@ -3634,15 +3642,13 @@
         }
         /** Initialize and handle an easy event */ 
         EasyEvent.emit = function (options) {
-            var type = options.type,
-                name = 'on:' + type,
-                event = new EasyEvent(type, options.elem, {
+            var type = options.type, name = 'on:' + type;
+            if(!options.elem.hasAttribute || !options.elem.hasAttribute(name)) return;
+            var attr = fn.attr(options.elem, [ name ], true);
+            var event = new EasyEvent(type, options.elem, {
                 data: { $model: options.model, $scope: options.scope },
                 result: options.result
             });
-
-            if(!options.elem.hasAttribute(name)) return;
-            var attr = fn.attr(options.elem, [ name ], true);
             Compiler.addOldAttr({ el: options.elem, value: attr });      
             var eventDesc = $propDescriptor($global, 'event'); 
             // Defining to the global object

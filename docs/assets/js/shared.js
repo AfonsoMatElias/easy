@@ -20,24 +20,26 @@ function createEl(appNode) {
     return $el;
 }
 
-function appExector(element) {
+function appExector(element, noApp) {
     // Executing apps
-    var $ad = 'config: { useDOMLoadEvent: false }, data:';
-    var $codes = element.querySelectorAll('.example');
-    for (var i = 0; i < $codes.length; i++) {
-        var $html = $codes[i].parentNode;
-        var $script = $html.nextElementSibling;
-        var $result = $script.nextElementSibling;
-        var $resultEl = createEl($html);
-        $result.appendChild($resultEl);
-
-        // Highlighting the block
-        hljs.highlightBlock($script);
-
-        eval($script.innerText.replace('data:', $ad));
-
-        // Adding the app to the window object
-        window[$resultEl.id] = eval($resultEl.id); 
+    if (!noApp) {
+        var $ad = 'config: { useDOMLoadEvent: false }, data:';
+        var $codes = element.querySelectorAll('.example');
+        for (var i = 0; i < $codes.length; i++) {
+            var $html = $codes[i].parentNode;
+            var $script = $html.nextElementSibling;
+            var $result = $script.nextElementSibling;
+            var $resultEl = createEl($html);
+            $result.appendChild($resultEl);
+    
+            // Highlighting the block
+            hljs.highlightBlock($script);
+    
+            eval($script.innerText.replace('data:', $ad));
+    
+            // Adding the app to the window object
+            window[$resultEl.id] = eval($resultEl.id); 
+        }
     }
 
     var codes = element.querySelectorAll('code');
@@ -56,7 +58,7 @@ function getDateTime() {
 function scrollByAnchor(el) {
     if (location.hash !== '') {
         // Auto scroll if window has hash
-        var anchor = el.node(location.hash);
+        var anchor = el.node('a[id="'+location.hash+'"]');
         if (!anchor) return;
         var presentation = document.node('.doc-presentation');
         presentation.scrollTop = anchor.offsetTop - 10;
