@@ -670,7 +670,7 @@ ul.top-menu-opened {
 .note {
     background-color: var(--color-note);
     font-size: 12pt;
-    padding: 1px 6px;
+    padding: 0px 6px;
     border-radius: 3px;
     word-break: break-word;
     display: inline flow-root;
