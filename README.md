@@ -1,8 +1,12 @@
-<p style="width: 100%; text-align:center;">
-    <img height="120px" src="/docs/assets/img/main_ico.png" />
-<p>
+<p align="center">
+    <a href="https://afonsomatelias.github.io/easy" target="_blank" rel="noopener noreferrer">
+        <img height="120px" src="/docs/assets/img/main_ico.png" />
+    </a>
+</p>
 
-<h2 style="width: 100%; text-align:center;">  Easy </h2>
+<p align="center">
+    <h2> Easy </h2>
+</p>
 
 ## Introduction
 
