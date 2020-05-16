@@ -153,7 +153,7 @@ nav {
     position: relative;
     box-shadow: 0px 1px 3px .1px var(--color-shadow);
     display: flex;
-    z-index: 100;
+    z-index: 120;
 }
 
 nav>a {
@@ -693,9 +693,8 @@ ul.top-menu-opened {
 
 .modal .popup {
     position: absolute;
-    min-width: 150px;
+    min-width: 130px;
     border-radius: 4px;
-    height: 40px;
     background-color: var(--color-bg);
     box-shadow: var(--set-shadow);
     color: var(--color-text);
@@ -953,7 +952,6 @@ pre code::after,
     .menu-container>ul {
         position: absolute;
         background-color: var(--color-bg-lighter);
-        z-index: 300;
         top: 65px;
         right: 0;
         border-radius: 6px;

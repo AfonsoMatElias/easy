@@ -5,8 +5,7 @@
  */
 (function(global, factory){
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-    typeof define === 'function' && define.amd ? define(factory) :
-    (global.Easy = factory());
+    typeof define === 'function' && define.amd ? define(factory) : (global.Easy = factory());
 }(window, (function(){ 'use strict';
     // Shared variables
     var standardEvents = {}, eventModifiers = {};
@@ -469,7 +468,7 @@
             Easy.log('Easy is a constructor and should be called with the \'new\' keyword.');
             return this;
         }
-        
+
         this.name = 'Easy';
         this.version = '2.0.0';
         this.data = {};
@@ -482,6 +481,7 @@
 
         var prototype = Object.create(Easy.prototype);
         this.__proto__ = prototype;
+
         var $$delimiters = [
             { name: 'easy', delimiter: { open: '-e-', close: '-' } }, 
             { name: 'common', delimiter: { open: '{{', close: '}}' } } 
@@ -841,14 +841,6 @@
                 lower = !lower;
             }
             return result;
-        }
-        /** Easy return type */
-        prototype.return = function (status, message, result) {
-            return {
-                status: status,
-                msg: message,
-                result: result
-            };
         }
         /** Sets values in the data */
         prototype.setData = function (input, target) {
@@ -1501,9 +1493,7 @@
                 }
             });
         }
-        prototype.Fetch = Fetch;
-        prototype.extend = extend;
-
+        
         function checkIncPath(name) {
             var path = inc.paths[name];
             if( isNull(path) ) {
@@ -3749,6 +3739,12 @@
         } catch(error) {
             Easy.log({ msg: 'Error while initializing. Description: ' + error.message, error: error });
         }
+    }
+    // Default proto methods
+    Easy.prototype.Fetch = Fetch;
+    Easy.prototype.extend = extend;
+    Easy.prototype.return = function (status, message, result) {
+        return { status: status, msg: message, result: result };
     }
     return Easy;
 })));
