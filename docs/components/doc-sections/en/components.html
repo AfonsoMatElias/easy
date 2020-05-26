@@ -1,4 +1,4 @@
-<section class="section" e-ignore>
+<section class="section">
     <h1><a id="comps_incs" href="#comps_incs"> Components / Includers </a></h1>
     <p>
         It is a concept that allows the reuse of HTML code. Easy creates and handles components
@@ -9,11 +9,11 @@
         There are two types of components, <span class="note mark-el">Cloned</span> and <span
             class="note-mark-el">Registered</span>, and these two forms can be imported/included
         in the
-        same way, using the tag <span class="note mark-el">inc</span> or using a <span
-            class="note mark-el">Official DOM element</span> (a container type).
+        same way, using the tag <span class="note mark-el">inc</span> or using a <span class="note mark-el">Official DOM
+            element</span> (a container type).
     </p>
 
-    <pre><code class="HTML hljs">
+    <pre e-ignore><code class="HTML hljs">
     &lt;!-- Inc tag --&gt;
     &lt;inc src="nameId"&gt; &lt;/inc&gt;
     
@@ -24,15 +24,17 @@
     <h3> <a id="comp_cloned" href="#comp_cloned"> Cloned </a> </h3>
     <p>
         These are components that is based on a copy of an element during compilation, it is
-        like a copy and paste. It can be achived by defining <span
-            class="note mark-el">inc-tmp="<i>nameId</i>"</span> (means include template) to the
+        like a copy and paste. It can be achived by defining <span class="note mark-el">inc-tmp="<i>nameId</i>"</span>
+        (means include template) to the
         element that needs to be
-        copied and include it where it needs to pasted, but define <span
-            class="note mark-el">@</span> before the nameId value,
+        copied and include it where it needs to pasted, but define <span class="note mark-el">@</span> before the nameId
+        value,
         it tells <span class="note">Easy</span> that it's Cloned One.
     </p>
 
-    <pre><code class="example HTML hljs">
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+            <pre><code class="example HTML hljs">
     &lt;div id="app26"&gt;
         &lt;!-- Copying --&gt;
         &lt;div inc-tmp="app-logo"&gt;
@@ -47,15 +49,17 @@
     &lt;/div&gt;
     </code></pre>
 
-    <pre><code class="javascript hljs">
+            <pre><code class="javascript hljs">
     new Easy('#app26', {
         data: {}
     });
     </code></pre>
 
-    <div class="result"></div>
+            <div class="result"></div>
+        </div>
+    </div>
 
-    <h3> <a id="comp_registed" href="#comp_registed"> Registered</a> </h3>
+    <h3> <a id="comp_registered" href="#comp_registered"> Registered</a> </h3>
     <p>
         These are the components that are registered directly in the instance, it can be done
         when the <span class="note mark-el">Easy Class</span> or using the component manager
@@ -68,8 +72,7 @@
             Way</span>, where we define the <i class="note mark-el">nameId</i> with the <i
             class="note mark-el">componentPath</i> and <span class="note mark-el">Complete
             Way</span>,
-        where we define the <i class="note mark-el">nameId</i> with the <i
-            class="note mark-el">optionsObject</i>.
+        where we define the <i class="note mark-el">nameId</i> with the <i class="note mark-el">optionsObject</i>.
     </p>
 
     <pre><code class="javascript hljs">
@@ -105,9 +108,10 @@
     {
         components : {
             config: {
+                keepData : Boolean
+                /* This is for Routing Section */
                 base : String,
                 usehash : Boolean,
-                keepData : Boolean
             },
             elements: {
                 /* For Short Way */
@@ -116,14 +120,15 @@
                 /* For Complete Way */
                 String : {
                     url : String,
+                    template : String,
+                    restrictions : [ Function ],
+                    store : Boolean,
+                    data : Object,
+                    
+                    /* This is for Routing Section */
                     title : String,
                     route : String, 
-                    template : String,
-                    data : Object,
-                    store : Boolean,
-                    restrictions : [ Function ],
-
-                    /* This is for Routing Section */
+                    children : Object,
                     isDefault : Boolean,
                     isNotFound : Boolean,
                 }
@@ -133,56 +138,32 @@
     </code></pre>
 
     <ul>
-        <li> <span class="note mark-el">config.base</span> &ndash; used to define the adicionar
-            expression from the base. e.g.: www.domain.com<span
-                class="mark-el">/folder/app/</span>
-            index.html . The default value is <span class="note mark-el">'/'</span>.
-        </li>
-
-        <li> <span class="note mark-el">config.usehash</span> &ndash; used to allow page
-            navegation with hash. The default value is <span class="note mark-el">true</span>.
-        </li>
-
         <li> <span class="note mark-el">config.keepData</span> &ndash; used to allow to kept all
-            the changes made in the component data. The default value is <span
-                class="note mark-el">false</span>.</li>
+            the changes made in the component data. The default value is <span class="note mark-el">false</span>.</li>
 
         <li> <span class="note mark-el">elements</span> &ndash; used to define all the
             components elements. On the left side goes the <i class="note mark-el">nameId</i>,
-            an
-            the right side goes the <span class="mark-el">String componentPath</span>
+            an the right side goes the <span class="mark-el">String componentPath</span>
             (From the server) or the <span class="mark-el">Options Object</span>.</li>
 
         <li> <span class="note mark-el">nameId.url</span> &ndash; represents the component path.
             It uses the <span class="note mark-el">config.base</span> to request the file from
             the server. <span class="note">The extension .html is optional</span>. </li>
 
-        <li> <span class="note mark-el">nameId.title</span> &ndash; represents the title that
-            will be setted to the page after the component has been added to the DOM (It is
-            optional).</li>
-
-        <li> <span class="note mark-el">nameId.route</span> &ndash; represents the route that
-            will be setted to the page after the component has been added to the DOM (It is
-            optional). To use without <span class="note mark-el">Routing</span> you need to set
-            <span class="note mark-el">config.usehash</span> to <span
-                class="note mark-el">false</span>. </li>
-
         <li> <span class="note mark-el">nameId.template</span> &ndash; represents hardcode html
-            template. <span class="note att-border"> Do not use together with <i
-                    class="mark-el">nameId.url</i> </span> </li>
-
-        <li> <span class="note mark-el">nameId.data</span> &ndash; represents data that wll be
-            injected in the component when it loads. </li>
-
-        <li> <span class="note mark-el">nameId.store</span> &ndash; allow to store the component
-            when it request in the first time. The default value is <span
-                class="note mark-el">true</span>. </li>
+            template. <span class="note att-border"> Do not use together with <i class="mark-el">nameId.url</i> </span>
+        </li>
 
         <li> <span class="note mark-el">nameId.restrictions</span> &ndash; allow to add check
-            conditions
-            before the component request. It expects an array of functions that retuns
+            conditions before the component request. It expects an array of functions that retuns
             a <span class="note mark-el">Boolean</span>, <span class="mark-el">true</span> for
             checked and <span class="mark-el">false</span> for unchecked. </li>
+
+        <li> <span class="note mark-el">nameId.store</span> &ndash; allow to store the component
+            when it request in the first time. The default value is <span class="note mark-el">true</span>. </li>
+
+        <li> <span class="note mark-el">nameId.data</span> &ndash; represents data that wll be
+            injected in the component when it loads. </li>     
     </ul>
 
     <h3> <a id="comp_handing" href="#comp_handing"></a> Handling Components </h3>
@@ -200,12 +181,10 @@
             component options value. It expects the <span class="note mark-el">nameId</span> of
             the component: <span class="note mark-el">get(nameId)</span>. </li>
 
-        <li> <span class="note mark-el">restrictions</span> &ndash; it is an object that allow
-            to
+        <li> <span class="note mark-el">restrictions</span> &ndash; it is an object that allow to
             manage restrictions of a component. </li>
 
-        <li> <span class="note mark-el">restrictions.add</span> &ndash; it is a method that
-            allow
+        <li> <span class="note mark-el">restrictions.add</span> &ndash; it is a method that allow
             to add a restrictions to a component. It expects two parameter:
             <span class="note mark-el">restrictions.add(componentName,
                 restrictionsArray)</span>.
@@ -213,12 +192,10 @@
 
         <li> <span class="note mark-el">restrictions.get</span> &ndash; it is a method that
             allow
-            to get a restrictions of a component. It expects the <span
-                class="note mark-el">nameId</span> of the component: <span
-                class="note mark-el">restrictions.get(nameId)</span>. </li>
+            to get a restrictions of a component. It expects the <span class="note mark-el">nameId</span> of the
+            component: <span class="note mark-el">restrictions.get(nameId)</span>. </li>
 
-        <li> <span class="note mark-el">restrictions.remove</span> &ndash; it is a method that
-            allow
+        <li> <span class="note mark-el">restrictions.remove</span> &ndash; it is a method that allow
             to remove a restriction from a component. It expects two parameter:
             <span class="note mark-el">restrictions.add(componentName,
                 restrictionFunction)</span>. </li>
@@ -237,7 +214,7 @@
         like (<i class="note">easy-sAb_c123</i>) to the rules of the style.
     </p>
 
-    <pre><code class="HTML hljs">
+    <pre e-ignore><code class="HTML hljs">
     &lt;!-- Global Style --&gt;    
     &lt;style&gt;
         .p {
@@ -265,6 +242,12 @@
     <p>
         A block containing the JavaScript code that runs when the component is created a scrips
         are imported. The context (<i class="mark-el">this</i>) the component instance.
+    </p>
+
+    <p>
+        The <i class="mark-el">this</i> keywork allows you to have access of the component data accessing
+        <i class="mark-el">this.data</i>. To have access of the parent component data
+        (<i class="mark-el">outside scope</i>), we use <i class="mark-el">this.scope</i>
     </p>
 
     <div class="block-note-mark-el">
@@ -324,8 +307,7 @@
     <h3> <a id="comp_exporting" href="#comp_exporting"> Exporting </a> </h3>
     <p>
         The function that is used to export data from the script to the template. To be able to
-        export the data, it needs to be defined as following: <i
-            class="note mark-el">this.export({...})</i>.
+        export the data, it needs to be defined as following: <i class="note mark-el">this.export({...})</i>.
     </p>
 
     <div class="block-note info">
@@ -339,7 +321,7 @@
         At the end a component has the following form:
     </p>
 
-                            <pre><code class="HTML hljs">
+    <pre e-ignore><code class="HTML hljs">
     &lt;div&gt;
         &lt;h3 on:click="doSomeThing" &gt; {{ message }} &lt;/h3&gt;
     &lt;/div&gt;
@@ -383,7 +365,7 @@
         </p>
     </div>
 
-    <pre><code class="HTML hljs">
+    <pre e-ignore><code class="HTML hljs">
     &lt;inc data="{ appName: 'My App' }" src="myComponent"&gt; &lt;/inc&gt;
     </code></pre>
 
@@ -394,7 +376,7 @@
         <i class="note warn-border">Only one delimiter can be passed</i>.
     </p>
 
-    <pre><code class="HTML hljs">
+    <pre e-ignore><code class="HTML hljs">
     &lt;inc src="{{ currentTab }}"&gt; &lt;/inc&gt;
     </code></pre>
 
@@ -405,7 +387,7 @@
         <i class="note warn-border">The data from script will be reloaded</i>.
     </p>
 
-    <pre><code class="HTML hljs">
+    <pre e-ignore><code class="HTML hljs">
     &lt;inc src="registration-form" keep-alive &gt; &lt;/inc&gt;
     </code></pre>
 
@@ -416,8 +398,8 @@
         component template (where the content needs to placed).
     </p>
 
-    <h4>DOM</h4>
-    <pre><code class="HTML hljs">
+    <label>DOM</label>
+    <pre e-ignore><code class="HTML hljs">
     &lt;inc src="app-input" data="{ 
         field: 'name'
         label: 'Name', 
@@ -429,8 +411,8 @@
     &lt;/inc&gt;
     </code></pre>
 
-    <h4>Component</h4>
-    <pre><code class="HTML hljs">
+    <label>Component</label>
+    <pre e-ignore><code class="HTML hljs">
     &lt;div&gt;
         &lt;label&gt; {{ label }} &lt;/label&gt;
         &lt;content&gt;&lt;/content&gt;
@@ -440,13 +422,12 @@
 
     <b> What about multiple contents</b>
     <p>
-        In this we add <i class="note mark-el">ident</i> property in the <i
-            class="note mark-el">content</i> tag, it makes
-        Easy identify where each content will be placed.
+        In this we add <i class="note mark-el">ident</i> property in the <i class="note mark-el">content</i> tag, it
+        makes Easy identify where each content will be placed.
     </p>
 
-    <h4>DOM</h4>
-    <pre><code class="HTML hljs">
+    <label>DOM</label>
+    <pre e-ignore><code class="HTML hljs">
     &lt;inc src="table" data="{ users: users }" &gt; 
         &lt;content ident="head"&gt;
             &lt;label&gt; First Name &lt;/label&gt;
@@ -463,8 +444,8 @@
     &lt;/inc&gt;
     </code></pre>
 
-    <h4>Component</h4>
-    <pre><code class="HTML hljs">
+    <label>Component</label>
+    <pre e-ignore><code class="HTML hljs">
     &lt;div&gt;
         &lt;div class="app-table"&gt;
             &lt;div class="head"&gt;
@@ -486,15 +467,13 @@
     <h3> <a id="comp_nesting_includers" href="#comp_nesting_includers"> Nesting Includers</a>
     </h3>
     <p>
-        Includers can be easily nested, following the same line of thought with <a
-            href="#comp_nesting_content" class="mark-el">Nesting Content</a>, just put <i
-            class="note mark-el">inc</i> tag inside the <i class="note mark-el">content</i> tag.
+        Includers can be easily nested, following the same line of thought with <a href="#comp_nesting_content"
+            class="mark-el">Nesting Content</a>, just put <i class="note mark-el">inc</i> tag inside the <i
+            class="note mark-el">content</i> tag.
     </p>
 
-
-
-    <h4>DOM</h4>
-    <pre><code class="HTML hljs">
+    <label>DOM</label>
+    <pre e-ignore><code class="HTML hljs">
     &lt;inc src="modal" data="{ 
                 modalName: 'Person Registration', 
                 body: 'modal-registration' 
@@ -505,8 +484,8 @@
     &lt;/inc&gt;
     </code></pre>
 
-    <h4>Component</h4>
-    <pre><code class="HTML hljs">
+    <label>Component</label>
+    <pre e-ignore><code class="HTML hljs">
     &lt;div&gt;
         &lt;div class="app-modal"&gt;
             &lt;div class="head"&gt;

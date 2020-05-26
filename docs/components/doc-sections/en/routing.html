@@ -1,0 +1,115 @@
+<section class="section">
+    <h1> <a id="routing" href="#routing"> Routing </a> </h1>
+    <p>
+        The routing funcionality that enable the <b>Single Page Application</b> mode, and creating a SPA with 
+        <i class="mark-el">Easy</i> is very simple, because it uses <a href="includer" class="note mark-el"></a> 
+        elements.
+    </p>
+
+    <h3> <a id="routing_setting" href="#routing_setting"> Setting </a> </h3>
+    <p>
+        In the routing, the element where the components started to be rendered must be specified, for this, 
+        the <i class="note mark-el">route-view</i> directive is used, and in the definition of the components, 
+        some additional specific properties for the routing are defined, which are:
+    </p>
+
+    <pre><code class="javascript hljs">
+    {
+        components : {
+            config: {
+                base : String,
+                usehash : Boolean,
+            },
+            elements: {
+                String : {
+                    title : String,
+                    route : String, 
+                    isDefault : Boolean,
+                    isNotFound : Boolean,
+                    children : Object,
+                }
+            }
+        }
+    }
+    </code></pre>
+
+    <ul>
+        <li> <span class="note mark-el">config.base</span> &ndash; used to define the base URI of the project. 
+            e.g.: www.domain.com<span class="mark-el">/my-project/</span> index.html. The default value is 
+            <span class="note mark-el">'/'</span>, meaning that the project is at the root folder.
+        </li>
+
+        <li> <span class="note mark-el">config.usehash</span> &ndash; used to allow page navegation 
+            based on hash. The default value is <span class="note mark-el">true</span>.
+        </li>
+        <li>
+            Ate this point we are going to assume that you already know what component nameId means.
+        </li>
+        <li> <span class="note mark-el">nameId.title</span> &ndash; represents the title that will be 
+            setted to the page after the component has been added to the DOM (It is optional).</li>
+
+        <li> <span class="note mark-el">nameId.route</span> &ndash; represents the route that 
+            will be setted to the page after the component has been added to the DOM (It is
+            optional). </li>
+
+        <li> <span class="note mark-el">nameId.route</span> &ndash; represents the route that 
+            will be setted to the page after the component has been added to the DOM (It is
+            optional). </li>   
+    </ul>
+
+    <pre e-ignore><code class="HTML hljs">
+    &lt;div id="app"&gt;
+        &lt;nav&gt;
+            &lt;!-- Navegation links --&gt;
+        &lt;/nav&gt;
+        &lt;main route-view&gt;&lt;/main&gt;
+    &lt;/div&gt;
+    </code></pre>
+
+    <pre e-ignore><code class="javascript hljs">
+    new Easy('#app', {
+        components: {
+            elements: {
+                'home' : {
+                    template: '&lt;div&gt; Home Page &lt;/div&gt;'                    
+                    title : 'Home',
+                    route : '/home', 
+                    isDefault : true
+                },
+                'about' : {
+                    template: '&lt;div&gt; About Page &lt;/div&gt;'                    
+                    title : 'About',
+                    route : '/about'
+                }
+            }
+        }
+    });
+    </code></pre>
+
+    <p>
+        ...
+    </p>
+
+    <h3> <a id="routing_navegation" href="#routing_navegation"> Navegation </a> </h3>
+    <p>
+
+    </p>
+
+
+    <h3> <a id="routing_default_page" href="#routing_default_page"> Default Page </a> </h3>
+    <p>
+
+    </p>
+
+
+    <h3> <a id="routing_notfound_page" href="#routing_notfound_page"> NotFound Page </a> </h3>
+    <p>
+
+    </p>
+</section>
+<script>
+    this.mounted = function (el) {
+        appExector(el);
+        scrollByAnchor(el);
+    }
+</script>

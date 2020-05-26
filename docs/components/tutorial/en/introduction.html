@@ -1,5 +1,5 @@
 <!-- Including the tutorial structure -->
-<inc src="page" on:compiled="onCompiled">
+<inc src="page">
     <content>
         <!-- Including the introduction section -->
         <section class="section">
@@ -8,8 +8,8 @@
             <p>
                 Easy.js, short for <span style="color:var(--easy-yellow)">Easy</span>
                 and <span style="color:var(--easy-black)">Asyncronous Javascript</span>,
-                is a javascript library for building user interfaces and that helps in the
-                development of web applications, providing a synchronous interaction
+                is a javascript library for building user interfaces and helps in the
+                web applications development, providing a synchronous interaction
                 between user interfaces and Javascript data.
             </p>
         
@@ -93,19 +93,7 @@
             name: 'Tutorial',
             type: 'expanded',
             resizable: 'y',
-            content: '<h2> Hello From Easy! <\/h2>'
+            content: '<h2> Hello from Easy! <\/h2>'
         });
     }
-    
-    this.export({
-        onCompiled: function (evt) {
-            // Load hello word example
-            this.expose('tutorial', {
-                name: 'Tutorial',
-                type: 'expanded',
-                resizable: 'y',
-                content: '<h2> Hello from Easy! <\/h2>'
-            });
-        }
-    });
 </script>

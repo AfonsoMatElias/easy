@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
         components: {
             config: {
                 // Disable it when using locally 
-                base: '/easy/'
+                // base: '/easy/'
             },
             elements: {
                 top: "/components/top",
@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 'events': '/components/doc-sections/en/events',
                 'methods': '/components/doc-sections/en/methods',
                 'components': '/components/doc-sections/en/components',
+                'routing': '/components/doc-sections/en/routing',
                 
                 // Tutorial components
                 'page': '/components/tutorial/en/structure/page',
@@ -88,6 +89,13 @@ document.addEventListener('DOMContentLoaded', function () {
         if ($$page.data.hasOwnProperty('sMenuOpened'))
             $$page.data.sMenuOpened = false;
         
+    }
+
+    if ( location.pathname === '/docs.html' ) {
+        $$page.on('incLoaded', function (el) {
+            if ( el.inc === 'top' ) return;
+            addAnchors(el.nodes('a[id]'));
+        });
     }
 
 }, false);

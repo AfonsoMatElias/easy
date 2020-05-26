@@ -58,9 +58,16 @@ function getDateTime() {
 function scrollByAnchor(el) {
     if (location.hash !== '') {
         // Auto scroll if window has hash
-        var anchor = el.node('a[id="'+location.hash+'"]');
+        var anchor = el.node('a[id="'+location.hash.substr(1)+'"]');
         if (!anchor) return;
         var presentation = document.node('.doc-presentation');
         presentation.scrollTop = anchor.offsetTop - 10;
     }
+}
+
+var $anchors = [];
+function addAnchors(anchors) {
+    if (!anchors) return;
+    if (!Array.isArray(anchors)) return;
+    $anchors.push.apply($anchors, anchors);
 }

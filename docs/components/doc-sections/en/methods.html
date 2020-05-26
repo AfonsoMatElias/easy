@@ -1,4 +1,4 @@
-<section class="section" e-ignore>
+<section class="section">
     <h1><a id="methods" href="#methods"> Methods </a></h1>
     <p>
         There are some built-in methods that can be used in the application, which are:
@@ -31,7 +31,6 @@
         country: 'Angola'
     });
     </code></pre>
-
 
     <h3><a id="method_on" href="#method_on">on</a></h3>
     <p>
@@ -207,7 +206,9 @@
             called whenever a property is setted. </li>
     </ul>
 
-    <pre><code class="example html hljs">
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+            <pre><code class="example html hljs">
     &lt;div id="app25"&gt;        
         &lt;form on:submit.preventDefault="generate"&gt;
             
@@ -250,7 +251,7 @@
     &lt;/div&gt;
     </code></pre>
 
-    <pre><code class="javascript hljs">
+            <pre><code class="javascript hljs">
     var app25 = new Easy('#app25', {
         data: {
             /* Variables */
@@ -264,7 +265,9 @@
     });
     </code></pre>
 
-    <div class="result"></div>
+            <div class="result"></div>
+        </div>
+    </div>
 
     <div class="block-note info">
         <p>

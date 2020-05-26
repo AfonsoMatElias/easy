@@ -1,5 +1,5 @@
 <!-- Including the tutorial structure -->
-<inc src="page" on:compiled="onCompiled">
+<inc src="page">
     <content>
         <!-- Including the introduction section -->
         <inc src="instance" data="{ noApp: true }"></inc>
@@ -7,20 +7,12 @@
 </inc>
 <script>
     this.loaded = function (el) {
-        setTimeout(function(){
-            
-        }, 1000);
+        // Load hello word example
+        this.Easy.expose('tutorial', {
+            name: 'Tutorial',
+            type: 'expanded',
+            resizable: 'y',
+            content: '<h2> Instance Eg! <\/h2>'
+        });
     }
-
-    this.export({
-        onCompiled: function (evt) {
-            // Load hello word example
-            this.expose('tutorial', {
-                name: 'Tutorial',
-                type: 'expanded',
-                resizable: 'y',
-                content: '<h2> Instance Eg! <\/h2>'
-            });
-        }
-    });
 </script>

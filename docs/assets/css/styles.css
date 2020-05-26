@@ -71,7 +71,7 @@ i {
     --color-shadow: #e5e5e5;
     --color-menu: #343842;
     --color-disable: #efefef;
-    --color-soft-transparency: #f0f0f080;
+    --color-soft-transparency: #f0f0f08a;
     --color-popup: #fafafa;
     --color-row: #f6f6f6;
 
@@ -121,8 +121,8 @@ i {
 
 .light-theme *,
 .dark-theme * {
-    transition: background-color .1s;
-    transition: color .1.5s;
+    transition: background-color .6s;
+    transition: color .2s;
 }
 
 body {
@@ -242,6 +242,10 @@ nav>div .top-menu-handler .menu-btn-container {
     color: var(--color-active);
     transition: color .2s;
     text-shadow: 0px 0px .2px var(--color-shadow);
+}
+
+a.active-doc-menu, a.active-doc-menu * {
+    color: var(--color-blue) !important;
 }
 
 /* Main page displayed icon */
@@ -391,6 +395,11 @@ nav>div .top-menu-handler .menu-btn-container {
     font-size: 12.5pt;
 }
 
+.main-page-description {
+    margin: 0 20%;
+    line-height: 30px;
+}
+
 /* Main page footer style */
 .botton-content {
     padding: 25px;
@@ -457,6 +466,7 @@ nav>div .top-menu-handler .menu-btn-container {
 
 .doc-page .doc-menu .content,
 .tutorial-page .tutorial-menu .content {
+    scroll-behavior: smooth;
     overflow-y: auto;
     position: relative;
     flex: 1;
@@ -674,7 +684,7 @@ ul.top-menu-opened {
     border-radius: 3px;
     word-break: break-word;
     display: inline flow-root;
-    border: 2px solid transparent;
+    border: 1px solid transparent;
     margin: 1px 0;
 }
 
@@ -892,11 +902,11 @@ pre code::after,
 }
 
 .att-border.note {
-    border: 2px solid var(--note-red);
+    border-color: var(--note-red);
 }
 
 .warn-border.note {
-    border: 2px solid var(--note-yellow);
+    border-color: var(--note-yellow);
 }
 
 @media (max-width: 450px) {
@@ -929,6 +939,10 @@ pre code::after,
 
     .high-element .main-text {
         text-align: center;
+    }
+
+    .main-page-description {
+        margin: 0 10%;
     }
 }
 

@@ -127,7 +127,7 @@
             instance.content = '';
             options = options || {};
 
-            for (const key in options)
+            for (var key in options)
                 instance[key] = options[key];
 
             // vars 
@@ -240,8 +240,8 @@
                 var content = createTemplate(instance.screen.innerText);
                 var view = modal.node('.body');
                 view.innerText = content;
-                hljs.highlightBlock(view);
                 modal.classList.remove('hide-it');
+                hljs.highlightBlock(view);
             }
 
             modal.node('.body').ondblclick = function (evt) {
@@ -407,6 +407,7 @@
     }
 
     this.export({
+        name: this.scope.name, 
         showResult: false,
         runCodeShowResult: function () {
             if ($editorInstance) {

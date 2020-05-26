@@ -2,6 +2,7 @@
 <html lang="en" class="nice-scroll light-theme">
 
 <head>
+    <base href="/">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="assets/img/main_ico.png" type="image/x-icon">
@@ -141,7 +142,6 @@
                                         <li><a href="#method_set"> set </a></li>
                                     </ul>
                                 </li>
-                                </li>
                                 <li> <a href="#comps_incs">
                                         <h3>Components / Includers</h3>
                                     </a>
@@ -168,6 +168,16 @@
                                         <li> <a href="#comp_keep_alive"> Keep Alive </a> </li>
                                         <li> <a href="#comp_nesting_content"> Nesting Content </a> </li>
                                         <li> <a href="#comp_nesting_includers"> Nesting Includers </a> </li>
+                                    </ul>
+                                </li>
+                                <li> <a href="#routing">
+                                        <h3>Routing (Beta) </h3>
+                                    </a>
+                                    <ul>
+                                        <li> <a href="#routing_setting"> Setting </a> </li>
+                                        <li> <a href="#routing_navegation"> Navegation </a> </li>
+                                        <li> <a href="#routing_default_page"> Default Page </a> </li>
+                                        <li> <a href="#routing_notfound_page"> NotFound Page </a> </li>
                                     </ul>
                                 </li>
                             </ul>
@@ -205,6 +215,9 @@
 
                         <!-- Components -->
                         <inc src="components"></inc>
+
+                        <!-- Routing -->
+                        <inc src="routing"></inc>
                     </div>
                 </div>
 
@@ -215,6 +228,72 @@
     <script src="assets/js/app.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            setTimeout(function listenAnchors() {
+                // Store all the menu anchros do be able to find it by key
+                var menu = {},
+                    // Store the last passed anchor on scroll
+                    lastPassed,
+                    // Store the last active anchor in menu bar
+                    $lastActive,
+                    // Menu container
+                    $MenuContainer = document.node('.doc-menu .content'),
+                    // Getting all the anchors in the menu bar anchors
+                    $$anchors = $MenuContainer.nodes('.menu a[href]');
+
+                // Mapping the anchors to the menu variable
+                for (var i = 0; i < $$anchors.length; i++) {
+                    var $e = $$anchors[i];
+                    menu[$e.hash] = $e;
+                }
+
+                // Listening to the scroll event 
+                document.node('.doc-presentation').onscroll = function () {
+                    var current;
+                    // Looping all the subscribed anchors
+                    for (var i = 0; i < $anchors.length; i++) {
+                        var element = $anchors[i];
+
+                        // If has class attribute, means that is markable element
+                        if (element.attributes['class']) continue;
+
+                        // Getting the floor of the value
+                        var position = Math.floor(element.getBoundingClientRect().top);
+
+                        // Checking if it is in the range 
+                        // (Used this way because with only one value like 60, some of them will not this verification)
+                        if (position <= 70 && position >= 60) {
+                            current = element;
+                            break;
+                        }
+                    }
+
+                    if (current) {
+                        // Void if the current and the last are the same 
+                        if (lastPassed && (lastPassed.id === current.id)) return;
+
+                        // Getting the menu anchor that corresponds this id
+                        var $current = menu['#' + current.id];
+
+                        // Void if it wasn't found
+                        if (!$current) return;
+
+                        // Clearing the last acgive menu
+                        if ($lastActive) $lastActive.className = '';
+
+                        // Marking active to the current one
+                        $current.className = 'active-doc-menu';
+
+                        // Fixing the position of the menu scroll
+                        $MenuContainer.scrollTop = $current.offsetTop - 10;
+
+                        // Setting the last active one to be remembered
+                        $lastActive = $current;
+                        // Setting the last Passed one void if necessary
+                        lastPassed = current;
+                    }
+                }
+            }, 1)
+
             document.nodes('code').listen('click', function (e) {
                 // Pseudo 52 x 25
                 // Calculating the position of the curson
@@ -224,7 +303,7 @@
             });
         }, false);
 
-        hljs.initHighlightingOnLoad();    
+        hljs.initHighlightingOnLoad();
     </script>
 </body>
 

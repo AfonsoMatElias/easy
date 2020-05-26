@@ -8,7 +8,11 @@
     typeof define === 'function' && define.amd ? define(factory) : (global.Easy = factory());
 }(window, (function(){ 'use strict';
     // Shared variables
-    var standardEvents = {}, eventModifiers = {};
+    var standardEvents = {}, 
+        eventModifiers = { 
+            'stoppropagation': 'stopPropagation', 
+            'preventdefault': 'preventDefault' 
+        };
     var getter; // Store getter function
     var $global = window, doc = $global.document;
     delete $global.name; // Removing window.name property
@@ -22,13 +26,6 @@
     for ( var key in doc.createElement('input') ) {
         if( key[0] === 'o' && key[1] === 'n' )
             standardEvents[key.substr(2)] = true;
-    }
-
-    // Get all modifier functions
-    var $$evt = new Event('e');
-    for (const key in $$evt) {
-        if ( typeof $$evt[key] === 'function' )
-        eventModifiers[key.toLowerCase()] = key
     }
 
     var vars = {
@@ -253,7 +250,7 @@
         if (!ipv6InBrackets && hostname.indexOf(':') > -1)
             hostname = '[' + hostname + ']';
 
-        return {
+        var $return = {
             href: urlParsingNode.href,
             protocol: urlParsingNode.protocol ? urlParsingNode.protocol.replace(/:$/, '') : '',
             host: urlParsingNode.host,
@@ -264,6 +261,8 @@
             pathname: (urlParsingNode.pathname.charAt(0) === '/') ?
                 urlParsingNode.pathname : '/' + urlParsingNode.pathname
         };
+        $return.origin = $return.protocol + '://' + $return.host; 
+        return $return;
     }
     
     // Classes for Browsers compatibility
@@ -275,6 +274,20 @@
             this.WARN = 'Do not \'await\' this promise, it does not support await keyword.';
             var thens = [], catches = [], finallies = [];
 
+            function waitAndRun(array, value) {
+                function run(funcs, value) {
+                    forEach(funcs, function(callback) {
+                        callback.call(self, value);    
+                    });
+                }
+                var t = setTimeout(function() {
+                    run(array, value);
+                    run(finallies);
+                    clearTimeout(t);
+                }, 0);
+                return value;
+            }
+            
             this.then = function (resolve, reject) {
                 thens.push(resolve);
                 if( !isNull(reject) )
@@ -291,21 +304,6 @@
                 finallies.push(cb);
                 return self;
             }
-
-            function waitAndRun(array, value) {
-                function run(funcs, value) {
-                    forEach(funcs, function(callback) {
-                        callback.call(self, value);    
-                    });
-                }
-                var t = setTimeout(function() {
-                    run(array, value);
-                    run(finallies);
-                    clearTimeout(t);
-                }, 0);
-                return value;
-            }
-
             promise(function (value) {
                 self.status = 'resolved';
                 self.value = value;
@@ -317,7 +315,6 @@
 
             return self;
         }
-
         Promise.resolve = function (value) {
             return new Promise(function (resolve) {
                 return resolve(value);
@@ -327,6 +324,29 @@
             return new Promise(function (_, reject) {
                 return reject(value);
             });
+        }
+    }
+    $global.UrlData = function(url) {
+        if (!url) url = location.href;
+        var compare = arguments[1];
+        if ( compare && isString(compare) ) {
+            // Building from url comparison
+            var $url = url.split('/').reverse();
+            if ($url[0] === '') $url.shift();
+            var $compare = compare.split('/').reverse();
+            forEach($compare, (function(value, index) {
+                if (value[0] === ':')
+                    this[value.substr(1)] = $url[index];     
+            }).bind(this));
+        } else {
+            // Building from query string
+            var queryStr = url.split('?')[1];
+            if (!queryStr) return this;
+            var keys = queryStr.split('&');
+            forEach(keys, (function(key) {
+                var pair = key.split('=');
+                this[pair[0]] = pair[1]
+            }).bind(this));
         }
     }
     /**
@@ -351,18 +371,19 @@
             this[option] = options[option];
         }).bind(this));
 
-        this.xhrObject = xhr;
         // The default method is get
         options.method = this.method = this.method ? this.method : 'get';
         var xhr = createXhr(this.method), timeoutId;
+        this.xhrObject = xhr;
 
         // Unchangeable URL, even if it was passed in options
         this.url = url;
         // If timeout is not defined use the default 1 minute
-        this.timeout = this.timeout || 6 * 10000;
+        this.timeout = this.timeout || 60000;
 
         return new Promise(function (resolve, reject) {
             xhr.open(self.method, self.url, true);
+            xhr.timeout = self.timeout; 
 
             self.headers = self.headers ? self.headers : {};
             self.headers.keys(function (key) {
@@ -864,9 +885,9 @@
                     var $data = new ReactiveObject(data);
                     $data.$scope = Compiler.getUpData(el);
                     Compiler.compile({
-                    el: el,
-                    data: $data 
-                });
+                        el: el,
+                        data: $data 
+                    });
                 });
             }
             
@@ -1084,11 +1105,16 @@
                     if(!trim(attr.value))
                         return Easy.log({ msg: error.invalid('in ' + attr.name), el: el });
 
-                    if ( waitedData[attr.value] )
-                        waitedData[attr.value].push(el);
-                    else
-                        waitedData[attr.value] = [ el ];
-                    
+                    if (exposed[attr.value]) {
+                        var $$data = new ReactiveObject($easy.retrieve(attr.value, true));
+                        $$data.$scope = $scope;
+                        Compiler.compile({ el: el, data: $$data });
+                    } else {
+                        if ( waitedData[attr.value] )
+                            waitedData[attr.value].push(el);
+                        else
+                            waitedData[attr.value] = [ el ];                 
+                    }           
                     return;
                 }
 
@@ -1115,13 +1141,12 @@
                 if( hasAttr(el, cmds.if) || hasAttr(el, cmds.show) ) {
                     var attr = fn.attr(el, [cmds.if, cmds.show], true);
                     if( (trim(attr.value) === '') ) 
-                        return Easy.log({ msg: 'Invalid value in ' + attr.value, el: attr })
+                        return Easy.log({ msg: 'Invalid expression in ' + attr.value, el: attr })
 
                     if (attr.name === cmds.show) {
                         var res = ui.cmd.if.prepare(el, attr, attr.name);
-                        if (res === true) {
+                        if (res === true)
                             Compiler.setValue({ current: el, scope: $scope, methods: $$methods });
-                        }
                     } else {
                         var curr = el, chain = [ { attr: attr, el: curr } ]; 
 
@@ -1152,15 +1177,16 @@
                     var source = inc.src(el);
                     //Exposing the data 
                     $easy.expose(source, extend.obj($scope));
-                    
                     // For includer dynamic change
                     var delimiters = ui.getDelimiters(source);
                     if( delimiters.length === 1 ) {
                         el.valueIn('no-replace', '');
+                        
                         var container = el.parentNode;
                         var dlm = delimiters[0], name = el.nodeName;
                         var attr = fn.attr(el, ['inc-src', 'src']), current = el;
                         var hw = { el: current };
+
                         source = fn.eval(dlm.exp, $scope);
                         attr.value = source;
 
@@ -1187,7 +1213,7 @@
                     // Data
                     var scope = fn.attr(el, [cmds.data], true), $dt;
                     // Getting the data or the default
-                    if ( trim(scope.value) === ''){
+                    if ( trim(scope.value) === '' ){
                         $dt = extend.obj($easy.data); // clone the main data
                     } else {
                         $dt = fn.eval(scope.value, $scope);
@@ -1280,6 +1306,7 @@
                 }
 
                 if ($name.startsWith('on:') || $name.startsWith('listen:')) {
+                    if (trim($value) === '') return Easy.log('Invalid expression in ' + $name);
                     var evtExpression = $name.split(':')[1].split('.'); // click.preventdefault
                     var eventName = evtExpression[0], base = el.$e.$base;
 
@@ -1292,7 +1319,6 @@
                                 var $modName = eventModifiers[modifier];
                                 if ($modName) evtObject[$modName]();
                             });
-
                             arguments[0].data = { $scope: $scope }
                             // Calling the callback function
                             fn.eval("if (typeof (("+ $value+")) === 'function') ("+$value +").apply(this, arguments);", 
@@ -1502,7 +1528,7 @@
             }
             return path;
         }
-        
+
         //#region Classes
         function Compiler() {}
         /** Component includer */
@@ -1535,7 +1561,7 @@
                                     'Please reset this or these restrictions.', 'warn');
             }
             // Component Setter
-            this.setComponent = function (objects) {
+            this.setComponent = function (objects, onset) {
                 var comps = {};
                 objects.keys((function (key, value) {
                     if( !isNull(this.paths[key]) )
@@ -1560,6 +1586,15 @@
                     this.skipNoFunction(comps[key].restrictions, key);                
                     this.paths[key] = comps[key];
 
+                    if ( !isNull(onset) && typeof onset === 'function' )
+                        onset.call(this, comps[key], key);
+                    
+                    if ( isObj(value) && isObj(value.children) ) {
+                        this.setComponent(value.children, function ($comp, $key) {
+                            $comp.route = value.route + $comp.route;
+                            comps[$key] = $comp;
+                        });
+                    }
                 }).bind(this));
                 return comps;
             }
@@ -1674,8 +1709,8 @@
                     if (!isNull($path.data)) {
                         this.data = new ReactiveObject($path.data);    
                     } else {
-                        // If the data isn't defined take data from scope data 
-                        this.data = (this.scope ? this.scope : this.scope = {});
+                        this.data = {};
+                        // Link the datas if was asked to 
                         if ($config.keepData) $path.data = this.data; 
                     }
 
@@ -1689,6 +1724,11 @@
                             $propTransfer(this.data, data, k);  
                         }).bind(this));
                     }
+
+                    this.getUrlData = (function () {
+                        return new UrlData(location.href, 
+                                (!location.href.includes('?') ? this.route : null))
+                    }).bind($path)
 
                     var store = config.store,
                         content = config.content,
@@ -1793,7 +1833,7 @@
 
                         var dataAttribute = fn.attr(el, [ vars.cmds.data ], true);
                         if (dataAttribute) {
-                            var data = fn.eval(dataAttribute.value, this.data);
+                            var data = fn.eval(dataAttribute.value, this.scope);
                             if (data){
                                 if (isArray(data))
                                     return Easy.log('An array cannot be exposed, try to wrap it into a object literal!. Eg.: { myArray: [...] }.');
@@ -1830,13 +1870,12 @@
                                 // Checking it is still connected
                                 if (!$inc.parentNode) return;
 
-                                // In case of dynamic component inserction without exposing some data
-                                // to it, get the up component/element data
-                                if ( isEmptyObj(this.scope) ) {
+                                // In case of empty scope get the up component data
+                                if ( isEmptyObj(this.scope) ) 
                                     this.scope = Compiler.getUpData($inc);
-                                    if (isEmptyObj(this.data))
-                                        this.data = this.scope;
-                                }
+                                // Add the scope object if it isn't empty
+                                if ( !isEmptyObj(this.scope) )
+                                    this.data.$scope = this.scope;
 
                                 if (mainScript)
                                     // joining and evaluating the script
@@ -1907,7 +1946,7 @@
                             }
                         } catch (error) {
                             var $error = { fileName: this.name };
-                            for (const $k in error) $error[$k] = error[$k]; 
+                            for (var $k in error) $error[$k] = error[$k]; 
                             $error.message += " in " + error.fileName;
                             Easy.log($error);
                             clearInterval(tId);
@@ -1930,14 +1969,6 @@
                         return new Inc({ content: $path.template });
                     else
                         $url = $path.url;
-                    
-                    // Changing the title and the url if it needed
-                    if ($path.title) {
-                        doc.title = $path.title;
-                    }
-                    if ($path.route && $config.usehash === false) {
-                        $global.history.pushState($path.template, $path.title, $path.route);
-                    }
                 } else {
                     return Easy.log('No \''+ src +'\' component was found, please check if it is defined.');
                 }
@@ -2657,7 +2688,7 @@
             /** Reads the e-for property and generate an object */
             this.cmd.for.read = function(el) {
                 var scope = fn.attr(el, [vars.cmds.for]);
-                if (!scope.value) return { ok: false, msg: Easy.log('Invalid value in e-for') };
+                if (!scope.value) return { ok: false, msg: Easy.log('Invalid expression in e-for') };
                 
                 function split(str, exp) {
                     var check = str.includes(exp);
@@ -2906,7 +2937,7 @@
                             elem.valueIn('e-for', $use + '$data' + filter);
                             Compiler.compile({
                                 el: elem,
-                                data: extend.obj($request, $scope)
+                                data: extend.obj($scope, { $data: $request.$data })
                             });
 
                             EasyEvent.emit({
@@ -3452,16 +3483,15 @@
             this.target = element;
             if (options) options.keys(function (k, v) { self[k] = v; });
         }
-        
         /** Helper to handle the Routes. Dependencies: Easy, Includer */
         function RouteHandler(config) {
             this.routeView = config.el;
             this.routeView.removeAttribute('route-view');
+            var inc = config.includer;
             var msg = function(n, f, s) {
                 return ({ message: 'It is not allowed to defined more than one '+ n +' page.' + 
                 '\n  Please, choose between \''+ f +'\' and \''+ s +'\' in components definition.' });
             }
-            var inc = config.includer;
 
             try {
                 for (var key in inc.paths) {
@@ -3483,26 +3513,56 @@
             this.clear = function () {
                 this.routeView.innerHTML = '';
             }
-            var getPath = function(url) {
+            var getPath = function(url, rewriteUrl) {
                 var $url = urlResolve(url);
-                var value = inc.config.usehash === true ? $url.hash : $url.pathname; 
-                value = value.split('?')[0]; // Clearing the queryStrings
-                
-                if ( value === '' || value === '/' )
+                var $href = $url.href;
+                var $path = $href.substr($url.origin.length + componentConfig.base.length);
+                var usehash = inc.config.usehash;
+                // Removing the hash if necessary
+                if (usehash === true && $path.startsWith('#/') )
+                    $path = $path.substr('#'.length).trim();
+                else
+                    $path = '/' + $path.trim();
+
+                $path = $path.split('?')[0]; // Clearing the queryStrings
+                // If it is an empty path load the default page
+                if ( $path === '' || $path === '/' || $path === '/index.html' )
                     return this.defaultPage;
 
+                // Removing the last forward slash
+                if ( $path.endsWith('/') ) 
+                    $path = $path.substring(0, $path.length - 1); 
+
+                // Searching for the path
                 for (var key in inc.paths) {
                     var path = inc.paths[key];
-                    if( path.route === value )
-                        return path;
-                }
+                    if (!path.route) continue;
 
+                    var $$path = path.route.split('/').map(function(sec) {
+                        return sec[0] === ':' ? '\\w{1,}' : sec; 
+                    }).join('/');
+
+                    if( isArray(new RegExp('^'+ $$path +'$', 'gi').exec($path)) ) {
+                        rewriteUrl.url = (componentConfig.base + (usehash ? '/#/' : '') + $path).replaceAll('//', '/');
+                        return path;
+                    }
+                }
                 return this.notFoundPage;
             }
             this.navegate = function (url) {
+                var rewriteUrl = {}; // Store the url the needs to be wrote
+                var path = getPath.call(this, url, rewriteUrl);
+                
                 this.clear();
-                var path = getPath.call(this, url);
                 if (!path) return Easy.log('🛸 404 Page not found!!!');
+
+                // Changing the title and the url if it needed
+                if (path.title)
+                    doc.title = path.title;
+
+                // Changing the title and the url if it needed
+                if (path.route)
+                    $global.history.pushState(path.template, path.title, rewriteUrl.url);
 
                 var el = doc.createElement('inc');
                 el.valueIn('src', path.name);
@@ -3511,8 +3571,8 @@
                 this.markActive(path.route);
             }
 
-             // mark 
-             this.markActive = function (route) {
+            // mark 
+            this.markActive = function (route) {
                 // Marking the active-link
                 RouteHandler.handleLink(); // unmark the current
                 route = route || location.href.substr(location.origin.length);
@@ -3521,14 +3581,13 @@
                 if($anchor && $anchor.$markable) RouteHandler.handleLink($anchor);
             }
 
-            $global.addEventListener('hashchange', (function () {
+            $global.addEventListener('popstate', (function () {
                 this.navegate(location.href);
             }).bind(this));
 
             this.navegate(location.href);
             RouteHandler.navegate = this.navegate.bind(this);
         }
-
         RouteHandler.handleLink = function (a) {
             var cls = 'active-link', $instance = RouteHandler.instance;
             if (!$instance) return;
@@ -3540,13 +3599,12 @@
                 $instance.activeLink = a;
             }
         }
-
         RouteHandler.normalizePath = function($value) {
+            // Add and remove multiples // in the  $value
             if ( $value.includes('#') ) return $value;
             var $val = componentConfig.usehash === false ? $value : ('/#/' + $value);
             return (componentConfig.base + $val).replaceAll('//', '/');
         }
-
         //#endregion
 
         //#region Static functions
@@ -3635,12 +3693,13 @@
             var type = options.type, name = 'on:' + type;
             if(!options.elem.hasAttribute || !options.elem.hasAttribute(name)) return;
             var attr = fn.attr(options.elem, [ name ], true);
+            if (trim(attr.value) === '') return Easy.log('Invalid expression in ' + attr.name);
             var event = new EasyEvent(type, options.elem, {
                 data: { $model: options.model, $scope: options.scope },
                 result: options.result
             });
             Compiler.addOldAttr({ el: options.elem, value: attr });      
-            var eventDesc = $propDescriptor($global, 'event'); 
+            var eventDesc = $propDescriptor($global, 'event');
             // Defining to the global object
             $propTransfer($global, { event: event }, 'event');        
             // Calling the function, it is evaluated based on $model data not the scope
@@ -3689,7 +3748,6 @@
             } while(el = el.parentNode)
         }
         //#endregion
-
         try {
             // Setting the begin data
             this.setData(options.data);
@@ -3731,7 +3789,6 @@
                     });
                 }
             }
-    
             if ( options.config.useDOMLoadEvent )
                 doc.addEventListener('DOMContentLoaded', $$init.bind(this), false);
             else 

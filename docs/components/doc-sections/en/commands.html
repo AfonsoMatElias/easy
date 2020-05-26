@@ -1,4 +1,4 @@
-<section class="section" e-ignore>
+<section class="section">
     <h1> <a id="commands" href="#commands"> Commands </a> </h1>
     <p>
         Easy has some commands that are used as attributes in elements, each one has its
@@ -14,16 +14,22 @@
     </p>
 
     <p>
-        If you define an <a href="https://www.dyn-web.com/tutorials/object-literal/"
-            class="mark-el">Object Literal</a>, kwow that these properties are
-        temporary and by default <span class="note warn-border">they are not
-            reactive</span>, unless an object that
-        is already reactive is passedby itself or if you pass the object in the <span
-            class="note">this.reactive( ... )</span>
-        method, it expects a method and returns the already reactive object.
+        Whenever a scope is created, a variable <i class="mark-el">$scope</i> is added to the new scope making the
+        the parent scope accessable inside of the new scope. We hope it does not confuse you 😅!
     </p>
 
-    <pre><code class="example html hljs">
+    <p>
+        If you define an <a href="https://www.dyn-web.com/tutorials/object-literal/" class="mark-el">Object Literal</a>,
+        kwow that these properties are temporary and by default <span class="note warn-border">they are not
+            reactive</span>,
+        unless an object that is already reactive is passedby itself or if you pass the object in the
+        <span class="note">this.reactive( ... )</span> method, it expects a method and returns the already reactive
+        object.
+    </p>
+
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+            <pre><code class="example html hljs">
     &lt;div id="app5"&gt;
         &lt;div&gt;
             &lt;h4&gt; {{ value }} &lt;/h4&gt;
@@ -43,7 +49,7 @@
     &lt;/div&gt;
     </code></pre>
 
-    <pre><code class="javascript hljs">
+            <pre><code class="javascript hljs">
     var app5 = new Easy('#app5', {
         data: {
             value: 'This is a value from main scope 🙂',
@@ -57,14 +63,18 @@
     });
     </code></pre>
 
-    <div class="result"></div>
+            <div class="result"></div>
+        </div>
+    </div>
 
     <p>
         Now let's see how to create a scope with reactive properties, using the reactive
         function.
     </p>
 
-    <pre><code class="example html hljs">
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+            <pre><code class="example html hljs">
     &lt;div id="app6"&gt;
         &lt;div data="this.reactive(function(){
             return { name: person.name, country: 'Angola' }
@@ -80,9 +90,9 @@
 
         &lt;/div&gt;
     &lt;/div&gt;
-    </code></pre>
+            </code></pre>
 
-    <pre><code class="javascript hljs">
+            <pre><code class="javascript hljs">
     var app6 = new Easy('#app6', {
         data: {
             person: {
@@ -90,9 +100,11 @@
             }
         }
     });
-    </code></pre>
+            </code></pre>
 
-    <div class="result"></div>
+            <div class="result"></div>
+        </div>
+    </div>
 
     <h3> <a id="cmd_wait_data" href="#cmd_wait_data"> wait-data </a> </h3>
     <p>
@@ -102,7 +114,9 @@
         data available, we use the <a href="" class="note mark-el">expose</a> method.
     </p>
 
-    <pre><code class="example html hljs">
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+            <pre><code class="example html hljs">
     &lt;div id="app7"&gt;
         &lt;button on:click="load" &gt; Load Remain &lt;/button&gt;
         
@@ -110,9 +124,9 @@
             {{ message }}! &lt;span wait-data="waitForMe"&gt; {{ message }} &lt;/span&gt;
         &lt;/h4&gt;
     &lt;/div&gt;
-    </code></pre>
+            </code></pre>
 
-    <pre><code class="javascript hljs">
+            <pre><code class="javascript hljs">
     var app7 = new Easy('#app7', {
         data: {
             /* Variables */
@@ -124,9 +138,11 @@
             }
         }
     });
-    </code></pre>
+            </code></pre>
 
-    <div class="result"></div>
+            <div class="result"></div>
+        </div>
+    </div>
 
     <div class="block-note info">
         <p>
@@ -153,7 +169,9 @@
         Let's redo the example.
     </p>
 
-    <pre><code class="example html hljs">
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+            <pre><code class="example html hljs">
     &lt;div id="app8"&gt;
         &lt;button on:click="load" &gt; Load Remain &lt;/button&gt;
         
@@ -162,9 +180,9 @@
             &lt;h4 wait-data="waitForMe" e-content="{{ message }}"&gt; ... &lt;/h4&gt;
         &lt;/div&gt;
     &lt;/div&gt;
-    </code></pre>
+            </code></pre>
 
-    <pre><code class="javascript hljs">
+            <pre><code class="javascript hljs">
     var app8 = new Easy('#app8', {
         data: {
             /* Variables */
@@ -176,9 +194,11 @@
             }
         }
     });
-    </code></pre>
+            </code></pre>
 
-    <div class="result"></div>
+            <div class="result"></div>
+        </div>
+    </div>
 
     <p>
         This way it looks much better, but we can still improve it, let's combine it with a
@@ -204,7 +224,9 @@
         Now, let's redo the example above.
     </p>
 
-    <pre><code class="example html hljs">
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+            <pre><code class="example html hljs">
     &lt;div id="app9"&gt;
         &lt;button on:click="load" &gt; Load Remain &lt;/button&gt;
         
@@ -213,9 +235,9 @@
             &lt;h4 wait-data="waitForMe" e-skeleton e-content="{{ message }}" &gt; Waiting &lt;/h4&gt;
         &lt;/div&gt;
     &lt;/div&gt;
-    </code></pre>
+            </code></pre>
 
-    <pre><code class="javascript hljs">
+            <pre><code class="javascript hljs">
     var app9 = new Easy('#app9', {
         data: {
             /* Variables */
@@ -227,9 +249,11 @@
             }
         }
     });
-    </code></pre>
+            </code></pre>
 
-    <div class="result"></div>
+            <div class="result"></div>
+        </div>
+    </div>
 
     <p>
         When e-skeleton is defined for an element, it takes the form of the element to be able
@@ -244,20 +268,21 @@
             class="note mark-el">e-skeleton="someId"</span>,
         Without an identifier, the skeleton is removed after the element has been compiled. With
         an identifier, the
-        skeleton(s) must be removed manually using <span
-            class="note">element.clearSkeleton(id)</span> extension method
+        skeleton(s) must be removed manually using <span class="note">element.clearSkeleton(id)</span> extension method
         or simply remove the e-skeleton attribute from the elements.
     </p>
 
-    <pre><code class="example html hljs">
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+            <pre><code class="example html hljs">
     &lt;div id="app10"&gt;
         &lt;h4 e-skeleton="skeleton1"&gt; {{ message }}! &lt;/h4&gt;
         
         &lt;button on:click="removeSkeleton" &gt; Remove Skeleton&lt;/button&gt;
     &lt;/div&gt;
-    </code></pre>
+            </code></pre>
 
-    <pre><code class="javascript hljs">
+            <pre><code class="javascript hljs">
     var app10 = new Easy('#app10', {
         data: {
             /* Variables */
@@ -269,9 +294,11 @@
             }
         }
     });
-    </code></pre>
+            </code></pre>
 
-    <div class="result"></div>
+            <div class="result"></div>
+        </div>
+    </div>
 
     <h3> <a id="cmd_e_def" href="#cmd_e_def"> e-def </a> </h3>
     <p>
@@ -282,21 +309,25 @@
             Literal</a>.
     </p>
 
-    <pre><code class="example html hljs">
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+            <pre><code class="example html hljs">
     &lt;div id="app11"&gt;        
         &lt;div e-def="{ myProp: 'I was created dynamically' }"&gt; 
             {{ myProp }}! 
         &lt;/div&gt;
     &lt;/div&gt;
-    </code></pre>
+            </code></pre>
 
-    <pre><code class="javascript hljs">
+            <pre><code class="javascript hljs">
     var app11 = new Easy('#app11', {
         data: {}
     });
-    </code></pre>
+            </code></pre>
 
-    <div class="result"></div>
+            <div class="result"></div>
+        </div>
+    </div>
 
     <div class="block-note warn">
         <p>
@@ -307,14 +338,16 @@
 
     <h3> <a id="cmd_e_if" href="#cmd_e_if"> e-if </a> </h3>
     <p>
-        The <span class="note">e-if</span> command is very similar to the <span
-            class="mark-el">Vue.js</span> <span class="note">v-if</span> directive...
+        The <span class="note">e-if</span> command is very similar to the <span class="mark-el">Vue.js</span> <span
+            class="note">v-if</span> directive...
         it is used to conditionally render a block (element). The block will only be shown if
         the command expression returns a truthy value. It is accompanied with the e-else-if and
         e-else commands.
     </p>
 
-    <pre><code class="html example hljs">
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+            <pre><code class="html example hljs">
     &lt;div id="app12"&gt;
         &lt;input type="number" e-bind="binary" /&gt; &lt;br&gt; 
         
@@ -328,17 +361,19 @@
             {{ binary }} is not binary 🤨
         &lt;/p&gt;
     &lt;/div&gt;
-    </code></pre>
+            </code></pre>
 
-    <pre><code class="javascript hljs">
+            <pre><code class="javascript hljs">
     var app12 = new Easy('#app12', {
         data: {
             binary: 1
         }
     });
-    </code></pre>
+            </code></pre>
 
-    <div class="result"></div>
+            <div class="result"></div>
+        </div>
+    </div>
 
     <h3> <a id="cmd_e_show" href="#cmd_e_show"> e-show </a> </h3>
     <p>
@@ -350,7 +385,9 @@
         The block will be visible if the command expression returns a truthy value.
     </p>
 
-    <pre><code class="example html hljs">
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+            <pre><code class="example html hljs">
     &lt;div id="app13"&gt;
         &lt;button on:click="show = !show"&gt; toggle {{ show ? '🙉' : '🙈' }} &lt;/button&gt;
 
@@ -358,17 +395,19 @@
             &lt;p&gt; Want to hide me? Click on toggle&lt;/p&gt;
         &lt;/div&gt;
     &lt;/div&gt;
-    </code></pre>
+            </code></pre>
 
-    <pre><code class="javascript hljs">
+            <pre><code class="javascript hljs">
     var app13 = new Easy('#app13', {
         data: {
             show: true
         }
     });
-    </code></pre>
+            </code></pre>
 
-    <div class="result"></div>
+            <div class="result"></div>
+        </div>
+    </div>
 
     <h3> <a id="cmd_e_for" href="#cmd_e_for"> e-for </a> </h3>
     <p>
@@ -379,15 +418,21 @@
     </p>
 
     <p>
-        There are two syntaxes for its use, the simple <span
-            class="note mark-el">e-for="myArray"</span> normally used when it is
-        an array of object literal, and the complete <span class="note mark-el">e-for="item
-            of/in
-            myArray"</span> used mandatorily
-        when it is an array of primitives and optional when they are object literal.
+        There are two syntaxes for its use, the <b>short way</b> <span class="note mark-el">e-for="myArray"</span>
+        normally used when it is an array of object literal, and the <b>complete way</b>
+        <span class="note mark-el">e-for="item of/in myArray"</span> used mandatorilywhen it is an array of
+        primitives and optional when they are object literal.
     </p>
 
-    <pre><code class="example html hljs">
+    <p>
+        There is a big difference in these two ways of using it... Using the <b>short way</b> a scope created
+        in the for block, meaning that to access the various scope above you will have to use the
+        <i class="mark-el">$scope</i> variable, already using the <b>complete way</b> no scope is created.
+    </p>
+
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+            <pre><code class="example html hljs">
     &lt;div id="app14"&gt;
         &lt;h4&gt; Primitives&lt;/h4&gt;
         &lt;ul&gt; 
@@ -399,24 +444,25 @@
             &lt;li e-for="foods" &gt; {{ name }} &lt;/li&gt;
         &lt;/ul&gt;
     &lt;/div&gt;
-    </code></pre>
+            </code></pre>
 
-    <pre><code class="javascript hljs">
+            <pre><code class="javascript hljs">
     var app14 = new Easy('#app14', {
         data: {
             fruits: [ 'Bananas', 'Mango' ],
             foods: [ { name: 'Rice' }, { name: 'Beans' } ],
         }
     });
-    </code></pre>
+            </code></pre>
 
-    <div class="result"></div>
+            <div class="result"></div>
+        </div>
+    </div>
 
     <h4> <a id="cmd_e_for_filter" href="#cmd_e_for_filter"> Using Array filter </a> </h4>
     <p>
         Easy array filter is a way to filter data while it is being rendered. To add the filter
-        we use <span class="note mark-el">|</span> after <a href="#cmd_e_for"
-            class="note mark-el">e-for</a> expression.
+        we use <span class="note mark-el">|</span> after <a href="#cmd_e_for" class="note mark-el">e-for</a> expression.
         <span class="note mark-el">item of items | filterExpression</span>. There are four ways
         to
         use this filter,
@@ -430,7 +476,9 @@
         property set.
     </p>
 
-    <pre><code class="example html hljs">
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+            <pre><code class="example html hljs">
     &lt;div id="app15"&gt;
         &lt;input type="text" 
                 e-def="{ search: '' }" 
@@ -443,17 +491,19 @@
             &lt;/li&gt;
         &lt;/ul&gt;
     &lt;/div&gt;
-    </code></pre>
+            </code></pre>
 
-    <pre><code class="javascript hljs">
+            <pre><code class="javascript hljs">
     var app15 = new Easy('#app15', {
         data: {
             foods: [ { name: 'Rice' }, { name: 'Beans' } ],
         }
     });
-    </code></pre>
+            </code></pre>
 
-    <div class="result"></div>
+            <div class="result"></div>
+        </div>
+    </div>
 
     <h4> <a id="cmd_e_for_filter_tg_filter" href="#cmd_e_for_filter_tg_filter"> 2. Targeted
             filter </a> </h4>
@@ -464,7 +514,9 @@
             dataProperty:property1,property2...</span>
     </p>
 
-    <pre><code class="example html hljs">
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+            <pre><code class="example html hljs">
     &lt;div id="app16"&gt;
         &lt;input type="text" 
                 e-def="{ search: '' }" 
@@ -477,17 +529,19 @@
             &lt;/li&gt;
         &lt;/ul&gt;
     &lt;/div&gt;
-    </code></pre>
+            </code></pre>
 
-    <pre><code class="javascript hljs">
+            <pre><code class="javascript hljs">
     var app16 = new Easy('#app16', {
         data: {
             foods: [ { name: 'Rice', price: 10 }, { name: 'Beans', price: 15 } ]
         }
     });
-    </code></pre>
+            </code></pre>
 
-    <div class="result"></div>
+            <div class="result"></div>
+        </div>
+    </div>
 
     <h4> <a id="cmd_e_for_filter_d_filter" href="#cmd_e_for_filter_d_filter"> 3. Direct filter
         </a> </h4>
@@ -497,7 +551,9 @@
         <span class="note mark-el">| :property1 === someValue</span>
     </p>
 
-    <pre><code class="example html hljs">
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+            <pre><code class="example html hljs">
     &lt;div id="app17"&gt;
         &lt;ul&gt; 
             &lt;li e-for="food of foods | :price >= 15"&gt; 
@@ -505,29 +561,32 @@
             &lt;/li&gt;
         &lt;/ul&gt;
     &lt;/div&gt;
-    </code></pre>
+            </code></pre>
 
-    <pre><code class="javascript hljs">
+            <pre><code class="javascript hljs">
     var app17 = new Easy('#app17', {
         data: {
             foods: [ { name: 'Rice', price: 10 }, { name: 'Beans', price: 15 }, { name: 'Meat', price: 20 } ]
         }
     });
-    </code></pre>
+            </code></pre>
 
-    <div class="result"></div>
+            <div class="result"></div>
+        </div>
+    </div>
 
     <h4> <a id="cmd_e_for_filter_f_filter" href="#cmd_e_for_filter_f_filter"> 4. Function filter
         </a> </h4>
     <p>
-        Performs the filter of the items based on a function.T he context (<span
-            class="mark-el">this</span>)
+        Performs the filter of the items based on a function. The context (<span class="mark-el">this</span>)
         of the function is the instance. The array is the first argument of the function. It
         expects an array as return value. The filter need to be defined as following: <br>
         <span class="note mark-el">| :myFunction</span>
     </p>
 
-    <pre><code class="example html hljs">
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+            <pre><code class="example html hljs">
     &lt;div id="app18"&gt;
         &lt;ul&gt; 
             &lt;li e-for="food of foods | foodFilter"&gt; 
@@ -535,9 +594,9 @@
             &lt;/li&gt;
         &lt;/ul&gt;
     &lt;/div&gt;
-    </code></pre>
+            </code></pre>
 
-    <pre><code class="javascript hljs">
+            <pre><code class="javascript hljs">
     var app18 = new Easy('#app18', {
         data: {
             /* Variables */
@@ -551,9 +610,11 @@
             }
         }
     });
-    </code></pre>
+            </code></pre>
 
-    <div class="result"></div>
+            <div class="result"></div>
+        </div>
+    </div>
 
     <h3> <a id="" href="#"> Array Change Detection </a> </h3>
     <p>
@@ -579,8 +640,8 @@
 
     <div class="block-note dont">
         <p>
-            Easy cannot detect changes when you modify the length of the array. e.g.: <span
-                class="note att-border"> array.length = newLength </span>.
+            Easy cannot detect changes when you modify the length of the array. e.g.: <span class="note att-border">
+                array.length = newLength </span>.
             If will not have effects in to the user interface.
         </p>
     </div>
@@ -594,7 +655,7 @@
         <span class="note mark-el">des</span>, for descending.
     </p>
 
-    <pre><code class="html hljs">
+    <pre e-ignore><code class="html hljs">
     &lt;ul&gt; 
         &lt;li e-for="food of foods" e-order="asc:name"&gt; 
             {{ food.name }}, {{ food.price }} 💰 
@@ -603,7 +664,7 @@
     </code></pre>
 
     <div class="block-note info">
-        <p>
+        <p e-ignore>
             The command accepts delimiters, this means that it can be defined like this,
             e.g.: <span class="note mark-el">e-order="{{orderType}}:{{orderBy}}"</span>
         </p>
@@ -626,7 +687,7 @@
             from the left to the right, scrolling and gradually increasing the opacity. </li>
     </ul>
 
-    <pre><code class="html hljs">
+    <pre e-ignore><code class="html hljs">
     &lt;ul&gt; 
         &lt;li e-for="food of foods" e-anm="up"&gt; 
             {{ food.name }}, {{ food.price }} 💰 
@@ -636,29 +697,34 @@
 
     <h3> <a id="cmd_e_toggle" href="#cmd_e_toggle"> e-toggle </a> </h3>
     <p>
-        Allows you to toggle a property on an element, setting the value to <span
-            class="note mark-el">true</span> when set.
+        Allows you to toggle a property on an element, setting the value to <span class="note mark-el">true</span> when
+        set.
         Its syntax is <span class="note mark-el">e-toggle:<i>property</i>="dataProperty"</span>.
     </p>
 
-    <pre><code class="example html hljs">
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+            <pre><code class="example html hljs">
     &lt;div id="app19"&gt;
         &lt;input type="text" e-toggle:disabled="locked" placeholder="Type your name" /&gt;
         &lt;button on:click="locked = !locked"&gt; 
             {{ locked ? 'Locked 🔒' : 'Unlocked 🔓' }} 
         &lt;/button&gt;
     &lt;/div&gt;
-    </code></pre>
+            </code></pre>
 
-    <pre><code class="javascript hljs">
+            <pre><code class="javascript hljs">
     var app19 = new Easy('#app19', {
         data: {
             locked: false
         }
     });
-    </code></pre>
+            </code></pre>
 
-    <div class="result"></div>
+            <div class="result"></div>
+        </div>
+    </div>
+
 
     <h3> <a id="cmd_e" href="#cmd_e"> e-[something] </a> </h3>
     <p>
@@ -668,12 +734,11 @@
     </p>
 
     <p>
-        The sintax for simply property creation is <span
-            class="note mark-el">e-<i>property</i>="expression"</span>.
+        The sintax for simply property creation is <span class="note mark-el">e-<i>property</i>="expression"</span>.
         In this case the expression must contain delimiter, otherwise it will not be compiled.
     </p>
 
-    <pre><code class="html hljs">
+    <pre e-ignore><code class="html hljs">
     &lt;div id="app19"&gt;
         &lt;img e-src="{{ imgUrl }}" src="default.png" srcset="fail-onload.png" /&gt;
     &lt;/div&gt;
@@ -686,7 +751,9 @@
         <span class="note att-border">Do not use delimiters in the expression</span>.
     </p>
 
-    <pre><code class="example html hljs">
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+            <pre><code class="example html hljs">
     &lt;div id="app20"&gt;        
         &lt;style&gt; 
         .yellow-class {
@@ -699,17 +766,20 @@
             Click Me
         &lt;/button&gt;
     &lt;/div&gt;
-    </code></pre>
+            </code></pre>
 
-    <pre><code class="javascript hljs">
+            <pre><code class="javascript hljs">
     var app20 = new Easy('#app20', {
         data: {
             isYellow: false
         }
     });
-    </code></pre>
+            </code></pre>
 
-    <div class="result"></div>
+            <div class="result"></div>
+        </div>
+    </div>
+
 
 </section>
 <script>

@@ -1,4 +1,4 @@
-<section class="section" e-ignore>
+<section class="section">
     <h1> <a id="bindings" href="#bindings"> Bindings </a> </h1>
 
     <h3> <a id="bind_one_way" href="#bind_one_way"> One Way </a> </h3>
@@ -8,14 +8,16 @@
         the value to be.
     </p>
 
-    <pre><code class="example html hljs">
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+            <pre><code class="example html hljs">
     &lt;div id="app3"&gt;
         &lt;input type="text" value="{{ value }}" /&gt;
         &lt;h4&gt; {{ value }} &lt;/h4&gt;
     &lt;/div&gt;
-    </code></pre>
-
-    <pre><code class="javascript hljs">
+            </code></pre>
+        
+            <pre><code class="javascript hljs">
     var app3 = new Easy('#app3', {
         data: {
             value: 'Type something!'
@@ -27,18 +29,21 @@
             }
         }
     });
-    </code></pre>
+            </code></pre>
+        
+            <div class="result"></div>
+        </div>
+    </div>
 
-    <div class="result"></div>
 
-    <p>
+    <p e-ignore>
         If you don't want to do it this way, you can still use the command
         <span class="note mark-el">e-<i>property</i>="{{ dataProperty }}"</span>,
         it creates the property after being compiled. This commands is very versatile,
         we will go into details about it in the <a href="#cmd_e" class="note mark-el">commands</a> section.
     </p>
 
-    <pre><code class="html hljs">
+    <pre e-ignore><code class="html hljs">
     &lt;div id="app3"&gt;
         &lt;input type="text" e-value="{{ value }}" /&gt;
         &lt;h4 e-title="{{ value }}" &gt; Hello! &lt;/h4&gt;
@@ -54,23 +59,28 @@
         an input you can define like this <span class="note mark-el">e-bind="dataProperty"</span>.
     </p>
 
-    <pre><code class="example html hljs">
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+            <pre><code class="example html hljs">
     &lt;div id="app4"&gt;
         &lt;input type="text" e-bind:value="value" /&gt; &lt;br&gt;
         &lt;input type="text" e-bind="value" /&gt;
         &lt;h4&gt; {{ value }} &lt;/h4&gt;
     &lt;/div&gt;
-    </code></pre>
-
-    <pre><code class="javascript hljs">
+            </code></pre>
+        
+            <pre><code class="javascript hljs">
     var app4 = new Easy('#app4', {
         data: {
             value: 'Type something!'
         }
     });
-    </code></pre>
+            </code></pre>
+        
+            <div class="result"></div>
+        </div>
+    </div>
 
-    <div class="result"></div>
 </section>
 <script>
     this.mounted = function (el) {

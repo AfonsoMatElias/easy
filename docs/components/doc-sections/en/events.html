@@ -1,4 +1,4 @@
-<section class="section" e-ignore>
+<section class="section">
     <h1> <a id="events" href="#events"> Events </a> </h1>
     <p>
         We can use <span class="note mark-el">on:</span> to listen for DOM events and run some
@@ -16,12 +16,11 @@
 
     <p>
         When Standard and Easy events are issued, the event object can be accessed in the
-        <span class="note">event</span> variable. It contains the <span
-            class="note mark-el">base</span>
+        <span class="note">event</span> variable. It contains the <span class="note mark-el">base</span>
         property, which is passed to the element that is associated with the event, and the
         <span class="note">data</span> property, having the object of the current scope, this
-        is divided into: <span class="note">{ $model:{ <i class="mark-el">In case of e-for</i> 
-        }, $scope: { <i class="mark-el">It has the scope object it self</i> } }</span>
+        is divided into: <span class="note">{ $model:{ <i class="mark-el">In case of e-for</i>
+            }, $scope: { <i class="mark-el">It has the scope object it self</i> } }</span>
     </p>
 
     <h3> <a id="events_standard" href="#events_standard"> Standard</a> </h3>
@@ -29,7 +28,9 @@
         These are standard DOM events, such as onclick, ondblclick, onkeyup, etc.
     </p>
 
-    <pre><code class="example html hljs">
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+            <pre><code class="example html hljs">
     &lt;div id="app21"&gt;        
         &lt;button on:click="count++"&gt; 
             Clicked {{ count }} {{ count > 1 ? 'times' : 'time' }}
@@ -41,7 +42,7 @@
     &lt;/div&gt;
     </code></pre>
 
-    <pre><code class="javascript hljs">
+            <pre><code class="javascript hljs">
     var app21 = new Easy('#app21', {
         data: {
             /* Variables */
@@ -55,7 +56,9 @@
     });
     </code></pre>
 
-    <div class="result"></div>
+            <div class="result"></div>
+        </div>
+    </div>
 
     <h3> <a id="events_easy" href="#events_easy"> Easy </a> </h3>
     <p>
@@ -75,14 +78,16 @@
             <a href="connectors.html" class="note mark-el">connectors</a>. </li>
         </li>
         <li> <span class="note mark-el">response</span> &ndash; this event is emitted when we
-            get some response to a request made using a 
+            get some response to a request made using a
             <a href="connectors.html" class="note mark-el">connector</a>.
         </li>
         <li> <span class="note mark-el">fail</span> &ndash; this event is emitted when a request
             made using a <a href="connectors.html" class="note mark-el">connector</a> fails. </li>
     </ul>
 
-    <pre><code class="example html hljs">
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+            <pre><code class="example html hljs">
     &lt;div id="app22"&gt;
         &lt;ul&gt; 
             &lt;li e-for="food of foods" on:add="addEmoji"&gt; 
@@ -92,7 +97,7 @@
     &lt;/div&gt;
     </code></pre>
 
-    <pre><code class="javascript hljs">
+            <pre><code class="javascript hljs">
     var app22 = new Easy('#app22', {
         data: {
             /* Variables */
@@ -113,14 +118,16 @@
     });
     </code></pre>
 
-    <div class="result"></div>
+            <div class="result"></div>
+        </div>
+    </div>
 
     <h3> <a id="events_custom" href="#events_custom"> Custom </a> </h3>
     <p>
-        These are the events that we can freely set the names according to our liking. <span
-            class="note att-border">Do not use reserved names</span>, which are event names
-        mentioned above. To emit these events we use the <span
-            class="note mark-el">this.emit(eventName, someData)</span> method.
+        These are the events that we can freely set the names according to our liking. <span class="note att-border">Do
+            not use reserved names</span>, which are event names
+        mentioned above. To emit these events we use the <span class="note mark-el">this.emit(eventName,
+            someData)</span> method.
     </p>
 
     <p>
@@ -129,7 +136,9 @@
         associated with the event.
     </p>
 
-    <pre><code class="example html hljs">
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+            <pre><code class="example html hljs">
     &lt;div id="app23"&gt;
         &lt;input on:keyup="emitEvent(event.target.value)" 
                 type="text" placeholder="Type to change" /&gt;
@@ -138,7 +147,7 @@
     &lt;/div&gt;
     </code></pre>
 
-    <pre><code class="javascript hljs">
+            <pre><code class="javascript hljs">
     var app23 = new Easy('#app23', {
         data: {
             emitEvent: function(value){
@@ -151,7 +160,9 @@
     });
     </code></pre>
 
-    <div class="result"></div>
+            <div class="result"></div>
+        </div>
+    </div>
 
     <div class="block-note warn">
         <p>
@@ -178,8 +189,7 @@
     <h3> <a id="events_modifiers" href="#events_modifiers"> Modifiers </a> </h3>
     <p>
         To add modifiers to the events use <span class="note mark-el">.</span> (dot) after the
-        eventName. The sintax is <span
-            class="note mark-el">on:eventName.modifier1.modifier2="expression"</span>
+        eventName. The sintax is <span class="note mark-el">on:eventName.modifier1.modifier2="expression"</span>
     </p>
 
     <p>
@@ -193,8 +203,7 @@
                 class="note">event.stopPropagation()</span>, preventing the event reaching the
             next element. </li>
         <li> <span class="note mark-el">once</span> &ndash; remove the event after the first
-            time
-            it runs. </li>
+            time it runs. </li>
     </ul>
 
     <p>
@@ -202,7 +211,9 @@
         <span class="note mark-el">on:click.stopPropagation.once="doSomeThing"</span>
     </p>
 
-    <pre><code class="example html hljs">
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+            <pre><code class="example html hljs">
     &lt;div id="app24"&gt;        
         &lt;button on:click.once="count++"&gt; 
             Clicked {{ count }}
@@ -210,7 +221,7 @@
     &lt;/div&gt;
     </code></pre>
 
-    <pre><code class="javascript hljs">
+            <pre><code class="javascript hljs">
     var app24 = new Easy('#app24', {
         data: {
             count: 0
@@ -218,7 +229,9 @@
     });
     </code></pre>
 
-    <div class="result"></div>
+            <div class="result"></div>
+        </div>
+    </div>
 
 </section>
 <script>
