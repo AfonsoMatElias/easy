@@ -122,7 +122,6 @@ i {
 .light-theme *,
 .dark-theme * {
     transition: background-color .6s;
-    transition: color .2s;
 }
 
 body {
