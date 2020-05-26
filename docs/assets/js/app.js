@@ -6,7 +6,8 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         data: {
             darkMode: false,
-            themeIco: 'fa-moon-o'
+            themeIco: 'fa-moon-o',
+            isLoading: false
         },
         components: {
             config: {
@@ -97,5 +98,4 @@ document.addEventListener('DOMContentLoaded', function () {
             addAnchors(el.nodes('a[id]'));
         });
     }
-
 }, false);

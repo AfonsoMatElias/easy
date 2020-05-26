@@ -1,15 +1,15 @@
 <section class="section">
     <h1> <a id="routing" href="#routing"> Routing </a> </h1>
     <p>
-        The routing funcionality that enable the <b>Single Page Application</b> mode, and creating a SPA with 
-        <i class="mark-el">Easy</i> is very simple, because it uses <a href="includer" class="note mark-el"></a> 
-        elements.
+        The routing funcionality that enable the <b>Single Page Application</b> mode, and creating a SPA with
+        <i class="note">Easy</i> is very simple, because it uses 
+        <a id="comps_incs" class="note mark-el">includer</a> elements.
     </p>
 
     <h3> <a id="routing_setting" href="#routing_setting"> Setting </a> </h3>
     <p>
-        In the routing, the element where the components started to be rendered must be specified, for this, 
-        the <i class="note mark-el">route-view</i> directive is used, and in the definition of the components, 
+        In the routing, the element where the components started to be rendered must be specified, for this,
+        the <i class="note mark-el">route-view</i> directive is used, and in the definition of the components,
         some additional specific properties for the routing are defined, which are:
     </p>
 
@@ -34,50 +34,53 @@
     </code></pre>
 
     <ul>
-        <li> <span class="note mark-el">config.base</span> &ndash; used to define the base URI of the project. 
-            e.g.: www.domain.com<span class="mark-el">/my-project/</span> index.html. The default value is 
-            <span class="note mark-el">'/'</span>, meaning that the project is at the root folder.
+        <li> <span class="note mark-el">config.base</span> &ndash; used to define the base URI of the project.
+            e.g.: www.domain.com<span class="mark-el">/my-project/</span>index.html. The default value is
+            <span class="note mark-el">/</span>, meaning that the project is at the root folder.
         </li>
 
-        <li> <span class="note mark-el">config.usehash</span> &ndash; used to allow page navegation 
+        <li> <span class="note mark-el">config.usehash</span> &ndash; used to allow page navegation
             based on hash. The default value is <span class="note mark-el">true</span>.
         </li>
         <li>
             Ate this point we are going to assume that you already know what component nameId means.
         </li>
-        <li> <span class="note mark-el">nameId.title</span> &ndash; represents the title that will be 
+        <li> <span class="note mark-el">nameId.title</span> &ndash; represents the title that will be
             setted to the page after the component has been added to the DOM (It is optional).</li>
 
-        <li> <span class="note mark-el">nameId.route</span> &ndash; represents the route that 
+        <li> <span class="note mark-el">nameId.route</span> &ndash; represents the route that
             will be setted to the page after the component has been added to the DOM (It is
             optional). </li>
 
-        <li> <span class="note mark-el">nameId.route</span> &ndash; represents the route that 
+        <li> <span class="note mark-el">nameId.route</span> &ndash; represents the route that
             will be setted to the page after the component has been added to the DOM (It is
-            optional). </li>   
+            optional). </li>
     </ul>
 
+    <label>HTML</label>
     <pre e-ignore><code class="HTML hljs">
-    &lt;div id="app"&gt;
+    &lt;div id="routeApp"&gt;
         &lt;nav&gt;
-            &lt;!-- Navegation links --&gt;
+            &lt;a :href="/home"&gt; Home &lt;/a&gt;
+            &lt;a :href="/about"&gt; About &lt;/a&gt;
         &lt;/nav&gt;
         &lt;main route-view&gt;&lt;/main&gt;
     &lt;/div&gt;
     </code></pre>
 
+    <label>Javascript</label>
     <pre e-ignore><code class="javascript hljs">
-    new Easy('#app', {
+    var routeApp = new Easy('#routeApp', {
         components: {
             elements: {
                 'home' : {
-                    template: '&lt;div&gt; Home Page &lt;/div&gt;'                    
+                    url: '/pages/home.html',
                     title : 'Home',
                     route : '/home', 
-                    isDefault : true
+                    isDefault: true
                 },
                 'about' : {
-                    template: '&lt;div&gt; About Page &lt;/div&gt;'                    
+                    url: '/pages/about.html',
                     title : 'About',
                     route : '/about'
                 }
@@ -87,22 +90,54 @@
     </code></pre>
 
     <p>
-        ...
+        Whenever routing is used, it is mandatory to define the standard route (standard component) 
+        so that it can be loaded immediately. To do so, just set the 
+        <i class="note mark-el">isDefault:true</i> property in the component registering.
     </p>
+
+    <p>
+        In the case of page <b>404</b>, we can set the <i class="note mark-el">isNotFound:true</i> property, 
+        telling Easy that if there is no component with this route, insert this page.
+    </p>
+
+    <div class="block-note dont">
+        <p>
+            Two or more components cannot be defined with with <i class="note">isDefault</i> or
+            <i class="note">isNotFound</i>, if you do, an error will be thrown in saying 
+            `<i class="color-red">It is not allowed to define more than one 'default'/'notFound' page...</i>`.
+        </p>
+    </div>
 
     <h3> <a id="routing_navegation" href="#routing_navegation"> Navegation </a> </h3>
     <p>
-
+        Navigation between pages is done using the tag element <i class="note mark-el">a</i> but with 
+        the attribute <i class="note mark-el">:href</i> or <i class="note mark-el">i:href</i>, 
+        it can also be done with <i class="note">href</i> but we do not recommend using it, we 
+        will describe the behavior of each one.
     </p>
 
+    <p>
+        Both <i class="note mark-el">:href</i> or <i class="note mark-el">i:href</i> when defined create the 
+        href attribute combining it with config.base, whenever it is clicked, the default anchor action is 
+        prevented.
+    </p>
 
-    <h3> <a id="routing_default_page" href="#routing_default_page"> Default Page </a> </h3>
+    <pre e-ignore><code class="HTML hljs">
+    &lt;!-- config.base='/my-project/' --&gt;
+
+    &lt;!-- Defined (Not Compiled) --&gt;
+    &lt;a :href="/home"&gt; Home &lt;/a&gt;
+    
+    &lt;!-- Compiled --&gt;
+    &lt;a href="/my-project/home"&gt; Home &lt;/a&gt;
+    </code></pre>
+
+    <h3> <a id="routing_nesting" href="#routing_nesting"> Nesting Routes </a> </h3>
     <p>
 
     </p>
 
-
-    <h3> <a id="routing_notfound_page" href="#routing_notfound_page"> NotFound Page </a> </h3>
+    <h3> <a id="routing_pretty_url" href="#routing_pretty_url"> HTML5 Mode / Pretty URL </a> </h3>
     <p>
 
     </p>

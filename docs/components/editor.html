@@ -411,8 +411,8 @@
         showResult: false,
         runCodeShowResult: function () {
             if ($editorInstance) {
+                $comp.data.showResult = true;
                 $editorInstance.runCode();
-                $comp.scope.showResult = true;
             }
         }
     });

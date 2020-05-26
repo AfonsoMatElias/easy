@@ -1891,10 +1891,10 @@
                                     // Defining the name
                                     el.inc = src;
                                     // Adding the attributes to the that will be inserted
-                                    $inc.aboveMe().replaceChild(el, $inc);
-                                } else{
+                                    $inc.parentNode.replaceChild(el, $inc);
+                                } else {
                                     $inc.inc = src;
-                                    $inc.appendChild(el);
+                                    $inc.innerHTML = el;
                                     destroyable = $inc;
                                 }
                                 
@@ -3489,7 +3489,7 @@
             this.routeView.removeAttribute('route-view');
             var inc = config.includer;
             var msg = function(n, f, s) {
-                return ({ message: 'It is not allowed to defined more than one '+ n +' page.' + 
+                return ({ message: 'It is not allowed to define more than one '+ n +' page.' + 
                 '\n  Please, choose between \''+ f +'\' and \''+ s +'\' in components definition.' });
             }
 
