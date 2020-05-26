@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function () {
         
     }
 
-    if ( location.pathname === '/docs.html' ) {
+    if ( location.pathname.includes('/docs.html') ) {
         $$page.on('incLoaded', function (el) {
             if ( el.inc === 'top' ) return;
             addAnchors(el.nodes('a[id]'));
