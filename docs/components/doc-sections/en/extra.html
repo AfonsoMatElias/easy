@@ -1,0 +1,26 @@
+<section class="section">
+    <h2> So far we know almost 100% about <span class="mark-el">Easy.js</span> </h2>
+    <p class="show-case"> We hope you enjoyed it so far, we thank you very much for following the easy.js documentation. </p>
+
+    <h3 style="text-align: center;"> Salute 🙂! </h3>
+    <br><br>
+
+    <h1> But, wait...!!!</h1>
+
+    <p class="show-case"> What if we say that there is a simple a way to request data from a server, like doing this:</p>
+    <pre e-ignore><code class="html hljs">
+    &lt;ul&gt;
+        &lt;li e-tmp="users"&gt; 
+            {{ id }}, {{ name }}
+        &lt;/li&gt;
+    &lt;/ul&gt;
+    </code></pre>
+
+    <p class="show-case"> Want to learn more? Follow on <a class="mark-el" href="connectors.html"> Connectors </a></p>
+</section>
+<script>
+    this.mounted = function (el) {
+        appExector(el);
+        scrollByAnchor(el);
+    }
+</script>

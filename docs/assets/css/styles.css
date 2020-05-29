@@ -40,7 +40,7 @@ i {
     --note-yellow: #f0Db4f8a;
     --note-red: #f150478a;
 
-    --color-blue: #51a0d5;
+    --color-blue: #66a1c5;
     --color-yellow: #ffbe2f;
     --color-red: #f15047;
     --color-green: #3bbd42;
@@ -145,6 +145,10 @@ body {
 
 .main-view {
     width: 100%;
+}
+
+.show-case {
+    font-size: 13pt;
 }
 
 /* Top bar */
@@ -760,7 +764,13 @@ ul.top-menu-opened {
     margin-left: 2%;
 }
 
-.doc-page .doc-presentation .section ul li {
+.doc-page .doc-presentation .section ol {
+    margin-left: 2%;
+}
+
+.doc-page .doc-presentation .section ul li,
+.doc-page .doc-presentation .section ol li
+ {
     margin: 10px 0;
     line-height: 30px;
 }
@@ -784,6 +794,36 @@ ul.top-menu-opened {
 
 .doc-page .doc-presentation .section .result ul li {
     margin: 0;
+}
+
+.keep-reading {
+    display: flex;
+    padding: 40px 0;
+}
+
+.keep-reading>div {
+    flex: 1;
+}
+
+.keep-reading>div:first-child {
+    text-align: left;
+}
+
+.keep-reading>div:last-child {
+    text-align: right;
+}
+
+.keep-reading h3 {
+    display: inline;
+}
+
+.keep-reading .text {
+    margin: 0 6%;
+}
+
+.keep-reading a:hover * {
+    color: var(--color-blue)!important;
+    transition: color .3s;
 }
 
 .mark-el {

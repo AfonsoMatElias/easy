@@ -15,9 +15,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 base: '/easy/'
             },
             elements: {
-                top: "/components/top",
-                editor: "/components/editor",
-                main: {
+                'top': "/components/top",
+                'editor': "/components/editor",
+                'main': {
                     url: "/components/main",
                     title: 'Easy',
                     route: '/',
@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
 
                 // Documentation compoments
+                'side-menu': "/components/doc-sections/en/side-menu",
                 'introduction': '/components/doc-sections/en/introduction',
                 'installation': '/components/doc-sections/en/installation',
                 'instance': '/components/doc-sections/en/instance',
@@ -35,6 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 'methods': '/components/doc-sections/en/methods',
                 'components': '/components/doc-sections/en/components',
                 'routing': '/components/doc-sections/en/routing',
+                'extra': '/components/doc-sections/en/extra',
                 
                 // Tutorial components
                 'page': '/components/tutorial/en/structure/page',
@@ -92,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
         
     }
 
-    if ( location.pathname.includes('/docs.html') ) {
+    if ( location.pathname.match(/docs\.page\.\d{1}\.html/g) ) {
         $$page.on('incLoaded', function (el) {
             if ( el.inc === 'top' ) return;
             addAnchors(el.nodes('a[id]'));

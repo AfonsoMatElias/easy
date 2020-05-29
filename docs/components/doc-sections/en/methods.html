@@ -276,7 +276,7 @@
         </p>
     </div>
 
-    <h3><a href="#method_watch">watch</a></h3>
+    <h3><a id="method_watch" href="#method_watch">watch</a></h3>
     <p>
         It is used to watch changes in specific property in the data scope. Its sintax is
         <span class="note mark-el">instance.watch(propertyName, callback, targetObject)</span>.
@@ -308,18 +308,15 @@
     });
     </code></pre>
 
-    <h3><a href="#method_set">set</a></h3>
+    <h3><a id="method_set" href="#method_set">set</a></h3>
     <p>
         It is used to set some <span class="mark-el">Easy</span> configuration. The method
         expects two parameters, the first is the property to set and the second is the value
         (Object Literal) to be setted. The available configurations are:
     </p>
 
-    <h4><b>skeleton</b></h4>
-    <p>
-        allow to modify the background and/or wave of the skeleton values. Its sintax is
-        <i class="note mark-el">instance.set('skeleton', object)</i>.
-    </p>
+    <li><b>skeleton</b> &ndash; allow to modify the background and/or wave of the skeleton values. Its sintax is
+        <i class="note mark-el">instance.set('skeleton', object)</i>.</li>
 
     <ul>
         <li> <span class="note mark-el">{ Object } object</span> &ndash; the object having the
@@ -344,11 +341,8 @@
     app1.set('skeleton');
     </code></pre>
 
-    <h4><b>delimiter</b></h4>
-    <p>
-        allow to add a delimiter into the Easy compiler. Its sintax is
-        instance.set('delimiter', object).
-    </p>
+    <li><b>delimiter</b> &ndash; allow to add a delimiter into the Easy compiler. Its sintax is 
+        instance.set('delimiter', object).</li>
 
     <ul>
         <li> <span class="note mark-el">{ Object } object</span> &ndash; the object having the

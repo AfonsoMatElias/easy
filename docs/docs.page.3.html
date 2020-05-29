@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" class="nice-scroll light-theme">
+<head>
+    <!-- <base href="/"> -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="assets/img/main_ico.png" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="assets/css/styles.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
+    <link rel="font" href="assets/fonts/gadugi.ttf">
+
+    <link editor-hl rel="stylesheet" href="assets/highlights/atom-one-light.css">
+    <script src="assets/highlights/highlight.pack.js"></script>
+    <script src="assets/js/shared.js"></script>
+    <script src="assets/js/easy.js"></script>
+
+    <title>Documentation</title>
+</head>
+
+<body>
+    <div id="app-page">
+        <header>
+            <inc src="top"></inc>
+        </header>
+
+        <main>
+            <div class="main-view doc-page">
+                <!-- Side menu -->
+                <aside class="doc-menu" e-def="{ sMenuOpened: false }" e-class="{ 'side-menu-opened': sMenuOpened }">
+                    <!-- Side Menu -->
+                    <inc src="side-menu"></inc>
+                </aside>
+
+                <!-- Documentation container -->
+                <div class="doc-presentation nice-scroll">
+                    <!-- The Content Will be placed here -->
+                    <div class="content">
+                        <!-- Part 3 -->
+                        <!-- Methods -->
+                        <inc src="methods"></inc>
+
+                        <div class="keep-reading">
+                            <div class="left">
+                                <a href="docs.page.3.html#events">
+                                    <h3 class="center-icon fa fa-angle-left"></h3> <h3 class="text"> Events </h3>
+                                </a>
+                            </div>
+                            <div class="right">
+                                <a href="docs.page.4.html">
+                                    <h3 class="text"> Components </h3> <h3 class="center-icon fa fa-angle-right"></h3>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/docs.js"></script>
+</body>
+</html>
