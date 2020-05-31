@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var $$page = new Easy('#app-page', {
         config: {
             useDOMLoadEvent: false,
-            deepIgnore: true, 
+            deepIgnore: true,
         },
         data: {
             darkMode: false,
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
         components: {
             config: {
                 // Disable it when using locally 
-                base: '/easy/'
+                // base: '/easy/'
             },
             elements: {
                 'top': "/components/top",
@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     route: '/',
                     isDefault: true
                 },
+                'modal': "/components/modal/modal",
 
                 // Documentation compoments
                 'side-menu': "/components/doc-sections/en/side-menu",
@@ -37,18 +38,58 @@ document.addEventListener('DOMContentLoaded', function () {
                 'components': '/components/doc-sections/en/components',
                 'routing': '/components/doc-sections/en/routing',
                 'extra': '/components/doc-sections/en/extra',
-                
+                'connectors': '/components/doc-sections/en/connectors',
+
+                'download-connectors': '/components/doc-sections/en/download-connectors',
+
                 // Tutorial components
                 'page': '/components/tutorial/en/structure/page',
-                'tutorial-index': {
+                'tutorial': {
                     title: 'Tutorial',
+                    route: '/tutorial',
                     url: "/components/tutorial/en/introduction",
-                    route: '/tutorial'
-                },
-                'tutorial-instance': {
-                    title: 'Instance',
-                    url: '/components/tutorial/en/instance',
-                    route: '/tutorial/instance'
+                    children: {
+                        'tutorial-instance': {
+                            title: 'Instance',
+                            route: '/instance',
+                            url: '/components/tutorial/en/instance',
+                        },
+                        'tutorial-delimiters': {
+                            title: 'Delimiters',
+                            route: '/delimiters',
+                            url: '/components/tutorial/en/delimiters',
+                        },
+                        'tutorial-bindings': {
+                            title: 'Bindings',
+                            route: '/bindings',
+                            url: '/components/tutorial/en/bindings',
+                        },
+                        'tutorial-commands': {
+                            title: 'Commands',
+                            route: '/commands',
+                            url: '/components/tutorial/en/commands',
+                        },
+                        'tutorial-events': {
+                            title: 'Events',
+                            route: '/events',
+                            url: '/components/tutorial/en/events',
+                        },
+                        'tutorial-methods': {
+                            title: 'Methods',
+                            route: '/methods',
+                            url: '/components/tutorial/en/methods',
+                        },
+                        'tutorial-components': {
+                            title: 'Components',
+                            route: '/components',
+                            url: '/components/tutorial/en/components',
+                        },
+                        'tutorial-routing': {
+                            title: 'Routing',
+                            route: '/routing',
+                            url: '/components/tutorial/en/routing',
+                        }
+                    }
                 },
             }
         }
@@ -56,27 +97,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Theme handler
     themeHandler.call();
+
     function themeHandler(isDark) {
 
-        if ( isDark == null )
+        if (isDark == null)
             // Checking if it has some theme defined
             isDark = localStorage._dark;
-        
-        // Not theme defined
-        if ( isDark == null ) return;
 
-        var light = 'light-theme', dark = 'dark-theme', 
+        // Not theme defined
+        if (isDark == null) return;
+
+        var light = 'light-theme',
+            dark = 'dark-theme',
             hlLight = 'atom-one-light.css',
             hlDark = 'atom-one-dark.css';
         var highlightElement = document.head.node('link[editor-hl]');
-        if ( isDark === true || isDark === 'true' ) {
+        if (isDark === true || isDark === 'true') {
             // Setting dark mode
-            highlightElement.href = highlightElement.href.replace(hlLight, hlDark); 
+            highlightElement.href = highlightElement.href.replace(hlLight, hlDark);
             document.documentElement.classList.replace(light, dark);
             $$page.data.themeIco = 'fa-sun-o';
         } else {
             // Setting light mode
-            highlightElement.href = highlightElement.href.replace(hlDark, hlLight); 
+            highlightElement.href = highlightElement.href.replace(hlDark, hlLight);
             document.documentElement.classList.replace(dark, light);
             $$page.data.themeIco = 'fa-moon-o';
         }
@@ -91,12 +134,12 @@ document.addEventListener('DOMContentLoaded', function () {
     window.onhashchange = function () {
         if ($$page.data.hasOwnProperty('sMenuOpened'))
             $$page.data.sMenuOpened = false;
-        
+
     }
 
-    if ( location.pathname.match(/docs\.page\.\d{1}\.html/g) ) {
+    if (location.pathname.match(/docs\.page\.\d{1}\.html/g) || location.pathname.match('/connectors.html')) {
         $$page.on('incLoaded', function (el) {
-            if ( el.inc === 'top' ) return;
+            if (el.inc === 'top') return;
             addAnchors(el.nodes('a[id]'));
         });
     }

@@ -3,7 +3,7 @@
  * @version v2.0.0
  * Released under the MIT License.
  * This is easy.js free connector..
- * The user can create his own connector based on this one.
+ * The developer can create his own connector based on this one.
  */
 
 new EasyConnector();

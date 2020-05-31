@@ -1,13 +1,75 @@
 <section class="section">
-    <h2> So far we know almost 100% about <span class="mark-el">Easy.js</span> </h2>
-    <p class="show-case"> We hope you enjoyed it so far, we thank you very much for following the easy.js documentation. </p>
+    <a href="https://github.com/AfonsoMatElias/easy/blob/6a729b7284758c6064eaadb4dc6b23fde4081aaf/docs/components/doc-sections/en/extra.html"
+        title="Help us improve this documentation on github!" class="edit-content"><span
+            class="fa fa-pencil"></span></a>
+
+    <h1><a>Extra</a></h1>
+    <p> Easy, also provides you some extensions methods to your code, they are small, simple, easily rememberable, and
+        can be very useful... Let's see them: </p>
+
+    <pre><code class="javascript hljs">
+    // HTMLElement.node(...) -> executes querySelector method
+    var element = document.node('#node-id'); 
+    
+    // HTMLElement.nodes(...) -> executes querySelectorAll method, 
+    // returns an `Array` of the elements not `NodeList`
+    var elements = document.nodes('.node'); 
+    
+    // HTMLElement.listen(...), executes addEventListener method, fortunately
+    // it loops the elements when used with element.nodes(...)
+    document.node('#form-id').listen('submit', function(evt){
+        ...
+    });
+    
+    document.nodes('.menu-item').listen('click', function(evt){
+        // You can access the `event element` at `evt.base` 
+        ...
+    });
+
+    // The `listen extension` returns:
+    [{
+        el: Element, // The element having the event
+        event: String, // The event name
+        callback: Function, // The callback of the event
+    }]
+
+    // To remove the Event Listener, use the return Array and the `removeEventListener`
+    document.removeEventListener(listenReturn[0].name, listenReturn[0].callback);
+
+    // Note: If you use the callback passed in the listen method won't work!
+
+    // HTMLElement.valueIn(...) -> allow to get and set value into an attribute.
+
+    var value = element.valueIn('id'); // Returns the value of id `property`
+    value = element.valueIn('id', 'id-001'); // Sets the attribute id and return the value
+    value = element.valueIn(); // If used this way it gets the textContent value
+
+    // HTMLElement.aboveMe(...) -> Get the parent element
+    var parent = element.aboveMe(); // Returns the parent element
+    parent = element.aboveMe('.myClass'); // Returns the first parent element having this class
+
+    // Object.keys(Function(Key, Value)) -> executes Object.keys(object) method,
+    // returns all the keys... If a function was passed it loop the keys providing
+    // the key and value of the property
+
+    var keys = myObject.keys(function(key, value){
+        ...
+    });
+    </code></pre>
+
+    <br>
+    
+    <h2> So far we know almost everything about <span class="mark-el">Easy.js</span> </h2>
+    <p class="show-case"> We hope you enjoyed it so far, we thank you very much for following the easy.js documentation.
+    </p>
 
     <h3 style="text-align: center;"> Salute 🙂! </h3>
-    <br><br>
+    <br>
 
     <h1> But, wait...!!!</h1>
 
-    <p class="show-case"> What if we say that there is a simple a way to request data from a server, like doing this:</p>
+    <p class="show-case"> What if we say that there is a simple a way to request data from a server, like doing this:
+    </p>
     <pre e-ignore><code class="html hljs">
     &lt;ul&gt;
         &lt;li e-tmp="users"&gt; 

@@ -264,6 +264,329 @@
         $return.origin = $return.protocol + '://' + $return.host; 
         return $return;
     }
+
+    // Adding the extensions
+    (function () {
+        // Extensions
+        // Extension setter
+        function def(key, cb, type) {
+            $propDefiner((type || Object).prototype, key, { value: cb });
+        }
+        // Query one element
+        def('node', function (v) {
+            if (!v) return null;
+            return (v[0] === '#' && this.getElementById ? this.getElementById(v.substr(1)) : this.querySelector(v));
+        }, Node);
+        // Query many elements
+        def('nodes', function (v) {
+            if (!v) return null;
+            return toArray(this.querySelectorAll(v));
+        }, Node);
+        // get key of an object
+        def('keys', function (cb) {
+            var self = this;
+            var array = Object.keys(self);
+            // Calling the callback if it needs
+            if (cb && typeof cb === 'function') forEach(array, function (e) { cb(e, self[e]); });
+            return array;
+        });
+        // map values from an object to the another one
+        def('mapObj', function (input, deep) {
+            var self = this;
+            if (isNull(deep)) deep = false;
+            return input.keys(function (key, value) {
+                var destination = self[key];
+                if (deep && isObj(destination)) {
+                    if (!isArray(destination))
+                        self[key].mapObj(value);
+                } else{
+                    var source = (value ? value : self[key]);
+                    if (source != destination)
+                        self[key] = source;
+                }
+            });
+        });
+        // Get or Set and Get value from an attribute or content value
+        def('valueIn', function (name, set) {
+            if (!isNull(set))
+                return this.setAttribute(name, set) || this.getAttribute(name);
+            else
+                return name != null ? this[name] || this.getAttribute(name) : this.innerText;
+        }, Element);
+        // get the elem above the current element
+        def('aboveMe', function (selector) {
+            // Parent getter
+            function parent(elem) {
+                var $node = elem.parentNode;
+
+                if ( isNull(selector) ) return $node;
+                if ( $node === doc || isNull($node) ) return null;
+
+                var tester = doc.createElement('body');
+                // Defining the element in some kind of Virtual Element
+                tester.innerHTML = $node.outerHTML;
+                
+                if ( $node.nodeName === tester.nodeName )
+                    // Clearing his children
+                    tester.innerHTML = '';
+                else 
+                    // Clearing his children
+                    tester.children[0].innerHTML = '';
+
+                // And checking the selector
+                if ( !isNull(tester.querySelector(selector)) )
+                    return $node;
+                else if ( $node.nodeName === tester.nodeName ) // The element is 
+                    return null;
+                else
+                    return parent($node);
+            }
+            // Getting the parent
+            return parent(this);
+        }, Element);
+        // check if an object/primitive has some value or match a value, 
+        // and it returns true or false
+        def('hasValue', function (value, options) {
+            var res, self = this;
+            options = $objDesigner(options, {
+                ignoreCase: false,
+                comp: 'equal' 
+            });
+            function check(v1, v2) {    
+                var s1 = v1, s2 = v2;
+                if( !isObj(s1) && !isObj(s2) ) {
+                    s1 = toStr(v1), s2 = toStr(v2);
+                    if (options.ignoreCase) {
+                        s1 = s1.toLowerCase();
+                        s2 = s2.toLowerCase();
+                    }
+                }
+
+                return cmp[options.comp](s1, s2);
+            }
+            // Finding any property that matches the input value
+            if (isObj(self))
+                res = self.keys().findOne(function (x) {
+                    return check(self[x], value);
+                });
+            else
+                res = check(self, value);
+
+            return isNull(res) ? false : true;
+        });
+        // Gets any object inn the array that matches the value
+        def('get', function (value) {
+            var self = this;
+            // Finding the object that matches a value or index
+            return self.findOne(function (x) {
+                return x === value || (isObj(x) ? x.hasValue(value) : false);
+            }) || self[value];
+        }, Array);
+        // Gets any object that matches the value
+        def('findOne', function (cb) {
+            var self = this,
+                i = 0,
+                len = self.length,
+                result;
+        for(i; i < len; i++) {
+                if (cb(self[i], i)) {
+                    result = self[i];
+                    break;
+                }
+            }
+            return result;
+        }, Array);
+        // Get the index of an object
+        def('index', function (value) {
+            var index = -1;
+            this.findOne(function (x, i) {
+                if ((x === value || x.hasValue(value))) {
+                    index = i;
+                    return true;
+                }
+                return false;
+            });
+            return index;
+        }, Array);
+        // Get the index of all the ocurrencies of an object
+        def('indexes', function (value, cb) {
+            var array = [];
+            // Finding the object that matches a value or index
+            forEach(this, function (x, i) {
+                if ((x === value || x.hasValue(value)))
+                    array.push(i);
+            });
+            // Calling the callback if it needs
+            if (cb) forEach(array, function (e) {
+                cb(e);
+            });
+            return array;
+        }, Array);
+        // Remove element(s) from an array
+        def('remove', function (value, allWith) {
+            try {
+                if (isNull(allWith)) allWith = false;
+                // Handling the default pop function if the value is not defined
+                if (!value && value != 0) {
+                    this.pop();
+                } else{
+                    // Otherwise, Handling the costumized remove function
+                    // Removing all objects with this value
+                    if (allWith === true) {
+                        extend.array(this).indexes(value, function (i) {
+                            // removing the element
+                            this.splice(i, 1);
+                        });
+                    } else{
+                        var index = this.index(value);
+                        if (index === -1) {
+                            if (Number.isInteger(value * 1))
+                                index = value * 1;
+                        }
+                        // removing the element
+                        this.splice(index, 1);
+                    }
+                }
+            }catch(error) {
+                Easy.log({ msg: 'Remove function error. ' + error.message, error: error });
+            }
+            return this;
+        }, Array);
+        // Animation extension
+        // The main animation function for the extension
+        function niceShared(elem, direction, key, other) {
+            var anm = vars.anm, keyNormalized = key.toLowerCase().split(':');
+            // the animations keys, defined by the user
+            var keyIn = keyNormalized[0],
+                keyOut = keyNormalized[1] || anm.reverse(keyIn);
+
+            if (other) other.niceOut(keyOut);
+
+            anm['to'].keys(function (k, v) {
+                elem.classList.remove(v);
+            });
+            anm['from'].keys(function (k, v) {
+                elem.classList.remove(v);
+            });
+            // Adding the class in the main element
+            elem.classList.add(anm[direction][keyIn]);
+        }
+        // Execute the nice in animation into an element
+        def('niceIn', function (key, outElem, cb, delay) {
+            var self = this;
+            if (isNull(delay)) delay = 80;
+            // Executing the main function
+            niceShared(self, 'to', key, outElem);
+            // Executing the callback
+            setTimeout(function () {
+                if (cb) cb(self, outElem);
+            }, delay);
+        }, HTMLElement);
+        // Adds the nice out animation into an element
+        def('niceOut', function (key, inElem, cb, delay) {
+            var self = this;
+            if (isNull(delay)) delay = 80;
+            // Executing the main function
+            niceShared(self, 'from', key, inElem);
+            // Executing the callback
+            setTimeout(function () {
+                if (cb) cb(self, inElem);
+            }, delay);
+        }, HTMLElement);
+        // End Animation Extension
+        // Generate element description. eg.: form#some-id.class1.class2
+        def('desc', function () {
+            var self = this;
+            if (!self.nodeName) return self.toString();
+            return extend.array(self.nodeName.toLowerCase(), (self.id ? '#' + self.id : ''),
+                toArray(self.classList).map(function (x) {
+                    return '.' + x;
+                })).join('')
+        }, Element);
+        // Adds Event listener in an object or a list of it
+        def('listen', function (name, cb) {
+            var elems = isArray(this) ? this : [this], result = [];
+            forEach(elems, function (elem) {
+                // Checking if the element is valid
+                if (!(elem instanceof Node) && (elem !== $global))
+                    return Easy.log("Cannot apply '" + name + "'to the element" + elem.desc() + ".")
+                // Event object
+                var evt = {
+                    event: name,
+                    fnCallback: cb,
+                    callback: function () {
+                        // base property where will be passed the main object, **not the target**.
+                        arguments[0]['base'] = elem;
+                        evt.fnCallback.apply(evt.fnCallback, arguments);
+                    },
+                    options: false
+                }
+                elem.addEventListener(evt.event, evt.callback, evt.options);
+                result.push({
+                    el: elem,
+                    event: name,
+                    callback: evt.callback,
+                });
+            });
+
+            return result;
+        });
+        // Helper to replace every ocurrence of a string or a list of strings
+        def('replaceAll', function (oldValue, newValue) {
+            // The current value
+            var self = this;
+            if (isNull(newValue)) newValue = '';
+            // Replace all ocurrencies tha will be found
+            function replace(str, _old_, _new_) {
+                var slen = str.length, len = _old_.length, out = '';;
+                for(var i = 0; i < slen; i++) {
+                    if (str[i] === _old_[0] && str.substr(i, len) === _old_) {
+                        out += _new_;
+                        i += len - 1;
+                    } else {
+                        out += str[i];
+                    }
+                }
+                return out;
+            }
+
+            if (!isArray(oldValue))
+                self = replace(self, oldValue, newValue);
+            else
+                forEach(oldValue, function (el) {
+                    self = replace(self, el, newValue);
+                });
+
+            return self;
+        }, String);
+        
+        if( isNull(String.prototype.startsWith) ) {
+            // Helper to check if a string starts with some str
+            def('startsWith', function (v) {
+                return (this.substr(0, v.length) === v);
+            }, String);
+            // Helper to check if a string ends with some str
+            def('endsWith', function (v) {
+                return (this.substr(this.length - v.length) === v);
+            }, String);
+            // Helper to check if a string includes a sequence
+            def('includes', function (v) {
+                for(var i = 0; i < this.length; i++)
+                if(this.substr(i, v.length) === v)
+                    return true;
+                return false;
+            }, String);
+
+        }
+        // Helper to clear skeleton with identifier
+        def('clearSkeleton', function (id) {
+            var self = this, attr = '[e-skeleton="'+ id +'"]';
+            self.removeAttribute('e-skeleton');
+            if (self.nodes) forEach(self.nodes(attr), function (el) {
+                el.removeAttribute('e-skeleton');
+            });
+        }, Element);
+    })();
     
     // Classes for Browsers compatibility
     if (typeof Promise === 'undefined') {
@@ -326,7 +649,7 @@
             });
         }
     }
-    $global.UrlData = function(url) {
+    $global.UrlParams = function(url) {
         if (!url) url = location.href;
         var compare = arguments[1];
         if ( compare && isString(compare) ) {
@@ -527,7 +850,6 @@
             if ( !isNull($easy.emit) ) $easy.emit('log', { type: type, msg: v });
             return v;
         }
-
         var ui = new UIHandler({
             $$delimiters: $$delimiters.slice(),
             $handleWatches: []
@@ -913,22 +1235,22 @@
             return $data;
         }
         /** Get web request value made in e-req, e-tmp, e-fill */
-        prototype.request = function (id, callback) {
+        prototype.request = function (code, callback) {
             if (!callback) return Easy.log('Define a callback in second parameter to get the request.');
-            var req = webDataRequests[id];
+            var req = webDataRequests[code];
             if(req) {
                 callback(req);
                 return;
             }
-
             webDataRequests.keys(function(_, v) {
-                if(v.$id === id || v.$url === id){
+                if(v.$code === code || v.$url === code){
                     return callback(v);
                 } 
             });
         }
         prototype.on = function (evt, cb) {
             switch (evt) {
+                case 'incRequested': inc.requested.push(cb); break;
                 case 'incMounted': inc.mounted.push(cb); break;
                 case 'incLoaded': inc.loaded.push(cb); break;
                 case 'incDestroyed': inc.destroyed.push(cb); break;
@@ -947,9 +1269,10 @@
         }
         prototype.off = function (evt, cb) {
             switch (evt) {
-                case 'incAdded': inc.mounted.remove(cb); break;
+                case 'incRequested': inc.requested.push(cb); break;
+                case 'incMounted': inc.mounted.remove(cb); break;
                 case 'incLoaded': inc.loaded.remove(cb); break;
-                case 'incRemoved': inc.destroyed.remove(cb); break;
+                case 'incDestroyed': inc.destroyed.remove(cb); break;
                 case 'incBlocked': inc.blocked.push(cb); break;
                 case 'incFail': inc.fail.remove(cb); break;
                 default:
@@ -1536,7 +1859,8 @@
             var instance = this;
             if (!paths) paths = {};
             // Includer events store
-            this.mounted = [];
+            this.requested = []; 
+            this.mounted = []; 
             this.loaded = [];
             this.destroyed = [];
             this.blocked = [];
@@ -1655,6 +1979,7 @@
                         }
                     });
                 }
+                forEach(instance.requested, function (evt) { evt.call($easy, $inc); });
                 // Get element from Page
                 if (src[0] === '@') {
                     // Normalizing the name, removing @
@@ -1725,8 +2050,8 @@
                         }).bind(this));
                     }
 
-                    this.getUrlData = (function () {
-                        return new UrlData(location.href, 
+                    this.getParams = (function () {
+                        return new UrlParams(location.href, 
                                 (!location.href.includes('?') ? this.route : null))
                     }).bind($path)
 
@@ -2114,326 +2439,6 @@
                     });
                 }
             }
-            // Extensions
-            // Prevents redefinition of the extensions
-            if (doc.node !== undefined) return;
-            // Extension setter
-            function def(key, cb, type) {
-                $propDefiner((type || Object).prototype, key, { value: cb });
-            }
-            // Query one element
-            def('node', function (v) {
-                if (!v) return null;
-                return (v[0] === '#' && this.getElementById ? this.getElementById(v.substr(1)) : this.querySelector(v));
-            }, Node);
-            // Query many elements
-            def('nodes', function (v) {
-                if (!v) return null;
-                return toArray(this.querySelectorAll(v));
-            }, Node);
-            // get key of an object
-            def('keys', function (cb) {
-                var self = this;
-                var array = Object.keys(self);
-                // Calling the callback if it needs
-                if (cb) forEach(array, function (e) { cb(e, self[e]); });
-                return array;
-            });
-            // map values from an object to the another one
-            def('mapObj', function (input, deep) {
-                var self = this;
-                if (isNull(deep)) deep = false;
-                return input.keys(function (key, value) {
-                    var destination = self[key];
-                    if (deep && isObj(destination)) {
-                        if (!isArray(destination))
-                            self[key].mapObj(value);
-                    } else{
-                        var source = (value ? value : self[key]);
-                        if (source != destination)
-                            self[key] = source;
-                    }
-                });
-            });
-            // Get or Set and Get value from an attribute or content value
-            def('valueIn', function (name, set) {
-                if (!isNull(set))
-                    return this.setAttribute(name, set) || this.getAttribute(name);
-                else
-                    return name != null ? this[name] || this.getAttribute(name) : this.innerText;
-            }, Element);
-            // get the elem above the current element
-            def('aboveMe', function (selector) {
-                // Parent getter
-                function parent(elem) {
-                    var $node = elem.parentNode;
-
-                    if ( isNull(selector) ) return $node;
-                    if ( $node === doc || isNull($node) ) return null;
-
-                    var tester = doc.createElement('body');
-                    // Defining the element in some kind of Virtual Element
-                    tester.innerHTML = $node.outerHTML;
-                    
-                    if ( $node.nodeName === tester.nodeName )
-                        // Clearing his children
-                        tester.innerHTML = '';
-                    else 
-                        // Clearing his children
-                        tester.children[0].innerHTML = '';
-
-                    // And checking the selector
-                    if ( !isNull(tester.querySelector(selector)) )
-                        return $node;
-                    else if ( $node.nodeName === tester.nodeName ) // The element is 
-                        return null;
-                    else
-                        return parent($node);
-                }
-                // Getting the parent
-                return parent(this);
-            }, Element);
-            // check if an object/primitive has some value or match a value, 
-            // and it returns true or false
-            def('hasValue', function (value, options) {
-                var res, self = this;
-                options = $objDesigner(options, {
-                    ignoreCase: false,
-                    comp: 'equal' 
-                });
-                function check(v1, v2) {    
-                    var s1 = v1, s2 = v2;
-                    if( !isObj(s1) && !isObj(s2) ) {
-                        s1 = toStr(v1), s2 = toStr(v2);
-                        if (options.ignoreCase) {
-                            s1 = s1.toLowerCase();
-                            s2 = s2.toLowerCase();
-                        }
-                    }
-
-                    return cmp[options.comp](s1, s2);
-                }
-                // Finding any property that matches the input value
-                if (isObj(self))
-                    res = self.keys().findOne(function (x) {
-                        return check(self[x], value);
-                    });
-                else
-                    res = check(self, value);
-
-                return isNull(res) ? false : true;
-            });
-            // Gets any object inn the array that matches the value
-            def('get', function (value) {
-                var self = this;
-                // Finding the object that matches a value or index
-                return self.findOne(function (x) {
-                    return x === value || (isObj(x) ? x.hasValue(value) : false);
-                }) || self[value];
-            }, Array);
-            // Gets any object that matches the value
-            def('findOne', function (cb) {
-                var self = this,
-                    i = 0,
-                    len = self.length,
-                    result;
-            for(i; i < len; i++) {
-                    if (cb(self[i], i)) {
-                        result = self[i];
-                        break;
-                    }
-                }
-                return result;
-            }, Array);
-            // Get the index of an object
-            def('index', function (value) {
-                var index = -1;
-                this.findOne(function (x, i) {
-                    if ((x === value || x.hasValue(value))) {
-                        index = i;
-                        return true;
-                    }
-                    return false;
-                });
-                return index;
-            }, Array);
-            // Get the index of all the ocurrencies of an object
-            def('indexes', function (value, cb) {
-                var array = [];
-                // Finding the object that matches a value or index
-                forEach(this, function (x, i) {
-                    if ((x === value || x.hasValue(value)))
-                        array.push(i);
-                });
-                // Calling the callback if it needs
-                if (cb) forEach(array, function (e) {
-                    cb(e);
-                });
-                return array;
-            }, Array);
-            // Remove element(s) from an array
-            def('remove', function (value, allWith) {
-                try {
-                    if (isNull(allWith)) allWith = false;
-                    // Handling the default pop function if the value is not defined
-                    if (!value && value != 0) {
-                        this.pop();
-                    } else{
-                        // Otherwise, Handling the costumized remove function
-                        // Removing all objects with this value
-                        if (allWith === true) {
-                            extend.array(this).indexes(value, function (i) {
-                                // removing the element
-                                this.splice(i, 1);
-                            });
-                        } else{
-                            var index = this.index(value);
-                            if (index === -1) {
-                                if (Number.isInteger(value * 1))
-                                    index = value * 1;
-                            }
-                            // removing the element
-                            this.splice(index, 1);
-                        }
-                    }
-                }catch(error) {
-                    Easy.log({ msg: 'Remove function error. ' + error.message, error: error });
-                }
-                return this;
-            }, Array);
-            // Animation extension
-            // The main animation function for the extension
-            function niceShared(elem, direction, key, other) {
-                var anm = vars.anm, keyNormalized = key.toLowerCase().split(':');
-                // the animations keys, defined by the user
-                var keyIn = keyNormalized[0],
-                    keyOut = keyNormalized[1] || anm.reverse(keyIn);
-
-                if (other) other.niceOut(keyOut);
-
-                anm['to'].keys(function (k, v) {
-                    elem.classList.remove(v);
-                });
-                anm['from'].keys(function (k, v) {
-                    elem.classList.remove(v);
-                });
-                // Adding the class in the main element
-                elem.classList.add(anm[direction][keyIn]);
-            }
-            // Execute the nice in animation into an element
-            def('niceIn', function (key, outElem, cb, delay) {
-                var self = this;
-                if (isNull(delay)) delay = 80;
-                // Executing the main function
-                niceShared(self, 'to', key, outElem);
-                // Executing the callback
-                setTimeout(function () {
-                    if (cb) cb(self, outElem);
-                }, delay);
-            }, HTMLElement);
-            // Adds the nice out animation into an element
-            def('niceOut', function (key, inElem, cb, delay) {
-                var self = this;
-                if (isNull(delay)) delay = 80;
-                // Executing the main function
-                niceShared(self, 'from', key, inElem);
-                // Executing the callback
-                setTimeout(function () {
-                    if (cb) cb(self, inElem);
-                }, delay);
-            }, HTMLElement);
-            // End Animation Extension
-            // Generate element description. eg.: form#some-id.class1.class2
-            def('desc', function () {
-                var self = this;
-                if (!self.nodeName) return self.toString();
-                return extend.array(self.nodeName.toLowerCase(), (self.id ? '#' + self.id : ''),
-                    toArray(self.classList).map(function (x) {
-                        return '.' + x;
-                    })).join('')
-            }, Element);
-            // Adds Event listener in an object or a list of it
-            def('listen', function (name, cb) {
-                var elems = isArray(this) ? this : [this], result = [];
-                forEach(elems, function (elem) {
-                    // Checking if the element is valid
-                    if (!(elem instanceof Node) && (elem !== $global))
-                        return Easy.log("Cannot apply '" + name + "'to the element" + elem.desc() + ".")
-                    // Event object
-                    var evt = {
-                        event: name,
-                        fnCallback: cb,
-                        callback: function () {
-                            // base property where will be passed the main object, **not the target**.
-                            arguments[0]['base'] = elem;
-                            evt.fnCallback.apply(evt.fnCallback, arguments);
-                        },
-                        options: false
-                    }
-                    elem.addEventListener(evt.event, evt.callback, evt.options);
-                    result.push({
-                        el: elem,
-                        callback: evt.callback,
-                    });
-                });
-
-                return result;
-            });
-            // Helper to replace every ocurrence of a string or a list of strings
-            def('replaceAll', function (oldValue, newValue) {
-                // The current value
-                var self = this;
-                if (isNull(newValue)) newValue = '';
-                // Replace all ocurrencies tha will be found
-                function replace(str, _old_, _new_) {
-                    var slen = str.length, len = _old_.length, out = '';;
-                    for(var i = 0; i < slen; i++) {
-                        if (str[i] === _old_[0] && str.substr(i, len) === _old_) {
-                            out += _new_;
-                            i += len - 1;
-                        } else {
-                            out += str[i];
-                        }
-                    }
-                    return out;
-                }
-
-                if (!isArray(oldValue))
-                    self = replace(self, oldValue, newValue);
-                else
-                    forEach(oldValue, function (el) {
-                        self = replace(self, el, newValue);
-                    });
-
-                return self;
-            }, String);
-            
-            if( isNull(String.prototype.startsWith) ) {
-                // Helper to check if a string starts with some str
-                def('startsWith', function (v) {
-                    return (this.substr(0, v.length) === v);
-                }, String);
-                // Helper to check if a string ends with some str
-                def('endsWith', function (v) {
-                    return (this.substr(this.length - v.length) === v);
-                }, String);
-                // Helper to check if a string includes a sequence
-                def('includes', function (v) {
-                    for(var i = 0; i < this.length; i++)
-                    if(this.substr(i, v.length) === v)
-                        return true;
-                    return false;
-                }, String);
-
-            }
-            // Helper to clear skeleton with identifier
-            def('clearSkeleton', function (id) {
-                var self = this, attr = '[e-skeleton="'+ id +'"]';
-                self.removeAttribute('e-skeleton');
-                if (self.nodes) forEach(self.nodes(attr), function (el) {
-                    el.removeAttribute('e-skeleton');
-                });
-            }, Element);
         }
         /** UI Handler */
         function UIHandler(config) {
@@ -2479,7 +2484,8 @@
                                 // Skip if it's a comment
                                 if ( isIgnore(node.nodeName) ) return;
                                 
-                                callback(node);
+                                if (inc.isInc(node))
+                                    callback(node);
                             });
 
                             if (mut.removedNodes.length)
@@ -2907,47 +2913,85 @@
                     });
                 }
 
+                function prepareMany(data) {
+                    $request.$data = data;
+                    new ReactiveObject($request);
+                    // It's added after Reactive Call to avoid to be altered too
+                    $request.$el = elem;
+                    // Storing the data in the request data
+                    webDataRequests[$request.$code || 'r' + $easy.code(8)] = $request;
+
+                    // Builing e-for var declaration
+                    var $use = fn.attr(elem, [vars.cmds.use], true) || '';
+                    if($use) {
+                        Compiler.addOldAttr({ el: elem, value: $use });
+                        $use = $use.value + ' of ';
+                    }
+                    // Builing e-for filter
+                    var filter = fn.attr(elem, [vars.cmds.filter], true) || '';
+                    if(filter) { 
+                        Compiler.addOldAttr({ el: elem, value: filter });
+                        filter = ' | ' + filter.value;
+                    }
+
+                    elem.valueIn('e-for', $use + '$data' + filter);
+                    Compiler.compile({
+                        el: elem,
+                        data: extend.obj($scope, { $data: $request.$data })
+                    });
+
+                    EasyEvent.emit({
+                        elem: elem,
+                        type: vars.events.response,
+                        model: $request.$data,
+                        scope: $scope
+                    });
+                    watchRequestChanges([ '$id', '$url' ]);
+                }
+
+                function prepareOne(data) {
+                    // Builing e-for var declaration
+                    var $use = fn.attr(elem, [vars.cmds.use], true) || '';
+                    if($use) {
+                        Compiler.addOldAttr({ el: elem, value: $use });
+                        $use = $use.value;
+                    }
+                    
+                    // Setting the alias variable if was defined
+                    if ($use) {
+                        $request.$data = {};
+                        $request.$data[$use] = data; 
+                    } else {
+                        $request.$data = data;
+                    }
+                    new ReactiveObject($request);
+                    // It's added after Reactive Call to avoid to be altered too
+                    $request.$el = elem;
+                    // Storing the data in the request data
+                    webDataRequests[$request.$code || 'r' + $easy.code(8)] = $request;
+
+                    Compiler.compile({
+                        el: elem,
+                        data: extend.obj($request.$data, $scope)
+                    });
+
+                    EasyEvent.emit({
+                        elem: elem,
+                        type: vars.events.response,
+                        model: $request.$data,
+                        scope: $scope
+                    });
+
+                    watchRequestChanges([ '$id' ]);
+                }
+
                 switch ($request.$type) {
                     case 'many':
                         return $easy.read($request.$url, $request.$id)
                         .then(function(data) {
                             if(!data.status)
                                 return Easy.log(data.msg);
-
-                            $request.$data = data.result;
-                            new ReactiveObject($request);
-                            // It's added after Reactive Call to avoid to be altered too
-                            $request.$el = elem;
-                            // Storing the data in the request data
-                            webDataRequests[$request.$id || 'r' + $easy.code(8)] = $request;
-
-                            // Builing e-for var declaration
-                            var $use = fn.attr(elem, [vars.cmds.use], true) || '';
-                            if($use) {
-                                Compiler.addOldAttr({ el: elem, value: $use });
-                                $use = $use.value + ' of ';
-                            }
-                            // Builing e-for filter
-                            var filter = fn.attr(elem, [vars.cmds.filter], true) || '';
-                            if(filter) { 
-                                Compiler.addOldAttr({ el: elem, value: filter });
-                                filter = ' | ' + filter.value;
-                            }
-
-                            elem.valueIn('e-for', $use + '$data' + filter);
-                            Compiler.compile({
-                                el: elem,
-                                data: extend.obj($scope, { $data: $request.$data })
-                            });
-
-                            EasyEvent.emit({
-                                elem: elem,
-                                type: vars.events.response,
-                                model: $request.$data,
-                                scope: $scope
-                            });
-
-                            watchRequestChanges([ '$id', '$url' ]);
+                            prepareMany(data.result);
                         })
                         .catch(function(error) {
                             Easy.log(error);
@@ -2962,48 +3006,7 @@
                         .then(function(data) {
                             if(!data.status)
                                 return Easy.log(data.msg);
-                        
-                            // If no data from the response, do nothing
-                            if(!data.result)
-                                EasyEvent.emit({
-                                    elem: elem,
-                                    type: vars.events.empty,
-                                    result: data 
-                                });
-
-                            // Builing e-for var declaration
-                            var $use = fn.attr(elem, [vars.cmds.use], true) || '';
-                            if($use) {
-                                Compiler.addOldAttr({ el: elem, value: $use });
-                                $use = $use.value;
-                            }
-                            
-                            // Setting the alias variable if was defined
-                            if ($use) {
-                                $request.$data = {};
-                                $request.$data[$use] = data.result; 
-                            } else {
-                                $request.$data = data.result;
-                            }
-                            new ReactiveObject($request);
-                            // It's added after Reactive Call to avoid to be altered too
-                            $request.$el = elem;
-                            // Storing the data in the request data
-                            webDataRequests[$request.$id || 'r' + $easy.code(8)] = $request;
-
-                            Compiler.compile({
-                                el: elem,
-                                data: extend.obj($request.$data, $scope)
-                            });
-
-                            EasyEvent.emit({
-                                elem: elem,
-                                type: vars.events.response,
-                                model: $request.$data,
-                                scope: $scope
-                            });
-
-                            watchRequestChanges([ '$id' ]);
+                            prepareOne(data.result);
                         })
                         .catch(function(error) {
                             Easy.log(error);
@@ -3562,7 +3565,7 @@
 
                 // Changing the title and the url if it needed
                 if (path.route)
-                    $global.history.pushState(path.template, path.title, rewriteUrl.url);
+                    $global.history.pushState({ url: rewriteUrl.url }, path.title, rewriteUrl.url);
 
                 var el = doc.createElement('inc');
                 el.valueIn('src', path.name);

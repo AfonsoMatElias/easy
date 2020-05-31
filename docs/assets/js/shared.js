@@ -31,17 +31,17 @@ function appExector(element, noApp) {
             var $result = $script.nextElementSibling;
             var $resultEl = createEl($html);
             $result.appendChild($resultEl);
-    
+
             // Highlighting the block
             hljs.highlightBlock($script);
-    
+
             eval($script.innerText.replace('data:', $ad));
-    
+
             // Adding the app to the window object
-            window[$resultEl.id] = eval($resultEl.id); 
+            window[$resultEl.id] = eval($resultEl.id);
         }
     }
-    
+
     var codes = element.querySelectorAll('code');
     for (var i = 0; i < codes.length; i++)
         hljs.highlightBlock(codes[i]);
@@ -58,16 +58,94 @@ function getDateTime() {
 function scrollByAnchor(el) {
     if (location.hash !== '') {
         // Auto scroll if window has hash
-        var anchor = el.node('a[id="'+location.hash.substr(1)+'"]');
+        var anchor = el.node('a[id="' + location.hash.substr(1) + '"]');
         if (!anchor) return;
         var presentation = document.node('.doc-presentation');
-        presentation.scrollTop = anchor.offsetTop - 10;
+        presentation.scrollTop = anchor.offsetTop + 10;
     }
 }
 
 var $anchors = [];
+
 function addAnchors(anchors) {
     if (!anchors) return;
     if (!Array.isArray(anchors)) return;
     $anchors.push.apply($anchors, anchors);
+}
+
+function activeMenuOnScroll() {
+    // Store all the menu anchros do be able to find it by key
+    var menu = {},
+        // Store the last passed anchor on scroll
+        lastPassed,
+        // Store the last active anchor in menu bar
+        $lastActive,
+        // Menu container
+        $MenuContainer = document.node('.doc-menu .content'),
+        // Getting all the anchors in the menu bar anchors
+        $$anchors = $MenuContainer.nodes('.menu a[href]');
+
+    // Mapping the anchors to the menu variable
+    for (var i = 0; i < $$anchors.length; i++) {
+        var $e = $$anchors[i];
+        menu[$e.hash] = $e;
+    }
+
+    // Listening to the scroll event 
+    document.node('.doc-presentation').onscroll = function () {
+        var current;
+        // Looping all the subscribed anchors
+        for (var i = 0; i < $anchors.length; i++) {
+            var element = $anchors[i];
+
+            // If has class attribute, means that is markable element
+            if (element.attributes['class']) continue;
+
+            // Getting the floor of the value
+            var position = Math.floor(element.getBoundingClientRect().top);
+
+            // Checking if it is in the range 
+            // (Used this way because with only one value like 60, some of them will not this verification)
+            if (position <= 70 && position >= 60) {
+                current = element;
+                break;
+            }
+        }
+
+        if (current) {
+            // Void if the current and the last are the same 
+            if (lastPassed && (lastPassed.id === current.id)) return;
+
+            // Getting the menu anchor that corresponds this id
+            var $current = menu['#' + current.id];
+
+            // Void if it wasn't found
+            if (!$current) return;
+
+            // Clearing the last acgive menu
+            if ($lastActive) $lastActive.className = '';
+
+            // Marking active to the current one
+            $current.className = 'active-doc-menu';
+
+            // Fixing the position of the menu scroll
+            $MenuContainer.scrollTop = $current.offsetTop - 10;
+
+            // Setting the last active one to be remembered
+            $lastActive = $current;
+            // Setting the last Passed one void if necessary
+            lastPassed = current;
+        }
+    }
+}
+
+function showModal() {
+    var el = document.createElement('div');
+    el.innerHTML = '<inc src="modal" data="{ modalName: \'Downloads\' }">' +
+        '<content>' +
+        '<inc src="installation"></inc>' +
+        '<inc src="download-connectors"></inc>' +
+        '</content>' +
+        '</inc>';
+    this.el.appendChild(el.children[0]);
 }

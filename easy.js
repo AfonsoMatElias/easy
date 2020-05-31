@@ -5,11 +5,14 @@
  */
 (function(global, factory){
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-    typeof define === 'function' && define.amd ? define(factory) :
-    (global.Easy = factory());
+    typeof define === 'function' && define.amd ? define(factory) : (global.Easy = factory());
 }(window, (function(){ 'use strict';
     // Shared variables
-    var standardEvents = {}, eventModifiers = {};
+    var standardEvents = {}, 
+        eventModifiers = { 
+            'stoppropagation': 'stopPropagation', 
+            'preventdefault': 'preventDefault' 
+        };
     var getter; // Store getter function
     var $global = window, doc = $global.document;
     delete $global.name; // Removing window.name property
@@ -23,13 +26,6 @@
     for ( var key in doc.createElement('input') ) {
         if( key[0] === 'o' && key[1] === 'n' )
             standardEvents[key.substr(2)] = true;
-    }
-
-    // Get all modifier functions
-    var $$evt = new Event('e');
-    for (const key in $$evt) {
-        if ( typeof $$evt[key] === 'function' )
-        eventModifiers[key.toLowerCase()] = key
     }
 
     var vars = {
@@ -254,7 +250,7 @@
         if (!ipv6InBrackets && hostname.indexOf(':') > -1)
             hostname = '[' + hostname + ']';
 
-        return {
+        var $return = {
             href: urlParsingNode.href,
             protocol: urlParsingNode.protocol ? urlParsingNode.protocol.replace(/:$/, '') : '',
             host: urlParsingNode.host,
@@ -265,7 +261,332 @@
             pathname: (urlParsingNode.pathname.charAt(0) === '/') ?
                 urlParsingNode.pathname : '/' + urlParsingNode.pathname
         };
+        $return.origin = $return.protocol + '://' + $return.host; 
+        return $return;
     }
+
+    // Adding the extensions
+    (function () {
+        // Extensions
+        // Extension setter
+        function def(key, cb, type) {
+            $propDefiner((type || Object).prototype, key, { value: cb });
+        }
+        // Query one element
+        def('node', function (v) {
+            if (!v) return null;
+            return (v[0] === '#' && this.getElementById ? this.getElementById(v.substr(1)) : this.querySelector(v));
+        }, Node);
+        // Query many elements
+        def('nodes', function (v) {
+            if (!v) return null;
+            return toArray(this.querySelectorAll(v));
+        }, Node);
+        // get key of an object
+        def('keys', function (cb) {
+            var self = this;
+            var array = Object.keys(self);
+            // Calling the callback if it needs
+            if (cb && typeof cb === 'function') forEach(array, function (e) { cb(e, self[e]); });
+            return array;
+        });
+        // map values from an object to the another one
+        def('mapObj', function (input, deep) {
+            var self = this;
+            if (isNull(deep)) deep = false;
+            return input.keys(function (key, value) {
+                var destination = self[key];
+                if (deep && isObj(destination)) {
+                    if (!isArray(destination))
+                        self[key].mapObj(value);
+                } else{
+                    var source = (value ? value : self[key]);
+                    if (source != destination)
+                        self[key] = source;
+                }
+            });
+        });
+        // Get or Set and Get value from an attribute or content value
+        def('valueIn', function (name, set) {
+            if (!isNull(set))
+                return this.setAttribute(name, set) || this.getAttribute(name);
+            else
+                return name != null ? this[name] || this.getAttribute(name) : this.innerText;
+        }, Element);
+        // get the elem above the current element
+        def('aboveMe', function (selector) {
+            // Parent getter
+            function parent(elem) {
+                var $node = elem.parentNode;
+
+                if ( isNull(selector) ) return $node;
+                if ( $node === doc || isNull($node) ) return null;
+
+                var tester = doc.createElement('body');
+                // Defining the element in some kind of Virtual Element
+                tester.innerHTML = $node.outerHTML;
+                
+                if ( $node.nodeName === tester.nodeName )
+                    // Clearing his children
+                    tester.innerHTML = '';
+                else 
+                    // Clearing his children
+                    tester.children[0].innerHTML = '';
+
+                // And checking the selector
+                if ( !isNull(tester.querySelector(selector)) )
+                    return $node;
+                else if ( $node.nodeName === tester.nodeName ) // The element is 
+                    return null;
+                else
+                    return parent($node);
+            }
+            // Getting the parent
+            return parent(this);
+        }, Element);
+        // check if an object/primitive has some value or match a value, 
+        // and it returns true or false
+        def('hasValue', function (value, options) {
+            var res, self = this;
+            options = $objDesigner(options, {
+                ignoreCase: false,
+                comp: 'equal' 
+            });
+            function check(v1, v2) {    
+                var s1 = v1, s2 = v2;
+                if( !isObj(s1) && !isObj(s2) ) {
+                    s1 = toStr(v1), s2 = toStr(v2);
+                    if (options.ignoreCase) {
+                        s1 = s1.toLowerCase();
+                        s2 = s2.toLowerCase();
+                    }
+                }
+
+                return cmp[options.comp](s1, s2);
+            }
+            // Finding any property that matches the input value
+            if (isObj(self))
+                res = self.keys().findOne(function (x) {
+                    return check(self[x], value);
+                });
+            else
+                res = check(self, value);
+
+            return isNull(res) ? false : true;
+        });
+        // Gets any object inn the array that matches the value
+        def('get', function (value) {
+            var self = this;
+            // Finding the object that matches a value or index
+            return self.findOne(function (x) {
+                return x === value || (isObj(x) ? x.hasValue(value) : false);
+            }) || self[value];
+        }, Array);
+        // Gets any object that matches the value
+        def('findOne', function (cb) {
+            var self = this,
+                i = 0,
+                len = self.length,
+                result;
+        for(i; i < len; i++) {
+                if (cb(self[i], i)) {
+                    result = self[i];
+                    break;
+                }
+            }
+            return result;
+        }, Array);
+        // Get the index of an object
+        def('index', function (value) {
+            var index = -1;
+            this.findOne(function (x, i) {
+                if ((x === value || x.hasValue(value))) {
+                    index = i;
+                    return true;
+                }
+                return false;
+            });
+            return index;
+        }, Array);
+        // Get the index of all the ocurrencies of an object
+        def('indexes', function (value, cb) {
+            var array = [];
+            // Finding the object that matches a value or index
+            forEach(this, function (x, i) {
+                if ((x === value || x.hasValue(value)))
+                    array.push(i);
+            });
+            // Calling the callback if it needs
+            if (cb) forEach(array, function (e) {
+                cb(e);
+            });
+            return array;
+        }, Array);
+        // Remove element(s) from an array
+        def('remove', function (value, allWith) {
+            try {
+                if (isNull(allWith)) allWith = false;
+                // Handling the default pop function if the value is not defined
+                if (!value && value != 0) {
+                    this.pop();
+                } else{
+                    // Otherwise, Handling the costumized remove function
+                    // Removing all objects with this value
+                    if (allWith === true) {
+                        extend.array(this).indexes(value, function (i) {
+                            // removing the element
+                            this.splice(i, 1);
+                        });
+                    } else{
+                        var index = this.index(value);
+                        if (index === -1) {
+                            if (Number.isInteger(value * 1))
+                                index = value * 1;
+                        }
+                        // removing the element
+                        this.splice(index, 1);
+                    }
+                }
+            }catch(error) {
+                Easy.log({ msg: 'Remove function error. ' + error.message, error: error });
+            }
+            return this;
+        }, Array);
+        // Animation extension
+        // The main animation function for the extension
+        function niceShared(elem, direction, key, other) {
+            var anm = vars.anm, keyNormalized = key.toLowerCase().split(':');
+            // the animations keys, defined by the user
+            var keyIn = keyNormalized[0],
+                keyOut = keyNormalized[1] || anm.reverse(keyIn);
+
+            if (other) other.niceOut(keyOut);
+
+            anm['to'].keys(function (k, v) {
+                elem.classList.remove(v);
+            });
+            anm['from'].keys(function (k, v) {
+                elem.classList.remove(v);
+            });
+            // Adding the class in the main element
+            elem.classList.add(anm[direction][keyIn]);
+        }
+        // Execute the nice in animation into an element
+        def('niceIn', function (key, outElem, cb, delay) {
+            var self = this;
+            if (isNull(delay)) delay = 80;
+            // Executing the main function
+            niceShared(self, 'to', key, outElem);
+            // Executing the callback
+            setTimeout(function () {
+                if (cb) cb(self, outElem);
+            }, delay);
+        }, HTMLElement);
+        // Adds the nice out animation into an element
+        def('niceOut', function (key, inElem, cb, delay) {
+            var self = this;
+            if (isNull(delay)) delay = 80;
+            // Executing the main function
+            niceShared(self, 'from', key, inElem);
+            // Executing the callback
+            setTimeout(function () {
+                if (cb) cb(self, inElem);
+            }, delay);
+        }, HTMLElement);
+        // End Animation Extension
+        // Generate element description. eg.: form#some-id.class1.class2
+        def('desc', function () {
+            var self = this;
+            if (!self.nodeName) return self.toString();
+            return extend.array(self.nodeName.toLowerCase(), (self.id ? '#' + self.id : ''),
+                toArray(self.classList).map(function (x) {
+                    return '.' + x;
+                })).join('')
+        }, Element);
+        // Adds Event listener in an object or a list of it
+        def('listen', function (name, cb) {
+            var elems = isArray(this) ? this : [this], result = [];
+            forEach(elems, function (elem) {
+                // Checking if the element is valid
+                if (!(elem instanceof Node) && (elem !== $global))
+                    return Easy.log("Cannot apply '" + name + "'to the element" + elem.desc() + ".")
+                // Event object
+                var evt = {
+                    event: name,
+                    fnCallback: cb,
+                    callback: function () {
+                        // base property where will be passed the main object, **not the target**.
+                        arguments[0]['base'] = elem;
+                        evt.fnCallback.apply(evt.fnCallback, arguments);
+                    },
+                    options: false
+                }
+                elem.addEventListener(evt.event, evt.callback, evt.options);
+                result.push({
+                    el: elem,
+                    event: name,
+                    callback: evt.callback,
+                });
+            });
+
+            return result;
+        });
+        // Helper to replace every ocurrence of a string or a list of strings
+        def('replaceAll', function (oldValue, newValue) {
+            // The current value
+            var self = this;
+            if (isNull(newValue)) newValue = '';
+            // Replace all ocurrencies tha will be found
+            function replace(str, _old_, _new_) {
+                var slen = str.length, len = _old_.length, out = '';;
+                for(var i = 0; i < slen; i++) {
+                    if (str[i] === _old_[0] && str.substr(i, len) === _old_) {
+                        out += _new_;
+                        i += len - 1;
+                    } else {
+                        out += str[i];
+                    }
+                }
+                return out;
+            }
+
+            if (!isArray(oldValue))
+                self = replace(self, oldValue, newValue);
+            else
+                forEach(oldValue, function (el) {
+                    self = replace(self, el, newValue);
+                });
+
+            return self;
+        }, String);
+        
+        if( isNull(String.prototype.startsWith) ) {
+            // Helper to check if a string starts with some str
+            def('startsWith', function (v) {
+                return (this.substr(0, v.length) === v);
+            }, String);
+            // Helper to check if a string ends with some str
+            def('endsWith', function (v) {
+                return (this.substr(this.length - v.length) === v);
+            }, String);
+            // Helper to check if a string includes a sequence
+            def('includes', function (v) {
+                for(var i = 0; i < this.length; i++)
+                if(this.substr(i, v.length) === v)
+                    return true;
+                return false;
+            }, String);
+
+        }
+        // Helper to clear skeleton with identifier
+        def('clearSkeleton', function (id) {
+            var self = this, attr = '[e-skeleton="'+ id +'"]';
+            self.removeAttribute('e-skeleton');
+            if (self.nodes) forEach(self.nodes(attr), function (el) {
+                el.removeAttribute('e-skeleton');
+            });
+        }, Element);
+    })();
     
     // Classes for Browsers compatibility
     if (typeof Promise === 'undefined') {
@@ -276,6 +597,20 @@
             this.WARN = 'Do not \'await\' this promise, it does not support await keyword.';
             var thens = [], catches = [], finallies = [];
 
+            function waitAndRun(array, value) {
+                function run(funcs, value) {
+                    forEach(funcs, function(callback) {
+                        callback.call(self, value);    
+                    });
+                }
+                var t = setTimeout(function() {
+                    run(array, value);
+                    run(finallies);
+                    clearTimeout(t);
+                }, 0);
+                return value;
+            }
+            
             this.then = function (resolve, reject) {
                 thens.push(resolve);
                 if( !isNull(reject) )
@@ -292,21 +627,6 @@
                 finallies.push(cb);
                 return self;
             }
-
-            function waitAndRun(array, value) {
-                function run(funcs, value) {
-                    forEach(funcs, function(callback) {
-                        callback.call(self, value);    
-                    });
-                }
-                var t = setTimeout(function() {
-                    run(array, value);
-                    run(finallies);
-                    clearTimeout(t);
-                }, 0);
-                return value;
-            }
-
             promise(function (value) {
                 self.status = 'resolved';
                 self.value = value;
@@ -318,7 +638,6 @@
 
             return self;
         }
-
         Promise.resolve = function (value) {
             return new Promise(function (resolve) {
                 return resolve(value);
@@ -328,6 +647,29 @@
             return new Promise(function (_, reject) {
                 return reject(value);
             });
+        }
+    }
+    $global.UrlParams = function(url) {
+        if (!url) url = location.href;
+        var compare = arguments[1];
+        if ( compare && isString(compare) ) {
+            // Building from url comparison
+            var $url = url.split('/').reverse();
+            if ($url[0] === '') $url.shift();
+            var $compare = compare.split('/').reverse();
+            forEach($compare, (function(value, index) {
+                if (value[0] === ':')
+                    this[value.substr(1)] = $url[index];     
+            }).bind(this));
+        } else {
+            // Building from query string
+            var queryStr = url.split('?')[1];
+            if (!queryStr) return this;
+            var keys = queryStr.split('&');
+            forEach(keys, (function(key) {
+                var pair = key.split('=');
+                this[pair[0]] = pair[1]
+            }).bind(this));
         }
     }
     /**
@@ -352,18 +694,19 @@
             this[option] = options[option];
         }).bind(this));
 
-        this.xhrObject = xhr;
         // The default method is get
         options.method = this.method = this.method ? this.method : 'get';
         var xhr = createXhr(this.method), timeoutId;
+        this.xhrObject = xhr;
 
         // Unchangeable URL, even if it was passed in options
         this.url = url;
         // If timeout is not defined use the default 1 minute
-        this.timeout = this.timeout || 6 * 10000;
+        this.timeout = this.timeout || 60000;
 
         return new Promise(function (resolve, reject) {
             xhr.open(self.method, self.url, true);
+            xhr.timeout = self.timeout; 
 
             self.headers = self.headers ? self.headers : {};
             self.headers.keys(function (key) {
@@ -469,7 +812,7 @@
             Easy.log('Easy is a constructor and should be called with the \'new\' keyword.');
             return this;
         }
-        
+
         this.name = 'Easy';
         this.version = '2.0.0';
         this.data = {};
@@ -482,6 +825,7 @@
 
         var prototype = Object.create(Easy.prototype);
         this.__proto__ = prototype;
+
         var $$delimiters = [
             { name: 'easy', delimiter: { open: '-e-', close: '-' } }, 
             { name: 'common', delimiter: { open: '{{', close: '}}' } } 
@@ -506,7 +850,6 @@
             if ( !isNull($easy.emit) ) $easy.emit('log', { type: type, msg: v });
             return v;
         }
-
         var ui = new UIHandler({
             $$delimiters: $$delimiters.slice(),
             $handleWatches: []
@@ -842,14 +1185,6 @@
             }
             return result;
         }
-        /** Easy return type */
-        prototype.return = function (status, message, result) {
-            return {
-                status: status,
-                msg: message,
-                result: result
-            };
-        }
         /** Sets values in the data */
         prototype.setData = function (input, target) {
             if (isNull(input)) return;
@@ -872,9 +1207,9 @@
                     var $data = new ReactiveObject(data);
                     $data.$scope = Compiler.getUpData(el);
                     Compiler.compile({
-                    el: el,
-                    data: $data 
-                });
+                        el: el,
+                        data: $data 
+                    });
                 });
             }
             
@@ -900,22 +1235,22 @@
             return $data;
         }
         /** Get web request value made in e-req, e-tmp, e-fill */
-        prototype.request = function (id, callback) {
+        prototype.request = function (code, callback) {
             if (!callback) return Easy.log('Define a callback in second parameter to get the request.');
-            var req = webDataRequests[id];
+            var req = webDataRequests[code];
             if(req) {
                 callback(req);
                 return;
             }
-
             webDataRequests.keys(function(_, v) {
-                if(v.$id === id || v.$url === id){
+                if(v.$code === code || v.$url === code){
                     return callback(v);
                 } 
             });
         }
         prototype.on = function (evt, cb) {
             switch (evt) {
+                case 'incRequested': inc.requested.push(cb); break;
                 case 'incMounted': inc.mounted.push(cb); break;
                 case 'incLoaded': inc.loaded.push(cb); break;
                 case 'incDestroyed': inc.destroyed.push(cb); break;
@@ -934,9 +1269,10 @@
         }
         prototype.off = function (evt, cb) {
             switch (evt) {
-                case 'incAdded': inc.mounted.remove(cb); break;
+                case 'incRequested': inc.requested.push(cb); break;
+                case 'incMounted': inc.mounted.remove(cb); break;
                 case 'incLoaded': inc.loaded.remove(cb); break;
-                case 'incRemoved': inc.destroyed.remove(cb); break;
+                case 'incDestroyed': inc.destroyed.remove(cb); break;
                 case 'incBlocked': inc.blocked.push(cb); break;
                 case 'incFail': inc.fail.remove(cb); break;
                 default:
@@ -1092,11 +1428,16 @@
                     if(!trim(attr.value))
                         return Easy.log({ msg: error.invalid('in ' + attr.name), el: el });
 
-                    if ( waitedData[attr.value] )
-                        waitedData[attr.value].push(el);
-                    else
-                        waitedData[attr.value] = [ el ];
-                    
+                    if (exposed[attr.value]) {
+                        var $$data = new ReactiveObject($easy.retrieve(attr.value, true));
+                        $$data.$scope = $scope;
+                        Compiler.compile({ el: el, data: $$data });
+                    } else {
+                        if ( waitedData[attr.value] )
+                            waitedData[attr.value].push(el);
+                        else
+                            waitedData[attr.value] = [ el ];                 
+                    }           
                     return;
                 }
 
@@ -1123,13 +1464,12 @@
                 if( hasAttr(el, cmds.if) || hasAttr(el, cmds.show) ) {
                     var attr = fn.attr(el, [cmds.if, cmds.show], true);
                     if( (trim(attr.value) === '') ) 
-                        return Easy.log({ msg: 'Invalid value in ' + attr.value, el: attr })
+                        return Easy.log({ msg: 'Invalid expression in ' + attr.value, el: attr })
 
                     if (attr.name === cmds.show) {
                         var res = ui.cmd.if.prepare(el, attr, attr.name);
-                        if (res === true) {
+                        if (res === true)
                             Compiler.setValue({ current: el, scope: $scope, methods: $$methods });
-                        }
                     } else {
                         var curr = el, chain = [ { attr: attr, el: curr } ]; 
 
@@ -1160,15 +1500,16 @@
                     var source = inc.src(el);
                     //Exposing the data 
                     $easy.expose(source, extend.obj($scope));
-                    
                     // For includer dynamic change
                     var delimiters = ui.getDelimiters(source);
                     if( delimiters.length === 1 ) {
                         el.valueIn('no-replace', '');
+                        
                         var container = el.parentNode;
                         var dlm = delimiters[0], name = el.nodeName;
                         var attr = fn.attr(el, ['inc-src', 'src']), current = el;
                         var hw = { el: current };
+
                         source = fn.eval(dlm.exp, $scope);
                         attr.value = source;
 
@@ -1195,7 +1536,7 @@
                     // Data
                     var scope = fn.attr(el, [cmds.data], true), $dt;
                     // Getting the data or the default
-                    if ( trim(scope.value) === ''){
+                    if ( trim(scope.value) === '' ){
                         $dt = extend.obj($easy.data); // clone the main data
                     } else {
                         $dt = fn.eval(scope.value, $scope);
@@ -1288,6 +1629,7 @@
                 }
 
                 if ($name.startsWith('on:') || $name.startsWith('listen:')) {
+                    if (trim($value) === '') return Easy.log('Invalid expression in ' + $name);
                     var evtExpression = $name.split(':')[1].split('.'); // click.preventdefault
                     var eventName = evtExpression[0], base = el.$e.$base;
 
@@ -1300,7 +1642,6 @@
                                 var $modName = eventModifiers[modifier];
                                 if ($modName) evtObject[$modName]();
                             });
-
                             arguments[0].data = { $scope: $scope }
                             // Calling the callback function
                             fn.eval("if (typeof (("+ $value+")) === 'function') ("+$value +").apply(this, arguments);", 
@@ -1501,9 +1842,7 @@
                 }
             });
         }
-        prototype.Fetch = Fetch;
-        prototype.extend = extend;
-
+        
         function checkIncPath(name) {
             var path = inc.paths[name];
             if( isNull(path) ) {
@@ -1512,7 +1851,7 @@
             }
             return path;
         }
-        
+
         //#region Classes
         function Compiler() {}
         /** Component includer */
@@ -1520,7 +1859,8 @@
             var instance = this;
             if (!paths) paths = {};
             // Includer events store
-            this.mounted = [];
+            this.requested = []; 
+            this.mounted = []; 
             this.loaded = [];
             this.destroyed = [];
             this.blocked = [];
@@ -1545,7 +1885,7 @@
                                     'Please reset this or these restrictions.', 'warn');
             }
             // Component Setter
-            this.setComponent = function (objects) {
+            this.setComponent = function (objects, onset) {
                 var comps = {};
                 objects.keys((function (key, value) {
                     if( !isNull(this.paths[key]) )
@@ -1570,6 +1910,15 @@
                     this.skipNoFunction(comps[key].restrictions, key);                
                     this.paths[key] = comps[key];
 
+                    if ( !isNull(onset) && typeof onset === 'function' )
+                        onset.call(this, comps[key], key);
+                    
+                    if ( isObj(value) && isObj(value.children) ) {
+                        this.setComponent(value.children, function ($comp, $key) {
+                            $comp.route = value.route + $comp.route;
+                            comps[$key] = $comp;
+                        });
+                    }
                 }).bind(this));
                 return comps;
             }
@@ -1630,6 +1979,7 @@
                         }
                     });
                 }
+                forEach(instance.requested, function (evt) { evt.call($easy, $inc); });
                 // Get element from Page
                 if (src[0] === '@') {
                     // Normalizing the name, removing @
@@ -1684,8 +2034,8 @@
                     if (!isNull($path.data)) {
                         this.data = new ReactiveObject($path.data);    
                     } else {
-                        // If the data isn't defined take data from scope data 
-                        this.data = (this.scope ? this.scope : this.scope = {});
+                        this.data = {};
+                        // Link the datas if was asked to 
                         if ($config.keepData) $path.data = this.data; 
                     }
 
@@ -1699,6 +2049,11 @@
                             $propTransfer(this.data, data, k);  
                         }).bind(this));
                     }
+
+                    this.getParams = (function () {
+                        return new UrlParams(location.href, 
+                                (!location.href.includes('?') ? this.route : null))
+                    }).bind($path)
 
                     var store = config.store,
                         content = config.content,
@@ -1803,7 +2158,7 @@
 
                         var dataAttribute = fn.attr(el, [ vars.cmds.data ], true);
                         if (dataAttribute) {
-                            var data = fn.eval(dataAttribute.value, this.data);
+                            var data = fn.eval(dataAttribute.value, this.scope);
                             if (data){
                                 if (isArray(data))
                                     return Easy.log('An array cannot be exposed, try to wrap it into a object literal!. Eg.: { myArray: [...] }.');
@@ -1840,13 +2195,12 @@
                                 // Checking it is still connected
                                 if (!$inc.parentNode) return;
 
-                                // In case of dynamic component inserction without exposing some data
-                                // to it, get the up component/element data
-                                if ( isEmptyObj(this.scope) ) {
+                                // In case of empty scope get the up component data
+                                if ( isEmptyObj(this.scope) ) 
                                     this.scope = Compiler.getUpData($inc);
-                                    if (isEmptyObj(this.data))
-                                        this.data = this.scope;
-                                }
+                                // Add the scope object if it isn't empty
+                                if ( !isEmptyObj(this.scope) )
+                                    this.data.$scope = this.scope;
 
                                 if (mainScript)
                                     // joining and evaluating the script
@@ -1862,10 +2216,10 @@
                                     // Defining the name
                                     el.inc = src;
                                     // Adding the attributes to the that will be inserted
-                                    $inc.aboveMe().replaceChild(el, $inc);
-                                } else{
+                                    $inc.parentNode.replaceChild(el, $inc);
+                                } else {
                                     $inc.inc = src;
-                                    $inc.appendChild(el);
+                                    $inc.innerHTML = el;
                                     destroyable = $inc;
                                 }
                                 
@@ -1917,7 +2271,7 @@
                             }
                         } catch (error) {
                             var $error = { fileName: this.name };
-                            for (const $k in error) $error[$k] = error[$k]; 
+                            for (var $k in error) $error[$k] = error[$k]; 
                             $error.message += " in " + error.fileName;
                             Easy.log($error);
                             clearInterval(tId);
@@ -1940,14 +2294,6 @@
                         return new Inc({ content: $path.template });
                     else
                         $url = $path.url;
-                    
-                    // Changing the title and the url if it needed
-                    if ($path.title) {
-                        doc.title = $path.title;
-                    }
-                    if ($path.route && $config.usehash === false) {
-                        $global.history.pushState($path.template, $path.title, $path.route);
-                    }
                 } else {
                     return Easy.log('No \''+ src +'\' component was found, please check if it is defined.');
                 }
@@ -1974,7 +2320,7 @@
                     });
                 }
                 // Otherwise, wait untill the web request is done 
-                else{
+                else {
                     var t = setInterval(function () {
                         // Checking if the component is configured
                         var component = instance.components[src];
@@ -2093,326 +2439,6 @@
                     });
                 }
             }
-            // Extensions
-            // Prevents redefinition of the extensions
-            if (doc.node !== undefined) return;
-            // Extension setter
-            function def(key, cb, type) {
-                $propDefiner((type || Object).prototype, key, { value: cb });
-            }
-            // Query one element
-            def('node', function (v) {
-                if (!v) return null;
-                return (v[0] === '#' && this.getElementById ? this.getElementById(v.substr(1)) : this.querySelector(v));
-            }, Node);
-            // Query many elements
-            def('nodes', function (v) {
-                if (!v) return null;
-                return toArray(this.querySelectorAll(v));
-            }, Node);
-            // get key of an object
-            def('keys', function (cb) {
-                var self = this;
-                var array = Object.keys(self);
-                // Calling the callback if it needs
-                if (cb) forEach(array, function (e) { cb(e, self[e]); });
-                return array;
-            });
-            // map values from an object to the another one
-            def('mapObj', function (input, deep) {
-                var self = this;
-                if (isNull(deep)) deep = false;
-                return input.keys(function (key, value) {
-                    var destination = self[key];
-                    if (deep && isObj(destination)) {
-                        if (!isArray(destination))
-                            self[key].mapObj(value);
-                    } else{
-                        var source = (value ? value : self[key]);
-                        if (source != destination)
-                            self[key] = source;
-                    }
-                });
-            });
-            // Get or Set and Get value from an attribute or content value
-            def('valueIn', function (name, set) {
-                if (!isNull(set))
-                    return this.setAttribute(name, set) || this.getAttribute(name);
-                else
-                    return name != null ? this[name] || this.getAttribute(name) : this.innerText;
-            }, Element);
-            // get the elem above the current element
-            def('aboveMe', function (selector) {
-                // Parent getter
-                function parent(elem) {
-                    var $node = elem.parentNode;
-
-                    if ( isNull(selector) ) return $node;
-                    if ( $node === doc || isNull($node) ) return null;
-
-                    var tester = doc.createElement('body');
-                    // Defining the element in some kind of Virtual Element
-                    tester.innerHTML = $node.outerHTML;
-                    
-                    if ( $node.nodeName === tester.nodeName )
-                        // Clearing his children
-                        tester.innerHTML = '';
-                    else 
-                        // Clearing his children
-                        tester.children[0].innerHTML = '';
-
-                    // And checking the selector
-                    if ( !isNull(tester.querySelector(selector)) )
-                        return $node;
-                    else if ( $node.nodeName === tester.nodeName ) // The element is 
-                        return null;
-                    else
-                        return parent($node);
-                }
-                // Getting the parent
-                return parent(this);
-            }, Element);
-            // check if an object/primitive has some value or match a value, 
-            // and it returns true or false
-            def('hasValue', function (value, options) {
-                var res, self = this;
-                options = $objDesigner(options, {
-                    ignoreCase: false,
-                    comp: 'equal' 
-                });
-                function check(v1, v2) {    
-                    var s1 = v1, s2 = v2;
-                    if( !isObj(s1) && !isObj(s2) ) {
-                        s1 = toStr(v1), s2 = toStr(v2);
-                        if (options.ignoreCase) {
-                            s1 = s1.toLowerCase();
-                            s2 = s2.toLowerCase();
-                        }
-                    }
-
-                    return cmp[options.comp](s1, s2);
-                }
-                // Finding any property that matches the input value
-                if (isObj(self))
-                    res = self.keys().findOne(function (x) {
-                        return check(self[x], value);
-                    });
-                else
-                    res = check(self, value);
-
-                return isNull(res) ? false : true;
-            });
-            // Gets any object inn the array that matches the value
-            def('get', function (value) {
-                var self = this;
-                // Finding the object that matches a value or index
-                return self.findOne(function (x) {
-                    return x === value || (isObj(x) ? x.hasValue(value) : false);
-                }) || self[value];
-            }, Array);
-            // Gets any object that matches the value
-            def('findOne', function (cb) {
-                var self = this,
-                    i = 0,
-                    len = self.length,
-                    result;
-            for(i; i < len; i++) {
-                    if (cb(self[i], i)) {
-                        result = self[i];
-                        break;
-                    }
-                }
-                return result;
-            }, Array);
-            // Get the index of an object
-            def('index', function (value) {
-                var index = -1;
-                this.findOne(function (x, i) {
-                    if ((x === value || x.hasValue(value))) {
-                        index = i;
-                        return true;
-                    }
-                    return false;
-                });
-                return index;
-            }, Array);
-            // Get the index of all the ocurrencies of an object
-            def('indexes', function (value, cb) {
-                var array = [];
-                // Finding the object that matches a value or index
-                forEach(this, function (x, i) {
-                    if ((x === value || x.hasValue(value)))
-                        array.push(i);
-                });
-                // Calling the callback if it needs
-                if (cb) forEach(array, function (e) {
-                    cb(e);
-                });
-                return array;
-            }, Array);
-            // Remove element(s) from an array
-            def('remove', function (value, allWith) {
-                try {
-                    if (isNull(allWith)) allWith = false;
-                    // Handling the default pop function if the value is not defined
-                    if (!value && value != 0) {
-                        this.pop();
-                    } else{
-                        // Otherwise, Handling the costumized remove function
-                        // Removing all objects with this value
-                        if (allWith === true) {
-                            extend.array(this).indexes(value, function (i) {
-                                // removing the element
-                                this.splice(i, 1);
-                            });
-                        } else{
-                            var index = this.index(value);
-                            if (index === -1) {
-                                if (Number.isInteger(value * 1))
-                                    index = value * 1;
-                            }
-                            // removing the element
-                            this.splice(index, 1);
-                        }
-                    }
-                }catch(error) {
-                    Easy.log({ msg: 'Remove function error. ' + error.message, error: error });
-                }
-                return this;
-            }, Array);
-            // Animation extension
-            // The main animation function for the extension
-            function niceShared(elem, direction, key, other) {
-                var anm = vars.anm, keyNormalized = key.toLowerCase().split(':');
-                // the animations keys, defined by the user
-                var keyIn = keyNormalized[0],
-                    keyOut = keyNormalized[1] || anm.reverse(keyIn);
-
-                if (other) other.niceOut(keyOut);
-
-                anm['to'].keys(function (k, v) {
-                    elem.classList.remove(v);
-                });
-                anm['from'].keys(function (k, v) {
-                    elem.classList.remove(v);
-                });
-                // Adding the class in the main element
-                elem.classList.add(anm[direction][keyIn]);
-            }
-            // Execute the nice in animation into an element
-            def('niceIn', function (key, outElem, cb, delay) {
-                var self = this;
-                if (isNull(delay)) delay = 80;
-                // Executing the main function
-                niceShared(self, 'to', key, outElem);
-                // Executing the callback
-                setTimeout(function () {
-                    if (cb) cb(self, outElem);
-                }, delay);
-            }, HTMLElement);
-            // Adds the nice out animation into an element
-            def('niceOut', function (key, inElem, cb, delay) {
-                var self = this;
-                if (isNull(delay)) delay = 80;
-                // Executing the main function
-                niceShared(self, 'from', key, inElem);
-                // Executing the callback
-                setTimeout(function () {
-                    if (cb) cb(self, inElem);
-                }, delay);
-            }, HTMLElement);
-            // End Animation Extension
-            // Generate element description. eg.: form#some-id.class1.class2
-            def('desc', function () {
-                var self = this;
-                if (!self.nodeName) return self.toString();
-                return extend.array(self.nodeName.toLowerCase(), (self.id ? '#' + self.id : ''),
-                    toArray(self.classList).map(function (x) {
-                        return '.' + x;
-                    })).join('')
-            }, Element);
-            // Adds Event listener in an object or a list of it
-            def('listen', function (name, cb) {
-                var elems = isArray(this) ? this : [this], result = [];
-                forEach(elems, function (elem) {
-                    // Checking if the element is valid
-                    if (!(elem instanceof Node) && (elem !== $global))
-                        return Easy.log("Cannot apply '" + name + "'to the element" + elem.desc() + ".")
-                    // Event object
-                    var evt = {
-                        event: name,
-                        fnCallback: cb,
-                        callback: function () {
-                            // base property where will be passed the main object, **not the target**.
-                            arguments[0]['base'] = elem;
-                            evt.fnCallback.apply(evt.fnCallback, arguments);
-                        },
-                        options: false
-                    }
-                    elem.addEventListener(evt.event, evt.callback, evt.options);
-                    result.push({
-                        el: elem,
-                        callback: evt.callback,
-                    });
-                });
-
-                return result;
-            });
-            // Helper to replace every ocurrence of a string or a list of strings
-            def('replaceAll', function (oldValue, newValue) {
-                // The current value
-                var self = this;
-                if (isNull(newValue)) newValue = '';
-                // Replace all ocurrencies tha will be found
-                function replace(str, _old_, _new_) {
-                    var slen = str.length, len = _old_.length, out = '';;
-                    for(var i = 0; i < slen; i++) {
-                        if (str[i] === _old_[0] && str.substr(i, len) === _old_) {
-                            out += _new_;
-                            i += len - 1;
-                        } else {
-                            out += str[i];
-                        }
-                    }
-                    return out;
-                }
-
-                if (!isArray(oldValue))
-                    self = replace(self, oldValue, newValue);
-                else
-                    forEach(oldValue, function (el) {
-                        self = replace(self, el, newValue);
-                    });
-
-                return self;
-            }, String);
-            
-            if( isNull(String.prototype.startsWith) ) {
-                // Helper to check if a string starts with some str
-                def('startsWith', function (v) {
-                    return (this.substr(0, v.length) === v);
-                }, String);
-                // Helper to check if a string ends with some str
-                def('endsWith', function (v) {
-                    return (this.substr(this.length - v.length) === v);
-                }, String);
-                // Helper to check if a string includes a sequence
-                def('includes', function (v) {
-                    for(var i = 0; i < this.length; i++)
-                    if(this.substr(i, v.length) === v)
-                        return true;
-                    return false;
-                }, String);
-
-            }
-            // Helper to clear skeleton with identifier
-            def('clearSkeleton', function (id) {
-                var self = this, attr = '[e-skeleton="'+ id +'"]';
-                self.removeAttribute('e-skeleton');
-                if (self.nodes) forEach(self.nodes(attr), function (el) {
-                    el.removeAttribute('e-skeleton');
-                });
-            }, Element);
         }
         /** UI Handler */
         function UIHandler(config) {
@@ -2458,7 +2484,8 @@
                                 // Skip if it's a comment
                                 if ( isIgnore(node.nodeName) ) return;
                                 
-                                callback(node);
+                                if (inc.isInc(node))
+                                    callback(node);
                             });
 
                             if (mut.removedNodes.length)
@@ -2667,7 +2694,7 @@
             /** Reads the e-for property and generate an object */
             this.cmd.for.read = function(el) {
                 var scope = fn.attr(el, [vars.cmds.for]);
-                if (!scope.value) return { ok: false, msg: Easy.log('Invalid value in e-for') };
+                if (!scope.value) return { ok: false, msg: Easy.log('Invalid expression in e-for') };
                 
                 function split(str, exp) {
                     var check = str.includes(exp);
@@ -2886,47 +2913,85 @@
                     });
                 }
 
+                function prepareMany(data) {
+                    $request.$data = data;
+                    new ReactiveObject($request);
+                    // It's added after Reactive Call to avoid to be altered too
+                    $request.$el = elem;
+                    // Storing the data in the request data
+                    webDataRequests[$request.$code || 'r' + $easy.code(8)] = $request;
+
+                    // Builing e-for var declaration
+                    var $use = fn.attr(elem, [vars.cmds.use], true) || '';
+                    if($use) {
+                        Compiler.addOldAttr({ el: elem, value: $use });
+                        $use = $use.value + ' of ';
+                    }
+                    // Builing e-for filter
+                    var filter = fn.attr(elem, [vars.cmds.filter], true) || '';
+                    if(filter) { 
+                        Compiler.addOldAttr({ el: elem, value: filter });
+                        filter = ' | ' + filter.value;
+                    }
+
+                    elem.valueIn('e-for', $use + '$data' + filter);
+                    Compiler.compile({
+                        el: elem,
+                        data: extend.obj($scope, { $data: $request.$data })
+                    });
+
+                    EasyEvent.emit({
+                        elem: elem,
+                        type: vars.events.response,
+                        model: $request.$data,
+                        scope: $scope
+                    });
+                    watchRequestChanges([ '$id', '$url' ]);
+                }
+
+                function prepareOne(data) {
+                    // Builing e-for var declaration
+                    var $use = fn.attr(elem, [vars.cmds.use], true) || '';
+                    if($use) {
+                        Compiler.addOldAttr({ el: elem, value: $use });
+                        $use = $use.value;
+                    }
+                    
+                    // Setting the alias variable if was defined
+                    if ($use) {
+                        $request.$data = {};
+                        $request.$data[$use] = data; 
+                    } else {
+                        $request.$data = data;
+                    }
+                    new ReactiveObject($request);
+                    // It's added after Reactive Call to avoid to be altered too
+                    $request.$el = elem;
+                    // Storing the data in the request data
+                    webDataRequests[$request.$code || 'r' + $easy.code(8)] = $request;
+
+                    Compiler.compile({
+                        el: elem,
+                        data: extend.obj($request.$data, $scope)
+                    });
+
+                    EasyEvent.emit({
+                        elem: elem,
+                        type: vars.events.response,
+                        model: $request.$data,
+                        scope: $scope
+                    });
+
+                    watchRequestChanges([ '$id' ]);
+                }
+
                 switch ($request.$type) {
                     case 'many':
                         return $easy.read($request.$url, $request.$id)
                         .then(function(data) {
                             if(!data.status)
                                 return Easy.log(data.msg);
-
-                            $request.$data = data.result;
-                            new ReactiveObject($request);
-                            // It's added after Reactive Call to avoid to be altered too
-                            $request.$el = elem;
-                            // Storing the data in the request data
-                            webDataRequests[$request.$id || 'r' + $easy.code(8)] = $request;
-
-                            // Builing e-for var declaration
-                            var $use = fn.attr(elem, [vars.cmds.use], true) || '';
-                            if($use) {
-                                Compiler.addOldAttr({ el: elem, value: $use });
-                                $use = $use.value + ' of ';
-                            }
-                            // Builing e-for filter
-                            var filter = fn.attr(elem, [vars.cmds.filter], true) || '';
-                            if(filter) { 
-                                Compiler.addOldAttr({ el: elem, value: filter });
-                                filter = ' | ' + filter.value;
-                            }
-
-                            elem.valueIn('e-for', $use + '$data' + filter);
-                            Compiler.compile({
-                                el: elem,
-                                data: extend.obj($request, $scope)
-                            });
-
-                            EasyEvent.emit({
-                                elem: elem,
-                                type: vars.events.response,
-                                model: $request.$data,
-                                scope: $scope
-                            });
-
-                            watchRequestChanges([ '$id', '$url' ]);
+                            prepareMany(data.result);
                         })
                         .catch(function(error) {
                             Easy.log(error);
@@ -2941,48 +3006,7 @@
                         .then(function(data) {
                             if(!data.status)
                                 return Easy.log(data.msg);
-                        
-                            // If no data from the response, do nothing
-                            if(!data.result)
-                                EasyEvent.emit({
-                                    elem: elem,
-                                    type: vars.events.empty,
-                                    result: data 
-                                });
-
-                            // Builing e-for var declaration
-                            var $use = fn.attr(elem, [vars.cmds.use], true) || '';
-                            if($use) {
-                                Compiler.addOldAttr({ el: elem, value: $use });
-                                $use = $use.value;
-                            }
-                            
-                            // Setting the alias variable if was defined
-                            if ($use) {
-                                $request.$data = {};
-                                $request.$data[$use] = data.result; 
-                            } else {
-                                $request.$data = data.result;
-                            }
-                            new ReactiveObject($request);
-                            // It's added after Reactive Call to avoid to be altered too
-                            $request.$el = elem;
-                            // Storing the data in the request data
-                            webDataRequests[$request.$id || 'r' + $easy.code(8)] = $request;
-
-                            Compiler.compile({
-                                el: elem,
-                                data: extend.obj($request.$data, $scope)
-                            });
-
-                            EasyEvent.emit({
-                                elem: elem,
-                                type: vars.events.response,
-                                model: $request.$data,
-                                scope: $scope
-                            });
-
-                            watchRequestChanges([ '$id' ]);
+                            prepareOne(data.result);
                         })
                         .catch(function(error) {
                             Easy.log(error);
@@ -3462,16 +3486,15 @@
             this.target = element;
             if (options) options.keys(function (k, v) { self[k] = v; });
         }
-        
         /** Helper to handle the Routes. Dependencies: Easy, Includer */
         function RouteHandler(config) {
             this.routeView = config.el;
             this.routeView.removeAttribute('route-view');
+            var inc = config.includer;
             var msg = function(n, f, s) {
-                return ({ message: 'It is not allowed to defined more than one '+ n +' page.' + 
+                return ({ message: 'It is not allowed to define more than one '+ n +' page.' + 
                 '\n  Please, choose between \''+ f +'\' and \''+ s +'\' in components definition.' });
             }
-            var inc = config.includer;
 
             try {
                 for (var key in inc.paths) {
@@ -3493,26 +3516,56 @@
             this.clear = function () {
                 this.routeView.innerHTML = '';
             }
-            var getPath = function(url) {
+            var getPath = function(url, rewriteUrl) {
                 var $url = urlResolve(url);
-                var value = inc.config.usehash === true ? $url.hash : $url.pathname; 
-                value = value.split('?')[0]; // Clearing the queryStrings
-                
-                if ( value === '' || value === '/' )
+                var $href = $url.href;
+                var $path = $href.substr($url.origin.length + componentConfig.base.length);
+                var usehash = inc.config.usehash;
+                // Removing the hash if necessary
+                if (usehash === true && $path.startsWith('#/') )
+                    $path = $path.substr('#'.length).trim();
+                else
+                    $path = '/' + $path.trim();
+
+                $path = $path.split('?')[0]; // Clearing the queryStrings
+                // If it is an empty path load the default page
+                if ( $path === '' || $path === '/' || $path === '/index.html' )
                     return this.defaultPage;
 
+                // Removing the last forward slash
+                if ( $path.endsWith('/') ) 
+                    $path = $path.substring(0, $path.length - 1); 
+
+                // Searching for the path
                 for (var key in inc.paths) {
                     var path = inc.paths[key];
-                    if( path.route === value )
-                        return path;
-                }
+                    if (!path.route) continue;
 
+                    var $$path = path.route.split('/').map(function(sec) {
+                        return sec[0] === ':' ? '\\w{1,}' : sec; 
+                    }).join('/');
+
+                    if( isArray(new RegExp('^'+ $$path +'$', 'gi').exec($path)) ) {
+                        rewriteUrl.url = (componentConfig.base + (usehash ? '/#/' : '') + $path).replaceAll('//', '/');
+                        return path;
+                    }
+                }
                 return this.notFoundPage;
             }
             this.navegate = function (url) {
+                var rewriteUrl = {}; // Store the url the needs to be wrote
+                var path = getPath.call(this, url, rewriteUrl);
+                
                 this.clear();
-                var path = getPath.call(this, url);
                 if (!path) return Easy.log('🛸 404 Page not found!!!');
+
+                // Changing the title and the url if it needed
+                if (path.title)
+                    doc.title = path.title;
+
+                // Changing the title and the url if it needed
+                if (path.route)
+                    $global.history.pushState({ url: rewriteUrl.url }, path.title, rewriteUrl.url);
 
                 var el = doc.createElement('inc');
                 el.valueIn('src', path.name);
@@ -3521,8 +3574,8 @@
                 this.markActive(path.route);
             }
 
-             // mark 
-             this.markActive = function (route) {
+            // mark 
+            this.markActive = function (route) {
                 // Marking the active-link
                 RouteHandler.handleLink(); // unmark the current
                 route = route || location.href.substr(location.origin.length);
@@ -3531,14 +3584,13 @@
                 if($anchor && $anchor.$markable) RouteHandler.handleLink($anchor);
             }
 
-            $global.addEventListener('hashchange', (function () {
+            $global.addEventListener('popstate', (function () {
                 this.navegate(location.href);
             }).bind(this));
 
             this.navegate(location.href);
             RouteHandler.navegate = this.navegate.bind(this);
         }
-
         RouteHandler.handleLink = function (a) {
             var cls = 'active-link', $instance = RouteHandler.instance;
             if (!$instance) return;
@@ -3550,13 +3602,12 @@
                 $instance.activeLink = a;
             }
         }
-
         RouteHandler.normalizePath = function($value) {
+            // Add and remove multiples // in the  $value
             if ( $value.includes('#') ) return $value;
             var $val = componentConfig.usehash === false ? $value : ('/#/' + $value);
             return (componentConfig.base + $val).replaceAll('//', '/');
         }
-
         //#endregion
 
         //#region Static functions
@@ -3645,12 +3696,13 @@
             var type = options.type, name = 'on:' + type;
             if(!options.elem.hasAttribute || !options.elem.hasAttribute(name)) return;
             var attr = fn.attr(options.elem, [ name ], true);
+            if (trim(attr.value) === '') return Easy.log('Invalid expression in ' + attr.name);
             var event = new EasyEvent(type, options.elem, {
                 data: { $model: options.model, $scope: options.scope },
                 result: options.result
             });
             Compiler.addOldAttr({ el: options.elem, value: attr });      
-            var eventDesc = $propDescriptor($global, 'event'); 
+            var eventDesc = $propDescriptor($global, 'event');
             // Defining to the global object
             $propTransfer($global, { event: event }, 'event');        
             // Calling the function, it is evaluated based on $model data not the scope
@@ -3699,7 +3751,6 @@
             } while(el = el.parentNode)
         }
         //#endregion
-
         try {
             // Setting the begin data
             this.setData(options.data);
@@ -3741,7 +3792,6 @@
                     });
                 }
             }
-    
             if ( options.config.useDOMLoadEvent )
                 doc.addEventListener('DOMContentLoaded', $$init.bind(this), false);
             else 
@@ -3749,6 +3799,12 @@
         } catch(error) {
             Easy.log({ msg: 'Error while initializing. Description: ' + error.message, error: error });
         }
+    }
+    // Default proto methods
+    Easy.prototype.Fetch = Fetch;
+    Easy.prototype.extend = extend;
+    Easy.prototype.return = function (status, message, result) {
+        return { status: status, msg: message, result: result };
     }
     return Easy;
 })));

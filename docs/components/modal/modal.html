@@ -1,0 +1,40 @@
+<div class="app-modal flex-it">
+    <div class="app-flex-center app-card modal">
+        <div class="modal-head flex-it">
+            <div class="app-flex-middle-left">
+                <h3> {{ modalName }} </h3>
+            </div>
+            <div class="app-flex-middle-right function-keys">
+                <span class="app-icon-center bg-close fa fa-times" on:click="closeModal()"></span>
+            </div>
+        </div>
+        <div class="modal-body nice-scroll">
+            <content></content>
+        </div>
+    </div>
+    <div class="app-modal-bg" on:click="closeModal()"></div>
+</div>
+<script>
+    var header, main, self = this;
+    this.mounted = function () { 
+        header = document.node('header');
+        main = document.node('main');
+        if (header && main){
+            header.classList.add('blur-it');
+            main.classList.add('blur-it');
+        }
+    }
+    
+    this.destroyed = function () {
+        if (header && main){
+            header.classList.remove('blur-it');
+            main.classList.remove('blur-it');
+        }
+    }
+
+    this.export({
+        closeModal: function() {
+            self.destroy();
+        }
+    });
+</script>

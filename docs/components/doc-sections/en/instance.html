@@ -1,10 +1,14 @@
 <section class="section">
+    <a href="https://github.com/AfonsoMatElias/easy/blob/6a729b7284758c6064eaadb4dc6b23fde4081aaf/docs/components/doc-sections/en/instance.html"
+        title="Help us improve this documentation on github!" class="edit-content"><span
+            class="fa fa-pencil"></span></a>
+
     <h1> <a id="instance" href="#instance"> Instance </a> </h1>
 
     <p>
-        When you import <span class="note">Easy</span> it will added a function to the global 
-        object, so, to begin using it you need to create a new instance of Easy Class, this 
-        instance expects two parameters:
+        When we import <span class="note">Easy</span> it will added a function to the global
+        object, so, to begin using it we need to create a new instance of Easy Class, this
+        constructor expects two parameters:
     </p>
 
     <pre><code class="javascript hljs">
@@ -14,7 +18,7 @@
     <h3> <a id="inst_el" href="#inst_el"> Element </a> </h3>
     <p>
         The element is the mandatory parameter that represents the section that the instance
-        will control in the application, it must be passed as a String in the format of a 
+        will control in the application, it must be passed as a String in the format of a
         CSS Selector. <span class="note">#myId</span>, <span class="note">.myClass</span> or
         <span class="note">body</span>.
     </p>
@@ -23,12 +27,11 @@
     <p>
         Options is the optional parameter, which can be used to define initial data, instance
         configuration, components (we'll talk about this later), etc. If passed, it must be
-        an object containing all the information you need when the instance is created.
+        an object containing all the information we need when the instance is created.
     </p>
 
     <p>
-        This property can be accessed from the instance object: <span
-            class="note">instance.options</span>.
+        This property can be accessed from the instance object: <span class="note">instance.options</span>.
     </p>
 
     <h3> <a id="properties" href="#properties"> Properties</a> </h3>
@@ -64,45 +67,39 @@
     <ul>
         <li>
             <span class="note mark-el">{ Boolean } log</span> &ndash; Allows the logs
-            (logs, errors and warning) to be shown. Default value is <span
-                class="note mark-el">true</span>.
+            (logs, errors and warning) to be shown. Default value is <span class="note mark-el">true</span>.
         </li>
         <li>
             <span class="note mark-el">{ Boolean } deepIgnore</span> &ndash;
             Allows you to ignore all elements that are inside a container
-            (even those that are added later) when using the command <span
-                class="note">e-ignore</span>
+            (even those that are added later) when using the command <span class="note">e-ignore</span>
             (We'll talk about that in the <a href="docs.page.2.html#commands" class=" mark-el">Commands</a>
             section). <br>
             <span class="note att-border">Be careful, this can slow down your
                 application.</span>
         </li>
         <li>
-            <span class="note mark-el">{ Boolean } useDOMLoadEvent</span> &ndash; Allows the
-            instance to use the 'DOMContentLoaded' event when loading the page.
-            Default value is <span class="note mark-el">true</span>.
+            <span class="note mark-el">{ Boolean } useDOMLoadEvent</span> &ndash; Allows the instance to use
+            the 'DOMContentLoaded' event when loading the page. Default value is
+            <span class="note mark-el">true</span>.
         </li>
         <li>
-            <span class="note mark-el">{ Object } skeleton</span> &ndash; Defines color of the
-            skeleton while the
-            content is being loaded. Is structured as follows: <br>
+            <span class="note mark-el">{ Object } skeleton</span> &ndash; Defines color of the skeleton while
+            the content is being loaded. Is structured as follows: <br>
             <span class="note mark-el"> { background: 'color', wave: 'color' } </span>
-            <br>
-            By default the skeleton is light gray with the lightest wave.
+            <br> By default the skeleton is light gray with the lightest wave.
         </li>
     </ul>
 
     <h3> <a id="prop_data" href="#prop_data">Data</a> </h3>
     <p>
-        As already mentioned, the data property allows you to define the data that the
-        application will have
+        As already mentioned, the data property allows you to define the data that the application will have
         when it starts, however there is a way to add data while it is already running with the
         <span class="note">app.setData(...)</span> method. (We'll talk about that in the
         <a href="docs.page.3.html#methods" class=" mark-el">methods</a> section).
         <br>
-        Data or properties defined on <span class="note">date</span> are not normal
-        properties,
-        they are reactive, this means that they react to changes made to them.
+        Data or properties defined on <span class="note mark-el">data</span> are not normal properties, they are
+        reactive, this means that they react to changes made to them.
     </p>
 
     <div e-if="typeof noApp === 'undefined'">
@@ -112,7 +109,7 @@
         &lt;h4&gt; {{ message }} &lt;/h4&gt;
     &lt;/div&gt;
             </code></pre>
-        
+
             <pre><code class="javascript hljs">
     var app1 = new Easy('#app1', {
         data: {
@@ -120,15 +117,20 @@
         }
     });
             </code></pre>
-        
+
             <div class="result"></div>
         </div>
     </div>
 
     <p>
-        This property can be accessed from the instance object: <span
-            class="note">instance.data</span>,
+        This property can be accessed from the instance object: <span class="note">instance.data</span>,
         You can open the browser console and type <span class="note">app1.data</span>.
+    </p>
+
+    <p>
+        Is in data property where the <i class="note mark-el">functions</i> need to be defined too, and
+        they do not respect <i class="note mark-el">scopes</i> (we'll talk about this later), they can be
+        accessed even if a scope is created.
     </p>
 
     <h3> <a id="prop_hooks" href="#prop_hooks"> Instance Hooks </a> </h3>
@@ -138,18 +140,14 @@
 
     <ul>
         <li>
-            <span class="note mark-el">{ Function } mounted</span> &ndash; this hook is called
-            when
-            the
-            DOMContentLoaded event is raised (It works this way if the <a href="#prop_config"
-                id="prop_config" class="mark-el">useDOMLoadEvent</a>
-            property is true, otherwise, it will be called as soon as the Class is
-            instantiated).
+            <span class="note mark-el">{ Function } mounted</span> &ndash; this hook is called when the
+            DOMContentLoaded event is raised (It works this way if the <a href="#prop_config" id="prop_config"
+                class="mark-el">useDOMLoadEvent</a> property is true, otherwise, it
+            will be called as soon as the Class is instantiated).
         </li>
         <li>
-            <span class="note mark-el">{ Function } loaded</span> &ndash; this hook is called
-            when
-            the root element was compiled.
+            <span class="note mark-el">{ Function } loaded</span> &ndash; this hook is called when the
+            root element was compiled.
         </li>
     </ul>
 
@@ -161,7 +159,7 @@
         &lt;h4&gt; Loaded at: {{ loadedHook }} &lt;/h4&gt;
     &lt;/div&gt;
             </code></pre>
-        
+
             <pre><code class="javascript hljs">
     var app2 = new Easy('#app2', {
         data: {
@@ -176,28 +174,28 @@
         }
     });
             </code></pre>
-        
+
             <div class="result"></div>
         </div>
     </div>
 
     <div class="block-note warn">
         <p>
-            The context of these hooks is the current instance and the root element is
-            passed as an argument.
+            The context of these hooks is the current instance and the root element is passed as
+            an argument.
         </p>
     </div>
 
     <div class="block-note info">
         <p>
-            You can create an instance without a variable, this means that your data
-            cannot be accessed by the browser console.
+            We can create an instance without a variable, meaning that the instance cannot be accessed by the browser
+            console.
         </p>
     </div>
 
 </section>
 <script>
-    this.mounted = function (el) {        
+    this.mounted = function (el) {
         // Execute only if noApp is invalid
         appExector(el, this.scope.noApp);
         scrollByAnchor(el);

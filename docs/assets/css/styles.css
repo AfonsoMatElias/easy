@@ -1,18 +1,17 @@
-@font-face {
-    font-family: Gadugi, Geneva, Tahoma;
-    src: url(../fonts/gadugi.ttf) format("truetype");
-}
-
 * {
     margin: 0;
     padding: 0;
-    font-family: Gadugi;
+    font-family: 'Work Sans', Gadugi, Geneva, Tahoma, sans-serif;
 }
 
 a {
     text-decoration: none;
     color: var(--color-text);
     cursor: pointer;
+}
+
+b {
+    font-weight: 600;
 }
 
 button {
@@ -151,6 +150,48 @@ body {
     font-size: 13pt;
 }
 
+.flex-it {
+    display: flex;
+}
+
+.blur-it {
+    -webkit-filter: blur(8px);
+    -moz-filter: blur(8px);
+    -o-filter: blur(8px);
+    -ms-filter: blur(8px);
+    filter: blur(8px);
+}
+
+.app-flex-center {
+    margin: auto;
+}
+
+.app-flex-center {
+    margin: auto;
+}
+
+.app-flex-middle-right {
+    margin: auto 0 auto auto;
+}
+
+.app-card {
+    background-color: var(--color-bg-lighter);
+    box-shadow: var(--set-shadow);
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.is-in-development {
+    position: absolute;
+    left: 0;   
+    right: 0;
+    background-color: #f0ec8e;
+    z-index: 150;
+    text-align: center;
+    padding: 8px 0;
+    color: var(--color-black-text);
+}
+
 /* Top bar */
 nav {
     position: relative;
@@ -216,7 +257,7 @@ nav .logo {
 
 nav .logo>h2 {
     margin: auto;
-    font-weight: 900;
+    font-weight: 600;
     color: var(--easy-black);
     position: relative;
     top: -3px;
@@ -414,9 +455,10 @@ a.active-doc-menu, a.active-doc-menu * {
     color: var(--color-white-text);
 }
 
-
 /* Documentation page */
-
+.menu a {
+    display: block;
+}
 .menu-btn-container .menu-btn {
     border-radius: 50%;
     border: 2.5px solid var(--color-light-grey);
@@ -691,6 +733,31 @@ ul.top-menu-opened {
     margin: 1px 0;
 }
 
+.section {
+    position: relative;
+}
+
+.section *, p {
+    line-height: 1.5rem;
+}
+
+.edit-content {
+    position: absolute;
+    cursor: pointer;
+    font-size: 13pt;
+    right: 0px;
+    top: 26px;
+}
+
+.edit-content .fa {
+    color: var(--color-text);
+    transition:  color .2s;
+}
+
+.edit-content .fa:hover {
+    color: var(--color-blue);
+}
+
 .doc-page .doc-presentation,
 .tutorial-page .tutorial-presentation {
     flex: 1;
@@ -745,7 +812,7 @@ ul.top-menu-opened {
 
 .doc-page .doc-presentation .section h3,
 .doc-page .doc-presentation .section h4 {
-    font-weight: bold;
+    font-weight: 600;
 }
 
 .doc-page .doc-presentation .section {
@@ -769,8 +836,7 @@ ul.top-menu-opened {
 }
 
 .doc-page .doc-presentation .section ul li,
-.doc-page .doc-presentation .section ol li
- {
+.doc-page .doc-presentation .section ol li {
     margin: 10px 0;
     line-height: 30px;
 }
@@ -797,6 +863,7 @@ ul.top-menu-opened {
 }
 
 .keep-reading {
+    max-width: 950px;
     display: flex;
     padding: 40px 0;
 }
@@ -952,6 +1019,114 @@ pre code::after,
     color: var(--note-red);
 }
 
+.app-modal,
+.app-modal .app-modal-bg {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 200;
+}
+
+.app-modal .app-modal-bg {
+    background-color: #3d3d3d;
+    opacity: .6;
+}
+
+.app-modal .modal {
+    z-index: 201;
+    width: 600px;
+}
+
+.app-modal .modal .modal-head {
+    padding: 10px 0;
+}
+
+.app-modal .modal .modal-body {
+    padding: 10px 5px;
+}
+
+.app-modal .modal .modal-body {
+    max-height: 560px;
+    overflow-y: auto;
+    color: var(--color-text);
+    line-height: 28px;
+}
+
+.app-modal .modal .modal-body .edit-content {
+    top: 0px;
+}
+
+.app-modal .modal .modal-body .modal-actions {
+    margin-top: 15px;
+}
+
+.app-modal .modal .modal-body p,
+.app-modal .modal .modal-body h1,
+.app-modal .modal .modal-body h2,
+.app-modal .modal .modal-body h3 {
+    margin: 26px 0;
+    color: var(--color-text);
+}
+
+.app-modal .modal .modal-body h1 * {
+    color: var(--color-blue);
+}
+
+.app-modal .modal .modal-body h3,
+.app-modal .modal .modal-body h4 {
+    font-weight: 600;
+}
+
+
+.function-keys {
+    position: relative;
+}
+
+.function-keys>span {
+    cursor: pointer;
+    display: inline-block;
+    border-radius: 50%;
+    box-shadow: 0 0 2px 1.4px var(--color-border);
+    color: transparent;
+    margin: 0 2px;
+    margin-top: 4px;
+    font-size: 9pt;
+    height: 18px;
+    width: 18px;
+}
+
+.function-keys>span:hover {
+    transition: color .4s;
+    color: #fafafa;
+} 
+
+.function-keys .bg-add {
+    background-color: var(--color-green);
+} 
+
+.function-keys .bg-min {
+    background-color: var(--color-yellow);
+} 
+
+.function-keys .bg-close {
+    background-color: var(--color-red);
+}
+
+.function-keys .bg-edit {
+    background-color: var(--color-blue);
+}
+
+.function-keys>span {
+    position: relative;
+}
+
+.function-keys>span:before {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
 /* Animations classes */
 .loading-component {
     z-index: 300;
@@ -1026,6 +1201,21 @@ pre code::after,
 @media (max-width: 700px) {
     .editor-divider {
         padding: 0;
+    }
+
+    .app-modal .modal {
+        width: unset;
+        margin: unset;
+        position: absolute;
+        top: 20px;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+    }
+    
+    .app-modal .modal .modal-body {
+        overflow-y: auto;
+        height: 80vh;
     }
 }
 

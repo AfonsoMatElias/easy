@@ -309,11 +309,16 @@
                     '<\/script>'
                 );
 
-                // Filling the screen
-                var idoc = result.contentWindow.document;
-                idoc.open();
-                idoc.write(content);
-                idoc.close();
+                var contentWindow = result.contentWindow;
+                if (contentWindow) {
+                    // Filling the screen
+                    var idoc = contentWindow.document;
+                    idoc.open();
+                    idoc.write(content);
+                    idoc.close();
+                } else {
+                    console.error(options, 'No window has been found!');
+                }
             }
 
             function setConsoleIcon(name) {

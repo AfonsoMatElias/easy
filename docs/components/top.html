@@ -1,6 +1,8 @@
 <nav>
     <a i:href="/">
-        <div class="logo"><h2><span class="yellow">e</span><span>asy.js</span></h2></div>
+        <div class="logo">
+            <h2><span class="yellow">e</span><span>asy.js</span></h2>
+        </div>
     </a>
     <div class="menu-container">
         <div class="top-menu-handler" e-def="{ menuOpened: false }">
@@ -14,8 +16,9 @@
             <li> <a :href="/tutorial"> Tutorial </a> </li>
             <li> <a href="docs.page.1.html"> Docs </a> </li>
             <li> <a href="connectors.html"> Connectors </a> </li>
-            <li class="hide-it"> <span class="text"> Translations </span> <span class="fa fa-dot-circle-o dot"></span> </li>
-            <li> <a>Download</a> </li>
+            <li class="hide-it"> <span class="text"> Translations </span> <span class="fa fa-dot-circle-o dot"></span>
+            </li>
+            <li> <a on:click="showModal">Download</a> </li>
             <li> <a href="https://github.com/AfonsoMatElias/easy" class="fa fa-github"></a> </li>
             <li> <a target="blank" href="https://www.facebook.com/easyjs" class="fa fa-facebook"></a> </li>
             <li on:click="darkMode = !darkMode"> <span class="fa {{ themeIco }}"></span> </li>
@@ -24,13 +27,13 @@
 </nav>
 <script>
     this.loaded = function (el) {
-        if ( this.Easy.routing && location.hash != '' ) {
+        if (this.Easy.routing && location.hash != '') {
             this.Easy.routing.markActive();
         } else {
             var anchors = el.nodes('a');
             for (var i = 0; i < anchors.length; i++) {
                 var e = anchors[i];
-                if ( e.pathname === location.pathname ) {
+                if (e.pathname === location.pathname ) {
                     e.classList.add('active-link');
                     break;
                 }

@@ -1,9 +1,22 @@
 <section class="section">
+    <a href="https://github.com/AfonsoMatElias/easy/blob/6a729b7284758c6064eaadb4dc6b23fde4081aaf/docs/components/doc-sections/en/components.html"
+        title="Help us improve this documentation on github!" class="edit-content"><span
+            class="fa fa-pencil"></span></a>
+
     <h1><a id="comps_incs" href="#comps_incs"> Components / Includers </a></h1>
     <p>
         It is a concept that allows the reuse of HTML code. Easy creates and handles components
         in a different way, we will see in the chapters below...
     </p>
+
+    <div class="block-note warn">
+        <p>
+            The terms <i class="mark-el">Includer</i> and <i class="mark-el">Component</i> in <i
+                class="note">Easy.js</i>
+            are the same thing, so, when we say `includer` it means that we are refering a `component` and when say
+            `component` we are also refering an `includer`.
+        </p>
+    </div>
 
     <p>
         There are two types of components, <span class="note mark-el">Cloned</span> and <span
@@ -163,7 +176,7 @@
             when it request in the first time. The default value is <span class="note mark-el">true</span>. </li>
 
         <li> <span class="note mark-el">nameId.data</span> &ndash; represents data that wll be
-            injected in the component when it loads. </li>     
+            injected in the component when it loads. </li>
     </ul>
 
     <h3> <a id="comp_handing" href="#comp_handing"></a> Handling Components </h3>
@@ -245,7 +258,7 @@
     </p>
 
     <p>
-        The <i class="mark-el">this</i> keywork allows you to have access of the component data accessing
+        The <i class="mark-el">this</i> keyword allows you to have access of the component data accessing
         <i class="mark-el">this.data</i>. To have access of the parent component data
         (<i class="mark-el">outside scope</i>), we use <i class="mark-el">this.scope</i>
     </p>
@@ -380,6 +393,27 @@
     &lt;inc src="{{ currentTab }}"&gt; &lt;/inc&gt;
     </code></pre>
 
+    <h3> <a id="comp_on" href="#comp_on"> Inc with `on` Method </a> </h3>
+    <p>
+        There are built-in events for includers that allow us to listen to a diferents states of an includer,
+        which are:
+    </p>
+
+    <ul>
+        <li> <span class="note mark-el">incRequested</span> &ndash; this event is dispatched when the DOM requestes
+            an includer. </li>
+        <li> <span class="note mark-el">incMounted</span> &ndash; this event is dispatched when an includer is
+            mounted in the DOM. </li>
+        <li> <span class="note mark-el">incLoaded</span> &ndash; this event is dispatched when an includer is
+            loaded or compiled.</li>
+        <li> <span class="note mark-el">incDestroyed</span> &ndash; this event is dispatched when an includer is
+            destroyed. </li>
+        <li> <span class="note mark-el">incBlocked</span> &ndash; this event is dispatched when an includer is
+            blocked for restrictions reasons.</li>
+        <li> <span class="note mark-el">incFail</span> &ndash; this event is dispatched when an includer failed
+            on request.</li>
+    </ul>
+
     <h3> <a id="comp_keep_alive" href="#comp_keep_alive"> Keep Alive </a> </h3>
     <p>
         By default, the components are re-created when they are requested to be included, to
@@ -460,7 +494,8 @@
 
     <div class="block-note info">
         <p>
-            For live usage, you may keep learing in Tutorial Page. <a i:href="/tutorial" class="mark-el">Take me there</a>!
+            For live usage, you may keep learning in Tutorial Page. <a i:href="/tutorial/components" class="mark-el">Take me
+                there</a>!
         </p>
     </div>
 

@@ -1,4 +1,13 @@
-<p align="center"><a href="https://afonsomatelias.github.io/easy" target="_blank" rel="noopener noreferrer"><img height="120px" src="/docs/assets/img/main_ico.png" /></a></p>
+<p align="center"><a href="https://afonsomatelias.github.io/easy" target="_blank" rel="noopener noreferrer"><img height="120px" src="docs/assets/img/main_ico.png" /></a></p>
+
+<p align="center">
+    <a href="https://github.com/afonsomatelias/easy/blob/master/LICENSE">
+        <img src="https://img.shields.io/badge/dynamic/json?color=orange&label=version&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2FAfonsoMatElias%2Feasy%2Fmaster%2Fpackage.json" alt="Verison">
+    </a>
+    <a href="https://github.com/afonsomatelias/easy">
+        <img src="https://img.shields.io/badge/License-MIT-brightgreen" alt="License">
+    </a>
+</p>
 
 <h2 align="center"> Easy </h2>
 
@@ -48,7 +57,7 @@ Or, you may download file to use locally 💻:
 ```
 [Download it now](https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.0.0/easy.js)
 
-#### Until now, you have it install in your project and you are ready to go!!! 😀
+#### So far, you have it install in your project and you are ready to go!!! 😀
 
 ## Testing
 
@@ -74,15 +83,11 @@ Check the browser console, if no error or warning message is there, congratulati
 
 ## Check the documentation
 
-[Click Me](https://afonsomatelias.github.io/easy/docs.html) to see the documentation and some live examples!
+[Click Me](https://afonsomatelias.github.io/easy/docs.page.1.html) to see the documentation and some live examples!
 
 ## Contributing
 
-Will be listed! 😁
-
-## Authors
-
-* **Afonso Matumona** - *Initial work* - [AfonsoMaElias](https://github.com/AfonsoMatumona)
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
 

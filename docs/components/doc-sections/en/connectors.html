@@ -1,0 +1,467 @@
+<section class="section">
+    <a href="https://github.com/AfonsoMatElias/easy/blob/6a729b7284758c6064eaadb4dc6b23fde4081aaf/docs/components/doc-sections/en/connectors.html"
+        title="Help us improve this documentation on github!" class="edit-content"><span
+            class="fa fa-pencil"></span></a>
+
+    <h1> <a id="connectors" href="#connectors"> Connectors </a> </h1>
+    <p>
+        A connector is a class object that is associated with <i class="note mark-el">Easy</i> making it able to make
+        outside requests using built-in methods and simple commands. When it is imported it also creates an instance
+        of it self configuring that instance in the Easy Object. <br>
+        <a class="mark-el">See All Available Connectors</a>
+    </p>
+
+    <div class="block-note warn">
+        <p>
+            Connectors doesn't work alone, it need find easy.js script imported, otherwise it will not be created.
+        </p>
+    </div>
+
+    <h3> <a id="conn_methods" href="#conn_methods"> Methods </a> </h3>
+    <p>
+        Each easy instance has 5 methods that can be used to execute certain method in the connector instance,
+        which are:
+    </p>
+
+    <ul>
+        <li> <span class="note mark-el">create(<i class="mark-el">path</i>, <i class="mark-el">object</i>)</span> </li>
+        <li> <span class="note mark-el">read(<i class="mark-el">path</i>, <i class="mark-el">extra</i>)</span> </li>
+        <li> <span class="note mark-el">update(<i class="mark-el">path</i>, <i class="mark-el">object</i>, <i
+                    class="mark-el">id</i>)</span> </li>
+        <li> <span class="note mark-el">delete(<i class="mark-el">path</i>, <i class="mark-el">object</i>)</span> </li>
+        <li> <span class="note mark-el">getOne(<i class="mark-el">path</i>, <i class="mark-el">id</i>) </span> </li>
+        <li> <span class="note mark-el">request(<i class="mark-el">code</i>, <i class="mark-el">callback</i>) </span>
+        </li>
+    </ul>
+
+    <p>
+        Let's explain how each method work.
+    </p>
+
+    <p>
+        <span class="note mark-el">create</span> &ndash; performs the <i class="mark-el">create</i> method in the
+        connector instance returning a promise. It expects two parameters:
+    </p>
+
+    <ul>
+        <li> <i class="mark-el">path</i> &ndash; the path the where the object need to be inserted. </li>
+        <li> <i class="mark-el">object</i> &ndash; the object is a <i class="note mark-el">Object Literal</i> or a
+            <i class="note mark-el">Form Element</i>, represents the object that will be inserted. When passed a
+            Form Element it an object will the generated from the element. </li>
+        <li> <i class="mark-el">return</i> &ndash; a promise according to data configured in the connector instance.
+        </li>
+    </ul>
+
+    <pre><code class="javascript hljs">
+    var app = new Easy('#app');
+
+    app.create('user', { name: 'Maria', country: 'Angola' })
+       .then(function(data){
+            console.log(data);  
+       })
+       .catch(function(err){
+            console.error(err);  
+       });
+    </code></pre>
+
+    <p>
+        <span class="note mark-el">read</span> &ndash; performs the <i class="mark-el">read</i> method in the connector
+        instance returning a promise. It expects two parameters:
+    </p>
+    <ul>
+        <li> <i class="mark-el">path</i> &ndash; the path the where the objects need to be read. </li>
+        <li> <i class="mark-el">extra (Optional)</i> &ndash; some extra string that need to be concatenated with the
+            path
+            using forward slash <i class="note mark-el">/</i>. </li>
+        <li> <i class="mark-el">return</i> &ndash; a promise according to data configured in the connector instance.
+        </li>
+    </ul>
+
+    <pre e-ignore><code class="javascript hljs">
+    var app = new Easy('#app');
+
+    app.read('users')
+       .then(function(data){
+            console.log(data);  
+       })
+       .catch(function(err){
+            console.error(err);  
+       });
+    </code></pre>
+
+    <p>
+        <span class="note mark-el">update</span> &ndash; performs the <i class="mark-el">update</i> method in the
+        connector instance returning a promise. It expects three parameters:
+    </p>
+
+    <ul>
+        <li> <i class="mark-el">path</i> &ndash; the path the where the object need to be updated. </li>
+        <li> <i class="mark-el">object</i> &ndash; the object is a <i class="note mark-el">Object Literal</i> or a
+            <i class="note mark-el">Form Element</i>, represents the object that will be updated to. When passed a
+            Form Element it an object will the generated from the element. </li>
+        <li> <i class="mark-el">return</i> &ndash; a promise according to data configured in the connector instance.
+        </li>
+    </ul>
+
+    <pre e-ignore><code class="javascript hljs">
+    var app = new Easy('#app');
+
+    app.update('user', { name: 'Formosa' }, 1)
+       .then(function(data){
+            console.log(data);  
+       })
+       .catch(function(err){
+            console.error(err);  
+       });
+    </code></pre>
+
+    <p>
+        <span class="note mark-el">delete</span> &ndash; performs the <i class="mark-el">delete</i> method in the
+        connector instance returning a promise. It expects two parameters:
+    </p>
+    <ul>
+        <li> <i class="mark-el">path</i> &ndash; the path the where the object need to be deleted. </li>
+        <li> <i class="mark-el">id</i> &ndash; the unique id of the object. </li>
+        <li> <i class="mark-el">return</i> &ndash; a promise according to data configured in the connector instance.
+        </li>
+    </ul>
+
+    <pre e-ignore><code class="javascript hljs">
+    var app = new Easy('#app');
+    app.delete('user', 1)
+       .then(function(data){
+            console.log(data);  
+       })
+       .catch(function(err){
+            console.error(err);  
+       });
+    </code></pre>
+
+    <p>
+        <span class="note mark-el">getOne</span> &ndash; performs the <i class="mark-el">getOne</i> method in the
+        connector instance returning a promise. Is mandatory that only one result object need to be returned.
+        It expects two parameters:
+    </p>
+
+    <ul>
+        <li> <i class="mark-el">path</i> &ndash; the path the where the object need to be read. </li>
+        <li> <i class="mark-el">id</i> &ndash; the unique id of the object. </li>
+        <li> <i class="mark-el">return</i> &ndash; a promise according to data configured in the connector instance.
+        </li>
+    </ul>
+
+    <pre e-ignore><code class="javascript hljs">
+    var app = new Easy('#app');
+    app.getOne('user', 1)
+       .then(function(data){
+            console.log(data);  
+       })
+       .catch(function(err){
+            console.error(err);  
+       });
+    </code></pre>
+
+    <p>
+        <span class="note mark-el">request</span> &ndash; used to get command request object. It expects two
+        parameters:
+    </p>
+
+    <ul>
+        <li> <i class="mark-el">code</i> &ndash; the unique code defined in the request command or the request url.
+        </li>
+        <li> <i class="mark-el">callback</i> &ndash; the callback function where will be passed the request object as
+            the first argument. </li>
+        <li> <i class="mark-el">return</i> &ndash; a promise according to data configured in the connector instance.
+        </li>
+    </ul>
+
+    <p>
+        The struture of the request object is:
+    </p>
+
+    <pre e-ignore><code class="javascript hljs">
+    {
+        // An unique code
+        $code: String,
+        
+        // The url of the request
+        $url: String,
+
+        // The request type 
+        $type: String,
+
+        // The id value of the request
+        $id: String,
+
+        // The element of the request
+        $el: Element,
+
+        // The data of the request
+        $data: Object,
+
+        // The scope object
+        $scope: Object
+    }
+    </code></pre>
+
+    <h3> <a id="conn_commands" href="#conn_commands"> <b>Commands</b> </a> </h3>
+    <p>
+        These are commands that can be used with a connector in HTML elements, performing <i
+            class="note mark-el">read</i> request or <i class="note mark-el">getOne</i> request.
+    </p>
+
+    <h4> <a id="conn_c_tmp" href="#conn_c_tmp"> e-tmp </a> </h4>
+    <p>
+        It's short of e-template, performs read request according to the path provided and render all the results after
+        the request is completed.
+    </p>
+
+    <pre e-ignore><code class="html hljs">
+    &lt;ul&gt;
+        &lt;li e-tmp="users"&gt;
+            &lt;label&gt; {{ name }} &lt;label&gt;
+            &lt;label&gt; {{ country }} &lt;label&gt;
+        &lt;/li&gt;
+    &lt;/ul&gt;
+    </code></pre>
+
+    <h4> <a id="conn_c_tmp_w_filter" href="#conn_c_tmp_w_filter"> e-tmp with e-id </a> </h4>
+    <p>
+        Performs read request according to the path provided, adding the value of <i class="note mark-el">e-id</i>
+        attribute to extra parameter.
+    </p>
+
+    <pre e-ignore><code class="html hljs">
+    &lt;ul&gt;
+        &lt;!-- Getting only active users --&gt;
+        &lt;li e-tmp="users" e-id="active"&gt;
+            &lt;label&gt; {{ name }} &lt;label&gt;
+            &lt;label&gt; {{ country }} &lt;label&gt;
+        &lt;/li&gt;
+    &lt;/ul&gt;
+    </code></pre>
+
+    <div class="block-note info">
+        <p>
+            It could also be done like this:
+            <i class="note mark-el">e-tmp="users/active"</i>
+        </p>
+    </div>
+
+    <h4> <a id="conn_c_tmp_w_filter" href="#conn_c_tmp_w_filter"> e-tmp with e-filter </a> </h4>
+    <p>
+        The list of values returned can also be filtered using e-filter command, the filter expression is
+        the same of the <i class="note mark-el">e-for</i> filter, it accepts all the diferents filters
+        provided by easy.js.
+    </p>
+
+    <pre e-ignore><code class="html hljs">
+    &lt;ul e-def="{ search: '' }"&gt; 
+        &lt;li e-tmp="users" e-filter="search"&gt; 
+            &lt;label&gt; {{ name }} &lt;label&gt;
+            &lt;label&gt; {{ country }} &lt;label&gt;
+        &lt;/li&gt;
+    &lt;/ul&gt;
+    </code></pre>
+
+    <h4> <a id="conn_c_tmp_w_order" href="#conn_c_tmp_w_order"> e-tmp with e-order </a> </h4>
+    <p>
+        The list of values returned can also be ordered e-order command, the order expression is
+        the same of the <i class="note mark-el">e-for</i> order.
+    </p>
+
+    <pre e-ignore><code class="html hljs">
+    &lt;ul&gt; 
+        &lt;li e-tmp="users" e-order="asc:country"&gt; 
+            &lt;label&gt; {{ name }} &lt;label&gt;
+            &lt;label&gt; {{ country }} &lt;label&gt;
+        &lt;/li&gt;
+    &lt;/ul&gt;
+    </code></pre>
+
+    <h4> <a id="conn_c_fill" href="#conn_c_fill"> e-fill with e-id </a> </h4>
+    <p>
+        Performs getOne request according to the path provided and render the result after the
+        request is completed. The syntax is <i class="note mark-el">e-fill="path"</i>.
+        But, it need to be combined with <i class="note mark-el">e-id</i> that will the value of
+        the id parameter. <br>
+        <span class="note warn-border">The <i class="mark-el">e-id</i> attribute is mandatory</span>.
+    </p>
+
+    <pre e-ignore><code class="html hljs">
+    &lt;div e-fill="users" e-id="1"&gt; 
+        Name: &lt;label&gt; {{ name }} &lt;label&gt;
+        Country: &lt;label&gt; {{ country }} &lt;label&gt;
+    &lt;/div&gt;
+    </code></pre>
+
+    <h4> <a id="conn_c_req" href="#conn_c_req"> e-req </a> </h4>
+    <p>
+        It's short of e-request, this is the versatile command, whicch can perform
+        <i class="note mark-el">e-tmp (read)</i> or <i class="note mark-el">e-fill (getOne)</i>
+        request according to the expression provided. The syntax is: <br>
+    </p>
+
+    <pre e-ignore><code class="html hljs">
+    &lt;!-- Any request type --&gt;
+    &lt;element 
+    e-req="{
+        $code: String (Optional),
+        $url: String,
+        $type: String,
+        $id: String
+    }"/&gt;
+    </code></pre>
+
+    <ul>
+        <li> <i class="mark-el">$code</i> &ndash; the unique code of this request, used to get an specific
+            request object.</li>
+        <li> <i class="mark-el">$url</i> &ndash; the url or path of the request.</li>
+        <li> <i class="mark-el">$type</i> &ndash; the type of the request that can be
+            <i class="note mark-el">many</i> or <i class="note mark-el">one</i>. If not defined `many` will be setted to
+            to this property. </li>
+        <li> <i class="mark-el">$id</i> &ndash; the <i class="mark-el">id</i> value in case of
+            <i class="note mark-el">getOne</i> or <i class="mark-el">extra</i> in case
+            of <i class="note mark-el">read</i>.</li>
+    </ul>
+
+    <pre e-ignore><code class="html hljs">
+    &lt;!-- Requesting Many --&gt;
+    &lt;ul&gt;
+        &lt;li e-req="{ 
+            $url: 'users',
+            $code: 'all-users'
+        }"&gt;
+            &lt;label&gt; {{ name }} &lt;label&gt;
+            &lt;label&gt; {{ country }} &lt;label&gt;
+        &lt;/li&gt;
+    &lt;/ul&gt;
+
+    &lt;!-- Requesting One --&gt;
+    &lt;div e-req="{
+        $type: 'one',
+        $url: 'users', 
+        $id: 1
+    }"&gt; 
+        Name: &lt;label&gt; {{ name }} &lt;label&gt;
+        Country: &lt;label&gt; {{ country }} &lt;label&gt;
+    &lt;/div&gt;
+    
+    &lt;script&gt; 
+        var app = new Easy('#app');
+        app.request('all-users', function(req){
+            console.log(req);
+        });
+    &lt;/script&gt;
+    </code></pre>
+
+    <div class="block-note warn">
+        <p>
+            When the commands <i class="mark-el">e-tmp</i>, <i class="mark-el">e-fill</i> and <i
+                class="mark-el">e-req</i> are used, a scope is created having the <i class="mark-el">request object</i>
+            mixed with the <i class="mark-el">scope object</i> .
+        </p>
+    </div>
+
+    <h4> <a id="conn_c_use" href="#conn_c_use"> e-use </a> </h4>
+    <p>
+        This command is used to create a variable containing the request result. When used with <i
+            class="mark-el">e-tmp</i> or <i class="mark-el">e-req:'many'</i> creates for each result, and when used with
+        <i class="mark-el">e-fill</i> or <i class="mark-el">e-req:'one'</i> creates for the result.
+    </p>
+
+    <pre e-ignore><code class="html hljs">
+    &lt;ul&gt;
+        &lt;li e-tmp="users" e-use="user"&gt;
+            &lt;label&gt; {{ user.name }} &lt;label&gt;
+            &lt;label&gt; {{ user.country }} &lt;label&gt;
+        &lt;/li&gt;
+    &lt;/ul&gt;
+    </code></pre>
+
+    <h3> <a id="conn_available" href="#conn_available"> Available </a> </h3>
+    <p>
+        All the available connectors can be found in the connectors folder, and they can be downloaded using the <a
+        on:click="showModal" class="note mark-el">download modal</a>.
+    </p>
+
+    <h4> <a id="conn_ajax" href="#conn_ajax"> Ajax </a> </h4>
+    <p>
+        The file easy.ajax.js, has the connector that allows <i class="note mark-el">Easy.js</i> to make ajax request.
+        It is very simple to
+        be configured and begin making requests in a server.
+    </p>
+
+    <p>
+        The constructor of this connector expects two parameters, the <i class="note mark-el">baseUrl</i> and the <i
+            class="note mark-el">fetchOptions</i>.
+    </p>
+
+    <ul>
+        <li> <i class="mark-el">baseUrl</i> &ndash; represents the base url of the server, it is normally the constante
+            part of it. eg.: <i class="note mark-el">http://localhost:3000/api/</i> </li>
+        <li> <i class="mark-el">fetchOptions</i> &ndash; the object having the all the object that a request needs, like
+            <i class="note mark-el">type</i>, <i class="note mark-el">headers</i>, etc. </li>
+    </ul>
+
+    <pre e-ignore><code class="javascript hljs">
+    // Configuration example
+    new EasyConnector('http://localhost:3000/api/', {
+        type: 'json',
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        }
+    });
+    </code></pre>
+
+    <p>
+        In the main response return, only actually data need to be returned, if the response come into an object like
+        this one <span class="note">
+            { data: <i class="mark-el">{...}</i>, errors: <i class="mark-el">[...]</i>, success: <i
+                class="mark-el">boolean</i> }
+        </span>, we need to access the `data` property and return it like this:
+    </p>
+
+    <pre e-ignore><code class="javascript hljs">
+    ...
+    new Promise(function (resolve, reject) {
+        ...
+        var response = { data: [1,2,3], errors: [], success: true }; 
+    
+        return resolve($easy.return(true, 'Ok', response.data));
+    });
+    </code></pre>
+
+    <div class="block-note info">
+        <p>
+            The <i class="mark-el">return</i> method can be found in Easy.prototype.<i class="mark-el">return</i>, used
+            to generated the return type object to be understanded in the easy instance.
+        </p>
+    </div>
+
+    <div class="block-note info">
+        <p>
+            Into the connector file was explained how to configured it according to your server response.
+        </p>
+    </div>
+
+    <div class="block-note info">
+        <p>
+            All the returned data become reactive after the resolve function, it means that if the data is an array we may 
+            easily use the push, pop, etc.
+        </p>
+    </div>
+
+    <h3> <a id="conn_free" href="#conn_free"> Free </a> </h3>
+    <p>
+        The file easy.free.js is a connector struture that is used to create another connectors, meaning that any one
+        can create his own connector based on this file.
+    </p>
+</section>
+<script>
+    this.mounted = function (el) {
+        appExector(el);
+        scrollByAnchor(el);
+    }
+</script>

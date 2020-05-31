@@ -1,4 +1,8 @@
 <section class="section">
+    <a href="https://github.com/AfonsoMatElias/easy/blob/6a729b7284758c6064eaadb4dc6b23fde4081aaf/docs/components/doc-sections/en/installation.html"
+        title="Help us improve this documentation on github!" class="edit-content"><span
+            class="fa fa-pencil"></span></a>
+
     <h1> <a id="installation" href="#installation"> Installation </a> </h1>
     <p>
         It is easily added to a web project, just like the other libraries and framework, and
@@ -7,11 +11,12 @@
 
     <h3> <a id="install_local" href="#install_local"> Locally </a> </h3>
     <p>
-        To use it locally, you need to download the file and import it
+        To use it locally, we need to download the file and import it
     </p>
 
     <p>
-        <a class="button-like" href="#"> Download </a>
+        <a class="button-like" download target="_blank"
+            href="https://cdn.jsdelivr.net/gh/afonsomatelias/easy@1.0.6/easy.js"> Download </a>
     </p>
 
     <pre><code class="HTML hljs">
@@ -22,13 +27,13 @@
 
     <h3> <a id="install_cdn" href="#install_cdn"> CDN </a> </h3>
     <p>
-        Using <a href="https://www.cloudflare.com/learning/cdn/what-is-a-cdn/" target="_blank"
-            class="mark-a" rel="noopener noreferrer">CDN</a>
+        Using <a href="https://www.cloudflare.com/learning/cdn/what-is-a-cdn/" target="_blank" class="mark-a"
+            rel="noopener noreferrer">CDN</a>
         is a little bit simpler because the only thing that must be done is to import it
     </p>
 
     <pre><code class="HTML hljs">
-    &lt;script src="https://cdn.jsdeliv.com/gh/afonsomatelias/v2/easy.js"&gt;&lt;/script&gt;
+    &lt;script src="https://cdn.jsdelivr.net/gh/afonsomatelias/easy@1.0.6/easy.js"&gt;&lt;/script&gt;
     </code></pre>
 
 </section>
@@ -36,5 +41,17 @@
     this.mounted = function (el) {
         appExector(el);
         scrollByAnchor(el);
+    }
+
+    this.loaded = function (el) {
+        // disabling the anchors
+        if (this.scope.hasOwnProperty('modalName')) {
+            var anchors = el.nodes('a[id]');
+            for (var i = 0; i < anchors.length; i++) {
+                anchors[i].onclick = function (evt) {
+                    return evt.preventDefault();
+                }
+            }
+        }
     }
 </script>
