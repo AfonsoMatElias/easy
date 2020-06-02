@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
         components: {
             config: {
                 // Disable it when using locally 
-                // base: '/easy/'
+                base: '/easy/'
             },
             elements: {
                 'top': "/components/top",
