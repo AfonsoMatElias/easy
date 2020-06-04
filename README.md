@@ -5,7 +5,7 @@
         <img src="https://img.shields.io/badge/dynamic/json?color=orange&label=version&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2FAfonsoMatElias%2Feasy%2Fmaster%2Fpackage.json" alt="Verison">
     </a>
     <a href="https://github.com/afonsomatelias/easy">
-        <img src="https://img.shields.io/badge/License-MIT-brightgreen" alt="License">
+        <img src="https://img.shields.io/badge/license-MIT-brightgreen" alt="License">
     </a>
 </p>
 
