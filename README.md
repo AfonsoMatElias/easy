@@ -31,7 +31,7 @@ It was tested in almost every popular browsers and IE 11, below that is not supo
 ### Scale of Projects
 A web application fully developed with easy.js was tested only with small projects, larger projects was not tested yet.
 
-Learn more about at, visit our site [Easy Site](https://afonsomatelias.github.com/easy).
+Visit our site to learn more about it, [Easy Site](https://afonsomatelias.github.com/easy).
 
 ## Prerequisites
 
