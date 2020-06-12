@@ -69,7 +69,7 @@ Create a script tag below the importing or even a script file (you need to impor
     <p> This is my first Easy app </p>
 <div>
 
-<script src="/js/easy.js"></script>
+<script src="js/easy.js"></script>
 <script>
     new Easy('#app', {
         data: {
