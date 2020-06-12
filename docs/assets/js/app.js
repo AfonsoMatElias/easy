@@ -11,8 +11,8 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         components: {
             config: {
-                // Disable it when using locally 
-                // base: '/easy/'
+                // Comment this when using locally 
+                base: '/easy/'
             },
             elements: {
                 'top': "/components/top",
