@@ -3498,7 +3498,7 @@
                 var removeLastForwardSlash = function ($$path) {
                     return $$path.endsWith('/') ? $$path.substring(0, $$path.length - 1) : $$path; 
                 }
-                rewriteUrl.url = removeLastForwardSlash('/' + $path + componentConfig.base).replaceAll('//', '/');
+                rewriteUrl.url = removeLastForwardSlash(componentConfig.base + $path).replaceAll('//', '/');
                 // Removing the hash if necessary
                 if (usehash === true && $path.startsWith('#/') )
                     $path = $path.substr('#'.length).trim();
