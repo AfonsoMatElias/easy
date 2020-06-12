@@ -47,7 +47,7 @@ To use into your project you may import via cdn 🌍:
 
 ``` HTML
 <!-- Attention: this is an example -->
-<script src="https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.0.0/easy.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.0.0-rls/easy.js"></script>
 ```
 
 Or, you may download file to use locally 💻:
