@@ -5,7 +5,7 @@
         <img src="https://img.shields.io/badge/dynamic/json?color=orange&label=version&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2FAfonsoMatElias%2Feasy%2Fmaster%2Fpackage.json" alt="Verison">
     </a>
     <a href="https://github.com/afonsomatelias/easy">
-        <img src="https://img.shields.io/badge/License-MIT-brightgreen" alt="License">
+        <img src="https://img.shields.io/badge/license-MIT-brightgreen" alt="License">
     </a>
 </p>
 
@@ -31,7 +31,7 @@ It was tested in almost every popular browsers and IE 11, below that is not supo
 ### Scale of Projects
 A web application fully developed with easy.js was tested only with small projects, larger projects was not tested yet.
 
-Learn more about at, visit our site [Easy Site](https://afonsomatelias.github.com/easy).
+Visit our site to learn more about it, [Easy Site](https://afonsomatelias.github.com/easy).
 
 ## Prerequisites
 
