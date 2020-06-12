@@ -46,7 +46,7 @@ To start using it, you need to know:
 To use into your project you may import via cdn 🌍:
 
 ``` HTML
-<!-- Attention: this url is not working yet -->
+<!-- Attention: this is an example -->
 <script src="https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.0.0/easy.js"></script>
 ```
 
