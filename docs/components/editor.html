@@ -2,16 +2,48 @@
     <div class="editor" e-class="{ 'show-result' : showResult }">
         <div class="main">
             <div class="editor-aside editor-html">
+                <!-- Top Editor Bar -->
                 <div class="top">
-                    <div>
-                        <span class="fa fa-eye" title="Click to see whole the HTML code"></span>
-                        <label> Live Editor </label>
+                    <div class="tab-container nice-scroll">
+                        <div class="tab active" tab-id="main" on:click="selectTab">
+                            <span class="fa fa-globe" title="The Main Code"></span>
+                            <label> Editor </label>
+                        </div>
+
+                        <!-- List of tabs -->
+                        <div class="tab" e-for="tab of tabList" tab-id="{{ tab.id }}" on:click="selectTab">
+                            <label contenteditable tabindex="1" spellcheck="false"
+                                on:input="tab.name = event.base.textContent">New-Tab</label>
+                            <i class="center-icon fa fa-close" on:click="(function(evt){
+                                evt.$data.scope.tabList.remove(tab.id);
+                            })(event)"></i>
+                        </div>
+                    </div>
+                    <div class="add-tab">
+                        <i class="center-icon fa fa-plus" on:click="(function(evt) {
+                            evt.$data.scope.tabList.push({ id: this.code(8), name: 'New-Tab' });
+                        }).call(this, event)"></i>
                     </div>
                 </div>
-                <div class="screen editor-screen" e-ignore>
-                    <div class="screen-view html hljs nice-scroll" tabindex="-1" spellcheck="false"></div>
-                    <div class="screen-write nice-scroll" tabindex="-1" spellcheck="false" contenteditable="true"></div>
+
+                <!-- Screens -->
+                <div class="screens">
+                    <div class="screen editor-screen" e-ignore screen-tab-id="main">
+                        <div class="screen-view html hljs nice-scroll" tabindex="-1" spellcheck="false"></div>
+                        <div class="screen-write nice-scroll" tabindex="-1" spellcheck="false" contenteditable="true">
+                        </div>
+                    </div>
+
+                    <!-- List of screens -->
+                    <div class="screen editor-screen hide-it" screen-tab-id="{{ tab.id }}" find-me="{{ tab.name }}"
+                        e-for="tab of tabList" on:add="listenScreen(event.base)">
+                        <div e-ignore class="screen-view html hljs nice-scroll" tabindex="-1" spellcheck="false"></div>
+                        <div e-ignore class="screen-write nice-scroll" tabindex="2" spellcheck="false"
+                            contenteditable="true"></div>
+                    </div>
                 </div>
+
+                <!-- Botton Bar -->
                 <div class="extra-area">
                     <span class="info">
                         <span>
@@ -23,13 +55,10 @@
             </div>
             <span class="resizable"></span>
             <div class="editor-aside editor-result" e-ignore>
-                <div class="top">
-                    <div>
-                        <label> Result </label>
-                    </div>
+                <div class="top result-container">
+                    <label> Result </label>
                 </div>
                 <div class="screen">
-                    <!-- <object type="text/html" style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; width: 100%;height: 100%;"></object> -->
                     <iframe frameBorder="0"
                         style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; width: 100%;height: 100%;"></iframe>
                 </div>
@@ -45,24 +74,8 @@
             </div>
         </div>
         <div class="extra">
-            <div class="modal hide-it">
-                <div class="head">
-                    <div class="name">
-                        <h4> {{ name }} Example</h4>
-                    </div>
-                    <div class="action">
-                        <span class="fa fa-remove" on:click="(function(){
-                            event.base.aboveMe('.modal').classList.add('hide-it');
-                        })()"></span>
-                    </div>
-                </div>
-                <div class="body nice-scroll" tabindex="-1"></div>
-                <span class="popup hide-it" e-anm="up">
-                    <span> </span>
-                </span>
-            </div>
             <div class="alternator">
-                <button on:click="$scope.sMenuClosed = false">Tutorial</button>
+                <button on:click="$scope.$scope.sMenuClosed = false">Tutorial</button>
                 <button on:click="showResult = false" e-class="{ 'active-side' : !showResult }">Code</button>
                 <button on:click="runCodeShowResult" e-class="{ 'active-side' : showResult }">Result</button>
             </div>
@@ -72,12 +85,61 @@
 <script>
     var $comp = this;
     var $easy = this.Easy;
-    var id = 'live-' + $easy.code();
-    var watch, evtResize, MOBILE_SIZE = 645;
+    var evtResize, MOBILE_SIZE = 645;
     var $editorInstance;
-    this.created = function (element) {
-        element.id = id;
+    var tabConfig = {};
+
+    function addtab(n) {
+        var tab = '\u00a0\u00a0',
+            str = tab;
+        for (let i = 1; i <= n || 0; i++)
+            str += tab;
+        return str;
     }
+
+    function updateView(view, write) {
+        view.innerHTML = write.innerHTML;
+        hljs.highlightBlock(view);
+    }
+
+    function listenScreen(div) {
+        var view = div.node('.screen-view');
+        var write = div.node('.screen-write');
+
+        write.onscroll = function () {
+            view.scrollTop = write.scrollTop;
+            view.scrollLeft = write.scrollLeft;
+        }
+
+        write.onkeydown = function (evt) {
+            if (evt.keyCode === 9) {
+                evt.preventDefault();
+                var range = window.getSelection().getRangeAt(0), n = 0;
+                var tabNode = document.createTextNode(addtab(n));
+                range.insertNode(tabNode);
+                range.setStartAfter(tabNode);
+                range.setEndAfter(tabNode);
+            }
+
+            if (evt.ctrlKey && evt.keyCode === 13)
+                $editorInstance.runCode();
+
+            // if (evt.keyCode === 13) {}
+
+            // if (view.innerHTML !== write.innerHTML)
+            //     updateView(view, write);
+        }
+
+        write.onkeyup = function (evt) {
+            if (view.innerHTML !== write.innerHTML)
+                updateView(view, write);
+        }
+
+        write.oninput = function (evt) {
+            updateView(view, write);
+        }
+    }
+
     this.mounted = function (element) {
         var editor = element.children[0];
         var $classes = editor.classList;
@@ -96,24 +158,23 @@
 
         exec(element.clientWidth);
     }
+
     this.loaded = function (element) {
         // Editor config 
         function Editor(selector, options) {
             var editor = (selector instanceof Element) ? selector :
-                element.querySelector(selector);
+                element.node(selector);
 
             if (!editor) {
                 return console.error('[Editor]: Editor element not found!');
             }
 
             var instance = this;
-
-            var eye = editor.querySelector('.fa-eye');
-            var modal = editor.querySelector('.modal');
-            var modalPopup = editor.querySelector('.modal .popup');
-            var view = editor.querySelector('.screen-view');
-            var write = editor.querySelector('.screen-write');
-            var result = editor.querySelector('.editor-result .screen').children[0];
+            tabConfig.activeTab = editor.node('div[tab-id="main"]');
+            var mainScreen = tabConfig.activeScreen = editor.node('div[screen-tab-id="main"]');
+            var view = editor.node('div[screen-tab-id="main"] .screen-view');
+            var write = editor.node('div[screen-tab-id="main"] .screen-write');
+            var result = editor.node('.editor-result .screen').children[0];
 
             if (!view || !write) {
                 console.error('[Editor]: Missing screens to be added: div.screen-view or div.screen-write.');
@@ -141,10 +202,18 @@
                 error: 'fa-times-circle'
             }
 
+            instance.tab = (function (name) {
+                var screen = editor.node('div[find-me="' + name + '"]');
+                if (screen)
+                    return screen.node('.screen-write').textContent;
+                return ''
+            }).bind(instance)
+
             // Confifuring the instance functions
             instance.console = {
                 add: function (obj) {
-                    messageContainer.innerHTML += '<p class="line fa ' + obj.type + '">' + obj.msg + '</p>';
+                    messageContainer.innerHTML += '<p class="line fa ' + obj.type + '">' + obj.message +
+                        '</p>';
                     setConsoleIcon(icons[obj.type]);
                 },
                 clear: function () {
@@ -206,47 +275,8 @@
             }
 
             // events
-            // UI Updater
-            watch = $easy.watch('content', function (v) {
-                updateView();
-            }, $comp.scope);
 
-            write.onkeyup = write.oninput = function () {
-                updateView();
-            }
-
-            write.onkeydown = function (evt) {
-                if (evt.keyCode === 9) {
-                    evt.preventDefault();
-                    // Adding tab
-                    var range = window.getSelection().getRangeAt(0);
-                    var tabNode = document.createTextNode(Editor.tabs());
-                    range.insertNode(tabNode);
-                    range.setStartAfter(tabNode);
-                    range.setEndAfter(tabNode);
-                }
-
-                if (evt.ctrlKey && evt.keyCode === 13) {
-                    runCode();
-                }
-            }
-
-            write.onscroll = function () {
-                view.scrollTop = write.scrollTop;
-                view.scrollLeft = write.scrollLeft;
-            }
-
-            eye.onclick = function () {
-                var content = createTemplate(instance.screen.innerText);
-                var view = modal.node('.body');
-                view.innerText = content;
-                modal.classList.remove('hide-it');
-                hljs.highlightBlock(view);
-            }
-
-            modal.node('.body').ondblclick = function (evt) {
-                copyTextToClipboard(evt.target.innerText);
-            }
+            listenScreen(mainScreen);
 
             $console.onclick = function (evt) {
                 var $class = 'open-extra',
@@ -258,60 +288,46 @@
             // Last executions
             if (instance.content) {
                 write.innerText = instance.content;
-                updateView();
+                updateView(view, write);
                 if (instance.run)
                     runCode();
             }
 
             // functions
-            function updateView() {
-                view.innerHTML = write.innerHTML;
-                hljs.highlightBlock(view);
-            }
-
             function runCode() {
                 // Clear the console
                 setConsoleIcon(icons.fine);
                 instance.console.clear();
-
                 // Execute your code...
-                var content = createTemplate(instance.screen.innerText,
-                    Editor.tabs() + '\n<script> ' +
-                    '\nvar editor = parent.document.querySelector(\'#' + id + '\').$editor;\n' +
-                    codeToStr(function () {
-                        var $$refs = {
-                            log: console.log.bind(console),
-                            warn: console.warn.bind(console),
-                            error: console.error.bind(console)
-                        };
-
-                        if (typeof $$refs.keys === 'function') {
-                            $$refs.keys(function (key, v) {
-                                console[key] = function (info, value) {
-                                    var $value = '';
-                                    if (!value) {
-                                        $value = info;
-                                    } else {
-                                        if (typeof value === 'string')
-                                            $value = value;
-                                        else
-                                            $value = JSON.stringify(value);
-                                    }
-
-                                    editor.console.add({
-                                        type: key === 'log' ? 'fine' : key,
-                                        msg: $value
-                                    });
-                                }
-                            });
-                        }
-                    }) +
-                    '<\/script>'
-                );
-
+                var content = createTemplate(instance.screen.innerText);
                 var contentWindow = result.contentWindow;
                 if (contentWindow) {
+                    // Reference storage
+                    var $$refs = {
+                        log: contentWindow.console.log.bind(contentWindow.console),
+                        warn: contentWindow.console.warn.bind(contentWindow.console),
+                        error: contentWindow.console.error.bind(contentWindow.console)
+                    };
+                    if (typeof $$refs.keys === 'function') {
+                        // Modifieng the console methods
+                        $$refs.keys(function (key, v) {
+                            contentWindow.console[key] = function (info, value) {
+                                var $value = '';
+                                if (!value) {
+                                    $value = info;
+                                } else {
+                                    $value = value.toString();
+                                }
+
+                                instance.console.add({
+                                    type: key === 'log' ? 'fine' : key,
+                                    message: $value
+                                });
+                            }
+                        });
+                    }
                     // Filling the screen
+                    contentWindow.editor = instance;
                     var idoc = contentWindow.document;
                     idoc.open();
                     idoc.write(content);
@@ -329,22 +345,14 @@
                 consoleIcon.classList.add(name);
             }
 
-            function createTemplate(content, extra) {
-                extra = extra || '';
-                var str = '<html lang="en">' +
-                    '\n<head>' +
-                    Editor.tabs() + '\n<meta charset="UTF-8">' +
-                    Editor.tabs() + '\n<title>Live Editor page<\/title>' +
-                    Editor.tabs() + '\n<script src="assets/js/easy.js"><\/script>' +
-                    Editor.tabs() +
-                    '\n<style> * html,body { padding:0; } { font-family: Arial, Helvetica, sans-serif; } ' +
+            function createTemplate(content) {
+                content = content || '';
+                var str = '<html lang="en"><head><meta charset="UTF-8"><title>Live Editor page<\/title>' +
+                    '<script src="assets/js/easy.js"><\/script>' +
+                    '<style> * html,body { padding:0; } { font-family: Arial, Helvetica, sans-serif; } ' +
                     'input, button { border: 1px solid lightgray; border-radius: 3px; } button { padding: 3px 10px; } </style>' +
-                    extra +
-                    '\n<\/head>' +
-                    '\n<body>\n' +
-                    content +
-                    '\n<\/body>' +
-                    '\n<\/html>';
+                    '<\/head><body>' + content + '<\/body>' +
+                    '<\/html>';
 
                 return str;
             }
@@ -368,7 +376,7 @@
                 document.body.appendChild(textArea);
                 textArea.focus();
                 textArea.select();
-                
+
                 try {
                     if (!document.execCommand('copy')) throw ({});
                     showPopup(successful);
@@ -376,27 +384,11 @@
                     showPopup(fail);
                 } finally {
                     document.body.removeChild(textArea);
-                }          
-            }
-
-            function showPopup(msg) {
-                modalPopup.children[0].innerText = msg;
-                modalPopup.classList.remove('hide-it');
-                var t = setTimeout(function () {
-                    modalPopup.classList.add('hide-it');
-                }, 3000);
+                }
             }
 
             instance.runCode = runCode;
             return instance;
-        }
-
-        Editor.tabs = function (n) {
-            var tab = '\u00a0\u00a0',
-                str = tab;
-            for (let i = 1; i <= n || 0; i++)
-                str += tab;
-            return str;
         }
 
         // Editor initialization
@@ -406,19 +398,46 @@
             }));
 
     }
+
     this.destroyed = function (element) {
-        if (watch) watch.destroy();
         if (evtResize) window.removeEventListener(evtResize.event, evtResize.callback, false);
     }
 
     this.export({
-        name: this.scope.name, 
+        name: this.scope.name,
         showResult: false,
+        tabList: [],
+        listenScreen: listenScreen,
         runCodeShowResult: function () {
             if ($editorInstance) {
                 $comp.data.showResult = true;
                 $editorInstance.runCode();
             }
+        },
+        selectTab: function (evt) {
+            // Getting the scope data and the clicked element
+            var scope = evt.$data.scope,
+                tab = evt.base;
+            // If the is the same ignore
+            if (tabConfig.activeTab === tab) return;
+            // Finding the screen
+            var id = tab.valueIn('tab-id');
+            var screen = evt.base.aboveMe('.editor-aside');
+            // If the screen was not found means that the it was removed
+            if (!screen) return;
+            screen = screen.node('div[screen-tab-id="' + id + '"]');
+            // Hiding the current screen
+            tabConfig.activeScreen.classList.add('hide-it');
+            // Unmarking the current tab
+            tabConfig.activeTab.classList.remove('active');
+            // Showing the other screen
+            screen.classList.remove('hide-it');
+            // Marking the clicked one
+            tab.classList.add('active');
+
+            // Storing the last position
+            tabConfig.activeScreen = screen;
+            tabConfig.activeTab = tab;
         }
     });
 </script>
@@ -464,6 +483,11 @@
         flex-flow: column;
     }
 
+    .editor-aside .screens {
+        display: flex;
+        flex: 1;
+    }
+
     .editor-aside .screen {
         flex: 1;
         overflow-y: auto;
@@ -507,27 +531,109 @@
     }
 
     .editor-aside .top {
-        height: 35px;
+        height: 45px;
         font-size: 10pt;
         color: var(--color-text);
         position: relative;
-        border-bottom: 0.1px solid var(--color-border);
-    }
-
-    .editor-aside .top>div {
-        top: 50%;
-        left: 8px;
-        position: absolute;
-        transform: translateY(-50%);
     }
 
     .editor-aside .top .fa {
-        cursor: pointer;
-        padding: 0 12px;
+        padding: 0 8px;
     }
 
     .editor-aside .top label {
         font-weight: 500;
+    }
+
+    .editor-aside .tab-container,
+    .editor-aside .add-tab {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 40px;
+        display: flex;
+        align-items: center;
+        overflow-x: auto;
+        padding: 0 4px;
+    }
+
+    .editor-aside .add-tab {
+        left: auto;
+        right: 0px;
+        width: 30px;
+    }
+
+    .editor-aside .add-tab .fa {
+        background-color: var(--color-editor-border);
+        width: 28px;
+        height: 28px;
+        padding: 0;
+        border-radius: 3px;
+        transition: background-color .2s;
+    }
+
+    .editor-aside .add-tab .fa:active {
+        background-color: var(--color-soft-transparency);
+    }
+
+    .editor-aside .tab-container .tab {
+        background-color: var(--color-soft-transparency);
+        height: 32px;
+        min-width: 120px;
+        display: flex;
+        align-items: center;
+        padding: 0 8px;
+        border-radius: 3px;
+        margin-right: 2px;
+        position: relative;
+        cursor: pointer;
+    }
+
+    .editor-aside .tab-container .tab.active:before {
+        content: '';
+        height: 26px;
+        position: absolute;
+        left: 4px;
+        width: 4px;
+        background-color: var(--color-blue);
+        border-radius: 4px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .editor-aside .tab-container .tab label[contenteditable] {
+        margin: 0 3px;
+        padding: 1px 2px;
+        border-radius: 2px;
+    }
+
+    .editor-aside .tab-container .tab label[contenteditable]:focus {
+        background-color: var(--color-bg-lighter);
+    }
+
+    .editor-aside .tab-container .tab .fa-close {
+        position: absolute;
+        right: 4px;
+        font-size: 9pt;
+        background-color: var(--color-border);
+        border-radius: 15px;
+        color: var(--color-text);
+        width: 16px;
+        height: 16px;
+        padding: 0;
+        transition: color .2s;
+    }
+
+    .editor-aside .tab-container .tab .fa-close:hover {
+        color: var(--color-red);
+    }
+
+    .editor-aside .top.result-container {
+        display: flex;
+        align-items: center;
+        padding: 0 8px;
+        background-color: var(--color-bg);
     }
 
     .editor-result .screen {
@@ -602,80 +708,6 @@
         color: var(--color-yellow);
     }
 
-    /* Editor Modal */
-    .editor .modal {
-        background-color: var(--color-bg-lighter);
-        box-shadow: var(--set-shadow);
-        border-radius: 6px;
-        position: absolute;
-        width: 80%;
-        height: 500px;
-        top: -10%;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 100;
-        display: flex;
-        flex-flow: column;
-        overflow: hidden;
-    }
-
-    .editor .modal .head {
-        display: flex;
-        min-height: 50px;
-        height: 50px;
-        padding: 0 10px;
-    }
-
-    .editor .modal .head .name {
-        flex: 1;
-        display: flex;
-    }
-
-    .editor .modal .head .name h4 {
-        margin: auto auto auto 0;
-    }
-
-    .editor .modal .head .action {
-        width: 100px;
-        display: flex;
-    }
-
-    .editor .modal .head .action .fa {
-        font-size: 9pt;
-        width: 18px;
-        height: 18px;
-        background-color: var(--color-red);
-        position: relative;
-        border-radius: 50%;
-        box-shadow: var(--set-shadow);
-        color: transparent;
-        margin: auto 0px auto auto;
-        cursor: pointer;
-    }
-
-    .editor .modal .head .action .fa:hover {
-        transition: color .2s;
-        color: var(--color-white-text);
-    }
-
-    .editor .modal .head .action .fa::before {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    .editor .modal .body {
-        background-color: var(--color-bg-lighter);
-        padding: 10px;
-        overflow: auto;
-        flex: 1;
-    }
-
-    .editor .modal .body * {
-        font-family: Consolas, 'Courier New', monospace;
-    }
-
     .resizable {
         flex: 0.01;
         -moz-user-select: none;
@@ -716,7 +748,7 @@
         margin: 5px 8px;
         border-radius: 5px;
         color: var(--color-text);
-        max-width: 100px;
+        max-width: 115px;
         padding: 0 5%;
     }
 

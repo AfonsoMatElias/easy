@@ -70,24 +70,29 @@
             (logs, errors and warning) to be shown. Default value is <span class="note mark-el">true</span>.
         </li>
         <li>
-            <span class="note mark-el">{ Boolean } deepIgnore</span> &ndash;
-            Allows you to ignore all elements that are inside a container
-            (even those that are added later) when using the command <span class="note">e-ignore</span>
-            (We'll talk about that in the <a href="docs.page.2.html#commands" class=" mark-el">Commands</a>
-            section). <br>
+            <span class="note mark-el">{ Boolean } deepIgnore</span> &ndash; allows you to ignore all elements
+            that are inside a container (even those that are added later) when using the command
+            <span class="note">e-ignore</span> (We'll talk about that in the
+            <a href="docs.page.2.html#commands" class=" mark-el">Commands</a> section). <br>
             <span class="note att-border">Be careful, this can slow down your
                 application.</span>
         </li>
         <li>
-            <span class="note mark-el">{ Boolean } useDOMLoadEvent</span> &ndash; Allows the instance to use
+            <span class="note mark-el">{ Boolean } useDOMLoadEvent</span> &ndash; allows the instance to use
             the 'DOMContentLoaded' event when loading the page. Default value is
             <span class="note mark-el">true</span>.
         </li>
         <li>
-            <span class="note mark-el">{ Object } skeleton</span> &ndash; Defines color of the skeleton while
+            <span class="note mark-el">{ Object } skeleton</span> &ndash; defines color of the skeleton while
             the content is being loaded. Is structured as follows: <br>
             <span class="note mark-el"> { background: 'color', wave: 'color' } </span>
             <br> By default the skeleton is light gray with the lightest wave.
+        </li>
+        <li>
+            <span class="note mark-el">{ Boolean } rerenderOnArrayChange</span> &ndash; this the
+            <i class="note-mark-el">e-for</i> exclusive config that allows to rerender all the items
+            of the array in the UI when it changes. We'll get into more details in <a href="docs.page.2.html#cmd_e_for"
+                class="mark-el">e-for</a> section.
         </li>
     </ul>
 

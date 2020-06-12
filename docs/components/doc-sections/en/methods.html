@@ -161,8 +161,10 @@
     <pre><code class="javascript hljs">
     var app = new Easy('#my-app');
 
+    // Exposing data
     app.expose('userInfo', { name: 'Maria', roles: ['admin', 'manager'] });
     
+    // Retrieving the exposed data
     var data = app.retrive('userInfo');
     </code></pre>
 

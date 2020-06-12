@@ -13,7 +13,8 @@
             'stoppropagation': 'stopPropagation', 
             'preventdefault': 'preventDefault' 
         };
-    var getter; // Store getter function
+    var getter, // Store getter function
+        compilingFile = 'main file'; // Store the compiling filePath
     var $global = window, doc = $global.document;
     delete $global.name; // Removing window.name property
 
@@ -63,8 +64,8 @@
                 left: 'from-left',
                 right: 'from-right'
             },
-            reverse: function (v) {
-                switch (v) {
+            reverse: function (value) {
+                switch (value) {
                     case 'up': return 'down';
                     case 'down': return 'up';
                     case 'left': return 'right';
@@ -87,7 +88,7 @@
     }
     // Error messages
     var error = {
-        dlm: 'The command cannot contain a delimiter in ' +
+        delimiter: 'The command cannot contain a delimiter in ' +
              'expression value... The variables are compiled without a delimiter.',
         conn: function () {
             return "It seems that there is not any easy connector available. " +
@@ -97,7 +98,7 @@
         elem: function (v) { return "The selector or object passed for '" + v + "' is invalid, please check it." }
     }
     // Comparison functions
-    var cmp = {
+    var compare = {
         'match': function (s1, s2) { return s1.match(s2) },
         'equal': function (s1, s2) { return s1 === s2 }
     }
@@ -137,13 +138,13 @@
         // Set default properties in a object if it doesn't exists
         if (!obj) obj = {};
         if (!options) options = {};
-        options.keys(function (k, v) {
-            if (isNull(obj[k])) obj[k] = v;
+        options.keys(function (key, value) {
+            if (isNull(obj[key])) obj[key] = value;
         });
         return obj;
     }
-    function $propTransfer(dst, src, name) {
-        $propDefiner(dst, name, $propDescriptor(src, name));
+    function $propTransfer(dest, src, name) {
+        $propDefiner(dest, name, $propDescriptor(src, name));
     }
     function $propDefiner(obj, prop, desc) {
         Object.defineProperty(obj, prop, desc); return obj;
@@ -151,33 +152,33 @@
     function $propDescriptor(obj, prop) {
         return Object.getOwnPropertyDescriptor(obj, prop); 
     }
-    function isIgnore(v) {
-        switch (v) {
+    function isIgnore(value) {
+        switch (value) {
             case "#comment": case "SCRIPT": case "#text": case "STYLE":
                 return true;
             default: return false;
         }
     }
-    function isObj(v) {
-        return v instanceof Object; 
+    function isObj(value) {
+        return value instanceof Object; 
     }
-    function isArray(v) {
-        return Array.isArray(v); 
+    function isArray(value) {
+        return Array.isArray(value); 
     }
-    function isNull(v) {
-        return (typeof v === 'undefined') || (v === undefined || v === null);
+    function isNull(value) {
+        return (typeof value === 'undefined') || (value === undefined || value === null);
     }
-    function isString(v) {
-        return (typeof v !== 'undefined') && (typeof v === 'string');
+    function isString(value) {
+        return (typeof value !== 'undefined') && (typeof value === 'string');
     }
     function isEmptyObj(obj) {
         if(!obj) return true;
         return obj.keys().length === 0;
     }
-    function toArray(obj, cb, ctx) {
+    function toArray(obj, callback, context) {
         if (!obj) return [];
         var array = [].slice.call(obj);
-        if (cb) forEach(array, cb, ctx);
+        if (callback) forEach(array, callback, context);
         return array;
     }
     function toPath() {
@@ -187,40 +188,40 @@
             var el = arguments[key];
             if (!isNull(el) && el !== '') {
                 if (isArray(el))
-                    path += el.map(function (m) {
-                        return "['" + m + "']";
+                    path += el.map(function (part) {
+                        return "['" + part + "']";
                     }).join('');
                 else if (isString(el)) {
                     path += forEach( el.split('.'), function (f) {
                         return f;
-                    }).map(function (m) {
-                        return !m.includes('[') ? "['" + m + "']" : m
+                    }).map(function (part) {
+                        return !part.includes('[') ? "['" + part + "']" : part;
                     }).join('');
                 }
             }
         }
         return path;
     }
-    function toStr(v) { 
-        return v ? v + '' : ''; 
+    function toStr(value) { 
+        return value ? value + '' : ''; 
     }
-    function forEach(obj, cb, ctx) {
+    function forEach(obj, callback, context) {
         // Array iterator
         if (!obj || !obj.length) return [];
 
         var len = obj.length, index, result = [];
         for(index = 0; index < len; index++) {
-            if (cb.call(ctx, obj[index], index)) {
+            if (callback.call(context, obj[index], index)) {
                 result.push(obj[index]);
             } 
         }
         return result;
     }
-    function nameof(v) { 
-        return v.keys()[0]; 
+    function nameof(value) { 
+        return value.keys()[0]; 
     }
-    function trim(v) {
-        return v ? v.trim() : v; 
+    function trim(value) {
+        return value ? value.trim() : value; 
     }
     function setEasy(el) {
         // Sets $easy property in a element where will be stored configurations used by easy
@@ -229,8 +230,8 @@
     function extractor(obj, name) {
         // Extracts and generate a new object having only value of the extraction type  
         var out = {};     
-        if (obj) obj.keys(function(k, v) {
-            if (typeof v === name) out[k] = v;
+        if (obj) obj.keys(function(key, value) {
+            if (typeof value === name) out[key] = value;
         });
         return out;
     }
@@ -268,26 +269,27 @@
     // Adding the extensions
     (function () {
         // Extensions
+        if ( !isNull(Node.prototype.node) ) return;
         // Extension setter
-        function def(key, cb, type) {
-            $propDefiner((type || Object).prototype, key, { value: cb });
+        function def(key, callback, type) {
+            $propDefiner((type || Object).prototype, key, { value: callback });
         }
         // Query one element
-        def('node', function (v) {
-            if (!v) return null;
-            return (v[0] === '#' && this.getElementById ? this.getElementById(v.substr(1)) : this.querySelector(v));
+        def('node', function (value) {
+            if (!value) return null;
+            return (value[0] === '#' && this.getElementById ? this.getElementById(value.substr(1)) : this.querySelector(value));
         }, Node);
         // Query many elements
-        def('nodes', function (v) {
-            if (!v) return null;
-            return toArray(this.querySelectorAll(v));
+        def('nodes', function (value) {
+            if (!value) return null;
+            return toArray(this.querySelectorAll(value));
         }, Node);
         // get key of an object
-        def('keys', function (cb) {
+        def('keys', function (callback) {
             var self = this;
             var array = Object.keys(self);
             // Calling the callback if it needs
-            if (cb && typeof cb === 'function') forEach(array, function (e) { cb(e, self[e]); });
+            if (callback && typeof callback === 'function') forEach(array, function (key) { callback(key, self[key]); });
             return array;
         });
         // map values from an object to the another one
@@ -361,13 +363,12 @@
                         s2 = s2.toLowerCase();
                     }
                 }
-
-                return cmp[options.comp](s1, s2);
+                return compare[options.comp](s1, s2);
             }
             // Finding any property that matches the input value
             if (isObj(self))
-                res = self.keys().findOne(function (x) {
-                    return check(self[x], value);
+                res = self.keys().findOne(function (key) {
+                    return check(self[key], value);
                 });
             else
                 res = check(self, value);
@@ -378,17 +379,14 @@
         def('get', function (value) {
             var self = this;
             // Finding the object that matches a value or index
-            return self.findOne(function (x) {
-                return x === value || (isObj(x) ? x.hasValue(value) : false);
-            }) || self[value];
+            return self.findOne(function (item) {
+                return item === value || (isObj(item) ? item.hasValue(value) : false);
+            }) || (Number.isInteger(value) || isString(value) ? self[value] : null);
         }, Array);
         // Gets any object that matches the value
         def('findOne', function (cb) {
-            var self = this,
-                i = 0,
-                len = self.length,
-                result;
-        for(i; i < len; i++) {
+            var self = this, len = self.length, result;
+        for(var i = 0; i < len; i++) {
                 if (cb(self[i], i)) {
                     result = self[i];
                     break;
@@ -398,27 +396,28 @@
         }, Array);
         // Get the index of an object
         def('index', function (value) {
-            var index = -1;
-            this.findOne(function (x, i) {
-                if ((x === value || x.hasValue(value))) {
-                    index = i;
-                    return true;
-                }
-                return false;
-            });
+            var index = this.indexOf(value);
+            if (index === -1)
+                this.findOne(function (item, $index) {
+                    if ((item === value || item.hasValue(value))) {
+                        index = $index;
+                        return true;
+                    }
+                    return false;
+                });
             return index;
         }, Array);
         // Get the index of all the ocurrencies of an object
-        def('indexes', function (value, cb) {
+        def('indexes', function (value, callback) {
             var array = [];
-            // Finding the object that matches a value or index
-            forEach(this, function (x, i) {
-                if ((x === value || x.hasValue(value)))
-                    array.push(i);
+            // Finding the object that matches a the value
+            forEach(this, function (item, index) {
+                if ((item === value || item.hasValue(value)))
+                    array.push(index);
             });
             // Calling the callback if it needs
-            if (cb) forEach(array, function (e) {
-                cb(e);
+            if (callback) forEach(array, function (item) {
+                callback(item);
             });
             return array;
         }, Array);
@@ -427,7 +426,7 @@
             try {
                 if (isNull(allWith)) allWith = false;
                 // Handling the default pop function if the value is not defined
-                if (!value && value != 0) {
+                if (!value && value !== 0) {
                     this.pop();
                 } else{
                     // Otherwise, Handling the costumized remove function
@@ -448,7 +447,7 @@
                     }
                 }
             }catch(error) {
-                Easy.log({ msg: 'Remove function error. ' + error.message, error: error });
+                Easy.log({ message: 'Remove function error. ' + error.message, error: error });
             }
             return this;
         }, Array);
@@ -472,25 +471,25 @@
             elem.classList.add(anm[direction][keyIn]);
         }
         // Execute the nice in animation into an element
-        def('niceIn', function (key, outElem, cb, delay) {
+        def('niceIn', function (key, outElem, callback, delay) {
             var self = this;
-            if (isNull(delay)) delay = 80;
+            if (isNull(delay)) delay = 100;
             // Executing the main function
             niceShared(self, 'to', key, outElem);
             // Executing the callback
             setTimeout(function () {
-                if (cb) cb(self, outElem);
+                if (callback) callback(self, outElem);
             }, delay);
         }, HTMLElement);
         // Adds the nice out animation into an element
-        def('niceOut', function (key, inElem, cb, delay) {
+        def('niceOut', function (key, inElem, callback, delay) {
             var self = this;
             if (isNull(delay)) delay = 80;
             // Executing the main function
             niceShared(self, 'from', key, inElem);
             // Executing the callback
             setTimeout(function () {
-                if (cb) cb(self, inElem);
+                if (callback) callback(self, inElem);
             }, delay);
         }, HTMLElement);
         // End Animation Extension
@@ -499,8 +498,8 @@
             var self = this;
             if (!self.nodeName) return self.toString();
             return extend.array(self.nodeName.toLowerCase(), (self.id ? '#' + self.id : ''),
-                toArray(self.classList).map(function (x) {
-                    return '.' + x;
+                toArray(self.classList).map(function (cls) {
+                    return '.' + cls;
                 })).join('')
         }, Element);
         // Adds Event listener in an object or a list of it
@@ -538,11 +537,11 @@
             if (isNull(newValue)) newValue = '';
             // Replace all ocurrencies tha will be found
             function replace(str, _old_, _new_) {
-                var slen = str.length, len = _old_.length, out = '';;
-                for(var i = 0; i < slen; i++) {
-                    if (str[i] === _old_[0] && str.substr(i, len) === _old_) {
+                var strLen = str.length, oldLen = _old_.length, out = '';;
+                for(var i = 0; i < strLen; i++) {
+                    if (str[i] === _old_[0] && str.substr(i, oldLen) === _old_) {
                         out += _new_;
-                        i += len - 1;
+                        i += oldLen - 1;
                     } else {
                         out += str[i];
                     }
@@ -562,17 +561,17 @@
         
         if( isNull(String.prototype.startsWith) ) {
             // Helper to check if a string starts with some str
-            def('startsWith', function (v) {
-                return (this.substr(0, v.length) === v);
+            def('startsWith', function (value) {
+                return (this.substr(0, value.length) === value);
             }, String);
             // Helper to check if a string ends with some str
-            def('endsWith', function (v) {
-                return (this.substr(this.length - v.length) === v);
+            def('endsWith', function (value) {
+                return (this.substr(this.length - value.length) === value);
             }, String);
             // Helper to check if a string includes a sequence
-            def('includes', function (v) {
+            def('includes', function (value) {
                 for(var i = 0; i < this.length; i++)
-                if(this.substr(i, v.length) === v)
+                if(this.substr(i, value.length) === value)
                     return true;
                 return false;
             }, String);
@@ -677,6 +676,7 @@
      * Note: it was based on angular.js version 1.7.9
      */
     function Fetch(url, options) {
+        if (!url) return Easy.log('Invalid url');
         options = options ? options : {};
 
         function createXhr(method) {
@@ -763,18 +763,6 @@
                 }
             });
 
-            // if (self.timeout) {
-            //     timeoutId = setTimeout(function () {
-            //         timeoutRequest('timeout');
-            //     }, self.timeout);
-            // }
-            // function timeoutRequest(reason) {
-            //     abortedByTimeout = reason === 'timeout';
-            //     if (xhr) {
-            //         xhr.abort();
-            //     }
-            // }
-
             function completeRequest(status, response, headersString, statusText, xhrStatus) {
                 xhr = null;
                 self.response = response;
@@ -797,9 +785,9 @@
 
             try {
                 xhr.responseType = self.type;
-            } catch (e) {
+            } catch (err) {
                 if (self.type !== 'json') {
-                    throw e;
+                    throw err;
                 }
             }
             
@@ -836,7 +824,8 @@
         options.data = $objDesigner(options.data, {});
         options.components = $objDesigner(options.components, { elements: {}, config: {} });
         options.components.config = $objDesigner(options.components.config, { usehash: true, base: '/', keepData: false });
-        options.config = $objDesigner(options.config, { deepIgnore: false, log: true, useDOMLoadEvent: true, skeleton: { background: '#E2E2E2' , wave: '#ffffff5d' } });
+        options.config = $objDesigner(options.config, { deepIgnore: false, rerenderOnArrayChange: false, log: true,
+                                        useDOMLoadEvent: true, skeleton: { background: '#E2E2E2' , wave: '#ffffff5d' } });
         this.options = options;
         
         skeletonConfig = extend.obj(options.config.skeleton);
@@ -844,11 +833,11 @@
         this.delimiters = Object.freeze($$delimiters);
 
         /** Easy Logger */
-        Easy.log = function (v, type) {
+        Easy.log = function (log, type) {
             if (!type) type = 'error';
-            if ( $easy.options.config.log ) console[type]('[Easy '+ type +']:', v);
-            if ( !isNull($easy.emit) ) $easy.emit('log', { type: type, msg: v });
-            return v;
+            if ( $easy.options.config.log ) console[type]('[Easy '+ type +']', EasyLog(log, type));
+            if ( !isNull($easy.emit) ) $easy.emit('log', { type: type, message: log });
+            return log;
         }
         var ui = new UIHandler({
             $$delimiters: $$delimiters.slice(),
@@ -875,8 +864,7 @@
         /**
          * Get all from a path
          * @param {String} path The URL endpoint
-         * @param {Function} cb (optional) The callback that will be passed the return
-         * @param {String} filter (optional) Some extra string that will be added to the path
+         * @param {String} extra (optional) Some extra string that will be added to the path
          */
         prototype.read = function (path, extra) {
             try {
@@ -923,7 +911,6 @@
          * getOne obj from a source
          * @param {string} path The URL endpoint
          * @param {string} id The Id of the object
-         * @param {Function} elem (optional) The element that will be filled
          */
         prototype.getOne = function (path, id) {
             try {
@@ -984,15 +971,14 @@
 
             function buildObj(element) {
                 var obj = {};
-                var t = true;
                 // Elements that skipped on serialization process
-                var escapes = { BUTTON:t };
-                var checkables = { checkbox: t, radio: t };
+                var escapes = { BUTTON: true };
+                var checkables = { checkbox: true, radio: true };
                 // Try to get value from the element
-                function tryGetValue(e) {
+                function tryGetValue($el) {
                     var val = null;
-                    mValues.findOne(function (v) {
-                        return (val = e.valueIn(v)) ? true : false;
+                    mValues.findOne(function (value) {
+                        return (val = $el.valueIn(value)) ? true : false;
                     });
                     return val;
                 }
@@ -1033,45 +1019,45 @@
             // Building the base form
             var obj = buildObj(elem);
             // Getting the builds 
-            var builds = elem.nodes('[' + cmd + ']');
+            var builds = elem.nodes('['+cmd+']');
             // Building builders
-            forEach(builds, function (b) {
+            forEach(builds, function ($build) {
                 // Getting the e-build attr value
-                var name = b.valueIn(cmd);
+                var name = $build.valueIn(cmd);
                 // Checking if has an attr defined
-                var isarray = b.hasAttribute(vars.cmds.array);
+                var isarray = $build.hasAttribute(vars.cmds.array);
                 // Building the object
-                var value = buildObj(b);
+                var value = buildObj($build);
                 if (isEmptyObj(value)) return;
                 // Build a path to set the value in the main object
-                function pathBuilder(fullPath, cb) {
+                function pathBuilder(fullPath, callback) {
                     var path = '', sections = fullPath.split('.');
-                    forEach(sections, function (sec) {
-                        path += '.' + sec;
+                    forEach(sections, function (part) {
+                        path += '.' + part;
                         var propValue = eval(nameof({ obj: '' }) + path);
                         // Checking the path has a null value
                         if (isNull(propValue)) {
                             eval(nameof({ obj: '' }) + path + '={}');
                             // Checking if it's last section of the path
-                            if (sections[sections.length - 1] === sec)
-                                cb(path);
+                            if (sections[sections.length - 1] === part)
+                                callback(path);
                         }
                         // Otherwise, check if the value is an array
                         else if (isArray(propValue)) {
                             var remainPath = toPath(fullPath.substr(path.length));
                             if (remainPath === '')
-                                cb(path, propValue);
+                                callback(path, propValue);
                             else
-                                forEach(propValue, function (e, i) {
+                                forEach(propValue, function (_, index) {
                                     // Building new path according the index of the array
-                                    pathBuilder(path.substr(1) + '[' + i + ']' + remainPath, cb);
+                                    pathBuilder(path.substr(1) + '['+index+']' + remainPath, callback);
                                 });
                             // Breaking the main loop, because every work is done
                             return;
                         } else{
                             // Checking if it's last section of the path
-                            if (sections[sections.length - 1] === sec)
-                                cb(path, propValue);
+                            if (sections[sections.length - 1] === part)
+                                callback(path, propValue);
                         }
                     });
                 }
@@ -1101,9 +1087,9 @@
             return obj;
         } 
         // Helper to add easy css in the DOM
-        prototype.css = function (replace) {
+        prototype.css = function (isReplace) {
             var current = doc.node('[e-style="true"]'); 
-            if ( current && replace !== true ) return;
+            if ( current && isReplace !== true ) return;
 
             var style = doc.createElement("style");
             style.valueIn('e-style', 'true');
@@ -1111,7 +1097,7 @@
             var vals = {
                 dist: 12,
                 opacity: 6,
-                dur: 0.2
+                dur: 0.35
             }
             // Creates to- animation body
             var toAnim = function (n, dir) {
@@ -1168,7 +1154,7 @@
                 "@keyframes loading {  100% { transform: translateX(100%); } }" +
                 "@-webkit-keyframes loading { 100% { transform: translateX(100%); } } ";
 
-            if (replace === true) 
+            if (isReplace === true) 
                 doc.head.replaceChild(style, current);    
             else
                 doc.head.appendChild(style);
@@ -1179,8 +1165,8 @@
             var alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_01234567890';
             var lower = false, result = '', i = 0;
             for(i; i < len; i++) {
-                var p = Math.floor(Math.random() * alpha.length);
-                result += lower ? alpha[p].toLowerCase() : alpha[p];
+                var pos = Math.floor(Math.random() * alpha.length);
+                result += lower ? alpha[pos].toLowerCase() : alpha[pos];
                 lower = !lower;
             }
             return result;
@@ -1190,8 +1176,8 @@
             if (isNull(input)) return;
             if (isNull(target)) target = $easy.data;
             var data = new ReactiveObject(input);
-            data.keys(function (k) {
-                $propTransfer(target, data, k);
+            data.keys(function (key) {
+                $propTransfer(target, data, key);
             });       
             return target;
         }
@@ -1242,45 +1228,45 @@
                 callback(req);
                 return;
             }
-            webDataRequests.keys(function(_, v) {
-                if(v.$code === code || v.$url === code){
-                    return callback(v);
+            webDataRequests.keys(function(_, value) {
+                if(value.$code === code || value.$url === code){
+                    return callback(value);
                 } 
             });
         }
-        prototype.on = function (evt, cb) {
+        prototype.on = function (evt, callback) {
             switch (evt) {
-                case 'incRequested': inc.requested.push(cb); break;
-                case 'incMounted': inc.mounted.push(cb); break;
-                case 'incLoaded': inc.loaded.push(cb); break;
-                case 'incDestroyed': inc.destroyed.push(cb); break;
-                case 'incBlocked': inc.blocked.push(cb); break;
-                case 'incFail': inc.fail.push(cb); break;
+                case 'incRequested': inc.requested.push(callback); break;
+                case 'incMounted': inc.mounted.push(callback); break;
+                case 'incLoaded': inc.loaded.push(callback); break;
+                case 'incDestroyed': inc.destroyed.push(callback); break;
+                case 'incBlocked': inc.blocked.push(callback); break;
+                case 'incFail': inc.fail.push(callback); break;
                 default:
                     var obj = customEvents[evt]; 
                     if (obj){
-                        obj.push(cb);
+                        obj.push(callback);
                     } else {
-                        customEvents[evt] = [ cb ];
+                        customEvents[evt] = [ callback ];
                     }
                     break;
             }
-            return { event: evt, callback: cb };
+            return { event: evt, callback: callback };
         }
-        prototype.off = function (evt, cb) {
+        prototype.off = function (evt, callback) {
             switch (evt) {
-                case 'incRequested': inc.requested.push(cb); break;
-                case 'incMounted': inc.mounted.remove(cb); break;
-                case 'incLoaded': inc.loaded.remove(cb); break;
-                case 'incDestroyed': inc.destroyed.remove(cb); break;
-                case 'incBlocked': inc.blocked.push(cb); break;
-                case 'incFail': inc.fail.remove(cb); break;
+                case 'incRequested': inc.requested.push(callback); break;
+                case 'incMounted': inc.mounted.remove(callback); break;
+                case 'incLoaded': inc.loaded.remove(callback); break;
+                case 'incDestroyed': inc.destroyed.remove(callback); break;
+                case 'incBlocked': inc.blocked.push(callback); break;
+                case 'incFail': inc.fail.remove(callback); break;
                 default:
                     var obj = customEvents[evt]; 
-                    if (obj) obj.remove(cb);
+                    if (obj) obj.remove(callback);
                     break;
             }
-            return { event: evt, callback: cb };
+            return { event: evt, callback: callback };
         }
         prototype.emit = function (evt, data, once) {
             if(isNull(once)) once = false;
@@ -1302,8 +1288,7 @@
                         });
                     
                     if (value.keys === 'undefined') return Easy.log('Invalid object');
-
-                    value.keys(function (k, v) { skeletonConfig[k] = v; });
+                    value.keys(function (key, value) { skeletonConfig[key] = value; });
                     return $easy.css(true);                
                 } case 'delimiter': {
 
@@ -1331,15 +1316,15 @@
                 return res;
             },
             restrictions: {
-                add: function (name, rests) {
-                    if( !isArray(rests) ) {
+                add: function (name, restrs) {
+                    if( !isArray(restrs) ) {
                         Easy.log(error.invalid() + ' Try an array!'); 
                         return; 
                     } 
                     var path = checkIncPath(name);
                     if( isNull(path) ) return;
-                    inc.skipNoFunction(rests, name);
-                    return path.restrictions.push.apply(path.restrictions, rests);
+                    inc.skipNoFunction(restrs, name);
+                    return path.restrictions.push.apply(path.restrictions, restrs);
                 },
                 get: function (name) {
                     var path = checkIncPath(name);
@@ -1383,15 +1368,15 @@
             if ( !isObj($return) ) return;
 
             // Adding missing properties that is the primitives
-            $return.keys(function (k, v) {
-                if (!obj.hasOwnProperty(k))
-                    obj[k] = v;
+            $return.keys(function (key, value) {
+                if (!obj.hasOwnProperty(key))
+                    obj[key] = value;
             });
             
             // Removing all the exceeded properties 
-            obj.keys(function (k) {
-                if ( !$return.hasOwnProperty(k) && k !== '$scope' )
-                    delete obj[k];
+            obj.keys(function (key) {
+                if ( !$return.hasOwnProperty(key) && key !== '$scope' )
+                    delete obj[key];
             });
 
             new ReactiveObject(obj);
@@ -1422,11 +1407,12 @@
                 // Comment cannot be read
                 if ( $name === '#comment' ) return;
                 if ( hasAttr(el, 'e-ignore') ) return;
-
+                if ( hasAttr(el, 'e-compile') ) el.removeAttribute('e-compile');
+                
                 if ( hasAttr(el, 'wait-data') ) {
                     var attr = fn.attr(el, [ 'wait-data' ], true);
                     if(!trim(attr.value))
-                        return Easy.log({ msg: error.invalid('in ' + attr.name), el: el });
+                        return Easy.log({ message: error.invalid('in ' + attr.name), el: el });
 
                     if (exposed[attr.value]) {
                         var $$data = new ReactiveObject($easy.retrieve(attr.value, true));
@@ -1448,14 +1434,14 @@
                     if (trim(attr.value))
                         inc.components[attr.value] = { content: el.outerHTML };
                     else
-                        Easy.log({ msg: 'Invalid value in element[inc-tmp]. ', el: el }, 'warn');
+                        Easy.log({ message: 'Invalid value in element[inc-tmp]. ', el: el }, 'warn');
                 }
-                
+                                
                 // Property definer
                 if ( $name === cmds.def ) {
                     remAttr(el.$e.$base, $name);
-                    var defs = fn.eval($value, $scope);
-                    if (defs) $easy.setData(defs, $scope);
+                    var obj = fn.eval($value, $scope);
+                    if (obj) $easy.setData(obj, $scope);
                     return;
                 }
 
@@ -1464,7 +1450,7 @@
                 if( hasAttr(el, cmds.if) || hasAttr(el, cmds.show) ) {
                     var attr = fn.attr(el, [cmds.if, cmds.show], true);
                     if( (trim(attr.value) === '') ) 
-                        return Easy.log({ msg: 'Invalid expression in ' + attr.value, el: attr })
+                        return Easy.log({ message: 'Invalid expression in ' + attr.value, el: attr })
 
                     if (attr.name === cmds.show) {
                         var res = ui.cmd.if.prepare(el, attr, attr.name);
@@ -1498,8 +1484,7 @@
                 // Includer 
                 if ( inc.isInc(el) ) {
                     var source = inc.src(el);
-                    //Exposing the data 
-                    $easy.expose(source, extend.obj($scope));
+                    el.$$data = isEmptyObj($scope) ? null : extend.obj($scope);
                     // For includer dynamic change
                     var delimiters = ui.getDelimiters(source);
                     if( delimiters.length === 1 ) {
@@ -1556,9 +1541,9 @@
                     // Preparing the element 
                     var attr = fn.attr(el, [cmds.tmp, cmds.fill], true);
                     if (attr) {
-                        var tp = attr.name === cmds.tmp ? 'many' : 'one';
+                        var type = attr.name === cmds.tmp ? 'many' : 'one';
                         var id = fn.attr(el, [cmds.id], true); id = id ? id.value : '';
-                        el.valueIn('e-req', '{ $url: "'+ attr.value +'", $type: "'+ tp +'", $id: "'+ id +'" }');
+                        el.valueIn('e-req', '{ $url: "'+ attr.value +'", $type: "'+ type +'", $id: "'+ id +'" }');
                     }
                     // Templates
                     ui.init(el, extend.obj($scope, this.methods));
@@ -1611,9 +1596,8 @@
                     if (desc) propConfig.binds.push({ el: comment, isObj: true, obj: extend.obj($scope, $$methods) });
                     return;
                 }
-
                 // Loop attrs
-                forEach( extend.array(el.$e.$oldAttrs, toArray((el.attributes || [])) ),
+                forEach( extend.array(toArray((el.attributes || [])) ),
                     function (child) {
                         setEasy(child);
                         child.$e.$base = el;
@@ -1633,32 +1617,32 @@
                     var evtExpression = $name.split(':')[1].split('.'); // click.preventdefault
                     var eventName = evtExpression[0], base = el.$e.$base;
 
-                    if ( standardEvents[eventName] === true ){
-                        var $on = base.listen(eventName, function (evtObject) {
+                    if ( standardEvents[eventName] === true ) {
+                        var $event = base.listen(eventName, function (evtObject) {
                             if(evtExpression.indexOf('once') !== -1) // If once                        
-                                base.removeEventListener(eventName, $on[0].callback, false);
+                                base.removeEventListener(eventName, $event[0].callback, false);
                             // Applying the modifier
                             forEach(evtExpression,function (modifier) {
-                                var $modName = eventModifiers[modifier];
-                                if ($modName) evtObject[$modName]();
+                                var $modifierName = eventModifiers[modifier];
+                                if ($modifierName) evtObject[$modifierName]();
                             });
-                            arguments[0].data = { $scope: $scope }
+                            arguments[0].$data = { scope: $scope };
                             // Calling the callback function
-                            fn.eval("if (typeof (("+ $value+")) === 'function') ("+$value +").apply(this, arguments);", 
-                                extend.obj($scope, $$methods) || {}, false, arguments);
+                            var $$result = fn.eval($value, extend.obj($scope, $$methods) || {});
+                            if (typeof $$result === 'function') $$result.apply($easy, arguments);
                         });
 
                     } else {
                         if( !isNull(vars.events[eventName]) ) return;
                         var callback = function() {
                             if(evtExpression.indexOf('once') !== -1) // If once
-                                $easy.off(eventName, $on.callback);
+                                $easy.off(eventName, $event.callback);
                             // Calling the callback function
-                            fn.eval("if (typeof (("+$value+")) === 'function') ("+$value+").apply(this, arguments);", 
-                                extend.obj($scope, $$methods) || {}, false, arguments);
+                            var $$result = fn.eval($value, extend.obj($scope, $$methods) || {});
+                            if (typeof $$result === 'function') $$result.apply($easy, arguments);
                         }
                         callback.$target = base;
-                        var $on = $easy.on(eventName, callback);
+                        var $event = $easy.on(eventName, callback);
                     }
 
                     remAttr(base, $name);
@@ -1711,7 +1695,6 @@
                         }, obj);
                         ui.$handleWatches.push({ el: base, watch: w });
                     }
-
                     exec(res); unget();
                     return;
                 }
@@ -1736,13 +1719,12 @@
 
                         function exec(obj) {
                             if(!obj) return;
-                            obj.keys(function(k, v){
-                                if(v) {
-                                    if(!$attr.value.includes(k))
-                                        $attr.value += ' ' + k;
-                                } else {
-                                    $attr.value = $attr.value.replaceAll(k); 
-                                }
+                            obj.keys(function(key, value){
+                                if(value) {
+                                    if(!$attr.value.includes(key))
+                                        $attr.value += ' ' + key;
+                                } else
+                                    $attr.value = $attr.value.replaceAll([' '+ key, key]); 
                             });
                         }
 
@@ -1755,25 +1737,18 @@
 
                         var res = fn.eval($value, $scope);
                         if(!isObj(res)) return; 
-                        exec(res);
-                        unget();
+                        exec(res); unget();
                         return;
                     }
                 }
 
                 // dynamic toggled value in attr
                 if (el.nodeValue) {
-                    var text = el, fields, base = el.$e.$base;
-                    
-                    if (text.$e.$fields && text.$e.$fields.length) {
-                        fields = text.$e.$fields;
-                    } else {
-                        fields = ui.getDelimiters(text.$e.$oldValue || text.nodeValue);
-                    }
+                    var text = el, base = el.$e.$base, 
+                        fields = ui.getDelimiters(text.nodeValue);
 
                     if (fields.length) {
                         text.$e.$fields = fields;
-
                         if($name !== '#text') Compiler.addOldAttr({ el: base, value: el });
                         Compiler.setDefault({ attr: text });
                         Compiler.setValue({ current: text, scope: $$scope, methods: $$methods });
@@ -1797,10 +1772,11 @@
                     base.valueIn('href', RouteHandler.normalizePath($value));
                     base.addEventListener('click', function (evt) {
                         if ( isNull(RouteHandler.handleLink) ) return;
-                        if(componentConfig.usehash === false) {
-                            evt.preventDefault();
-                            RouteHandler.navegate(evt.target.href);
-                        }
+                        evt.preventDefault();
+                        if (RouteHandler.navegate)
+                            RouteHandler.navegate(base.href);
+                        else
+                            $global.location.href = base.href;
                     });
 
                     if ( $name === ':href' )
@@ -1825,7 +1801,6 @@
                     scope: extend.obj($scope)
                 });
             }
-
             // Setting the data function
             var $closure = $$scope;
             $$el.$e.data = function () { return $closure; }
@@ -1925,14 +1900,14 @@
             // Includer paths
             this.setComponent(paths);
             /** * Get a HTML file from the server, according to a path */
-            this.get = function (path, cb, fail) {
+            this.get = function (path, callback, fail) {
                 // fetch function to get the file
                 new Fetch(location.origin + $config.base + path, {
                     method: 'get',
                     headers: { 'Content-Type': 'text/plain' }
                 }).then(function (data) {
                     if (data.ok) {
-                        cb(data.response);
+                        callback(data.response);
                     } else {
                         throw ({ message: 'Unable to load the file: ' + path + '\nDescription: ' + data.statusText + '.' });
                     }
@@ -2009,13 +1984,11 @@
                     // Reading the added element
                     Compiler.compile({
                         el: el,
-                        data: $easy.retrieve(src, true) || Compiler.getUpData(el)
+                        data: $easy.retrieve(src, true) || $inc.$$data || Compiler.getUpData(el)
                     });
 
                     // calling the events
-                    forEach(instance.loaded, function (evt) {
-                        evt(el, $inc);
-                    });
+                    forEach(instance.loaded, function (evt) { evt.call($easy, el); });
                     return;
                 }
 
@@ -2024,12 +1997,14 @@
                     this.name = (src + ' compoment').toUpperCase();
                     this.created = this.mounted = fn.empty;
                     this.loaded = this.destroyed = fn.empty
-                    this.scope = $easy.retrieve(src, true);
+                    this.scope = $easy.retrieve(src, true) || $inc.$$data;
                     this.Easy = $easy;
                     
                     // In this case the element was removed from the DOM before de compilation
                     // Removing the exposed data of this component
                     if (!$inc.parentNode) return;
+                    if (!$path.template)
+                        compilingFile = $path.url.endsWith('.html') ? $path.url : $path.url + '.html';
 
                     if (!isNull($path.data)) {
                         this.data = new ReactiveObject($path.data);    
@@ -2132,9 +2107,9 @@
                             }
                         });
         
-                        forEach(styleIds, function (s) {
+                        forEach(styleIds, function (id) {
                             // Redefining the top object class
-                            el.classList.add(s);
+                            el.classList.add(id);
                         });
         
                         // Storing the content
@@ -2194,7 +2169,6 @@
                                 clearInterval(tId);
                                 // Checking it is still connected
                                 if (!$inc.parentNode) return;
-
                                 // In case of empty scope get the up component data
                                 if ( isEmptyObj(this.scope) ) 
                                     this.scope = Compiler.getUpData($inc);
@@ -2231,17 +2205,20 @@
 
                                 // Element was added
                                 this.mounted(el, $inc);
-                                forEach(instance.mounted, function (evt) { evt.call(self, el, $inc); });
+                                forEach(instance.mounted, function (evt) { evt.call($easy, el); });
                                 
                                 // Compiling the added element according the scope data                        
                                 Compiler.compile({
                                     el: el,
-                                    data: this.data 
+                                    data: this.data,
+                                    done: function() {
+                                        compilingFile = 'main file';
+                                    }
                                 });
                                 
                                 // Element was loaded
                                 this.loaded(el);
-                                forEach(instance.loaded, function (evt) { evt.call(self, el); });
+                                forEach(instance.loaded, function (evt) { evt.call($easy, el); });
                                 // Two parents in case of no-replace inc
                                 if (!el.parentNode || !el.parentNode.parentNode) return;
                                 var target = el.parentNode;
@@ -2250,7 +2227,7 @@
                                 var mut = new MutationObserver(function() {
                                     if(el.isConnected === false){
                                         self.destroyed(el);
-                                        forEach(instance.destroyed, function (evt) { evt.call(self, el); });
+                                        forEach(instance.destroyed, function (evt) { evt.call($easy, el); });
 
                                         // Removing every styles 
                                         toArray( styles, function(el) {
@@ -2270,10 +2247,7 @@
                                 });
                             }
                         } catch (error) {
-                            var $error = { fileName: this.name };
-                            for (var $k in error) $error[$k] = error[$k]; 
-                            $error.message += " in " + error.fileName;
-                            Easy.log($error);
+                            Easy.log(error);
                             clearInterval(tId);
                         }
                     }).bind(this), 0);
@@ -2349,9 +2323,7 @@
              */
             this.eval = function ($exp, $data, $return, $args) {
                 if (!$data) $data = {};
-
                 if (isNull($exp) || $exp === '') return;
-                
                 if (isNull($return) || $return === true) 
                     $exp = 'this.$return=' + $exp; // Allow to return a value
 
@@ -2360,8 +2332,7 @@
                         Function($exp).apply($easy, $args);
                     }, $data);
                 }catch(error) {
-                    var v = isArray($data) ? '$array' : v = $data.keys().join(', ');
-                    Easy.log(error.message + '.\nAvailable variables in current scope: { ' + v + ' }');
+                    Easy.log({ message: error.message, scope: $data });
                 }
                 // Retrieving the returned value
                 var $value = $easy.$return; delete $easy.$return;
@@ -2390,8 +2361,8 @@
                 if (isNull(remove)) remove = false;
                 if (isNull(elem.attributes)) return;
 
-                var res, i;
-                for (i = 0; i < attrs.length; i++)
+                var res;
+                for (var i = 0; i < attrs.length; i++)
                     if ( res = elem.attributes[attrs[i]] ) break;
 
                 if (res && remove) elem.removeAttribute(res.name);
@@ -2406,36 +2377,36 @@
                 if (isObj($dt)) keys = $dt.keys();
                 try {
                     // Defining 
-                    forEach(keys, function (k) {
-                        if ($global.hasOwnProperty(k)) {
-                            if ( $propDescriptor($global, k).configurable === true )
-                                $propTransfer(oldVars, $global, k);
+                    forEach(keys, function (key) {
+                        if ($global.hasOwnProperty(key)) {
+                            if ( $propDescriptor($global, key).configurable === true )
+                                $propTransfer(oldVars, $global, key);
                             else
-                                nonConfigurable[k] = $global[k]; // In case of noo-configurable props
+                                nonConfigurable[key] = $global[key]; // In case of noo-configurable props
                         }
 
-                        if (nonConfigurable.hasOwnProperty(k))
-                            $global[k] = $dt[k];
+                        if (nonConfigurable.hasOwnProperty(key))
+                            $global[key] = $dt[key];
                         else
-                            $propTransfer($global, $dt, k);
+                            $propTransfer($global, $dt, key);
                     });
                     callback.call($easy);
                 } catch(error) {
                     throw (error);
                 } finally {
-                    nonConfigurable.keys(function (k, v) {
+                    nonConfigurable.keys(function (key, value) {
                         // Changing the value if they are diferents
-                        if ($dt[k] !== $global[k]) $dt[k] = $global[k];
+                        if ($dt[key] !== $global[key]) $dt[key] = $global[key];
                         // Restoring the non configs props
-                        $global[k] = v;
+                        $global[key] = value;
                     });
                     // Cleaning
-                    forEach(keys, function (k) {
-                        if (!nonConfigurable.hasOwnProperty(k)) delete $global[k]; 
+                    forEach(keys, function (key) {
+                        if (!nonConfigurable.hasOwnProperty(key)) delete $global[key]; 
                     });
                     // Redefining the old values
-                    oldVars.keys(function(k) {
-                        $propTransfer($global, oldVars, k);
+                    oldVars.keys(function(key) {
+                        $propTransfer($global, oldVars, key);
                     });
                 }
             }
@@ -2451,20 +2422,20 @@
                     // remove all desconected elements from temporaly store variables
                     function maintenance() {
                         // Removing non used requests
-                        toArray(webDataRequests.keys(), function(idx) {
-                            var obj = webDataRequests[idx];
+                        toArray(webDataRequests.keys(), function(key) {
+                            var obj = webDataRequests[key];
                             if (obj.$type === 'many') {
                                 if (obj.$el.$e.com.isConnected === false)
-                                    delete webDataRequests[idx];
+                                    delete webDataRequests[key];
                             } else {
                                 if (obj.$el.isConnected === false)
-                                    delete webDataRequests[idx];
+                                    delete webDataRequests[key];
                             }
                         });
                         
-                        toArray(instance.$handleWatches, function(obj, idx) {
+                        toArray(instance.$handleWatches, function(obj, index) {
                             if ( obj.el.isConnected === false ) {
-                                instance.$handleWatches.splice(idx, 1);
+                                instance.$handleWatches.splice(index, 1);
                                 obj.watch.destroy();
                             }
                         });
@@ -2484,7 +2455,7 @@
                                 // Skip if it's a comment
                                 if ( isIgnore(node.nodeName) ) return;
                                 
-                                if (inc.isInc(node))
+                                if (inc.isInc(node) || (node.hasAttribute && node.hasAttribute('e-compile')))
                                     callback(node);
                             });
 
@@ -2499,17 +2470,17 @@
                 // Creates a comment with some identifier
                 create: function (id, options) {
                     if (!options) options = {};
-                    var c = doc.createComment('e');
-                    c.easy = true;
-                    c.$id = id || $easy.code(8);
-                    options.keys(function (k, v) { c[k] = v; });
-                    return c;
+                    var comment = doc.createComment('e');
+                    comment.easy = true;
+                    comment.$id = id || $easy.code(8);
+                    options.keys(function (key, value) { comment[key] = value; });
+                    return comment;
                 },
                 // Gets a comment from an element
                 get: function (elem, id) {
                     if (isNull(id)) return;
-                    return instance.com.getAll(elem, id).findOne(function (n) {
-                        return n.$id === id;
+                    return instance.com.getAll(elem, id).findOne(function (com) {
+                        return com.$id === id;
                     });
                 },
                 getAll: function (elem, id) {
@@ -2526,8 +2497,8 @@
             }
             // Objtec for ui commands like: if, for, show...
             this.cmd = {
-                if: function (elem, $dt) {
-                    if (isNull($dt)) $dt = {};
+                if: function (elem, $data) {
+                    if (isNull($data)) $data = {};
                     var exp = elem.$e.typeValue, res;
                     
                     if ( elem.$e.chainObj.trueEl )
@@ -2536,7 +2507,7 @@
                     else if ( elem.$e.typeName === 'e-else' )
                         res = elem.$e.chainObj.$elseValue;                     
                     else
-                        res = fn.eval(exp, $dt) ? true : false;
+                        res = fn.eval(exp, $data) ? true : false;
 
                     if (new String(res).toLowerCase() === 'false') {
                         // Hide element
@@ -2557,10 +2528,10 @@
                     }
                     return res;
                 },
-                show: function (elem, $dt) {
-                    if (isNull($dt)) $dt = {};
+                show: function (elem, $data) {
+                    if (isNull($data)) $data = {};
                     var exp = elem.$e.typeValue;
-                    var res = fn.eval(exp, $dt) ? true : false;
+                    var res = fn.eval(exp, $data) ? true : false;
                     if (new String(res).toLowerCase() === 'false') 
                         elem.style.display = 'none';
                     else if (new String(res).toLowerCase() === 'true')
@@ -2577,13 +2548,13 @@
                         attr = fn.attr(el, [name]);
                         
                         if (instance.getDelimiters(attr.value).length > 0) {
-                            Easy.log(error.dlm);
+                            Easy.log(error.delimiter);
                             return undefined;
                         }
 
                         if (!array) {
                             Easy.log({
-                                msg: 'It seems like the array defined in e-for is invalid',
+                                message: 'It seems like the array defined in e-for is invalid',
                                 elem: el,
                                 expression: attr.value
                             });
@@ -2593,10 +2564,8 @@
                         var helper = instance.cmd.for.read(el);
                         // If it has no comment, means that the list was not used yet
                         if (!comment) {
-                            var aId = el.aId = $easy.code(10);
-                            comment = instance.com.create(aId, {
-                                $tmp: el
-                            });
+                            var arrayId = el.aId = $easy.code(10);
+                            comment = instance.com.create(arrayId, { $tmp: el });
                             el.$e.com = comment;
                             // Removing the current element
                             el.aboveMe().replaceChild(comment, el);
@@ -2605,7 +2574,7 @@
                         var methods = extractor($scope, 'function');
                         // Executes the main actions
                         function exec($array) {
-                            forEach($array, function (item, i) {
+                            forEach($array, function (item, index) {
                                 var copy = el.cloneNode(true), data = {};
                                 forEach([name, vars.cmds.order], function (p) {
                                     copy.removeAttribute(p);
@@ -2617,7 +2586,7 @@
                                     dec: helper.dec,
                                     data: $scope,
                                     array: $array,
-                                    index: i,
+                                    index: index,
                                     extIndex: obj.index
                                 });
 
@@ -2674,7 +2643,7 @@
                 if (element.$e.hasOwnProperty('type')) return true;
                 // Checking if it has delimiters
                 if (ui.getDelimiters(attr.value).length > 0) {
-                    Easy.log(error.dlm);
+                    Easy.log(error.delimiter);
                     return; // fail on preparation
                 }
 
@@ -2711,8 +2680,8 @@
                 array = remain[0];
                 filter = remain[1];
                 if (dec) {
-                    var _ = dec.replaceAll(['(', ')']).split(',');
-                    $dec = { first: _[0], sec : _[1] };
+                    var $variables = dec.replaceAll(['(', ')']).split(',');
+                    $dec = { first: $variables[0], sec : $variables[1] };
                 }
                 return {
                     ok: true,
@@ -2735,7 +2704,10 @@
                     // Getting the declaration expression
                     Object.defineProperty(obj, trim(dec.first), $propDescriptor(array, index));
                     // If if has an index defined in for config obj use it
-                    if (!isNull(dec.sec))  obj[trim(dec.sec)] = ( !isNull(extIndex) ? extIndex : index );
+                    if (!isNull(dec.sec)) {
+                        obj[trim(dec.sec)] = ( !isNull(extIndex) ? extIndex : index );
+                        new ReactiveProperty({ object: obj, property: trim(dec.sec) });
+                    }
                     obj = extend.obj(obj, data);
                 }
                 return obj;
@@ -2746,16 +2718,16 @@
                 var check = function (text, flag) {
                     var center = '([\\S\\s]*?)';
                     for (var i = 0; i < instance.$$delimiters.length; i++) {
-                        var d = instance.$$delimiters[i], 
-                        result = text.match( RegExp( d.delimiter.open + center + d.delimiter.close, flag) );
+                        var dlm = instance.$$delimiters[i], 
+                        result = text.match( RegExp( dlm.delimiter.open + center + dlm.delimiter.close, flag) );
                         if ( result ) return result; 
                     }
                 }
 
                 var res = check(str, 'g');
                 if (!res) return [];
-                return res.map(function (m) {
-                    var matches = check(m);
+                return res.map(function (item) {
+                    var matches = check(item);
                     return {
                         field: matches[0],
                         exp: trim(matches[1])
@@ -2763,12 +2735,12 @@
                 });
             }
             /** set value field as #value or #text. */
-            this.setNodeValue = function (field, $dt) {
+            this.setNodeValue = function (field, $data) {
                 var origin = field.$e.$base, name = field._name || field.nodeName;
                 var value = field.$e.$oldValue;
 
                 forEach(field.$e.$fields, function (f) {
-                    value = value.replaceAll( f.field, fn.exec(f.exp, $dt, true) );
+                    value = value.replaceAll( f.field, fn.exec(f.exp, $data, true) );
                 });
 
                 var replaceable = name.startsWith('e-') && !vars.cmds.hasValue(name);
@@ -2781,7 +2753,7 @@
                     try {
                         if ( !isNull(origin[name]) ) {
                             // Building the type of the object to set
-                            var ctorName = origin[name].constructor.name;
+                            var ctorName = origin[name].__proto__.constructor.name;
                             // In case of Boolean, the constructor does not parse string to boolean
                             // The verification will be manually
                             if (vars.types.indexOf(ctorName) > -1) {
@@ -2814,16 +2786,15 @@
                 }
             }
             /** Sets value according to type  */
-            this.setElemValue = function (elem, $dt) {
-                var c = vars.cmds, $$e = elem.$e || {};
+            this.setElemValue = function (elem, $data) {
+                var cmd = vars.cmds, $$e = elem.$e || {};
                 // By default compile as text
-                var type = $$e.type || c.field;
+                var type = $$e.type || cmd.field;
                 
                 switch (type) {
-                    case c.field: 
-                        instance.setNodeValue(elem, $dt); 
-                        return;
-                    case c.if:
+                    case cmd.field: 
+                    return instance.setNodeValue(elem, $data); 
+                    case cmd.if:
                         // Executing the whole chain
                         var chainObj = elem.$e.chainObj; 
                         chainObj.trueEl = null;
@@ -2835,20 +2806,20 @@
                                 if ( cond.attr.name === 'e-else' && isNull(chainObj.trueEl) )
                                     chainObj.$elseValue = true;
 
-                                instance.cmd.if(cond.el, $dt);
+                                instance.cmd.if(cond.el, $data);
                                 cond.el.$prevent = true;
                             }
                         });
                         return;
-                    case c.show:
-                        return instance.cmd.show(elem, $dt);
+                    case cmd.show:
+                        return instance.cmd.show(elem, $data);
                     default: return;
                 }
             }
             /** UI template web request initializer */ 
-            this.init = function (elem, $dt) {
+            this.init = function (elem, $$data) {
                 var cmds = vars.cmds,
-                    $scope = $dt || $easy.data,
+                    $scope = $$data || $easy.data,
                     attr = fn.attr(elem, [cmds.req], true);
 
                 if (!attr) return;
@@ -2857,7 +2828,7 @@
                 var $value = trim(attr.value), $request = {};
 
                 if(!$value)
-                    return Easy.log({ msg: error.invalid('e-req'), el: elem });
+                    return Easy.log({ message: error.invalid('e-req'), el: elem });
 
                 // Repleacing if we got delimiters
                 forEach(instance.getDelimiters($value), function (f) {
@@ -2873,7 +2844,7 @@
                 }
                 
                 if(isNull($request.$url))
-                    return Easy.log({ msg: 'No $url defined in e-req object', el: elem });
+                    return Easy.log({ message: 'No $url defined in e-req object', el: elem });
                 
                 $request.$scope = $scope;
                 // Setting the default type if it is not defined
@@ -3017,7 +2988,7 @@
                             });
                         });
                     default:
-                        return Easy.log({ msg: 'No url defined in e-req object', el: elem });
+                        return Easy.log({ message: 'No url defined in e-req object', el: elem });
                 }
             }
         }
@@ -3028,7 +2999,7 @@
 
             if ($propDescriptor(object, property).writable === false)
                 return this;
-            
+                
             // If function
             var $prop = object[property];
             if (typeof $prop === 'function') {
@@ -3054,11 +3025,11 @@
                     if (isArray(obj)) return 'array';
                     return typeof obj;
                 }
-                var n = getType(newValue), o = getType(oldValue), el = bind.el;
-                if (n !== o) return Easy.log('The types of the objects are diferents, Old Type: ' + o + '; New Type: ' + 
-                            n + '. ' + 'You need to set the same object types to performe the change in the DOM.');
+                var newType = getType(newValue), oldType = getType(oldValue), el = bind.el;
+                if (newType !== oldType) return Easy.log('The types of the objects are diferents, Old Type: ' + oldType + '; New Type: ' + 
+                            newType + '. ' + 'You need to set the same object types to performe the change in the DOM.');
                 
-                if (n !== 'array') return;
+                if (newType !== 'array') return;
                 // Only run if the element is a #comment 
                 if (el.nodeName !== '#comment') return;
                 
@@ -3092,7 +3063,8 @@
                             propConfig.value.splice(0, propConfig.value.length);
                             propConfig.value.push.apply(propConfig.value, value);
                         } else{
-                            object[property].mapObj(newValue);
+                            if (!isNull(object[property]))
+                                object[property].mapObj(newValue);
                         }
                     }
                     else
@@ -3138,54 +3110,50 @@
                     if (!bind.isObj)
                         // Updating bound nodes
                         return ui.setElemValue(bind.el, bind.obj);
-
-                    // This way, clear and add every elements again
-                    // Advantage: if the list is ordered, it will always appear ordered.
-                    // Disadvantage: Consumes a lot of CPU if there is 10.000.000 or above elements listed, 
-                    // there will be a huge work! 
-                    // ReactiveArray.retrieveElems(bind.el, true);
-                    // ui.cmd.for({
-                    //     el: bind.el.$tmp, 
-                    //     array: array, 
-                    //     comment: bind.el, 
-                    //     data: bind.obj
-                    // });
-
-                    // This way, it will be applied Array methods in the elements listed.
-                    // Advantage: Consumes very less of CPU, because it handle arguments elements everytime.
-                    // Disadvantage: if the list is ordered, it will not appear ordered, on add or unshift.
-                    var elems = ReactiveArray.retrieveElems(bind.el);
-                    function add(args, neighbor) {
+                    // Rerender all the array on change
+                    if (options.config.rerenderOnArrayChange === true) {
+                        ReactiveArray.retrieveElems(bind.el, true);
                         ui.cmd.for({
                             el: bind.el.$tmp, 
-                            array: args.keys().map(function(k){
-                                return args[k];
-                            }), 
+                            array: config.array, 
                             comment: bind.el, 
-                            data: bind.obj,
-                            // The new element will be inserted before de neighbor
-                            neighbor: neighbor,
-                            index: config.array.length - 1
+                            data: bind.obj
                         });
-                    }
-                    switch (config.method) {
-                        case 'push': // Perform normal add action
-                            add(config.args);
-                            break;
-                        case 'unshift': // Perform add before the first element
-                            add(config.args, elems[0]);
-                            break;
-                        case 'pop': // Perform the remove action, at the end
-                        case 'shift'://                         , ate the beginning
-                            var el = elems[config.method]();
-                            if(el) el.parentNode.removeChild(el);
-                            break;
-                        case 'splice': // Perform index removing
-                            forEach(elems.splice.apply(elems, config.args),
-                            function (el) {
-                                el.parentNode.removeChild(el);
+                    } else {
+                        // Make the change on the value changed
+                        var elems = ReactiveArray.retrieveElems(bind.el);
+                        function add(args, neighbor) {
+                            ui.cmd.for({
+                                el: bind.el.$tmp, 
+                                array: args.keys().map(function(key){
+                                    return args[key];
+                                }), 
+                                comment: bind.el, 
+                                data: bind.obj,
+                                // The new element will be inserted before de neighbor
+                                neighbor: neighbor,
+                                index: config.array.length - 1
                             });
-                        default: break;
+                        }
+                        switch (config.method) {
+                            case 'push': // Perform normal add action
+                                add(config.args);
+                                break;
+                            case 'unshift': // Perform add before the first element
+                                add(config.args, elems[0]);
+                                break;
+                            case 'pop': // Perform the remove action, at the end
+                            case 'shift'://                         , ate the beginning
+                                var el = elems[config.method]();
+                                if(el) el.parentNode.removeChild(el);
+                                break;
+                            case 'splice': // Perform index removing
+                                forEach(elems.splice.apply(elems, config.args),
+                                function (el) {
+                                    el.parentNode.removeChild(el);
+                                });
+                            default: break;
+                        }
                     }
                 });
                 forEach(propConfig.watches, function (watch) {
@@ -3229,8 +3197,7 @@
             if (!(isObj(object))) return object;
             for(var key in object) {
                 // If the property is already a reactive one, skip.
-                if(!$propDescriptor(object, key).hasOwnProperty('value')) 
-                    continue;
+                if(!$propDescriptor(object, key).hasOwnProperty('value')) continue;
                 
                 var prop = object[key];
                 new ReactiveProperty({
@@ -3238,7 +3205,7 @@
                     property: key
                 });
 
-                if (typeof prop === 'object') {
+                if (typeof prop === 'object' && !isNull(prop)) {
                     if (isArray(prop)) {
                         new ReactiveArray({
                             object: object,
@@ -3249,6 +3216,8 @@
                             new ReactiveObject(item);
                         });
                     } else {
+                        if (prop.constructor.name === 'Inc' || prop.constructor.name === 'Easy' || prop instanceof Node)
+                            continue;
                         new ReactiveObject(prop);
                     }
                 }
@@ -3357,14 +3326,14 @@
             var exp = filter.split(':');
             // For direct filter. Eg.: :name == 'something'
             if ((filter.indexOf(':') !== -1) && (trim(exp[0]) === '') && (trim(exp[1]) !== '')) {
-                array.filtered = forEach(array.value, function (item, i) {
+                array.filtered = forEach(array.value, function (item, index) {
                     var obj = item;
                     // if it is primitive, define an object with a declatation variables
                     if (dec && !isObj(item)) {
                         obj = {};
                         // Cleaning the expression
                         obj[trim(dec.first)] = item;
-                        if(dec.sec) obj[trim(dec.sec)] = i;
+                        if(dec.sec) obj[trim(dec.sec)] = index;
                     }
                     return fn.eval(exp[1], obj);
                 });
@@ -3376,7 +3345,7 @@
                     filterType = 'targeted';
                 } else {
                     var vtrim = trim(filter);
-                    condition = $data.hasOwnProperty(vtrim) ? $data[vtrim] : $global[vtrim];
+                    condition = fn.eval(vtrim, $data);
                     if (typeof condition === 'function') filterType = 'function';
                 }
                 // Executes the filter function
@@ -3395,10 +3364,10 @@
                                 });
                             } else {
                                 var res = false;
-                                trim(exp[1]).split(',').findOne(function (p) {
-                                    var val = fn.eval(p, item);
+                                trim(exp[1]).split(',').findOne(function (part) {
+                                    var val = fn.eval(part, item);
                                     if (!val) {
-                                        Easy.log(error.invalid(val + ' in ' + p));
+                                        Easy.log(error.invalid(val + ' in ' + part));
                                         return false;
                                     }
                                     // Converting to string and comparing
@@ -3410,14 +3379,19 @@
                     }
                     return config.actions.run(lastValue);
                 }
-                
-                this.reference = execute($data[exp[0]]);
+                var $$data = $data, $prop = exp[0], $value;
+                getter = function (layerData, property) {
+                    $$data = layerData;
+                    $prop = property.property;
+                };
+                $value = fn.eval(exp[0], $$data); unget();
+                this.reference = execute($value);
                 // Watching the change of property in the filter
-                watch = Watch.exec(exp[0], function (value) {
+                watch = Watch.exec($prop, function (value) {
                     if (self.reference.isConnected === false)
                         return self.destroy(); // auto destroy if it does not exits;
                     execute(value);
-                }, $data);
+                }, $$data);
             }
 
             this.destroy = function () {
@@ -3455,9 +3429,9 @@
                     data: config.data
                 });
                 
-                forEach(fields, function (f) {
+                forEach(fields, function (field) {
                     // Watching the bound properties
-                    watches.push(Watch.exec(f.exp, function () {
+                    watches.push(Watch.exec(field.exp, function () {
                         if (self.reference.isConnected === false)
                             return self.destroy(); // auto destroy if it does not exits
                         config.actions.run.call(self);
@@ -3484,16 +3458,16 @@
             this.type = type;
             this.base =  element;
             this.target = element;
-            if (options) options.keys(function (k, v) { self[k] = v; });
+            if (options) options.keys(function (key, value) { self[key] = value; });
         }
         /** Helper to handle the Routes. Dependencies: Easy, Includer */
         function RouteHandler(config) {
             this.routeView = config.el;
             this.routeView.removeAttribute('route-view');
             var inc = config.includer;
-            var msg = function(n, f, s) {
-                return ({ message: 'It is not allowed to define more than one '+ n +' page.' + 
-                '\n  Please, choose between \''+ f +'\' and \''+ s +'\' in components definition.' });
+            var msg = function(codeName, firstPage, secPage) {
+                return ({ message: 'It is not allowed to define more than one '+ codeName +' page.' + 
+                '\n  Please, choose between \''+ firstPage +'\' and \''+ secPage +'\' in components definition.' });
             }
 
             try {
@@ -3521,6 +3495,10 @@
                 var $href = $url.href;
                 var $path = $href.substr($url.origin.length + componentConfig.base.length);
                 var usehash = inc.config.usehash;
+                var removeLastForwardSlash = function ($$path) {
+                    return $$path.endsWith('/') ? $$path.substring(0, $$path.length - 1) : $$path; 
+                }
+                rewriteUrl.url = removeLastForwardSlash('/' + $path + componentConfig.base).replaceAll('//', '/');
                 // Removing the hash if necessary
                 if (usehash === true && $path.startsWith('#/') )
                     $path = $path.substr('#'.length).trim();
@@ -3533,8 +3511,7 @@
                     return this.defaultPage;
 
                 // Removing the last forward slash
-                if ( $path.endsWith('/') ) 
-                    $path = $path.substring(0, $path.length - 1); 
+                $path = removeLastForwardSlash($path);
 
                 // Searching for the path
                 for (var key in inc.paths) {
@@ -3545,14 +3522,12 @@
                         return sec[0] === ':' ? '\\w{1,}' : sec; 
                     }).join('/');
 
-                    if( isArray(new RegExp('^'+ $$path +'$', 'gi').exec($path)) ) {
-                        rewriteUrl.url = (componentConfig.base + (usehash ? '/#/' : '') + $path).replaceAll('//', '/');
+                    if( isArray(new RegExp('^'+ $$path +'$', 'gi').exec($path)) )
                         return path;
-                    }
                 }
                 return this.notFoundPage;
             }
-            this.navegate = function (url) {
+            this.navegate = function (url, isPopState) {
                 var rewriteUrl = {}; // Store the url the needs to be wrote
                 var path = getPath.call(this, url, rewriteUrl);
                 
@@ -3564,42 +3539,54 @@
                     doc.title = path.title;
 
                 // Changing the title and the url if it needed
-                if (path.route)
-                    $global.history.pushState({ url: rewriteUrl.url }, path.title, rewriteUrl.url);
+                if (isNull(isPopState) && path.route)
+                    this.pushState(rewriteUrl.url, path.title);
 
                 var el = doc.createElement('inc');
                 el.valueIn('src', path.name);
-                //el.valueIn('keep-alive', '');
+                if ( path.keepAlive === true )
+                    el.valueIn('keep-alive', '');
                 this.routeView.appendChild(el);
                 this.markActive(path.route);
             }
-
+            this.pushState = function (url, title) {
+                $global.history.pushState({ url: url }, title, url);
+            }
+            this.popState = function (number) {
+                if ( isNull(number) ) number = -1;
+                $global.history.go(number);
+            }
             // mark 
-            this.markActive = function (route) {
+            this.markActive = function (routeOrAnchor) {
                 // Marking the active-link
                 RouteHandler.handleLink(); // unmark the current
-                route = route || location.href.substr(location.origin.length);
-                var currentUrl = RouteHandler.normalizePath(route);
-                var $anchor = $easy.el.node('a[href="'+currentUrl+'"]');
-                if($anchor && $anchor.$markable) RouteHandler.handleLink($anchor);
+                if ( isString(routeOrAnchor) || isNull(routeOrAnchor) ) {
+                    routeOrAnchor = routeOrAnchor || location.href.substr(location.origin.length);
+                    var currentUrl = RouteHandler.normalizePath(routeOrAnchor);
+                    var $anchor = $easy.el.node('a[href="'+currentUrl+'"]');
+                    if($anchor && $anchor.$markable) RouteHandler.handleLink($anchor);
+                } else if (routeOrAnchor instanceof HTMLAnchorElement) {
+                    RouteHandler.handleLink(routeOrAnchor);
+                }
             }
 
-            $global.addEventListener('popstate', (function () {
-                this.navegate(location.href);
+            $global.addEventListener('popstate', (function (evt) {
+                evt.preventDefault();
+                this.navegate((evt.state || {}).url || location.href, true);
             }).bind(this));
 
             this.navegate(location.href);
             RouteHandler.navegate = this.navegate.bind(this);
         }
-        RouteHandler.handleLink = function (a) {
+        RouteHandler.handleLink = function (anchor) {
             var cls = 'active-link', $instance = RouteHandler.instance;
             if (!$instance) return;
             if ($instance.activeLink){
                 $instance.activeLink.classList.remove(cls);
             }
-            if(a) {
-                a.classList.add(cls);
-                $instance.activeLink = a;
+            if(anchor) {
+                anchor.classList.add(cls);
+                $instance.activeLink = anchor;
             }
         }
         RouteHandler.normalizePath = function($value) {
@@ -3622,9 +3609,9 @@
                         layer: object,
                         lastLayer: obj,
                         property: prop
-                    }
+                    };
                     // Adding the options to the config
-                    options.keys(function (k, v) { config[k] = v; });
+                    options.keys(function (key, value) { config[key] = value; });
                     // Binding the element
                     new Bind(config);
                 }
@@ -3636,7 +3623,7 @@
             }
         }
         /** watch a property from data */
-        prototype.watch = Watch.exec = function (prop, cb, object) {
+        prototype.watch = Watch.exec = function (prop, callback, object) {
             if (!object) object = $easy.data;
             if ( !object.hasOwnProperty(prop) ) return;
             var watch;
@@ -3644,7 +3631,7 @@
             getter = function (_, prop) {
                 watch = new Watch({
                     property: prop,
-                    callback: cb
+                    callback: callback
                 });
             }; 
             var _ = object[prop];
@@ -3698,17 +3685,16 @@
             var attr = fn.attr(options.elem, [ name ], true);
             if (trim(attr.value) === '') return Easy.log('Invalid expression in ' + attr.name);
             var event = new EasyEvent(type, options.elem, {
-                data: { $model: options.model, $scope: options.scope },
+                $data: { model: options.model, scope: options.scope },
                 result: options.result
             });
             Compiler.addOldAttr({ el: options.elem, value: attr });      
             var eventDesc = $propDescriptor($global, 'event');
             // Defining to the global object
             $propTransfer($global, { event: event }, 'event');        
-            // Calling the function, it is evaluated based on $model data not the scope
-            fn.eval("if (typeof (" + attr.value + ") === 'function') " +
-                attr.value + ".apply(this, arguments);", options.scope || {}, false, [event]);
-
+            // Calling the function, it is evaluated based on model data not the scope
+            var $$result = fn.eval(attr.value, options.scope || {});
+            if (typeof $$result === 'function') $$result.apply($easy, [event]);
             // Defining the old value in the global object
             $propDefiner($global, 'event', eventDesc);
         }
@@ -3728,7 +3714,7 @@
             if (!el.$e.$oldAttrs) {
                 el.$e.$oldAttrs = [ value ];
             } else {
-                if (el.$e.$oldAttrs.findOne(function (x) { return x == value; }))
+                if (el.$e.$oldAttrs.findOne(function (old) { return old == value; }))
                     return value;
                 el.$e.$oldAttrs.push(value);
             }
@@ -3797,9 +3783,34 @@
             else 
                 $$init.call(this);
         } catch(error) {
-            Easy.log({ msg: 'Error while initializing. Description: ' + error.message, error: error });
+            Easy.log({ message: 'Error while initializing. Description: ' + error.message, error: error });
         }
     }
+    function EasyLog(log, type) {
+        var $instance = {};
+        $instance.__proto__ = Object.create(EasyLog.prototype, {
+            constructor: { value: EasyLog, writable: true, configurable: true }
+        });
+        $instance.type = type;
+        $instance.thrownAt = new Date().toLocaleString();
+        if (isString(log))
+            $instance.message = log;
+        else if (isObj(log)) {
+            for (var key in log)
+                $propTransfer($instance, log, key);
+            Object.defineProperties($instance, {
+                message: { enumerable: true, value: log.message }, 
+                file: { enumerable: true, value: log.file || compilingFile }
+            });
+        }
+        
+        $instance.name = log.name || 'Error';
+        $instance.__proto__.toString = function(){ return $instance.message; };
+        return $instance;
+    }
+    EasyLog.prototype = Object.create(Error.prototype, {
+        constructor: { value: EasyLog, writable: true, configurable: true }
+    });
     // Default proto methods
     Easy.prototype.Fetch = Fetch;
     Easy.prototype.extend = extend;

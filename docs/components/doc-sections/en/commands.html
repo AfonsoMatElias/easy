@@ -1,6 +1,7 @@
 <section class="section">
-    <a href="https://github.com/AfonsoMatElias/easy/blob/6a729b7284758c6064eaadb4dc6b23fde4081aaf/docs/components/doc-sections/en/commands.html" 
-    title="Help us improve this documentation on github!" class="edit-content"><span class="fa fa-pencil"></span></a>
+    <a href="https://github.com/AfonsoMatElias/easy/blob/6a729b7284758c6064eaadb4dc6b23fde4081aaf/docs/components/doc-sections/en/commands.html"
+        title="Help us improve this documentation on github!" class="edit-content"><span
+            class="fa fa-pencil"></span></a>
 
     <h1> <a id="commands" href="#commands"> Commands </a> </h1>
     <p>
@@ -24,7 +25,8 @@
     <p>
         If we define an <a href="https://www.dyn-web.com/tutorials/object-literal/" class="mark-el">Object Literal</a>,
         kwow that these properties are temporary and by default <span class="note warn-border">they are not
-            reactive</span>, unless an object that is already reactive is passedby itself or if we passe the object in the
+            reactive</span>, unless an object that is already reactive is passedby itself or if we passe the object in
+        the
         <span class="note">this.reactive( ... )</span> method, it expects a method and returns the already reactive
         object.
     </p>
@@ -421,7 +423,7 @@
     <p>
         There are two syntaxes for its use, the <b>short way</b> <span class="note mark-el">e-for="myArray"</span>
         normally used when it is an array of object literal, and the <b>complete way</b>
-        <span class="note mark-el">e-for="item of/in myArray"</span> used mandatorilywhen it is an array of
+        <span class="note mark-el">e-for="item of/in myArray"</span> used mandatorily when it is an array of
         primitives and optional when they are object literal.
     </p>
 
@@ -459,6 +461,15 @@
             <div class="result"></div>
         </div>
     </div>
+
+    <p>
+        Into <i class="mark-el">e-for</i> expression, two variables can be defined, the <i class="mark-el">item</i>
+        and the <i class="mark-el">index</i> of the item, using `rerenderOnArrayChange: <iclass="mark-el">false</i>` 
+        whenever the array changes, like for eg: `array.shift()` the index variable won't auto update because there is not 
+        a physical binding between this <i class="mark-el">index</i> with the <i class="mark-el">index of this item in the 
+            array</i>. In the other hand, using `rerenderOnArrayChange: <i class="mark-el">true</i>`, whenever the array 
+            changes, all the items of the array will be re-rendered in the UI, meaning the index variable updates too.
+    </p>
 
     <h4> <a id="cmd_e_for_filter" href="#cmd_e_for_filter"> Using Array filter </a> </h4>
     <p>

@@ -29,7 +29,8 @@
                     route : String, 
                     isDefault : Boolean,
                     isNotFound : Boolean,
-                    children : Object
+                    children : Object,
+                    keepAlive: Boolean
                 }
             }
         }
@@ -61,11 +62,13 @@
         <li> <span class="note mark-el">nameId.isNotFound</span> &ndash; set the compoment as the not found
             route of the app.</li>
 
-        <li> <span class="note mark-el">nameId.children</span> &ndash; represents the of this compoment.</li>
+        <li> <span class="note mark-el">nameId.children</span> &ndash; represents the children of this compoment.</li>
+        
+        <li> <span class="note mark-el">nameId.keepAlive</span> &ndash; allow the component to keep alive the old state.</li>
     </ul>
 
     <label>HTML</label>
-    <pre e-ignore><code class="HTML hljs">
+    <pre e-ignore><code class="html hljs">
     &lt;div id="routeApp"&gt;
         &lt;nav&gt;
             &lt;a :href="/home"&gt; Home &lt;/a&gt;
@@ -135,7 +138,7 @@
         other hand, using <i class="note mark-el">i:href</i>, the addition of the class is ignored.
     </p>
 
-    <pre e-ignore><code class="HTML hljs">
+    <pre e-ignore><code class="html hljs">
     &lt;!-- config.base='/my-project/' --&gt;
 
     &lt;!-- Defined (Not Compiled) --&gt;
@@ -192,7 +195,7 @@
         containing all the parameters of the route.
     </p>
 
-    <pre e-ignore><code class="HTML hljs">
+    <pre e-ignore><code class="html hljs">
     &lt;div&gt;
         &lt;!-- Compoment Content --&gt;
     &lt;/div&gt;
@@ -228,7 +231,7 @@
         </li>
     </ol>
 
-    <pre e-ignore><code class="HTML hljs">
+    <pre e-ignore><code class="html hljs">
     &lt;head&gt;
         &lt;base href="/" &gt;
         ...

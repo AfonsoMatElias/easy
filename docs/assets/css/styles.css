@@ -120,7 +120,7 @@ i {
 
 .light-theme *,
 .dark-theme * {
-    transition: background-color .6s;
+    transition: background-color .3s;
 }
 
 body {
@@ -317,28 +317,42 @@ a.active-doc-menu, a.active-doc-menu * {
     transform: translate(-50%, -50%);
 }
 
+.main-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 .main-icon img {
     height: 260px;
 }
 
+.high-element .main-text {
+    display: flex;
+    flex-flow: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 20px;
+}
+
 .main-text {
-    margin-top: 35px;
     color: var(--color-text);
 }
 
 .main-text .high-text {
     font-size: 26pt;
-    padding: 5px 0;
+    margin: 8px 0;
 }
 
 .main-text .high-btn {
     font-size: 16pt;
     border: 1px solid var(--color-border);
     border-radius: 25px;
-    padding: 8px 28px;
-    padding-bottom: 10px;
-    display: inline-block;
-    margin: 30px 0;
+    width: 165px;
+    height: 45px;
+    margin: 20px 0;
+    display: flex;    
+    justify-content: center;
+    align-items: center;
 }
 
 .main-text .high-btn:hover {
@@ -367,7 +381,7 @@ a.active-doc-menu, a.active-doc-menu * {
 .card {
     color: var(--color-text);
     width: 320px;
-    height: 200px;
+    height: 180px;
     margin: 10px 20px;
     border-radius: 4px;
     overflow: hidden;
@@ -382,6 +396,7 @@ a.active-doc-menu, a.active-doc-menu * {
 
 .card .head .title {
     font-size: 18pt;
+    margin-top: 5px;
 }
 
 /* Main Page Card setup */
@@ -526,6 +541,10 @@ a.active-doc-menu, a.active-doc-menu * {
     color: var(--color-text);
 }
 
+.tutorial-page .tutorial-menu .content .edit-content {
+    top: 0;
+} 
+
 .doc-page .doc-menu {
     width: 335px;
     box-shadow: 0 1px 2px 0.1px var(--color-soft-border);
@@ -599,10 +618,6 @@ a.active-doc-menu, a.active-doc-menu * {
 
 .tutorial-page .tutorial-menu .top .dir * {
     margin: auto 0;
-}
-
-.tutorial-page .tutorial-menu .content .text a {
-    color: var(--color-blue);
 }
 
 .tutorial-page .tutorial-menu .content .text h3 {
@@ -845,7 +860,7 @@ ul.top-menu-opened {
 .doc-page .doc-presentation .section .result select,
 .doc-page .doc-presentation .section .result button {
     border: 1px solid var(--color-border);
-    padding: 4px 10px;
+    padding: 2px 10px;
     border-radius: 4px;
     margin: 4px 0;
 }
@@ -918,6 +933,7 @@ pre {
 pre {
     padding: 0 !important;
     background-color: transparent !important;
+    font-family: Consolas, 'Courier New', monospace;
 }
 
 pre code {
@@ -929,6 +945,7 @@ pre code {
     color: var(--color-text);
     padding: 0px 10px !important;
     background-color: var(--color-editor-screen) !important;
+    font-family: Consolas, 'Courier New', monospace;
 }
 
 .result {
@@ -956,7 +973,7 @@ code .hljs-built_in {
 pre code::after,
 .result::after,
 .block-note::after {
-    content: "Copy";
+    content: "Code";
     font-family: Consolas, 'Courier New', monospace;
     position: absolute;
     top: 0;
@@ -968,13 +985,23 @@ pre code::after,
     line-height: 15px;
     height: 15px;
     font-weight: 600;
-    cursor: pointer;
+}
+
+pre code.html.hljs::after {
+    content: '.html';
+}
+
+pre code.javascript.hljs::after {
+    content: '.js';
+}
+
+pre code.bat.hljs::after {
+    content: '.bat';
 }
 
 .result::after,
 .block-note::after {
     content: "Result";
-    cursor: default;
 }
 
 .block-note::after {
@@ -988,11 +1015,12 @@ pre code::after,
     background-color: var(--color-soft-transparency);
     border: 2px solid transparent;
     position: relative;
+    border-left-width: 5px;
 }
 
 .block-note>* {
     display: block;
-    margin: 28px 15px !important;
+    margin: 22px 14px !important;
 }
 
 .block-note.info {
@@ -1190,7 +1218,7 @@ pre code::after,
     }
 
     .high-element .main-text {
-        text-align: center;
+        align-items: center;
     }
 
     .main-page-description {
