@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
         data: {
             darkMode: false,
             themeIco: 'fa-moon-o',
-            isLoading: false
+            pageLoading: false
         },
         components: {
             config: {
@@ -92,6 +92,22 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 },
             }
+        },
+        mounted: function () {
+            // Is loading something
+            var pagesLoading = 0;
+            this.on('incRequested', function () {
+                pagesLoading++;
+                if (this.data.pageLoading === false)
+                    this.data.pageLoading = true;
+            });
+            
+            // Everything loaded
+            this.on('incLoaded', function () {
+                pagesLoading--;
+                if (this.data.pageLoading == true && pagesLoading === 0)
+                    this.data.pageLoading = false;
+            });
         }
     });
 

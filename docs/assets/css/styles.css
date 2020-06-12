@@ -1156,16 +1156,15 @@ pre code.bat.hljs::after {
 }
 
 /* Animations classes */
-.loading-component {
-    z-index: 300;
+.page-loading {
+    z-index: 180;
     position: absolute;
-    top: 0;
+    top: 0; left: 0; right: 0;
     background-color: var(--easy-yellow);
-    width: 0%;
     height: 4px;
-    animation: loading-comp 2s .1s ease forwards,
-                fade-el 1.6s 2.4s ease infinite;
+    animation: fade-el 1.6s ease infinite;
 }
+
 .blink {
     animation: fade-el 1s infinite;
     -webkit-animation: fade-el 1s infinite;

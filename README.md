@@ -53,7 +53,7 @@ To use into your project you may import via cdn 🌍:
 Or, you may download file to use locally 💻:
 
 ```HTML
-<script src="/project/js/easy.js"></script>
+<script src="js/easy.js"></script>
 ```
 [Download it now](https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.0.0/easy.js)
 
@@ -69,7 +69,7 @@ Create a script tag below the importing or even a script file (you need to impor
     <p> This is my first Easy app </p>
 <div>
 
-<script src="/project/js/easy.js"></script>
+<script src="/js/easy.js"></script>
 <script>
     new Easy('#app', {
         data: {
