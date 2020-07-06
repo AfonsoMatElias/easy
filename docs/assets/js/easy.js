@@ -1,5 +1,5 @@
 /**
- * Easy.js @version v2.0.0
+ * Easy.js @version v2.0.1
  * Released under the MIT License.
  * (c) 2019 @author Afonso Matumona
  */
@@ -3500,7 +3500,9 @@
                 }
                 rewriteUrl.url = removeLastForwardSlash(componentConfig.base + $path).replaceAll('//', '/');
                 // Removing the hash if necessary
-                if (usehash === true && $path.startsWith('#/') )
+                if (usehash === true && $path == '#' )
+                    $path = '/';
+                else if (usehash === true && $path.startsWith('#/') )
                     $path = $path.substr('#'.length).trim();
                 else
                     $path = '/' + $path.trim();
