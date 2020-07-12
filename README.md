@@ -55,7 +55,7 @@ Or, you may download file to use locally 💻:
 ```HTML
 <script src="js/easy.js"></script>
 ```
-[Download it now](https://github.com/AfonsoMatElias/easy/releases/download/v2.0.0-rls/easy.js)
+Enter the site to download it!
 
 #### So far, you have it install in your project and you are ready to go!!! 😀
 
