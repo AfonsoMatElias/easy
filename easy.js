@@ -1,5 +1,5 @@
 /**
- * Easy.js @version v2.0.1
+ * Easy.js @version v2.0.0
  * Released under the MIT License.
  * (c) 2019 @author Afonso Matumona
  */
@@ -16,7 +16,6 @@
     var getter, // Store getter function
         compilingFile = 'main file'; // Store the compiling filePath
     var $global = window, doc = $global.document;
-    delete $global.name; // Removing window.name property
 
     // Helper variables to resolve url issues, based on Angular.js version 1.7.9
     var urlParsingNode = doc.createElement('a');
@@ -672,12 +671,11 @@
         }
     }
     /**
-     * A mimic of fetch api for browser compatibilities
+     * A mimic of fetch api for browsers compatibilities
      * Note: it was based on angular.js version 1.7.9
      */
-    function Fetch(url, options) {
+    function http(url, options) {
         if (!url) return Easy.log('Invalid url');
-        options = options ? options : {};
 
         function createXhr(method) {
             if (doc.documentMode && (!method.match(/^(get|post|head|put|delete|options)$/i) || !window.XMLHttpRequest)) {
@@ -688,29 +686,23 @@
             throw ({ message: "This browser does not support XMLHttpRequest." });
         }
 
-        var self = this, abortedByTimeout = false;
-        options.keys((function (option) {
-            if (option === 'body') return;
-            this[option] = options[option];
-        }).bind(this));
+        var self = {}, abortedByTimeout = false;
+        (options || {}).keys(function (key, value) { self[key] = value; });
 
         // The default method is get
-        options.method = this.method = this.method ? this.method : 'get';
-        var xhr = createXhr(this.method), timeoutId;
-        this.xhrObject = xhr;
+        self.method ? self.method : 'get';
+        var xhr = createXhr(self.method), timeoutId;
 
         // Unchangeable URL, even if it was passed in options
-        this.url = url;
+        self.url = url;
         // If timeout is not defined use the default 1 minute
-        this.timeout = this.timeout || 60000;
+        self.timeout = self.timeout || 60000;
 
         return new Promise(function (resolve, reject) {
-            xhr.open(self.method, self.url, true);
+            xhr.open(self.method, self.url, self.async || true);
             xhr.timeout = self.timeout; 
 
-            self.headers = self.headers ? self.headers : {};
-            self.headers.keys(function (key) {
-                var value = self.headers[key];
+            (options.headers || {}).keys(function (key, value) {
                 if (value) {
                     xhr.setRequestHeader(key, value);
                 }
@@ -731,6 +723,20 @@
                 completeRequest(status, response, xhr.getAllResponseHeaders(), statusText, 'complete');
             }
 
+            var completeRequest = function (status, response, headersString, statusText, xhrStatus) {
+                xhr = null;
+                self.response = response;
+                self.responseHeaders = headersString;
+                self.statusText = statusText;
+                self.statusMessage = xhrStatus;
+
+                if (status === -1) {
+                    reject(self);
+                } else {
+                    resolve(self);
+                }
+            }
+
             var requestError = function () {
                 completeRequest(-1, null, null, '', 'error');
             }
@@ -747,35 +753,17 @@
             xhr.ontimeout = requestTimeout;
             xhr.onabort = requestAborted;
 
-            self.eventHandlers = self.eventHandlers ? self.eventHandlers : {};
-            self.eventHandlers.keys(function (key) {
-                var value = self.eventHandlers[key];
+            (self.eventHandlers || {}).keys(function (key, value) {
                 if (value) {
                     xhr.addEventListener(key, value);
                 }
             });
             
-            self.uploadEventHandlers = self.uploadEventHandlers ? self.uploadEventHandlers : {};
-            self.uploadEventHandlers.keys(function (key) {
-                var value = self.uploadEventHandlers[key];
+            (self.uploadEventHandlers || {}).keys(function (key, value) {
                 if (value) {
                     xhr.addEventListener(key, value);
                 }
             });
-
-            function completeRequest(status, response, headersString, statusText, xhrStatus) {
-                xhr = null;
-                self.response = response;
-                self.responseHeaders = headersString;
-                self.statusText = statusText;
-                self.statusMessage = xhrStatus;
-
-                if (status === -1) {
-                    reject(self);
-                } else {
-                    resolve(self);
-                }
-            }
 
             if (self.withCredentials) {
                 xhr.withCredentials = true;
@@ -792,6 +780,7 @@
             }
             
             xhr.send(options.body || null);
+            return self;
         });
     }
 
@@ -1902,7 +1891,7 @@
             /** * Get a HTML file from the server, according to a path */
             this.get = function (path, callback, fail) {
                 // fetch function to get the file
-                new Fetch(location.origin + $config.base + path, {
+                http(location.origin + $config.base + path, {
                     method: 'get',
                     headers: { 'Content-Type': 'text/plain' }
                 }).then(function (data) {
@@ -2021,7 +2010,8 @@
                         new ReactiveObject(data);
                         
                         data.keys((function (k) {
-                            $propTransfer(this.data, data, k);  
+                            $propTransfer(this.data, data, k);
+                            this.data[k] = data[k]; // Updates the UI already
                         }).bind(this));
                     }
 
@@ -2047,6 +2037,7 @@
                         forEach(temp.children, function (child) {
                             switch (child.nodeName) {
                                 case 'STYLE': styles.push(child); return;
+                                case 'LINK': styles.push(child); return;
                                 case 'SCRIPT':  scripts.push(child); return;
                                 default: el = child; return;
                             }
@@ -2099,11 +2090,26 @@
                                 // Generating some class name for the selectors
                                 var value = 'easy-s' + $easy.code(7), $newContent = '';
                                 styleIds.push(value);
-                                // Changing each selector to avoid conflit
-                                forEach(style.sheet.cssRules, function (rule) {
-                                    $newContent += '.' + value + ' ' + rule.cssText + ' ';
-                                });
-                                style.innerText = $newContent;
+
+                                function changeSelector($style) {
+                                    // Changing each selector to avoid conflits
+                                    var isStyle = ($style.nodeName === 'STYLE'), rules = [];  
+                                    forEach($style.sheet.cssRules, function (rule) {
+                                        rule.selectorText = '.' + value + ' ' + rule.selectorText; 
+                                        rule.cssText = '.' + value + ' ' + rule.cssText;
+                                        if (isStyle) rules.push(rule.cssText);
+                                    });
+
+                                    if (isStyle) $style.innerText = rules.join('\n');
+                                }
+                                
+                                if (style.nodeName === 'LINK') {
+                                    style.onload = function (evt) {
+                                        changeSelector(evt.target);
+                                    }
+                                } else {
+                                    changeSelector(style);
+                                }
                             }
                         });
         
@@ -2193,7 +2199,7 @@
                                     $inc.parentNode.replaceChild(el, $inc);
                                 } else {
                                     $inc.inc = src;
-                                    $inc.innerHTML = el;
+                                    $inc.appendChild(el);
                                     destroyable = $inc;
                                 }
                                 
@@ -2405,7 +2411,7 @@
                         if (!nonConfigurable.hasOwnProperty(key)) delete $global[key]; 
                     });
                     // Redefining the old values
-                    oldVars.keys(function(key) {
+                    forEach(Object.keys(oldVars), function(key) {
                         $propTransfer($global, oldVars, key);
                     });
                 }
@@ -2976,7 +2982,7 @@
                         return $easy.getOne($request.$url, $request.$id)
                         .then(function(data) {
                             if(!data.status)
-                                return Easy.log(data.msg);
+                                return Easy.log(data.msg); 
                             prepareOne(data.result);
                         })
                         .catch(function(error) {
@@ -3071,7 +3077,7 @@
                         propConfig.value = newValue;
                     
                     // calling binds
-                    forEach(toArray(propConfig.binds), function (bind) {
+                    toArray(propConfig.binds, function (bind) {
                         if (bind.isObj)
                             emitArrayChanges(bind, newValue, oldValue);
                         else
@@ -3086,7 +3092,7 @@
                             bind.bind.destroy(); // If it is an Element node
                     });
                     // calling watches
-                    forEach(toArray(propConfig.watches), function (watch) {
+                    toArray(propConfig.watches, function (watch) {
                         watch.callback(newValue, oldValue);
                     });
                 }
@@ -3814,7 +3820,7 @@
         constructor: { value: EasyLog, writable: true, configurable: true }
     });
     // Default proto methods
-    Easy.prototype.Fetch = Fetch;
+    Easy.prototype.http = http;
     Easy.prototype.extend = extend;
     Easy.prototype.return = function (status, message, result) {
         return { status: status, msg: message, result: result };
