@@ -116,6 +116,17 @@
             });
             return out;
         },
+        // Add properties to the first object extracting from the next arguments
+        addToObj: function (destination) {
+            arguments.keys(function (idx, value) {
+                if (idx == 0) return;
+                if (isNull(value)) return; 
+                value.keys(function (prop) {
+                    $propTransfer(destination, value, prop);
+                });
+            });
+            return destination;
+        },
         // join arrays into one
         array: function () {
             var out = [];
@@ -809,9 +820,9 @@
         ];// Default delimiters
 
         // Setting the default values in options
-        options = $objDesigner(options, { config: {}, data: {}, components: {}, mounted: fn.empty, loaded: fn.empty });
+        options = $objDesigner(options, { config:{}, data:{}, global:{}, components:{}, mounted: fn.empty, loaded: fn.empty });
         options.data = $objDesigner(options.data, {});
-        options.components = $objDesigner(options.components, { elements: {}, config: {} });
+        options.components = $objDesigner(options.components, { elements:{}, config:{} });
         options.components.config = $objDesigner(options.components.config, { usehash: true, base: '/', keepData: false });
         options.config = $objDesigner(options.config, { deepIgnore: false, rerenderOnArrayChange: false, log: true,
                                         useDOMLoadEvent: true, skeleton: { background: '#E2E2E2' , wave: '#ffffff5d' } });
@@ -1183,7 +1194,7 @@
                     $data.$scope = Compiler.getUpData(el);
                     Compiler.compile({
                         el: el,
-                        data: $data 
+                        data: extend.addToObj($$data, extractor($data.$scope, 'function')) 
                     });
                 });
             }
@@ -1347,7 +1358,7 @@
             if (typeof fun !== 'function') {
                 Easy.log('this.reactive function expects a function as parameter.');
                 return;
-            } 
+            }
             var obj = {};
             getter = function(_, prop) {
                 Object.defineProperty(obj, prop.property, prop.descriptor);
@@ -1398,6 +1409,13 @@
                 if ( hasAttr(el, 'e-ignore') ) return;
                 if ( hasAttr(el, 'e-compile') ) el.removeAttribute('e-compile');
                 
+                // Addig the use id need
+                if ( hasAttr(el, vars.cmds.use) ) {
+                    var $use = fn.attr(el, [vars.cmds.use], true);
+                    if (!isObj($scope)) $scope = {};
+                    $scope[$use.value] = $scope; 
+                }
+
                 if ( hasAttr(el, 'wait-data') ) {
                     var attr = fn.attr(el, [ 'wait-data' ], true);
                     if(!trim(attr.value))
@@ -1406,7 +1424,7 @@
                     if (exposed[attr.value]) {
                         var $$data = new ReactiveObject($easy.retrieve(attr.value, true));
                         $$data.$scope = $scope;
-                        Compiler.compile({ el: el, data: $$data });
+                        Compiler.compile({ el: el, data: extend.addToObj($$data, $$methods) });
                     } else {
                         if ( waitedData[attr.value] )
                             waitedData[attr.value].push(el);
@@ -1517,12 +1535,12 @@
                     }
 
                     $dt.$scope = $scope;
-                    walker.call($easy, el, extend.obj($dt, $$methods));
+                    walker.call($easy, el, extend.addToObj($dt, $$methods));
                     
                     EasyEvent.emit({
                         elem: el,
                         type: vars.events.data,
-                        scope: extend.obj($scope)
+                        scope: $scope
                     });
 
                     return;
@@ -1617,7 +1635,7 @@
                             });
                             arguments[0].$data = { scope: $scope };
                             // Calling the callback function
-                            var $$result = fn.eval($value, extend.obj($scope, $$methods) || {});
+                            var $$result = fn.eval($value, extend.addToObj($scope, $$methods) || {});
                             if (typeof $$result === 'function') $$result.apply($easy, arguments);
                         });
 
@@ -1627,7 +1645,7 @@
                             if(evtExpression.indexOf('once') !== -1) // If once
                                 $easy.off(eventName, $event.callback);
                             // Calling the callback function
-                            var $$result = fn.eval($value, extend.obj($scope, $$methods) || {});
+                            var $$result = fn.eval($value, extend.addToObj($scope, $$methods) || {});
                             if (typeof $$result === 'function') $$result.apply($easy, arguments);
                         }
                         callback.$target = base;
@@ -1782,12 +1800,11 @@
                         walker.call($easy, child, $scope);
                     });
                 }
-
                 
                 EasyEvent.emit({ // Emitting the event
                     elem: el,
                     type: vars.events.compiled,
-                    scope: extend.obj($scope)
+                    scope: extend.addToObj($scope)
                 });
             }
             // Setting the data function
@@ -2088,7 +2105,7 @@
                             // For scoped styles
                             if (style.hasAttribute('scoped')) {
                                 // Generating some class name for the selectors
-                                var value = 'easy-s' + $easy.code(7), $newContent = '';
+                                var value = 'easy-s' + $easy.code(7);
                                 styleIds.push(value);
 
                                 function changeSelector($style) {
@@ -2099,7 +2116,6 @@
                                         rule.cssText = '.' + value + ' ' + rule.cssText;
                                         if (isStyle) rules.push(rule.cssText);
                                     });
-
                                     if (isStyle) $style.innerText = rules.join('\n');
                                 }
                                 
@@ -2599,14 +2615,14 @@
                                 // Compiling the element and stoping the mutation
                                 Compiler.compile({
                                     el: copy,
-                                    data: extend.obj(data, methods)
+                                    data: extend.addToObj(data, methods)
                                 });
                                 // Checking and calling the event if exists
                                 EasyEvent.emit({
                                     elem: copy,
                                     type: vars.events.add,
                                     model: data,
-                                    scope: extend.obj($scope)
+                                    scope: extend.addToObj($scope)
                                 });
 
                                 copy.$prevent = true;
@@ -2704,7 +2720,7 @@
                 if (!dec) {
                     if(!isObj(item)) throw ({ message: 'The Array shorthand \'e-for="myArray"\' '+
                                             'only work with object literal, not with primitives.' });
-                    obj = extend.obj(item);
+                    obj = item;
                     obj.$scope = data;
                 } else {
                     // Getting the declaration expression
@@ -2714,7 +2730,8 @@
                         obj[trim(dec.sec)] = ( !isNull(extIndex) ? extIndex : index );
                         new ReactiveProperty({ object: obj, property: trim(dec.sec) });
                     }
-                    obj = extend.obj(obj, data);
+                    obj = extend.addToObj(obj, data);
+                    obj[trim(dec.first)].$scope = data;
                 }
                 return obj;
             }
@@ -2893,6 +2910,15 @@
                 function prepareMany(data) {
                     $request.$data = data;
                     new ReactiveObject($request);
+
+                    // Emitting the response event
+                    EasyEvent.emit({
+                        elem: elem,
+                        type: vars.events.response,
+                        model: $request.$data,
+                        scope: $scope
+                    });
+
                     // It's added after Reactive Call to avoid to be altered too
                     $request.$el = elem;
                     // Storing the data in the request data
@@ -2914,15 +2940,9 @@
                     elem.valueIn('e-for', $use + '$data' + filter);
                     Compiler.compile({
                         el: elem,
-                        data: extend.obj($scope, { $data: $request.$data })
+                        data: extend.addToObj($scope, { $data: $request.$data })
                     });
 
-                    EasyEvent.emit({
-                        elem: elem,
-                        type: vars.events.response,
-                        model: $request.$data,
-                        scope: $scope
-                    });
                     watchRequestChanges([ '$id', '$url' ]);
                 }
 
@@ -2942,6 +2962,15 @@
                         $request.$data = data;
                     }
                     new ReactiveObject($request);
+                    
+                    // Emitting the response event
+                    EasyEvent.emit({
+                        elem: elem,
+                        type: vars.events.response,
+                        model: $request.$data,
+                        scope: $scope
+                    });
+
                     // It's added after Reactive Call to avoid to be altered too
                     $request.$el = elem;
                     // Storing the data in the request data
@@ -2949,14 +2978,7 @@
 
                     Compiler.compile({
                         el: elem,
-                        data: extend.obj($request.$data, $scope)
-                    });
-
-                    EasyEvent.emit({
-                        elem: elem,
-                        type: vars.events.response,
-                        model: $request.$data,
-                        scope: $scope
+                        data: extend.addToObj($request.$data, $scope)
                     });
 
                     watchRequestChanges([ '$id' ]);
@@ -3730,7 +3752,7 @@
         Compiler.setValue = function(obj) {
             // Binding and setting the value in the element
             // Only the primitives and objects are bindable
-            var data = extend.obj(obj.scope, obj.methods), $return;
+            var data = extend.addToObj(obj.scope, obj.methods), $return;
             Bind.exec(obj.current, obj.scope, function () {
                 $return = ui.setElemValue(obj.current, data);
             });
@@ -3741,13 +3763,15 @@
                 if(!el.$e) continue;
                 var curr = el.$e.data
                 if(typeof curr === 'function')
-                    return extend.obj( curr() );
+                    return curr();
             } while(el = el.parentNode)
         }
         //#endregion
         try {
             // Setting the begin data
+            this.global = {};
             this.setData(options.data);
+            this.setData(options.global, this.global);
             this.data = options.data;
             // Initializing easy animation css
             this.css();
