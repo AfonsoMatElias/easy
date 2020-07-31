@@ -707,7 +707,7 @@
         // Unchangeable URL, even if it was passed in options
         self.url = url;
         // If timeout is not defined use the default 1 minute
-        self.timeout = self.timeout || 60000;
+        self.timeout = self.timeout || 120000;
 
         return new Promise(function (resolve, reject) {
             xhr.open(self.method, self.url, self.async || true);
@@ -1408,13 +1408,6 @@
                 if ( $name === '#comment' ) return;
                 if ( hasAttr(el, 'e-ignore') ) return;
                 if ( hasAttr(el, 'e-compile') ) el.removeAttribute('e-compile');
-                
-                // Addig the use id need
-                if ( hasAttr(el, vars.cmds.use) ) {
-                    var $use = fn.attr(el, [vars.cmds.use], true);
-                    if (!isObj($scope)) $scope = {};
-                    $scope[$use.value] = $scope; 
-                }
 
                 if ( hasAttr(el, 'wait-data') ) {
                     var attr = fn.attr(el, [ 'wait-data' ], true);
@@ -1556,7 +1549,7 @@
                     ui.init(el, extend.obj($scope, this.methods));
                     return;
                 } else if ( hasAttr(el, cmds.for) ) {
-                    // For
+                    // Reading the for expression
                     var helper = ui.cmd.for.read(el), comment;
                     if (!helper.ok) return;
                     
@@ -1804,7 +1797,7 @@
                 EasyEvent.emit({ // Emitting the event
                     elem: el,
                     type: vars.events.compiled,
-                    scope: extend.addToObj($scope)
+                    scope: $scope
                 });
             }
             // Setting the data function
@@ -2250,7 +2243,6 @@
                                     if(el.isConnected === false){
                                         self.destroyed(el);
                                         forEach(instance.destroyed, function (evt) { evt.call($easy, el); });
-
                                         // Removing every styles 
                                         toArray( styles, function(el) {
                                             doc.head.removeChild(el);
@@ -2291,7 +2283,14 @@
                     else
                         $url = $path.url;
                 } else {
-                    return Easy.log('No \''+ src +'\' component was found, please check if it is defined.');
+                    var message = 'No \''+ src +'\' component was found, please check if it is defined.';
+                    forEach(instance.fail, function (evt) { 
+                        evt.call($easy, {
+                            message: message,
+                            inc: $inc 
+                        }); 
+                    });
+                    return Easy.log(message);
                 }
                 // Get element from Server
                 var component = instance.components[src];
@@ -2611,18 +2610,18 @@
                                     index: index,
                                     extIndex: obj.index
                                 });
-
+                                var itemData = extend.addToObj(data, methods);
                                 // Compiling the element and stoping the mutation
                                 Compiler.compile({
                                     el: copy,
-                                    data: extend.addToObj(data, methods)
+                                    data: itemData
                                 });
                                 // Checking and calling the event if exists
                                 EasyEvent.emit({
                                     elem: copy,
                                     type: vars.events.add,
                                     model: data,
-                                    scope: extend.addToObj($scope)
+                                    scope: itemData
                                 });
 
                                 copy.$prevent = true;
@@ -2731,7 +2730,6 @@
                         new ReactiveProperty({ object: obj, property: trim(dec.sec) });
                     }
                     obj = extend.addToObj(obj, data);
-                    obj[trim(dec.first)].$scope = data;
                 }
                 return obj;
             }
@@ -3523,25 +3521,22 @@
                 var $href = $url.href;
                 var $path = $href.substr($url.origin.length + componentConfig.base.length);
                 var usehash = inc.config.usehash;
-                var removeLastForwardSlash = function ($$path) {
-                    return $$path.endsWith('/') ? $$path.substring(0, $$path.length - 1) : $$path; 
-                }
-                rewriteUrl.url = removeLastForwardSlash(componentConfig.base + $path).replaceAll('//', '/');
+                
+                rewriteUrl.url = (componentConfig.base + $path).replaceAll('//', '/');
                 // Removing the hash if necessary
-                if (usehash === true && $path == '#' )
+                var ruleHome = /(^#$)|(^\/#$)|(^#\/$)|(^\/#\/$)/g;
+                var ruleSomePage = /(^#)|(^\/#)|(^#\/)|(^\/#\/)/g;
+                if (usehash === true && $path.match(ruleHome))
                     $path = '/';
-                else if (usehash === true && $path.startsWith('#/') )
-                    $path = $path.substr('#'.length).trim();
+                else if (usehash === true && $path.match(ruleSomePage) )
+                    $path = $path.replace(ruleSomePage, '').trim();
                 else
-                    $path = '/' + $path.trim();
+                    $path = ('/' + $path.trim()).replaceAll('//', '/');
 
                 $path = $path.split('?')[0]; // Clearing the queryStrings
                 // If it is an empty path load the default page
                 if ( $path === '' || $path === '/' || $path === '/index.html' )
                     return this.defaultPage;
-
-                // Removing the last forward slash
-                $path = removeLastForwardSlash($path);
 
                 // Searching for the path
                 for (var key in inc.paths) {
@@ -3846,8 +3841,8 @@
     // Default proto methods
     Easy.prototype.http = http;
     Easy.prototype.extend = extend;
-    Easy.prototype.return = function (status, message, result) {
-        return { status: status, msg: message, result: result };
+    Easy.prototype.return = function (status, message, result, extra) {
+        return extend.addToObj({ status: status, msg: message, result: result }, extra);
     }
     return Easy;
 })));
