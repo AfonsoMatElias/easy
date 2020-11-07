@@ -58,7 +58,7 @@
     <pre><code class="javascript hljs">
     var app = new Easy('#my-app');
 
-    app.on('changeName', function(data) {
+    app.on('eventName', function(data) {
         // Todo: your code here...
     });
     </code></pre>
@@ -85,11 +85,11 @@
     <pre><code class="javascript hljs">
     var app = new Easy('#my-app');
 
-    var event = app.on('changeName', function(data) {
+    var event = app.on('eventName', function(data) {
         // Todo: your code here...
     });
 
-    app.off('changeName', event.callback);
+    app.off('eventName', event.callback);
     </code></pre>
 
     <h3><a id="method_emit" href="#method_emit">emit</a></h3>
@@ -113,11 +113,11 @@
     <pre><code class="javascript hljs">
     var app = new Easy('#my-app');
 
-    var event = app.on('changeName', function(data) {
+    var event = app.on('eventName', function(data) {
         // Todo: your code here...
     });
     
-    app.emit('changeName', { name: 'transfered data' });
+    app.emit('eventName', { name: 'transfered data' });
     </code></pre>
 
     <h3><a id="method_expose" href="#method_expose">expose</a></h3>

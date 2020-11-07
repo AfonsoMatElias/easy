@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    var $$page = new Easy('#app-page', {
+    var app = new Easy('#app-page', {
         config: {
             useDOMLoadEvent: false,
             deepIgnore: true,
@@ -7,7 +7,16 @@ document.addEventListener('DOMContentLoaded', function () {
         data: {
             darkMode: false,
             themeIco: 'fa-moon-o',
-            pageLoading: false
+            pageLoading: false,
+            app: {
+                name: 'Easy',
+                version: 'v2.0.1',
+                url: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.0.0-rls/easy.js',
+                connectors: {
+                    ajax: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.0.0-rls/easy.ajax.js',
+                    free: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.0.0-rls/easy.free.js'
+                }
+            }
         },
         components: {
             config: {
@@ -96,17 +105,36 @@ document.addEventListener('DOMContentLoaded', function () {
         mounted: function () {
             // Is loading something
             var pagesLoading = 0;
+            var $easy = this;
+
+            function decreasePageLoaded() {
+                pagesLoading--;
+                if ($easy.data.pageLoading == true && pagesLoading === 0)
+                    $easy.data.pageLoading = false;
+            }
             this.on('incRequested', function () {
                 pagesLoading++;
                 if (this.data.pageLoading === false)
                     this.data.pageLoading = true;
             });
-            
+
             // Everything loaded
             this.on('incLoaded', function () {
-                pagesLoading--;
-                if (this.data.pageLoading == true && pagesLoading === 0)
-                    this.data.pageLoading = false;
+                decreasePageLoaded();
+            });
+
+            // If some page is blocked, then load the main page
+            this.on('incBlocked', function () {
+                decreasePageLoaded();
+            });
+
+            this.on('incFail', function () {
+                decreasePageLoaded();
+
+                // notify({
+                //     message: 'Página ou ficheiro não encontrado!',
+                //     type: 'error'
+                // });
             });
         }
     });
@@ -132,29 +160,28 @@ document.addEventListener('DOMContentLoaded', function () {
             // Setting dark mode
             highlightElement.href = highlightElement.href.replace(hlLight, hlDark);
             document.documentElement.classList.replace(light, dark);
-            $$page.data.themeIco = 'fa-sun-o';
+            app.data.themeIco = 'fa-sun-o';
         } else {
             // Setting light mode
             highlightElement.href = highlightElement.href.replace(hlDark, hlLight);
             document.documentElement.classList.replace(dark, light);
-            $$page.data.themeIco = 'fa-moon-o';
+            app.data.themeIco = 'fa-moon-o';
         }
 
         localStorage.setItem('_dark', isDark);
     }
 
-    $$page.watch('darkMode', function (v) {
+    app.watch('darkMode', function (v) {
         themeHandler(v);
     });
 
     window.onhashchange = function () {
-        if ($$page.data.hasOwnProperty('sMenuOpened'))
-            $$page.data.sMenuOpened = false;
-
+        if (app.data.hasOwnProperty('sMenuOpened'))
+            app.data.sMenuOpened = false;
     }
 
     if (location.pathname.match(/docs\.page\.\d{1}\.html/g) || location.pathname.match('/connectors.html')) {
-        $$page.on('incLoaded', function (el) {
+        app.on('incLoaded', function (el) {
             if (el.inc === 'top') return;
             addAnchors(el.nodes('a[id]'));
         });

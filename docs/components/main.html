@@ -6,7 +6,7 @@
                 <img src="assets/img/main_ico.png">
             </div>
             <div class="main-text">
-                <p class="high-text"> v2.0.0 </p>
+                <p class="high-text" e-content="{{ app.version }}"> version </p>
                 <p class="high-text"> Simpler & Cooler </p>
                 <a href="docs.page.1.html" class="high-btn"> Get Started </a>
             </div>
@@ -186,4 +186,5 @@
                 '<\/script>'
         });
     }
+    this.export(this.scope);
 </script>

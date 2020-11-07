@@ -104,6 +104,12 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             activeMenuOnScroll();
+
+            document.node('.doc-page .doc-menu').nodes('a').filter(function(anchor){ 
+                var href = anchor.attributes.href;
+                if (!href || href.value[0] != '#') return;
+                anchor.href = location.href + href.value;
+            })
         });
     </script>
 </body>

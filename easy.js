@@ -1,5 +1,5 @@
 /**
- * Easy.js @version v2.0.0
+ * Easy.js @version v2.0.1 Release
  * Released under the MIT License.
  * (c) 2019 @author Afonso Matumona
  */
@@ -13,6 +13,8 @@
             'stoppropagation': 'stopPropagation', 
             'preventdefault': 'preventDefault' 
         };
+    // methods to observe
+    var methods = [ 'push', 'pop', 'unshift', 'shift', 'splice' ];
     var getter, // Store getter function
         compilingFile = 'main file'; // Store the compiling filePath
     var $global = window, doc = $global.document;
@@ -236,6 +238,7 @@
     function setEasy(el) {
         // Sets $easy property in a element where will be stored configurations used by easy
         if ( !el.$e ) el.$e = {};
+        return el;
     }
     function extractor(obj, name) {
         // Extracts and generate a new object having only value of the extraction type  
@@ -463,13 +466,10 @@
         }, Array);
         // Animation extension
         // The main animation function for the extension
-        function niceShared(elem, direction, key, other) {
+        function niceShared(elem, direction, key) {
             var anm = vars.anm, keyNormalized = key.toLowerCase().split(':');
             // the animations keys, defined by the user
-            var keyIn = keyNormalized[0],
-                keyOut = keyNormalized[1] || anm.reverse(keyIn);
-
-            if (other) other.niceOut(keyOut);
+            var keyIn = keyNormalized[0];
 
             anm['to'].keys(function (k, v) {
                 elem.classList.remove(v);
@@ -479,13 +479,16 @@
             });
             // Adding the class in the main element
             elem.classList.add(anm[direction][keyIn]);
+
+            return keyNormalized[1] || anm.reverse(keyIn);
         }
         // Execute the nice in animation into an element
         def('niceIn', function (key, outElem, callback, delay) {
             var self = this;
             if (isNull(delay)) delay = 100;
             // Executing the main function
-            niceShared(self, 'to', key, outElem);
+            var keyOut = niceShared(self, 'to', key);
+            if (outElem) outElem.niceOut(keyOut);
             // Executing the callback
             setTimeout(function () {
                 if (callback) callback(self, outElem);
@@ -496,7 +499,8 @@
             var self = this;
             if (isNull(delay)) delay = 80;
             // Executing the main function
-            niceShared(self, 'from', key, inElem);
+            var keyOut = niceShared(self, 'from', key);
+            if (inElem) inElem.niceIn(keyOut);
             // Executing the callback
             setTimeout(function () {
                 if (callback) callback(self, inElem);
@@ -1194,7 +1198,7 @@
                     $data.$scope = Compiler.getUpData(el);
                     Compiler.compile({
                         el: el,
-                        data: extend.addToObj($$data, extractor($data.$scope, 'function')) 
+                        data: extend.addToObj($data, extractor($data.$scope, 'function')) 
                     });
                 });
             }
@@ -1382,6 +1386,7 @@
             new ReactiveObject(obj);
             return obj;
         }
+        
         prototype.compile = Compiler.compile = function (config) {
             var $$el = config.el;
             var $$data = config.data;
@@ -1391,356 +1396,452 @@
             var cmds = vars.cmds;
 
             if (!$$el) return Easy.log('Invalid element passed in the compiler');
-
             setEasy($$el);
-            // Helper functions
-            function hasAttr(el, name) {
-                return el.hasAttribute && el.hasAttribute(name) 
-            }
 
-            function remAttr(el, name) {
-                el.removeAttribute(name);
+            function includerHandler($config) {
+                var el = $config.el;
+                var $scope = $config.$scope;
+                var $name = el.nodeName;
+                var base = $name == 'INC' ? el : el.$e.$base;
+                var source = inc.src(base);
+
+                base.$$data = isEmptyObj($scope) ? null : extend.obj($scope);
+                // For includer dynamic change
+                var delimiters = ui.getDelimiters(source);
+                if( delimiters.length === 1 ) {
+                    base.valueIn('no-replace', '');
+                    
+                    var container = base.parentNode;
+                    var dlm = delimiters[0], name = base.nodeName;
+                    var attr = fn.attr(base, ['inc-src', 'src']), current = base;
+                    var hw = { el: current };
+
+                    source = fn.eval(dlm.exp, $scope);
+                    attr.value = source;
+
+                    hw.watch = $easy.watch(dlm.exp, function(val) {
+                        var element = doc.createElement(name);
+                        element.valueIn('no-replace', '');
+                        if(name === 'INC')
+                            element.valueIn('src', val);
+                        else 
+                            element.valueIn('inc-src', val);
+
+                        container.replaceChild(element, current);
+                        hw.el = current = element; // New element
+                    },  $scope);
+
+                    ui.$handleWatches.push(hw);
+                } else if( delimiters.length >= 1 ) {
+                    Easy.log('Only one delimiter is allowed in element[inc-src] or inc[src].\n  Check the value: \''+ source +'\'.')
+                    return base;
+                }
+                // including the component
+                inc.include(source, base);
+                return base;
             }
 
             function walker(el, $scope) {
                 var $name = el.nodeName, $value = el.nodeValue;
-                // Comment cannot be read
-                if ( $name === '#comment' ) return;
-                if ( hasAttr(el, 'e-ignore') ) return;
-                if ( hasAttr(el, 'e-compile') ) el.removeAttribute('e-compile');
-
-                if ( hasAttr(el, 'wait-data') ) {
-                    var attr = fn.attr(el, [ 'wait-data' ], true);
-                    if(!trim(attr.value))
-                        return Easy.log({ message: error.invalid('in ' + attr.name), el: el });
-
-                    if (exposed[attr.value]) {
-                        var $$data = new ReactiveObject($easy.retrieve(attr.value, true));
-                        $$data.$scope = $scope;
-                        Compiler.compile({ el: el, data: extend.addToObj($$data, $$methods) });
-                    } else {
-                        if ( waitedData[attr.value] )
-                            waitedData[attr.value].push(el);
-                        else
-                            waitedData[attr.value] = [ el ];                 
-                    }           
-                    return;
-                }
-
-                // Inline includer
-                if ( hasAttr(el, 'inc-tmp') ) {
-                    var attr = fn.attr(el, ['inc-tmp'], true);
-
-                    if (trim(attr.value))
-                        inc.components[attr.value] = { content: el.outerHTML };
-                    else
-                        Easy.log({ message: 'Invalid value in element[inc-tmp]. ', el: el }, 'warn');
-                }
-                                
-                // Property definer
-                if ( $name === cmds.def ) {
-                    remAttr(el.$e.$base, $name);
-                    var obj = fn.eval($value, $scope);
-                    if (obj) $easy.setData(obj, $scope);
-                    return;
-                }
-
-                setEasy(el); // setting $e property in the element
-                // Getting and Checking condition: if or show
-                if( hasAttr(el, cmds.if) || hasAttr(el, cmds.show) ) {
-                    var attr = fn.attr(el, [cmds.if, cmds.show], true);
-                    if( (trim(attr.value) === '') ) 
-                        return Easy.log({ message: 'Invalid expression in ' + attr.value, el: attr })
-
-                    if (attr.name === cmds.show) {
-                        var res = ui.cmd.if.prepare(el, attr, attr.name);
-                        if (res === true)
-                            Compiler.setValue({ current: el, scope: $scope, methods: $$methods });
-                    } else {
-                        var curr = el, chain = [ { attr: attr, el: curr } ]; 
-
-                        do { // Getting the chain of the condition
-                            curr = curr.nextElementSibling;
-                            if ( !curr ) break;
-                            var $attr = fn.attr(curr, ['e-else-if', 'e-else']);
-                            if ( !$attr ) break;
-                            chain.push({ attr: $attr, el: curr });
-                            // Break on else
-                            if ( $attr.name === 'e-else' ) break;
-                        } while(1);
-
-                        if (ui.cmd.if.prepare(el, attr, cmds.if)) {
-                            el.$e.chainObj = {
-                                $elseValue: false,
-                                chain: chain,
-                                trueEl: null
-                            }
-                            Compiler.setValue({ current: el, scope: $scope, methods: $$methods });
-                        }
-                    }
-                }
-
-                // Scope execution 
-                // Includer 
-                if ( inc.isInc(el) ) {
-                    var source = inc.src(el);
-                    el.$$data = isEmptyObj($scope) ? null : extend.obj($scope);
-                    // For includer dynamic change
-                    var delimiters = ui.getDelimiters(source);
-                    if( delimiters.length === 1 ) {
-                        el.valueIn('no-replace', '');
-                        
-                        var container = el.parentNode;
-                        var dlm = delimiters[0], name = el.nodeName;
-                        var attr = fn.attr(el, ['inc-src', 'src']), current = el;
-                        var hw = { el: current };
-
-                        source = fn.eval(dlm.exp, $scope);
-                        attr.value = source;
-
-                        hw.watch = $easy.watch(dlm.exp, function(val) {
-                            var element = doc.createElement(name);
-                            element.valueIn('no-replace', '');
-                            if(name === 'INC')
-                                element.valueIn('src', val);
-                            else 
-                                element.valueIn('inc-src', val);
-
-                            container.replaceChild(element, current);
-                            hw.el = current = element; // New element
-                        },  $scope);
-
-                        ui.$handleWatches.push(hw);
-                    } else if( delimiters.length >= 1 ) {
-                        return Easy.log('Only one delimiter is allowed in element[inc-src] or inc[src].\n  Check the value: \''+ source +'\'.')
-                    }
-                    // including the component
-                    inc.include(source, el);
-                    return;
-                } else if ( hasAttr(el, cmds.data) ) {
-                    // Data
-                    var scope = fn.attr(el, [cmds.data], true), $dt;
-                    // Getting the data or the default
-                    if ( trim(scope.value) === '' ){
-                        $dt = extend.obj($easy.data); // clone the main data
-                    } else {
-                        $dt = fn.eval(scope.value, $scope);
-                    }
-
-                    $dt.$scope = $scope;
-                    walker.call($easy, el, extend.addToObj($dt, $$methods));
-                    
-                    EasyEvent.emit({
-                        elem: el,
-                        type: vars.events.data,
-                        scope: $scope
+                setEasy( el ); // setting easy property in the element
+                // Add the old attributes if the compilation is forced
+                if (config.force === true && el.$e.$oldAttrs) {
+                    forEach(el.$e.$oldAttrs, function (attr) {
+                        el.attributes.setNamedItem(attr);
                     });
+                }
 
-                    return;
-                } else if ( hasAttr(el, cmds.tmp) || hasAttr(el, cmds.fill) || hasAttr(el, cmds.req) ) {
-                    // Preparing the element 
-                    var attr = fn.attr(el, [cmds.tmp, cmds.fill], true);
-                    if (attr) {
-                        var type = attr.name === cmds.tmp ? 'many' : 'one';
-                        var id = fn.attr(el, [cmds.id], true); id = id ? id.value : '';
-                        el.valueIn('e-req', '{ $url: "'+ attr.value +'", $type: "'+ type +'", $id: "'+ id +'" }');
-                    }
-                    // Templates
-                    ui.init(el, extend.obj($scope, this.methods));
-                    return;
-                } else if ( hasAttr(el, cmds.for) ) {
-                    // Reading the for expression
-                    var helper = ui.cmd.for.read(el), comment;
-                    if (!helper.ok) return;
-                    
-                    var propConfig, desc;
-                    // Getting the propConfig value
-                    getter = function (_, prop) {
-                        propConfig = prop; desc = prop.descriptor;
-                    }
-                    var v = fn.eval(helper.array, $scope);
-                    unget();
-                    var array = desc ? $propDefiner({}, 'value', desc) : { value: v };
-
-                    comment = new Filter({
-                        array: array,
-                        dec: helper.dec,
-                        data: $scope,
-                        filter: helper.filter,
-                        actions: {
-                            clean: function () {
-                                // Removing every listed elements
-                                ReactiveArray.retrieveElems(comment, true);  
-                            },
-                            run: function (data) {
-                                return ui.cmd.for({
-                                    el: el, 
-                                    array: data, 
-                                    comment: comment,
-                                    data: extend.obj($scope, $$methods)
-                                });
-                            }
+                switch ($name) {
+                    // Compilation to be skipped
+                    case '#comment': return;
+                    case 'e-compile': el.removeAttribute('e-compile'); break;
+                    case 'wait-data': {
+                        var base = el.$e.$base;
+                        var attr = fn.attr(base, [ 'wait-data' ], true);
+                        if(!trim(attr.value))
+                            return Easy.log({ message: error.invalid('in ' + attr.name), el: base });
+                            
+                        if (exposed[attr.value]) {
+                            var $$data = new ReactiveObject($easy.retrieve(attr.value, true));
+                            $$data.$scope = $scope;
+                            Compiler.compile({ el: base, data: extend.addToObj($$data, $$methods) });
+                        } else {
+                            if ( waitedData[attr.value] )
+                                waitedData[attr.value].push(base);
+                            else
+                                waitedData[attr.value] = [ base ];                 
                         }
-                    }).reference;
-
-                    if (!comment) {
-                        // No filter defined
-                        comment = ui.cmd.for({
-                                    el: el, 
-                                    array: array.value, 
-                                    comment: comment,
-                                    data: extend.obj($scope, this.methods)
-                                });
+                        return base.ignoreBaseCompilation = true;
                     }
+                    case 'inc-tmp': {
+                        var base = el.$e.$base;
+                        var attr = fn.attr(base, ['inc-tmp'], true);
 
-                    if (desc) propConfig.binds.push({ el: comment, isObj: true, obj: extend.obj($scope, $$methods) });
-                    return;
-                }
-                // Loop attrs
-                forEach( extend.array(toArray((el.attributes || [])) ),
-                    function (child) {
-                        setEasy(child);
-                        child.$e.$base = el;
-                        // Compilation with the same $scope
-                        walker.call($easy, child, $scope);
-                    });
-
-                if ($name === cmds.content) {
-                    var base = el.$e.$base;
-                    remAttr(base, $name);
-                    base.innerHTML = $value;
-                    return;
-                }
-
-                if ($name.startsWith('on:') || $name.startsWith('listen:')) {
-                    if (trim($value) === '') return Easy.log('Invalid expression in ' + $name);
-                    var evtExpression = $name.split(':')[1].split('.'); // click.preventdefault
-                    var eventName = evtExpression[0], base = el.$e.$base;
-
-                    if ( standardEvents[eventName] === true ) {
-                        var $event = base.listen(eventName, function (evtObject) {
-                            if(evtExpression.indexOf('once') !== -1) // If once                        
-                                base.removeEventListener(eventName, $event[0].callback, false);
-                            // Applying the modifier
-                            forEach(evtExpression,function (modifier) {
-                                var $modifierName = eventModifiers[modifier];
-                                if ($modifierName) evtObject[$modifierName]();
-                            });
-                            arguments[0].$data = { scope: $scope };
-                            // Calling the callback function
-                            var $$result = fn.eval($value, extend.addToObj($scope, $$methods) || {});
-                            if (typeof $$result === 'function') $$result.apply($easy, arguments);
-                        });
-
-                    } else {
-                        if( !isNull(vars.events[eventName]) ) return;
-                        var callback = function() {
-                            if(evtExpression.indexOf('once') !== -1) // If once
-                                $easy.off(eventName, $event.callback);
-                            // Calling the callback function
-                            var $$result = fn.eval($value, extend.addToObj($scope, $$methods) || {});
-                            if (typeof $$result === 'function') $$result.apply($easy, arguments);
-                        }
-                        callback.$target = base;
-                        var $event = $easy.on(eventName, callback);
-                    }
-
-                    remAttr(base, $name);
-                    return;
-                }
-
-                if ( $name === 'e-bind' || $name.startsWith('e-bind:') ) {
-                    var base = el.$e.$base;
-                    var val = $name.split(':'),
-                        // By default bind the value property
-                        field = val.length === 1 ? 'value' : val[1];
-
-                    base.$e.b = { data: field };
-                    // Defining the object for 'setValue' function
-                    base.$e.$oldValue = $value;
-                    base.$e.$fields = [{ exp: $value, field: $value }];
-                    base.$e.$base = base;
-                    base._name = field;
-
-                    remAttr(base, $name);
-
-                    if (isNull($value) || trim($value) === '')
-                        return Easy.log('e-bind attribule cannot have null or empty value.');
-
-                    Bind.exec(base, $scope, function () {
-                        ui.setNodeValue(base, $scope);
-                    }, { two: true });
-                    return;
-                }
-
-                if ( $name.startsWith('e-toggle:') ) {
-                    var base = el.$e.$base;
-                    var exp = $name.split(':');
-                    remAttr(base, $name);
-
-                    if (isNull($value) || trim($value) === '')
-                        return Easy.log('e-toggle attribule cannot have null or empty value.');
-
-                    function exec() {
-                        var res = fn.eval($value, $scope);
-                        if(res)
-                            base.valueIn(exp[1], 'true');
+                        if (trim(attr.value))
+                            inc.components[attr.value] = { content: base.outerHTML };
                         else
-                            base.removeAttribute(exp[1]);
-                    }
-
-                    getter = function (obj, prop) {
-                        var w = $easy.watch(prop.property, function(){
-                            exec();
-                        }, obj);
-                        ui.$handleWatches.push({ el: base, watch: w });
-                    }
-                    exec(res); unget();
-                    return;
-                }
-
-                // alternable attr values
-                if($name.startsWith('e-') && !vars.cmds.hasValue($name)) {
-                    if(ui.getDelimiters($value).length === 0 && trim($value) !== '') {
-                        $value = trim($value);
-                        // Testing if the value if object definition
-                        if( !($value[0] === '{' && $value[1] !== '{') ) return;
-
-                        var base  = el.$e.$base;
-                        remAttr(base, $name);
-
-                        Compiler.setDefault({ attr: el });
-                        Compiler.addOldAttr({ el: base, value: el });
-
-                        var name = $name.substr(2);
-                        if(!base.hasAttribute(name))
-                            base.valueIn(name, '');
-                        var $attr = fn.attr(base, [name]);
-
-                        function exec(obj) {
-                            if(!obj) return;
-                            obj.keys(function(key, value){
-                                if(value) {
-                                    if(!$attr.value.includes(key))
-                                        $attr.value += ' ' + key;
-                                } else
-                                    $attr.value = $attr.value.replaceAll([' '+ key, key]); 
-                            });
-                        }
-
-                        getter = function (obj, prop) {
-                            var w = $easy.watch(prop.property, function(){
-                                exec(fn.eval(el.$e.$oldValue, obj));
-                            }, obj);
-                            ui.$handleWatches.push({ el: base, watch: w });
-                        }
-
-                        var res = fn.eval($value, $scope);
-                        if(!isObj(res)) return; 
-                        exec(res); unget();
+                            Easy.log({ message: 'Invalid value in element[inc-tmp]. ', el: base }, 'warn');
                         return;
                     }
+                    case cmds.def: {
+                        var obj = fn.eval($value, $scope);
+                        if (obj) $easy.setData(obj, $scope);
+                        return el.$e.$base.removeAttribute($name);
+                    }
+                    case cmds.if: case cmds.show: {
+                        var base = el.$e.$base;
+                        var attr = fn.attr(el.$e.$base, [cmds.if, cmds.show], true);
+
+                        if( (trim(el.value) === '') ) 
+                            return Easy.log({ message: 'Invalid expression in ' + attr.value, el: el })
+                        
+                        // Checking if it has delimiters
+                        if (ui.getDelimiters(el.value).length > 0) 
+                            return Easy.log(error.delimiter); // fail on preparation
+                        
+                        if (el.name === cmds.show) {
+                            el.$e.$base = base;
+                            Compiler.addOldAttr({
+                                el: base,
+                                value: el
+                            });
+
+                            var verifyShowValue = function () {
+                                var check = fn.eval(el.nodeValue, $scope);
+                                if (check) base.style.display = '';
+                                else base.style.display = 'none';
+                            }
+
+                            getter = function (_, prop) {
+                                var watch = $easy.watch(prop.property, function () {
+                                    verifyShowValue();
+                                    if (!base.isConnected) watch.destroy();
+                                });
+                            }
+
+                            verifyShowValue(); unget();
+                        } else {
+                            var curr = base, container = base.parentNode, chainCondition = [];
+                            var hideChain = function () {
+                                forEach(chainCondition, function (item) {
+                                    var container = item.element.parentNode;
+                                    if (container) container.replaceChild(item.element.com, item.element);
+                                })
+                            }
+                            var addToChain = function (element, attr) {
+                                element.com = ui.com.create();
+                                element.removeAttribute(attr.nodeName);
+                                chainCondition.push({ 
+                                    attr: attr, 
+                                    element: element,
+                                    comment: element.com,
+                                    value: attr.nodeValue,
+                                    type: attr.nodeName
+                                });
+
+                                setEasy(attr).$e.$base = base;
+                                Compiler.addOldAttr({
+                                    el: element,
+                                    value: attr
+                                });
+                            }
+                            var verifyChain = function () {
+                                hideChain(); // Hiding all elements
+                                for (let i = 0; i < chainCondition.length; i++) {
+                                    var check, chain = chainCondition[i];
+                                    // Evaluating the element value
+                                    if (chain.value) check = fn.eval(chain.value, $scope);
+
+                                    if (check || chain.type == 'e-else') {
+                                        chain.element.$e.$oldAttrs.remove(chain.attr); // Avoid self-looping
+                                        container.replaceChild(chain.element, chain.comment);
+                                        Compiler.compile({
+                                            el: chain.element,
+                                            data: $scope,
+                                            force: true,
+                                            done: function () { chain.element.$e.$oldAttrs.push(chain.attr); }
+                                        });
+                                        break;
+                                    }
+                                }
+                            }
+
+                            addToChain(curr, el);
+
+                            do { // Getting the chain of the condition
+                                curr = curr.nextElementSibling;
+                                if ( !curr ) break;
+                                var $attr = fn.attr(curr, ['e-else-if', 'e-else']);
+                                if ( !$attr ) break;
+                                addToChain(curr, $attr);
+                                // Break on else
+                                if ( $attr.name === 'e-else' ) break;
+                            } while(1);
+
+                            getter = function (_, prop) {
+                                var watch = $easy.watch(prop.property, function () {
+                                    verifyChain();
+                                    var  isDestroy = true;
+                                    forEach(chainCondition, function (item) {
+                                        if (isDestroy == true && (item.comment.isConnected || item.element.isConnected)) 
+                                            isDestroy = false;
+                                    });
+
+                                    if (isDestroy) watch.destroy();
+                                });
+                            }
+                            verifyChain(); unget();
+                        }
+                        return;
+                    }
+                    case 'inc-src': {
+                        var base = includerHandler({ el: el, $scope: $scope });
+                        return base.ignoreBaseCompilation = true;
+                    }
+                    case cmds.data: {
+                        var base = el.$e.$base;
+                        if (inc.isInc(base)) return; // Ignore scope criation in Includer Element
+
+                        var scope = fn.attr(base, [cmds.data], true), $dt;
+                        // Getting the data or the default
+                        if ( trim(scope.value) === '' )
+                            $dt = extend.obj($easy.data); // clone the main data
+                        else
+                            $dt = fn.eval(scope.value, $scope);
+
+                        $dt.$scope = $scope;
+                        walker.call($easy, base, extend.addToObj($dt, $$methods));
+                        
+                        EasyEvent.emit({
+                            elem: base,
+                            type: vars.events.data,
+                            scope: $scope
+                        });
+                        return;
+                    }
+                    case cmds.tmp: case cmds.fill: case cmds.req: {
+                        var base = el.$e.$base;
+                        // Preparing the element 
+                        var attr = fn.attr(base, [cmds.tmp, cmds.fill], true);
+                        if (attr) {
+                            var type = attr.name === cmds.tmp ? 'many' : 'one';
+                            var id = fn.attr(base, [cmds.id], true); id = id ? id.value : '';
+                            base.valueIn('e-req', '{ $url: "'+ attr.value +'", $type: "'+ type +'", $id: "'+ id +'" }');
+                        }
+                        // Templates
+                        ui.init(base, extend.obj($scope, this.methods));
+                        return base.ignoreBaseCompilation = true;
+                    }
+                    case cmds.for: {
+                        var base = el.$e.$base;
+
+                        // Reading the for expression
+                        var helper = ui.cmd.for.read(base), comment;
+                        if (!helper.ok) return;
+                        
+                        var propConfig, desc;
+                        // Getting the propConfig value
+                        getter = function (_, prop) {
+                            propConfig = prop; desc = prop.descriptor;
+                        }
+                        var v = fn.eval(helper.array, $scope);
+                        unget();
+                        var array = desc ? $propDefiner({}, 'value', desc) : { value: v };
+
+                        comment = new Filter({
+                            array: array,
+                            dec: helper.dec,
+                            data: $scope,
+                            filter: helper.filter,
+                            actions: {
+                                clean: function () {
+                                    // Removing every listed elements
+                                    ReactiveArray.retrieveElems(comment, true);  
+                                },
+                                run: function (data) {
+                                    return ui.cmd.for({
+                                        el: base, 
+                                        array: data, 
+                                        comment: comment,
+                                        data: extend.obj($scope, $$methods)
+                                    });
+                                }
+                            }
+                        }).reference;
+
+                        if (!comment) {
+                            // No filter defined
+                            comment = ui.cmd.for({
+                                        el: base, 
+                                        array: array.value, 
+                                        comment: comment,
+                                        data: extend.obj($scope, this.methods),
+                                        read: helper
+                                    });
+                        }
+
+                        if (desc) propConfig.binds.push({ el: comment, isObj: true, obj: extend.obj($scope, $$methods) });
+                        return base.ignoreBaseCompilation = true;
+                    }
+                    case cmds.content: {
+                        var base = el.$e.$base;
+                        base.innerHTML = $value;                        
+                        return base.removeAttribute($name);
+                    }
+                    case cmds.anm: {
+                        var base = el.$e.$base;
+                        if (!isNull($value)) base.niceIn($value);
+                        return base.removeAttribute($name);
+                    }
+                    default:
+                        var base = el.$e.$base;
+                        if ($name.startsWith('on:') || $name.startsWith('listen:')) {
+                            if (trim($value) === '') return Easy.log('Invalid expression in ' + $name);
+                            var evtExpression = $name.split(':')[1].split('.'); // click.preventdefault
+                            var eventName = evtExpression[0];
+        
+                            if ( standardEvents[eventName] === true ) {
+                                var $event = base.listen(eventName, function (evtObject) {
+                                    if(evtExpression.indexOf('once') !== -1) // If once                        
+                                        base.removeEventListener(eventName, $event[0].callback, false);
+                                    // Applying the modifier
+                                    forEach(evtExpression,function (modifier) {
+                                        var $modifierName = eventModifiers[modifier];
+                                        if ($modifierName) evtObject[$modifierName]();
+                                    });
+                                    arguments[0].$data = { scope: $scope };
+                                    // Calling the callback function
+                                    var $$result = fn.eval($value, extend.addToObj($scope, $$methods) || {});
+                                    if (typeof $$result === 'function') $$result.apply($easy, arguments);
+                                });
+                            } else {
+                                if( !isNull(vars.events[eventName]) ) return;
+                                var callback = function() {
+                                    if(evtExpression.indexOf('once') !== -1) // If once
+                                        $easy.off(eventName, $event.callback);
+                                    // Calling the callback function
+                                    var $$result = fn.eval($value, extend.addToObj($scope, $$methods) || {});
+                                    if (typeof $$result === 'function') $$result.apply($easy, arguments);
+                                }
+                                callback.$target = base;
+                                var $event = $easy.on(eventName, callback);
+                            }
+                            return base.removeAttribute($name);
+                        } else if ( $name === 'e-bind' || $name.startsWith('e-bind:') ) {
+                            var val = $name.split(':'),
+                                // By default bind the value property
+                                field = val.length === 1 ? 'value' : val[1];
+        
+                            base.$e.b = { data: field };
+                            // Defining the object for 'setValue' function
+                            base.$e.$oldValue = $value;
+                            base.$e.$fields = [{ exp: $value, field: $value }];
+                            base.$e.$base = base;
+                            base._name = field;
+        
+                            if (isNull($value) || trim($value) === '')
+                                return Easy.log('e-bind attribute cannot have null or empty value.');
+        
+                            Bind.exec(base, $scope, function () {
+                                ui.setNodeValue(base, $scope);
+                            }, { two: true });
+                            return base.removeAttribute($name);
+                        } else if ( $name.startsWith('e-toggle:') ) {
+                            var exp = $name.split(':');
+                            if (isNull($value) || trim($value) === '')
+                                return Easy.log('e-toggle attribute cannot have null or empty value.');
+        
+                            function exec() {
+                                var res = fn.eval($value, $scope);
+                                if(res)
+                                    base.valueIn(exp[1], 'true');
+                                else
+                                    base.removeAttribute(exp[1]);
+                            }
+        
+                            getter = function (obj, prop) {
+                                var w = $easy.watch(prop.property, function(){
+                                    exec();
+                                }, obj);
+                                ui.$handleWatches.push({ el: base, watch: w });
+                            }
+                            exec(res); unget();
+                            return base.removeAttribute($name);
+                        } else if($name.startsWith('e-') && !vars.cmds.hasValue($name)) {
+                            // alternable attr values
+                            if(ui.getDelimiters($value).length === 0 && trim($value) !== '') {
+                                $value = trim($value);
+                                // Testing if the value if object definition
+                                if( !($value[0] === '{' && $value[1] !== '{') ) return;
+        
+                                Compiler.setDefault({ attr: el });
+                                Compiler.addOldAttr({ el: base, value: el });
+        
+                                var name = $name.substr(2);
+                                if(!base.hasAttribute(name))
+                                    base.valueIn(name, '');
+                                var $attr = fn.attr(base, [name]);
+                                base.removeAttribute($name);
+        
+                                function exec(obj) {
+                                    if(!obj) return;
+                                    obj.keys(function(key, value){
+                                        if(value) {
+                                            if(!$attr.value.includes(key))
+                                                $attr.value += ' ' + key;
+                                        } else
+                                            $attr.value = $attr.value.replaceAll([' '+ key, key]); 
+                                    });
+                                }
+        
+                                getter = function (obj, prop) {
+                                    var w = $easy.watch(prop.property, function(){
+                                        exec(fn.eval(el.$e.$oldValue, obj));
+                                    }, obj);
+                                    ui.$handleWatches.push({ el: base, watch: w });
+                                }
+        
+                                var res = fn.eval($value, $scope);
+                                if(!isObj(res)) return; 
+                                exec(res); unget();
+                            }
+                        }
+                        break;
                 }
+
+                // Loop attrs
+                var singleAttrCompilation, $attributes = [];
+                // Attributes Priorities
+                if (el.attributes) 
+                    singleAttrCompilation = el.attributes[cmds.fill] || el.attributes[cmds.for] || 
+                    el.attributes[cmds.req] || el.attributes[cmds.tmp] || el.attributes[cmds.fill] || 
+                    el.attributes['wait-data'];
+
+                $attributes = singleAttrCompilation ? [ singleAttrCompilation ] : toArray((el.attributes || []));
+                forEach($attributes, function (child) {
+                    setEasy(child).$e.$base = el;
+
+                    if (isNull($propDescriptor(child, 'isConnected')))
+                        // Connecting the isConnected property to the main element property
+                        $propDefiner(child, 'isConnected', {
+                            get: function () { return el.isConnected; },
+                            set: function () {}
+                        });
+  
+                    // Compilation with the same $scope
+                    walker.call($easy, child, $scope);
+                });
+
+                // Skip element if it was marked
+                if (el.hasAttribute && el.hasAttribute('e-ignore')) return;
+
+                if (el.ignoreBaseCompilation === true)
+                    return delete el.ignoreBaseCompilation;
+    
+                    // after checking the attrs, check the element node name
+                if ($name == 'INC')
+                    return includerHandler({ el: el, $scope: $scope })
+                            .ignoreBaseCompilation = true;
 
                 // dynamic toggled value in attr
                 if (el.nodeValue) {
@@ -1755,21 +1856,15 @@
                     }
                 }
 
-                if (hasAttr(el, cmds.anm)) {
-                    var anm = fn.attr(el, [cmds.anm], true);
-                    // Applying animation if needed
-                    if (!isNull(anm)) el.niceIn(anm.value);
-                }
-
                 // Handling skeleton attribute
                 if(($name === cmds.skeleton) && (trim($value) === ''))
-                    remAttr(el.$e.$base, $name);
+                    el.$e.$base.removeAttribute($name);
 
                 // Url hash normalizer
                 if( $name === ':href' || $name === 'i:href' ) {
                     var base = el.$e.$base;
-                    remAttr(base, $name);
-                    base.valueIn('href', RouteHandler.normalizePath($value));
+                    base.valueIn('href', RouteHandler.normalizePath(el.value));
+                    base.removeAttribute($name);
                     base.addEventListener('click', function (evt) {
                         if ( isNull(RouteHandler.handleLink) ) return;
                         evt.preventDefault();
@@ -1787,9 +1882,7 @@
                 if (!isNull(el.childNodes)) {
                     toArray(el.childNodes, function (child) {
                         $$scope = $scope;
-                        setEasy(child);
-                        child.$e.$base = el;
-                        // Compilation with diferent $scope if it was changed
+                        setEasy(child).$e.$base = el;
                         walker.call($easy, child, $scope);
                     });
                 }
@@ -1806,7 +1899,7 @@
 
             new Promise(function(resolve, reject) {
                 try {
-                    $$el.$e.$base = $$el.parentNode || $$el.ownerElement;
+                    $$el.$e.$base = $$el.ownerElement || $$el.parentNode;
                     // Compiling the the element
                     walker.call($easy, $$el, $$scope);
                     if ( !isNull(config.done) ) config.done.call($easy);
@@ -1816,7 +1909,7 @@
                 }
             });
         }
-        
+
         function checkIncPath(name) {
             var path = inc.paths[name];
             if( isNull(path) ) {
@@ -2073,7 +2166,7 @@
                         }
                         // Getting all the mains from the imported component 
                         var contents = findContents(el);
-                        if ($inc.children.length) {
+                        if ($inc.children.length && $inc.node('content')) {
                             // Getting all the mains from the current in element
                             var currentContentTags = findContents($inc);
                             // Adding the current content to the imported component
@@ -2237,9 +2330,13 @@
                                 // Two parents in case of no-replace inc
                                 if (!el.parentNode || !el.parentNode.parentNode) return;
                                 var target = el.parentNode;
-                                if (instance.isInc(target)) target = target.parentNode;   
-                                // Setting the compenent mutation
+                                if (instance.isInc(target)) target = target.parentNode;
+                                // Setting the component mutation
                                 var mut = new MutationObserver(function() {
+                                    var containerChild = target.children[0];
+                                    if (instance.isInc(el) && !isKeepAlive && el != containerChild)
+                                        el = containerChild;
+                                    
                                     if(el.isConnected === false){
                                         self.destroyed(el);
                                         forEach(instance.destroyed, function (evt) { evt.call($easy, el); });
@@ -2518,37 +2615,6 @@
             }
             // Objtec for ui commands like: if, for, show...
             this.cmd = {
-                if: function (elem, $data) {
-                    if (isNull($data)) $data = {};
-                    var exp = elem.$e.typeValue, res;
-                    
-                    if ( elem.$e.chainObj.trueEl )
-                        // Everyone else is false because there is already a true value    
-                        res = false;
-                    else if ( elem.$e.typeName === 'e-else' )
-                        res = elem.$e.chainObj.$elseValue;                     
-                    else
-                        res = fn.eval(exp, $data) ? true : false;
-
-                    if (new String(res).toLowerCase() === 'false') {
-                        // Hide element
-                        var above = elem.parentNode;
-                        if (isNull(above)) return res;
-
-                        if ( elem.com ) {
-                            above.replaceChild(elem.com, elem);
-                        } else {
-                            elem.com = instance.com.create();
-                            above.replaceChild(elem.com, elem);
-                        }
-                    } else if (new String(res).toLowerCase() === 'true') {
-                        // Show element
-                        if (elem.com && elem.com.parentNode)
-                            elem.com.parentNode.replaceChild(elem, elem.com);
-                        elem.$e.chainObj.trueEl = elem; // Assing element with the true value
-                    }
-                    return res;
-                },
                 show: function (elem, $data) {
                     if (isNull($data)) $data = {};
                     var exp = elem.$e.typeValue;
@@ -2631,7 +2697,7 @@
                         }
 
                         // Order if needed
-                        new OrderBy({
+                        var orderBy = new OrderBy({
                             elem: el,
                             data: $scope,
                             reference: comment,
@@ -2639,14 +2705,14 @@
                             actions: {
                                 run: function () {
                                     ReactiveArray.retrieveElems(comment, true);
-                                    exec(this.order(extend.array($scope[helper.array])));
+                                    exec(this.order(this.array));
                                 }
                             }
                         })
 
-                        exec(array);
+                        exec(orderBy.array);
 
-                        if(array.length === 0)
+                        if(orderBy.array.length === 0)
                             EasyEvent.emit({
                                 elem: el,
                                 type: vars.events.empty
@@ -2658,28 +2724,6 @@
                     // This comment will be added to the bind list of the property when it's the fist time
                     return comment;
                 }
-            }
-            this.cmd.if.prepare = function (element, attr, name) {
-                setEasy(element);
-                if (element.$e.hasOwnProperty('type')) return true;
-                // Checking if it has delimiters
-                if (ui.getDelimiters(attr.value).length > 0) {
-                    Easy.log(error.delimiter);
-                    return; // fail on preparation
-                }
-
-                setEasy(attr); attr.$e.$base = element;
-                Compiler.addOldAttr({
-                    el: element,
-                    value: attr
-                });
-
-                attr.value = attr.name === 'e-else' ? '$elseValue' : attr.value; 
-                element.$e.type = name; // Name for compilation
-                element.$e.typeName = attr.name; // Real prop name
-                element.$e.typeValue = attr.value;
-                element.$e.$fields = [{ exp: attr.value }];
-                return true; // everything was successfully prepared
             }
             /** Reads the e-for property and generate an object */
             this.cmd.for.read = function(el) {
@@ -2805,37 +2849,12 @@
                     origin.valueIn(name, value);
                     origin.removeAttribute(oldName);
                 }
-            }
-            /** Sets value according to type  */
-            this.setElemValue = function (elem, $data) {
-                var cmd = vars.cmds, $$e = elem.$e || {};
-                // By default compile as text
-                var type = $$e.type || cmd.field;
+
+                // If is a :href or i:href
+                if (name == ':href' || name == 'i:href')
+                    origin.valueIn('href', RouteHandler.normalizePath(value));
                 
-                switch (type) {
-                    case cmd.field: 
-                    return instance.setNodeValue(elem, $data); 
-                    case cmd.if:
-                        // Executing the whole chain
-                        var chainObj = elem.$e.chainObj; 
-                        chainObj.trueEl = null;
-                        forEach(elem.$e.chainObj.chain, function (cond) {
-                            var res = ui.cmd.if.prepare(cond.el, cond.attr, vars.cmds.if);
-                            if (res === true) {
-                                cond.el.$e.chainObj = chainObj;
-
-                                if ( cond.attr.name === 'e-else' && isNull(chainObj.trueEl) )
-                                    chainObj.$elseValue = true;
-
-                                instance.cmd.if(cond.el, $data);
-                                cond.el.$prevent = true;
-                            }
-                        });
-                        return;
-                    case cmd.show:
-                        return instance.cmd.show(elem, $data);
-                    default: return;
-                }
+                return value;
             }
             /** UI template web request initializer */ 
             this.init = function (elem, $$data) {
@@ -2847,9 +2866,7 @@
                 setEasy(elem);
 
                 var $value = trim(attr.value), $request = {};
-
-                if(!$value)
-                    return Easy.log({ message: error.invalid('e-req'), el: elem });
+                if(!$value) return Easy.log({ message: error.invalid('e-req'), el: elem });
 
                 // Repleacing if we got delimiters
                 forEach(instance.getDelimiters($value), function (f) {
@@ -3043,7 +3060,7 @@
             }
             // Execute when some primitive changes
             function emitPrimitiveChanges(el, $dt) {
-                ui.setElemValue(el, $dt);
+                ui.setNodeValue(el, $dt);
             }
             // Execute when some object changes
             function emitArrayChanges(bind, newValue, oldValue) {
@@ -3104,7 +3121,9 @@
                             emitPrimitiveChanges(bind.el, bind.obj);
 
                         // In case of e-if or e-order, etc. check if the linked comment with is still connected
-                        if (bind.el.com && bind.el.com.isConnected === true) return;
+                        if ((bind.el.com && bind.el.com.isConnected === true)) return;
+                        // If the owner element is connected do nothing
+                        if (bind.el.$e.$base && bind.el.$e.$base.isConnected === true) return;
                         // Maintenance
                         if ((bind.el instanceof Element) && (bind.el.isConnected === false))
                             bind.bind.destroy(); // If it is an Element
@@ -3128,14 +3147,12 @@
             getter = function (_, prop) { propConfig = prop; }
             var $array = config.object[property]; unget();
 
-            // methods to observe
-            var methods = [ 'push', 'pop', 'unshift', 'shift', 'splice' ];
             // Execute when some value changes
             function emitChanges(config) {
                 forEach(propConfig.binds, function (bind) {
                     if (!bind.isObj)
                         // Updating bound nodes
-                        return ui.setElemValue(bind.el, bind.obj);
+                        return ui.setNodeValue(bind.el, bind.obj);
                     // Rerender all the array on change
                     if (options.config.rerenderOnArrayChange === true) {
                         ReactiveArray.retrieveElems(bind.el, true);
@@ -3211,6 +3228,9 @@
                         args: arguments,
                         return: res,
                     });
+                    
+                    if (!isNull($array.done))
+                        $array.done(method, arguments);
                     return res;
                 }
             }, this);
@@ -3426,25 +3446,26 @@
         }
         /** Helper class that handle list order actions of an element */
         function OrderBy(config) {
+            var self = this;
             // The element that will be linked this filter
             this.reference = config.reference;
             this.elem = config.elem;
-            this.array = config.array.value;
             this.data = config.data;
+            this.array = config.array.value;
             this.attr = config.attr = fn.attr(config.elem, [vars.cmds.order]) ||
                         // Checking the attribute in the old attributes property
                         (config.elem.$e.$oldAttrs || []).findOne(function (at) {
                             return at.name === vars.cmds.order;
                         });
 
-            if (!this.attr) return;
+            if (!this.attr) return this;
             // Defining com property to avoid the element to be removed
             // by the bind maintenance
             this.attr.com = this.reference;
             // Getting the delimiter if exists
             var fields = ui.getDelimiters(this.attr.value), exp, watches = [], self = this;
             
-            this.order = function(array){
+            this.order = function(array) {
                 exp = config.attr.value.split(':');
                 return OrderBy.exec(array, exp[0], exp[1]);
             }
@@ -3467,7 +3488,10 @@
                 Compiler.addOldAttr({ el: this.attr, value: this.attr }); 
             }
 
-            this.array = config.array.value = this.order(config.array.value);
+            this.array = this.order(extend.array(config.array.value));
+            config.array.value.__proto__.done = function (method, args) {
+                self.array[ method ].apply(self.array, args);
+            }
 
             this.destroy = function () {
                 forEach(watches, function (w) { w.destroy(); });
@@ -3544,7 +3568,7 @@
                     if (!path.route) continue;
 
                     var $$path = path.route.split('/').map(function(sec) {
-                        return sec[0] === ':' ? '\\w{1,}' : sec; 
+                        return sec[0] === ':' ? '[\\S\\s]{1,}' : sec; 
                     }).join('/');
 
                     if( isArray(new RegExp('^'+ $$path +'$', 'gi').exec($path)) )
@@ -3749,7 +3773,7 @@
             // Only the primitives and objects are bindable
             var data = extend.addToObj(obj.scope, obj.methods), $return;
             Bind.exec(obj.current, obj.scope, function () {
-                $return = ui.setElemValue(obj.current, data);
+                $return = ui.setNodeValue(obj.current, data);
             });
             return $return;
         }

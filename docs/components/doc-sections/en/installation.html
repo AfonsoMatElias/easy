@@ -15,8 +15,7 @@
     </p>
 
     <p>
-        <a class="button-like" download
-            href="https://github.com/AfonsoMatElias/easy/releases/download/v2.0.0-rls/easy.js"> Download </a>
+        <a class="button-like" download href="{{ app.url }}"> Download </a>
     </p>
 
     <pre><code class="html hljs">
@@ -54,4 +53,8 @@
             }
         }
     }
+
+    this.export({
+        app: this.Easy.data.app
+    });
 </script>

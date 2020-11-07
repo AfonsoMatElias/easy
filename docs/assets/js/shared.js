@@ -63,6 +63,12 @@ function scrollByAnchor(el) {
         var presentation = document.node('.doc-presentation');
         presentation.scrollTop = anchor.offsetTop + 10;
     }
+
+    el.nodes('a').filter(function(anchor){ 
+        var href = anchor.attributes.href;
+        if (!href || href.value[0] != '#') return;
+        anchor.href = location.href + href.value;
+    })
 }
 
 var $anchors = [];
