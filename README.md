@@ -31,7 +31,7 @@ It was tested in almost every popular browsers and IE 11, below that is not supo
 ### Scale of Projects
 A web application fully developed with easy.js was tested only with small projects, larger projects was not tested yet.
 
-Visit our site to learn more about it, [Easy Site](https://afonsomatelias.github.com/easy).
+Visit our site to learn more about it, [Easy Site](https://afonsomatelias.github.io/easy).
 
 ## Prerequisites
 
@@ -55,7 +55,7 @@ Or, you may download file to use locally 💻:
 ```HTML
 <script src="js/easy.js"></script>
 ```
-[Download it now](https://github.com/AfonsoMatElias/easy/releases/download/v2.0.0-rls/easy.js)
+Enter the site to download it!
 
 #### So far, you have it install in your project and you are ready to go!!! 😀
 
