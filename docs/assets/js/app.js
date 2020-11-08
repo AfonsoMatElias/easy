@@ -11,10 +11,12 @@ document.addEventListener('DOMContentLoaded', function () {
             app: {
                 name: 'Easy',
                 version: 'v2.0.1',
-                url: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.0.0-rls/easy.js',
+                cdn: 'https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.0.1/easy.js',
+                url: 'https://github.com/AfonsoMatElias/easy/releases/download/2.0.1/easy.js',
                 connectors: {
-                    ajax: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.0.0-rls/easy.ajax.js',
-                    free: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.0.0-rls/easy.free.js'
+                    ajax: 'https://github.com/AfonsoMatElias/easy/releases/download/2.0.1/easy.ajax.js',
+                    ajaxCdn: 'https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.0.1/connectors/easy.ajax.js',
+                    free: 'https://github.com/AfonsoMatElias/easy/releases/download/2.0.1/easy.free.js'
                 }
             }
         },
