@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
         components: {
             config: {
                 // Comment this when using locally 
-                base: '/easy/'
+                base: '/docs/'
             },
             elements: {
                 'top': "/components/top",
@@ -34,7 +34,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     route: '/',
                     isDefault: true
                 },
+                '404': {
+                    isNotFound: true,
+                    route: '/404',
+                    url: '/components/404',
+                    title: '404'
+                },
+
+                // Modal
                 'modal': "/components/modal/modal",
+                // Modal Body
+                'download-connectors': '/components/doc-sections/en/download-connectors',
 
                 // Documentation compoments
                 'side-menu': "/components/doc-sections/en/side-menu",
@@ -50,8 +60,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 'routing': '/components/doc-sections/en/routing',
                 'extra': '/components/doc-sections/en/extra',
                 'connectors': '/components/doc-sections/en/connectors',
-
-                'download-connectors': '/components/doc-sections/en/download-connectors',
+                
+                // Sections wrapper
+                'section-1': '/components/doc-sections/section.1',
+                'section-2': '/components/doc-sections/section.2',
+                'section-3': '/components/doc-sections/section.3',
+                'section-4': '/components/doc-sections/section.4',
 
                 // Tutorial components
                 'page': '/components/tutorial/en/structure/page',
@@ -105,6 +119,35 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         },
         mounted: function () {
+            var availableSections = {
+                'sctn1': 'section-1',
+                'sctn2': 'section-2',
+                'sctn3': 'section-3',
+                'sctn4': 'section-4',
+            };
+
+            var presentation = document.node('.doc-presentation');
+            if (presentation && !location.pathname.includes('docs.connectors.html')) {
+                var section, 
+                    // Getting the parameters of the url
+                    /* UrlParams, it is a Easy Js built-in class for getting url query string values */
+                    params = new UrlParams(); 
+
+                // If there is not a valid value load the first section
+                if (params.load == null){
+                    section = availableSections['sctn1'];
+                    history.replaceState(null, null, location.href + "?load=sctn1");
+                }
+                else // Otherwise load the asked section
+                    section = availableSections[params.load];
+
+                // If the section is valid, then load it
+                if (section)
+                    presentation.innerHTML = '<inc src="'+ section +'"></inc>';
+                else // Otherwise load the 404 component
+                    presentation.innerHTML = '<inc src="404"></inc>';
+            }
+
             // Is loading something
             var pagesLoading = 0;
             var $easy = this;
@@ -180,12 +223,5 @@ document.addEventListener('DOMContentLoaded', function () {
     window.onhashchange = function () {
         if (app.data.hasOwnProperty('sMenuOpened'))
             app.data.sMenuOpened = false;
-    }
-
-    if (location.pathname.match(/docs\.page\.\d{1}\.html/g) || location.pathname.match('/connectors.html')) {
-        app.on('incLoaded', function (el) {
-            if (el.inc === 'top') return;
-            addAnchors(el.nodes('a[id]'));
-        });
     }
 }, false);

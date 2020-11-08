@@ -61,7 +61,7 @@ function scrollByAnchor(el) {
         var anchor = el.node('a[id="' + location.hash.substr(1) + '"]');
         if (!anchor) return;
         var presentation = document.node('.doc-presentation');
-        presentation.scrollTop = anchor.offsetTop + 10;
+        presentation.scrollTop = anchor.offsetTop + 15;
     }
 
     el.nodes('a').filter(function(anchor){ 
@@ -70,8 +70,6 @@ function scrollByAnchor(el) {
         anchor.href = location.href + href.value;
     })
 }
-
-var $anchors = [];
 
 function addAnchors(anchors) {
     if (!anchors) return;
@@ -98,8 +96,9 @@ function activeMenuOnScroll() {
     }
 
     // Listening to the scroll event 
-    document.node('.doc-presentation').onscroll = function () {
-        var current;
+    var presentation = document.node('.doc-presentation');
+    presentation.onscroll = function () {
+        var current, $anchors = presentation.nodes('a[id]');
         // Looping all the subscribed anchors
         for (var i = 0; i < $anchors.length; i++) {
             var element = $anchors[i];
@@ -135,7 +134,7 @@ function activeMenuOnScroll() {
             $current.className = 'active-doc-menu';
 
             // Fixing the position of the menu scroll
-            $MenuContainer.scrollTop = $current.offsetTop - 10;
+            $MenuContainer.scrollTop = $current.offsetTop - 20;
 
             // Setting the last active one to be remembered
             $lastActive = $current;

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" class="nice-scroll light-theme">
+<head>
+    <!-- Comment this when using locally -->
+    <base href="/docs/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="assets/img/main_ico.png" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="assets/css/styles.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,200;0,300;0,400;0,600;0,800;1,200;1,300;1,400;1,600;1,800&display=swap" rel="stylesheet"> 
+    <link rel="stylesheet" href="assets/fonts/work-sans/fonts.css">
+
+    <link editor-hl rel="stylesheet" href="assets/highlights/atom-one-light.css">
+    <script src="assets/highlights/highlight.pack.js"></script>
+    <script src="assets/js/shared.js"></script>
+    <script src="assets/js/easy.js"></script>
+
+    <title>Documentation</title>
+</head>
+
+<body>
+    <div id="app-page">
+        <div e-class="{ 'page-loading': pageLoading }"></div>
+        <header>
+            <inc src="top"></inc>
+        </header>
+
+        <main>
+            <div class="main-view doc-page">
+                <!-- Side menu -->
+                <aside class="doc-menu" e-def="{ sMenuOpened: false }" e-class="{ 'side-menu-opened': sMenuOpened }">
+                    <!-- Side Menu -->
+                    <div class="content nice-scroll">
+                        <!-- Menu icon -->
+                        <div class="side-menu-handler">
+                            <div class="menu-btn-container">
+                                <div class="menu-btn" on:click="sMenuOpened = !sMenuOpened">
+                                    <span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- The Menu Will be placed here -->
+                        <div class="menu">
+                            <ul class="items">
+                                <li sec="sctn1"> <a href="#intro">
+                                        <h3> Introduction </h3>
+                                    </a>
+                                    <ul>
+                                        <li> <a href="#what"> What...? </a></li>
+                                        <li> <a href="#why"> Why...? </a></li>
+                                        <li> <a href="#compatibility"> Compatibility </a> </li>
+                                        <li> <a href="#scale"> Scale </a> </li>
+                                    </ul>
+                                </li>
+                                <li sec="sctn1"> <a href="#installation">
+                                        <h3> Installation </h3>
+                                    </a>
+                                    <ul>
+                                        <li> <a href="#install_local"> Locally </a> </li>
+                                        <li> <a href="#install_cdn"> CDN </a> </li>
+                                    </ul>
+                                </li>
+                                <li sec="sctn1"> <a href="#instance">
+                                        <h3> Instance </h3>
+                                    </a>
+                                    <ul>
+                                        <li> <a href="#inst_el"> Element </a> </li>
+                                        <li> <a href="#inst_options"> Options </a> </li>
+                                        <li> <a href="#properties"> <b>Properties</b> </a>
+                                            <ul>
+                                                <li> <a href="#prop_config"> Config Property </a> </li>
+                                                <li> <a href="#prop_data"> Data Property </a> </li>
+                                                <li> <a href="#prop_hooks"> Instance Hooks </a> </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li sec="sctn1"> <a href="#delimiters">
+                                        <h3> Delimiters </h3>
+                                    </a>
+                                    <ul>
+                                        <li> <a href="#dlm_easy"> Easy </a> </li>
+                                        <li> <a href="#dlm_common"> Common </a> </li>
+                                    </ul>
+                                </li>
+                                <li sec="sctn1"> <a href="#bindings">
+                                        <h3>Bindings</h3>
+                                    </a>
+                                    <ul>
+                                        <li> <a href="#bind_one_way"> One Way </a> </li>
+                                        <li> <a href="#bind_two_way"> Two Way </a> </li>
+                                    </ul>
+                                </li>
+                                <li sec="sctn2"> <a href="#commands">
+                                        <h3>Commands</h3>
+                                    </a>
+                                    <ul>
+                                        <li> <a href="#cmd_data"> data </a> </li>
+                                        <li> <a href="#cmd_wait_data"> wait-data </a> </li>
+                                        <li> <a href="#cmd_e_content"> e-content </a> </li>
+                                        <li> <a href="#cmd_e_skeleton"> e-skeleton </a> </li>
+                                        <li> <a href="#cmd_e_def"> e-def </a> </li>
+                                        <li> <a href="#cmd_e_if"> e-if </a> </li>
+                                        <li> <a href="#cmd_e_show"> e-show </a> </li>
+                                        <li> <a href="#cmd_e_for"> <b>e-for</b> </a>
+                                            <ul>
+                                                <li> <a href="#cmd_e_for_filter"> Filters </a> </li>
+                                                <li> <a href="#cmd_e_for_filter_g_filter"> Global Filter </a> </li>
+                                                <li> <a href="#cmd_e_for_filter_tg_filter"> Targeted Filter </a> </li>
+                                                <li> <a href="#cmd_e_for_filter_d_filter"> Direct Filter </a> </li>
+                                                <li> <a href="#cmd_e_for_filter_f_filter"> Function Filter </a> </li>
+                                            </ul>
+                                        </li>
+                                        <li> <a href="#cmd_e_order"> e-order </a> </li>
+                                        <li> <a href="#cmd_e_anm"> e-anm </a> </li>
+                                        <li> <a href="#cmd_e_toggle"> e-toggle </a> </li>
+                                        <li> <a href="#cmd_e"> e-[something] </a> </li>
+                                    </ul>
+                                </li>
+                                <li sec="sctn2"> <a href="#events">
+                                        <h3>Events</h3>
+                                    </a>
+                                    <ul>
+                                        <li> <a href="#events_standard"> Standard </a> </li>
+                                        <li> <a href="#events_easy"> Easy </a> </li>
+                                        <li> <a href="#events_custom"> Custom </a> </li>
+                                        <li> <a href="#events_modifiers"> Modifiers </a> </li>
+                                    </ul>
+                                </li>
+                                <li sec="sctn3"> <a href="#methods">
+                                        <h3> Methods </h3>
+                                    </a>
+                                    <ul>
+                                        <li><a href="#method_setData"> setData </a></li>
+                                        <li><a href="#method_on"> on </a></li>
+                                        <li><a href="#method_off"> off </a></li>
+                                        <li><a href="#method_emit"> emit </a></li>
+                                        <li><a href="#method_expose"> expose </a></li>
+                                        <li><a href="#method_retrieve"> retrieve </a></li>
+                                        <li><a href="#method_tojsobj"> toJsObj </a></li>
+                                        <li><a href="#method_watch"> watch </a></li>
+                                        <li><a href="#method_set"> set </a></li>
+                                    </ul>
+                                </li>
+                                <li sec="sctn4"> <a href="#comps_incs">
+                                        <h3>Components / Includers</h3>
+                                    </a>
+                                    <ul>
+                                        <li> <a href="#comp_cloned"> Cloned </a> </li>
+                                        <li> <a href="#comp_registered"> Registered </a> </li>
+                                        <li> <a href="#comp_registering"> Registering </a> </li>
+                                        <li> <a href="#comp_handing"> Handling Components </a> </li>
+                                        <li> <a href="#comp_format"> Component Format </a> </li>
+                                        <li> <a href="#comp_style"> Styles </a> </li>
+                                        <li> <a href="#comp_root"> Root Element </a> </li>
+                                        <li> <a href="#comp_script"> Scripts </a> </li>
+                                        <li> <a href="#comp_life_cycles"> <b>Lifecycles Hooks</b> </a>
+                                            <ul>
+                                                <li> <a href="#comp_life_cycles_created"> Created </a> </li>
+                                                <li> <a href="#comp_life_cycles_mounted"> Mounted </a> </li>
+                                                <li> <a href="#comp_life_cycles_loaded"> Loaded </a> </li>
+                                                <li> <a href="#comp_life_cycles_destroyed"> Destroyed </a> </li>
+                                            </ul>
+                                        </li>
+                                        <li> <a href="#comp_exporting"> Exporting </a> </li>
+                                        <li> <a href="#comp_data"> Inc with data </a> </li>
+                                        <li> <a href="#comp_delimiter"> Inc with Delimiter </a> </li>
+                                        <li> <a href="#comp_on"> Inc with `on` Method </a> </li>
+                                        <li> <a href="#comp_keep_alive"> Keep Alive </a> </li>
+                                        <li> <a href="#comp_nesting_content"> Nesting Content </a> </li>
+                                        <li> <a href="#comp_nesting_includers"> Nesting Includers </a> </li>
+                                    </ul>
+                                </li>
+                                <li sec="sctn4"> <a href="#routing">
+                                        <h3>Routing </h3>
+                                    </a>
+                                    <ul>
+                                        <li> <a href="#routing_setting"> Setting </a> </li>
+                                        <li> <a href="#routing_navegation"> Navegation </a> </li>
+                                        <li> <a href="#routing_nesting"> Nesting Routes </a> </li>
+                                        <li> <a href="#routing_params"> Route Params </a> </li>
+                                        <li> <a href="#routing_pretty_url"> HTML5 Mode / Pretty URL </a> </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Documentation container -->
+                <div class="doc-presentation nice-scroll">
+                    <!-- The Content Will be placed here -->
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/docs.js"></script>
+</body>
+</html>

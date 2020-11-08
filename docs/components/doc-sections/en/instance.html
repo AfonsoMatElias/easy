@@ -3,7 +3,7 @@
         title="Help us improve this documentation on github!" class="edit-content"><span
             class="fa fa-pencil"></span></a>
 
-    <h1> <a id="instance" href="#instance"> Instance </a> </h1>
+    <h1> <a id="instance"> Instance </a> </h1>
 
     <p>
         When we import <span class="note">Easy</span> it will added a function to the global
@@ -15,7 +15,7 @@
     var app = new Easy(element, options);
     </code></pre>
 
-    <h3> <a id="inst_el" href="#inst_el"> Element </a> </h3>
+    <h3> <a id="inst_el"> Element </a> </h3>
     <p>
         The element is the mandatory parameter that represents the section that the instance
         will control in the application, it must be passed as a String in the format of a
@@ -23,7 +23,7 @@
         <span class="note">body</span>.
     </p>
 
-    <h3> <a id="inst_options" href="#inst_options"> Options </a> </h3>
+    <h3> <a id="inst_options"> Options </a> </h3>
     <p>
         Options is the optional parameter, which can be used to define initial data, instance
         configuration, components (we'll talk about this later), etc. If passed, it must be
@@ -34,7 +34,7 @@
         This property can be accessed from the instance object: <span class="note">instance.options</span>.
     </p>
 
-    <h3> <a id="properties" href="#properties"> Properties</a> </h3>
+    <h3> <a id="properties"> Properties</a> </h3>
     <p>
         As previously stated, in the options parameter several properties can be defined which
         are:
@@ -59,7 +59,7 @@
     });
     </code></pre>
 
-    <h3> <a id="prop_config" href="#prop_config">Config Property</a> </h3>
+    <h3> <a id="prop_config">Config Property</a> </h3>
     <p>
         Is an object containing Easy’s global configurations. With config property you can set:
     </p>
@@ -96,7 +96,7 @@
         </li>
     </ul>
 
-    <h3> <a id="prop_data" href="#prop_data">Data</a> </h3>
+    <h3> <a id="prop_data">Data</a> </h3>
     <p>
         As already mentioned, the data property allows you to define the data that the application will have
         when it starts, however there is a way to add data while it is already running with the
@@ -138,7 +138,7 @@
         accessed even if a scope is created.
     </p>
 
-    <h3> <a id="prop_hooks" href="#prop_hooks"> Instance Hooks </a> </h3>
+    <h3> <a id="prop_hooks"> Instance Hooks </a> </h3>
     <p>
         There are only two main hooks in the Easy instance, which are:
     </p>
@@ -146,7 +146,7 @@
     <ul>
         <li>
             <span class="note mark-el">{ Function } mounted</span> &ndash; this hook is called when the
-            DOMContentLoaded event is raised (It works this way if the <a href="#prop_config" id="prop_config"
+            DOMContentLoaded event is raised (It works this way if the <a id="prop_config"
                 class="mark-el">useDOMLoadEvent</a> property is true, otherwise, it
             will be called as soon as the Class is instantiated).
         </li>

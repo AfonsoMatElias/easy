@@ -3,7 +3,7 @@
         title="Help us improve this documentation on github!" class="edit-content"><span
             class="fa fa-pencil"></span></a>
 
-    <h1><a id="comps_incs" href="#comps_incs"> Components / Includers </a></h1>
+    <h1><a id="comps_incs"> Components / Includers </a></h1>
     <p>
         It is a concept that allows the reuse of HTML code. Easy creates and handles components
         in a different way, we will see in the chapters below...
@@ -34,7 +34,7 @@
     &lt;div inc-src="nameId"&gt; &lt;/div&gt;
     </code></pre>
 
-    <h3> <a id="comp_cloned" href="#comp_cloned"> Cloned </a> </h3>
+    <h3> <a id="comp_cloned"> Cloned </a> </h3>
     <p>
         These are components that is based on a copy of an element during compilation, it is
         like a copy and paste. It can be achived by defining <span class="note mark-el">inc-tmp="<i>nameId</i>"</span>
@@ -72,14 +72,14 @@
         </div>
     </div>
 
-    <h3> <a id="comp_registered" href="#comp_registered"> Registered</a> </h3>
+    <h3> <a id="comp_registered"> Registered</a> </h3>
     <p>
         These are the components that are registered directly in the instance, it can be done
         when the <span class="note mark-el">Easy Class</span> or using the component manager
         object in <span class="note mark-el">instance.components</span>.
     </p>
 
-    <h3> <a id="comp_registering" href="#comp_registering"> Registering </a> </h3>
+    <h3> <a id="comp_registering"> Registering </a> </h3>
     <p>
         There are two ways to register a component, which are: <span class="note mark-el">Short
             Way</span>, where we define the <i class="note mark-el">nameId</i> with the <i
@@ -179,7 +179,7 @@
             injected in the component when it loads. </li>
     </ul>
 
-    <h3> <a id="comp_handing" href="#comp_handing"></a> Handling Components </h3>
+    <h3> <a id="comp_handing"></a> Handling Components </h3>
     <p>
         The object <span class="note mark-el">instance.components</span> allow us to manage
         components. It is structured as following:
@@ -214,13 +214,13 @@
                 restrictionFunction)</span>. </li>
     </ul>
 
-    <h3> <a id="comp_format" href="#comp_format"> Component Format </a> </h3>
+    <h3> <a id="comp_format"> Component Format </a> </h3>
     <p>
         They are written into .html files, containing styles (optional), scripts (optional) and
         a root element (required).
     </p>
 
-    <h3> <a id="comp_style" href="#comp_style"> Styles </a> </h3>
+    <h3> <a id="comp_style"> Styles </a> </h3>
     <p>
         The style tag here works as expected, by default the styles is global to define it has a
         scope one just add the <i class="note mark-el">scoped</i> attribute. This adds a class
@@ -243,7 +243,7 @@
     &lt;/style&gt;
     </code></pre>
 
-    <h3> <a id="comp_root" href="#comp_root"> Root Element </a> </h3>
+    <h3> <a id="comp_root"> Root Element </a> </h3>
     <p>
         A block element like a div that will be added to de DOM. If it was not defined an error
         will be showing say:
@@ -251,7 +251,7 @@
             <i class="note code">&lt;div&gt;&lt;/div&gt;</i>, to included.</b>
     </p>
 
-    <h3> <a id="comp_script" href="#comp_script"> Scripts </a> </h3>
+    <h3> <a id="comp_script"> Scripts </a> </h3>
     <p>
         A block containing the JavaScript code that runs when the component is created a scrips
         are imported. The context (<i class="mark-el">this</i>) the component instance.
@@ -270,12 +270,12 @@
         </p>
     </div>
 
-    <h3> <a id="comp_life_cycles" href="#comp_life_cycles"> Lifecycles Hooks </a> </h3>
+    <h3> <a id="comp_life_cycles"> Lifecycles Hooks </a> </h3>
     <p>
         These are functions that are called at some stages in the component's life, They
     </p>
 
-    <h4> <a id="comp_life_cycles_created" href="#comp_life_cycles_created"> Created </a> </h4>
+    <h4> <a id="comp_life_cycles_created"> Created </a> </h4>
     <p>
         This is the hook that is called when the component was created. It can be define as
         following:
@@ -283,7 +283,7 @@
         element is passed as first parameter.
     </p>
 
-    <h4> <a id="comp_life_cycles_mounted" href="#comp_life_cycles_mounted"> Mounted </a> </h4>
+    <h4> <a id="comp_life_cycles_mounted"> Mounted </a> </h4>
     <p>
         This is the hook that is called when the component was mounted or added to the DOM. It
         can be define as following:
@@ -291,7 +291,7 @@
         element is passed as first parameter.
     </p>
 
-    <h4> <a id="comp_life_cycles_loaded" href="#comp_life_cycles_loaded"> Loaded </a> </h4>
+    <h4> <a id="comp_life_cycles_loaded"> Loaded </a> </h4>
     <p>
         This is the hook that is called when the component was loaded or compiled. It can be
         define as following:
@@ -299,7 +299,7 @@
         element is passed as first parameter.
     </p>
 
-    <h4> <a id="comp_life_cycles_destroyed" href="#comp_life_cycles_destroyed"> Destroyed </a>
+    <h4> <a id="comp_life_cycles_destroyed"> Destroyed </a>
     </h4>
     <p>
         This is the hook that is called when the component was destroyed or removed from the
@@ -317,7 +317,7 @@
         </p>
     </div>
 
-    <h3> <a id="comp_exporting" href="#comp_exporting"> Exporting </a> </h3>
+    <h3> <a id="comp_exporting"> Exporting </a> </h3>
     <p>
         The function that is used to export data from the script to the template is <span class="mark-el">export</span>.
         To be able to export the data, it needs to be defined as following: <i class="note mark-el">this.export({...})</i>.
@@ -363,7 +363,7 @@
     &lt;/style&gt;
     </code></pre>
 
-    <h3> <a id="comp_data" href="#comp_data"> Inc with data </a> </h3>
+    <h3> <a id="comp_data"> Inc with data </a> </h3>
     <p>
         An includer can be combined with <i class="note mark-el">data command</i> to pass data
         in the component. This data can be accessed in the property
@@ -382,7 +382,7 @@
     &lt;inc data="{ appName: 'My App' }" src="myComponent"&gt; &lt;/inc&gt;
     </code></pre>
 
-    <h3> <a id="comp_delimiter" href="#comp_delimiter"> Inc with Delimiter </a> </h3>
+    <h3> <a id="comp_delimiter"> Inc with Delimiter </a> </h3>
     <p>
         An includer can be combined with a delimiter, giving you dynamic changes when the values
         of the property changes.
@@ -393,7 +393,7 @@
     &lt;inc src="{{ currentTab }}"&gt; &lt;/inc&gt;
     </code></pre>
 
-    <h3> <a id="comp_on" href="#comp_on"> Inc with `on` Method </a> </h3>
+    <h3> <a id="comp_on"> Inc with `on` Method </a> </h3>
     <p>
         There are built-in events for includers that allow us to listen to a diferents states of an includer,
         which are:
@@ -414,7 +414,7 @@
             on request.</li>
     </ul>
 
-    <h3> <a id="comp_keep_alive" href="#comp_keep_alive"> Keep Alive </a> </h3>
+    <h3> <a id="comp_keep_alive"> Keep Alive </a> </h3>
     <p>
         By default, the components are re-created when they are requested to be included, to
         keep the element with it information just define keep-alive.
@@ -425,7 +425,7 @@
     &lt;inc src="registration-form" keep-alive &gt; &lt;/inc&gt;
     </code></pre>
 
-    <h3> <a id="comp_nesting_content" href="#comp_nesting_content"> Nesting Content </a> </h3>
+    <h3> <a id="comp_nesting_content"> Nesting Content </a> </h3>
     <p>
         Content can be easily nested, just define a <i class="note mark-el">content</i>
         tag into the inc body and define a <i class="note mark-el">content</i> into the
@@ -499,10 +499,10 @@
         </p>
     </div>
 
-    <h3> <a id="comp_nesting_includers" href="#comp_nesting_includers"> Nesting Includers</a>
+    <h3> <a id="comp_nesting_includers"> Nesting Includers</a>
     </h3>
     <p>
-        Includers can be easily nested, following the same line of thought with <a href="#comp_nesting_content"
+        Includers can be easily nested, following the same line of thought with <a
             class="mark-el">Nesting Content</a>, just put <i class="note mark-el">inc</i> tag inside the <i
             class="note mark-el">content</i> tag.
     </p>

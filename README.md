@@ -83,7 +83,7 @@ Check the browser console, if no error or warning message is there, congratulati
 
 ## Check the documentation
 
-[Click Me](https://afonsomatelias.github.io/easy/docs.page.1.html) to see the documentation and some live examples!
+[Click Me](https://afonsomatelias.github.io/easy/docs.html) to see the documentation and some live examples!
 
 ## Contributing
 

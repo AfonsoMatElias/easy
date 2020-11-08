@@ -2,7 +2,7 @@
     <a href="https://github.com/AfonsoMatElias/easy/blob/6a729b7284758c6064eaadb4dc6b23fde4081aaf/docs/components/doc-sections/en/events.html" 
     title="Help us improve this documentation on github!" class="edit-content"><span class="fa fa-pencil"></span></a>
 
-    <h1> <a id="events" href="#events"> Events </a> </h1>
+    <h1> <a id="events"> Events </a> </h1>
     <p>
         We can use <span class="note mark-el">on:</span> to listen for DOM events and run some
         javascript code when it is emitted. In some examples above we use the click event so we
@@ -26,7 +26,7 @@
             }, scope: { <i class="mark-el">It has the scope object it self</i> } }</span>
     </p>
 
-    <h3> <a id="events_standard" href="#events_standard"> Standard</a> </h3>
+    <h3> <a id="events_standard"> Standard</a> </h3>
     <p>
         These are standard DOM events, such as onclick, ondblclick, onkeyup, etc.
     </p>
@@ -63,7 +63,7 @@
         </div>
     </div>
 
-    <h3> <a id="events_easy" href="#events_easy"> Easy </a> </h3>
+    <h3> <a id="events_easy"> Easy </a> </h3>
     <p>
         These are Easy's internal events, which we can mention:
     </p>
@@ -75,17 +75,17 @@
             element containing the data command is compiled. </li>
         <li> <span class="note mark-el">add</span> &ndash; this event is emitted when an element
             of the e-for command is inserted into the DOM. It works with
-            <a href="connectors.html" class="note mark-el">connectors</a>. </li>
+            <a href="docs.connectors.html" class="note mark-el">connectors</a>. </li>
         <li> <span class="note mark-el">empty</span> &ndash; this event is emitted when the
             array passed in the e-for command is empty. It works with
-            <a href="connectors.html" class="note mark-el">connectors</a>. </li>
+            <a href="docs.connectors.html" class="note mark-el">connectors</a>. </li>
         </li>
         <li> <span class="note mark-el">response</span> &ndash; this event is emitted when we
             get some response to a request made using a
-            <a href="connectors.html" class="note mark-el">connector</a>.
+            <a href="docs.connectors.html" class="note mark-el">connector</a>.
         </li>
         <li> <span class="note mark-el">fail</span> &ndash; this event is emitted when a request
-            made using a <a href="connectors.html" class="note mark-el">connector</a> fails. </li>
+            made using a <a href="docs.connectors.html" class="note mark-el">connector</a> fails. </li>
     </ul>
 
     <div e-if="typeof noApp === 'undefined'">
@@ -125,7 +125,7 @@
         </div>
     </div>
 
-    <h3> <a id="events_custom" href="#events_custom"> Custom </a> </h3>
+    <h3> <a id="events_custom"> Custom </a> </h3>
     <p>
         These are the events that we can freely set the names according to our liking. <span class="note att-border">Do
             not use reserved names</span>, which are event names
@@ -189,7 +189,7 @@
         </p>
     </div>
 
-    <h3> <a id="events_modifiers" href="#events_modifiers"> Modifiers </a> </h3>
+    <h3> <a id="events_modifiers"> Modifiers </a> </h3>
     <p>
         To add modifiers to the events use <span class="note mark-el">.</span> (dot) after the
         eventName. The sintax is <span class="note mark-el">on:eventName.modifier1.modifier2="expression"</span>
@@ -240,7 +240,6 @@
 <script>
     this.mounted = function (el) {
         appExector(el);
-
         scrollByAnchor(el);
     }
 </script>

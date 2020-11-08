@@ -9,7 +9,9 @@
     <link rel="shortcut icon" href="assets/img/main_ico.png" type="image/x-icon">
     <link rel="stylesheet" type="text/css" href="assets/css/styles.css">
     <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,200;0,300;0,400;0,600;0,800;1,200;1,300;1,400;1,600;1,800&display=swap" rel="stylesheet"> 
+    <link
+        href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,200;0,300;0,400;0,600;0,800;1,200;1,300;1,400;1,600;1,800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="assets/fonts/work-sans/fonts.css">
 
     <link editor-hl rel="stylesheet" href="assets/highlights/atom-one-light.css">
@@ -45,7 +47,7 @@
                         <!-- The Menu Will be placed here -->
                         <div class="menu">
                             <ul class="items">
-                                <li> <a href="#connectors">
+                                <li sec=""> <a href="#connectors">
                                         <h3> Connectors </h3>
                                     </a>
                                     <ul>
@@ -104,12 +106,6 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             activeMenuOnScroll();
-
-            document.node('.doc-page .doc-menu').nodes('a').filter(function(anchor){ 
-                var href = anchor.attributes.href;
-                if (!href || href.value[0] != '#') return;
-                anchor.href = location.href + href.value;
-            })
         });
     </script>
 </body>

@@ -2,12 +2,12 @@
     <a href="https://github.com/AfonsoMatElias/easy/blob/6a729b7284758c6064eaadb4dc6b23fde4081aaf/docs/components/doc-sections/en/methods.html" 
     title="Help us improve this documentation on github!" class="edit-content"><span class="fa fa-pencil"></span></a>
 
-    <h1><a id="methods" href="#methods"> Methods </a></h1>
+    <h1><a id="methods"> Methods </a></h1>
     <p>
         There are some built-in methods that can be used in the application, which are:
     </p>
 
-    <h3><a id="method_setData" href="#method_setData">setData</a></h3>
+    <h3><a id="method_setData">setData</a></h3>
     <p>
         It is used to define properties in the data scope. Its sintax is
         <span class="note mark-el">instance.setData(object, targetObject)</span>.
@@ -35,7 +35,7 @@
     });
     </code></pre>
 
-    <h3><a id="method_on" href="#method_on">on</a></h3>
+    <h3><a id="method_on">on</a></h3>
     <p>
         It allows adding an event to the instance so that it can be used anywhere in the
         application.
@@ -63,7 +63,7 @@
     });
     </code></pre>
 
-    <h3><a id="method_off" href="#method_off">off</a></h3>
+    <h3><a id="method_off">off</a></h3>
     <p>
         Allows you to remove an event added to the instance.
         The method expects two parameters: <span class="note mark-el">instance.off(eventName,
@@ -92,7 +92,7 @@
     app.off('eventName', event.callback);
     </code></pre>
 
-    <h3><a id="method_emit" href="#method_emit">emit</a></h3>
+    <h3><a id="method_emit">emit</a></h3>
     <p>
         Allows you to issue a specific item, whether customized (events added in elements) or
         added in the instance.
@@ -120,7 +120,7 @@
     app.emit('eventName', { name: 'transfered data' });
     </code></pre>
 
-    <h3><a id="method_expose" href="#method_expose">expose</a></h3>
+    <h3><a id="method_expose">expose</a></h3>
     <p>
         It allows exposing an object, allowing it to be retrieved anywhere in the application.
         By default, Easy uses to transfer data to a component.
@@ -143,7 +143,7 @@
     app.expose('userInfo', { name: 'Maria', roles: ['admin', 'manager'] });
     </code></pre>
 
-    <h3><a id="method_retrieve" href="#method_retrieve">retrieve</a></h3>
+    <h3><a id="method_retrieve">retrieve</a></h3>
     <p>
         It allows to retrieve the exposed data. The method expects two parameters: <span
             class="note mark-el">instance.remove(name, remove)</span>.
@@ -168,7 +168,7 @@
     var data = app.retrive('userInfo');
     </code></pre>
 
-    <h3><a id="method_tojsobj" href="#method_toJsObj">toJsObj</a></h3>
+    <h3><a id="method_tojsobj">toJsObj</a></h3>
     <p>
         It allows creating a structured javascript object based on the structure of the HTML
         element. Object that can be sent to a server.
@@ -179,14 +179,14 @@
     </p>
 
     <ul>
-        <li> <a id="method_tojsobj_build" href="#method_tojsobj_build" class="note mark-el">
+        <li> <a id="method_tojsobj_build" class="note mark-el">
                 e-build </a> &ndash; allows you to build one object within another. The syntax
             is <span class="note mark-el">e-build="<i>path</i>"</span>. The path always need to
             be complete, from the base object untill the property it needs to create. When you
             need to create an object inside of an array you don't need to put the property and
             the index (property[0]) of the array, just property name, by the default it maps all
             the array.</li>
-        <li> <a id="method_tojsobj_array" href="#method_tojsobj_array" class="note mark-el">
+        <li> <a id="method_tojsobj_array" class="note mark-el">
                 e-array </a> &ndash; allows to build a array of the element where it is defined.
             Even if it is not defined by default it creates an array if the elements repeats.
 
@@ -281,7 +281,7 @@
         </p>
     </div>
 
-    <h3><a id="method_watch" href="#method_watch">watch</a></h3>
+    <h3><a id="method_watch">watch</a></h3>
     <p>
         It is used to watch changes in specific property in the data scope. Its sintax is
         <span class="note mark-el">instance.watch(propertyName, callback, targetObject)</span>.
@@ -313,7 +313,7 @@
     });
     </code></pre>
 
-    <h3><a id="method_set" href="#method_set">set</a></h3>
+    <h3><a id="method_set">set</a></h3>
     <p>
         It is used to set some <span class="mark-el">Easy</span> configuration. The method
         expects two parameters, the first is the property to set and the second is the value

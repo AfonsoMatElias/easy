@@ -1155,6 +1155,54 @@ pre code.bat.hljs::after {
     transform: translate(-50%, -50%);
 }
 
+.container-404>div {
+    margin: 10px 0;
+}
+
+.unavaliable-section {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.unavaliable-section .page-icon {
+    display: flex;
+}
+
+.easy-logo {
+    width: 80px;
+    height: 80px;
+    background-color: #bbb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.easy-logo span {
+    font-size: 95px;
+    font-weight: 600;
+    margin-top: -15px;
+    color: #888;
+}
+
+.unavaliable-section .page-icon {
+    display: flex;
+}
+
+.unavaliable-section .page-icon .desc {
+    display: flex;
+    align-items: center;
+    margin: 0 20px;
+}
+
+.unavaliable-section .page-icon .desc h1 {
+    font-size: 65px;
+    font-weight: 600;
+}
+
 /* Animations classes */
 .page-loading {
     z-index: 180;
@@ -1226,6 +1274,14 @@ pre code.bat.hljs::after {
 }
 
 @media (max-width: 700px) {
+    .container-404 {
+        margin: 0 30px;
+    }
+
+    .container-404 .page-icon {
+        justify-content: center;
+    }
+    
     .editor-divider {
         padding: 0;
     }

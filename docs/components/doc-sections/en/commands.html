@@ -3,14 +3,14 @@
         title="Help us improve this documentation on github!" class="edit-content"><span
             class="fa fa-pencil"></span></a>
 
-    <h1> <a id="commands" href="#commands"> Commands </a> </h1>
+    <h1> <a id="commands"> Commands </a> </h1>
     <p>
         Easy has some commands that are used as attributes in elements, each one has its
         peculiarity and way of using it, we will explain each step by step how and where it
         can be used.
     </p>
 
-    <h3> <a id="cmd_data" href="#cmd_data"> data </a> </h3>
+    <h3> <a id="cmd_data"> data </a> </h3>
     <p>
         It allows defining a data scope for a certain element, the syntax is
         <span class="note mark-el">data="{...}"</span>, if it is defined to be
@@ -110,12 +110,12 @@
         </div>
     </div>
 
-    <h3> <a id="cmd_wait_data" href="#cmd_wait_data"> wait-data </a> </h3>
+    <h3> <a id="cmd_wait_data"> wait-data </a> </h3>
     <p>
         Allows the element where it is defined to be skipped in the compilation, waiting for its
         data to be provided. It is defined as follows:
         <span class="note mark-el">wait-data="dataID"</span>. In order to make the element
-        data available, we use the <a href="" class="note mark-el">expose</a> method.
+        data available, we use the <span class="note mark-el">expose</span> method.
     </p>
 
     <div e-if="typeof noApp === 'undefined'">
@@ -163,7 +163,7 @@
         delimiters in sight, fortunately we have <span class="note">e-content</span>.
     </p>
 
-    <h3> <a id="cmd_e_content" href="#cmd_e_content"> e-content </a> </h3>
+    <h3> <a id="cmd_e_content"> e-content </a> </h3>
     <p>
         It is a way to define a value that will be put in the container after the element is
         compiled.
@@ -209,7 +209,7 @@
         skeleton.
     </p>
 
-    <h3> <a id="cmd_e_skeleton" href="#cmd_e_skeleton"> e-skeleton </a> </h3>
+    <h3> <a id="cmd_e_skeleton"> e-skeleton </a> </h3>
     <p>
         It is a way of showing that information from a specific area is being loaded, it is used
         a lot in today's
@@ -303,7 +303,7 @@
         </div>
     </div>
 
-    <h3> <a id="cmd_e_def" href="#cmd_e_def"> e-def </a> </h3>
+    <h3> <a id="cmd_e_def"> e-def </a> </h3>
     <p>
         It is a short name of <span class="note">e-definer</span>, it allows to dynamically
         define properties (Reactives) in the current scope. Its syntax is
@@ -339,7 +339,7 @@
         </p>
     </div>
 
-    <h3> <a id="cmd_e_if" href="#cmd_e_if"> e-if </a> </h3>
+    <h3> <a id="cmd_e_if"> e-if </a> </h3>
     <p>
         The <span class="note">e-if</span> command is very similar to the <span class="mark-el">Vue.js</span> <span
             class="note">v-if</span> directive...
@@ -378,7 +378,7 @@
         </div>
     </div>
 
-    <h3> <a id="cmd_e_show" href="#cmd_e_show"> e-show </a> </h3>
+    <h3> <a id="cmd_e_show"> e-show </a> </h3>
     <p>
         The <span class="note">e-show</span> command is very similar to the
         <span class="mark-el">Vue.js</span> <span class="note">v-show</span> directive... It is
@@ -412,7 +412,7 @@
         </div>
     </div>
 
-    <h3> <a id="cmd_e_for" href="#cmd_e_for"> e-for </a> </h3>
+    <h3> <a id="cmd_e_for"> e-for </a> </h3>
     <p>
         The <span class="note">e-for</span> command is very similar to the
         <span class="mark-el">Vue.js</span> <span class="note">v-for</span> directive...
@@ -471,17 +471,17 @@
             changes, all the items of the array will be re-rendered in the UI, meaning the index variable updates too.
     </p>
 
-    <h4> <a id="cmd_e_for_filter" href="#cmd_e_for_filter"> Using Array filter </a> </h4>
+    <h4> <a id="cmd_e_for_filter"> Using Array filter </a> </h4>
     <p>
         Easy array filter is a way to filter data while it is being rendered. To add the filter
-        we use <span class="note mark-el">|</span> after <a href="#cmd_e_for" class="note mark-el">e-for</a> expression.
+        we use <span class="note mark-el">|</span> after <a class="note mark-el">e-for</a> expression.
         <span class="note mark-el">item of items | filterExpression</span>. There are four ways
         to
         use this filter,
         which are:
     </p>
 
-    <h4> <a id="cmd_e_for_filter_g_filter" href="#cmd_e_for_filter_g_filter"> 1. Global Fitler
+    <h4> <a id="cmd_e_for_filter_g_filter"> 1. Global Fitler
         </a> </h4>
     <p>
         Performs the filter on every property of the items containing the value of the data
@@ -517,7 +517,7 @@
         </div>
     </div>
 
-    <h4> <a id="cmd_e_for_filter_tg_filter" href="#cmd_e_for_filter_tg_filter"> 2. Targeted
+    <h4> <a id="cmd_e_for_filter_tg_filter"> 2. Targeted
             filter </a> </h4>
     <p>
         Performs the filter on specific properties of the items containing the value of the data
@@ -555,7 +555,7 @@
         </div>
     </div>
 
-    <h4> <a id="cmd_e_for_filter_d_filter" href="#cmd_e_for_filter_d_filter"> 3. Direct filter
+    <h4> <a id="cmd_e_for_filter_d_filter"> 3. Direct filter
         </a> </h4>
     <p>
         Performs the filter on specific property of the items to a value set.
@@ -587,7 +587,7 @@
         </div>
     </div>
 
-    <h4> <a id="cmd_e_for_filter_f_filter" href="#cmd_e_for_filter_f_filter"> 4. Function filter
+    <h4> <a id="cmd_e_for_filter_f_filter"> 4. Function filter
         </a> </h4>
     <p>
         Performs the filter of the items based on a function. The context (<span class="mark-el">this</span>)
@@ -628,7 +628,7 @@
         </div>
     </div>
 
-    <h3> <a id="" href="#"> Array Change Detection </a> </h3>
+    <h3> <a id=""Array Change Detection </a> </h3>
     <p>
         Easy links with the main methods of an array, making them become reactive, the methods
         are:
@@ -656,7 +656,7 @@
         </p>
     </div>
 
-    <h3> <a id="cmd_e_order" href="#cmd_e_order"> e-order </a> </h3>
+    <h3> <a id="cmd_e_order"> e-order </a> </h3>
     <p>
         Sorts a list according to the condition passed in the command's expression. Its syntax
         is
@@ -680,7 +680,7 @@
         </p>
     </div>
 
-    <h3> <a id="cmd_e_anm" href="#cmd_e_anm"> e-anm </a> </h3>
+    <h3> <a id="cmd_e_anm"> e-anm </a> </h3>
     <p>
         It is a simple way to animate the insertion of an element in the DOM. Its syntax is
         <span class="note mark-el">e-anm="<i>direction</i>"</span>.
@@ -705,7 +705,7 @@
     &lt;/ul&gt;
     </code></pre>
 
-    <h3> <a id="cmd_e_toggle" href="#cmd_e_toggle"> e-toggle </a> </h3>
+    <h3> <a id="cmd_e_toggle"> e-toggle </a> </h3>
     <p>
         Allows you to toggle a property on an element, setting the value to <span class="note mark-el">true</span> when
         set.
@@ -736,7 +736,7 @@
     </div>
 
 
-    <h3> <a id="cmd_e" href="#cmd_e"> e-[something] </a> </h3>
+    <h3> <a id="cmd_e"> e-[something] </a> </h3>
     <p>
         As we said above, it is the most versatile command according to the defined expression,
         because on the one hand it creates a property after being compiled and on the other it
