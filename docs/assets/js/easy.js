@@ -1391,7 +1391,7 @@
             var $$el = config.el;
             var $$data = config.data;
             var $$scope = $$data;
-            // Defining all the functions in the data
+            // Extracting all the functions from the data prop
             var $$methods = extractor($$data, 'function');
             var cmds = vars.cmds;
 
@@ -1497,15 +1497,13 @@
                         
                         // Checking if it has delimiters
                         if (ui.getDelimiters(el.value).length > 0) 
-                            return Easy.log(error.delimiter); // fail on preparation
+                            return Easy.log(error.delimiter);
                         
                         if (el.name === cmds.show) {
                             el.$e.$base = base;
-                            Compiler.addOldAttr({
-                                el: base,
-                                value: el
-                            });
+                            Compiler.addOldAttr({ el: base, value: el });
 
+                            // Toggle `display: none` in the element acording the value result
                             var verifyShowValue = function () {
                                 var check = fn.eval(el.nodeValue, $scope);
                                 if (check) base.style.display = '';
@@ -1522,13 +1520,13 @@
                             verifyShowValue(); unget();
                         } else {
                             var curr = base, container = base.parentNode, chainCondition = [];
-                            var hideChain = function () {
+                            var hideChainCondition = function () {
                                 forEach(chainCondition, function (item) {
                                     var container = item.element.parentNode;
                                     if (container) container.replaceChild(item.element.com, item.element);
                                 })
                             }
-                            var addToChain = function (element, attr) {
+                            var addToChainConditionList = function (element, attr) {
                                 element.com = ui.com.create();
                                 element.removeAttribute(attr.nodeName);
                                 chainCondition.push({ 
@@ -1540,13 +1538,10 @@
                                 });
 
                                 setEasy(attr).$e.$base = base;
-                                Compiler.addOldAttr({
-                                    el: element,
-                                    value: attr
-                                });
+                                Compiler.addOldAttr({ el: element, value: attr });
                             }
-                            var verifyChain = function () {
-                                hideChain(); // Hiding all elements
+                            var verifyChainCondition = function () {
+                                hideChainCondition(); // Hiding all elements
                                 for (let i = 0; i < chainCondition.length; i++) {
                                     var check, chain = chainCondition[i];
                                     // Evaluating the element value
@@ -1566,21 +1561,20 @@
                                 }
                             }
 
-                            addToChain(curr, el);
+                            addToChainConditionList(curr, el);
 
-                            do { // Getting the chain of the condition
+                            do { // Getting the chain conditions
                                 curr = curr.nextElementSibling;
                                 if ( !curr ) break;
                                 var $attr = fn.attr(curr, ['e-else-if', 'e-else']);
                                 if ( !$attr ) break;
-                                addToChain(curr, $attr);
-                                // Break on else
-                                if ( $attr.name === 'e-else' ) break;
+                                addToChainConditionList(curr, $attr);
+                                if ( $attr.name === 'e-else' ) break; // Break on else
                             } while(1);
 
                             getter = function (_, prop) {
                                 var watch = $easy.watch(prop.property, function () {
-                                    verifyChain();
+                                    verifyChainCondition();
                                     var  isDestroy = true;
                                     forEach(chainCondition, function (item) {
                                         if (isDestroy == true && (item.comment.isConnected || item.element.isConnected)) 
@@ -1590,7 +1584,7 @@
                                     if (isDestroy) watch.destroy();
                                 });
                             }
-                            verifyChain(); unget();
+                            verifyChainCondition(); unget();
                         }
                         return;
                     }
@@ -1634,7 +1628,6 @@
                     }
                     case cmds.for: {
                         var base = el.$e.$base;
-
                         // Reading the for expression
                         var helper = ui.cmd.for.read(base), comment;
                         if (!helper.ok) return;
