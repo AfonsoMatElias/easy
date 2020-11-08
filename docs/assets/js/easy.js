@@ -692,12 +692,11 @@
     function http(url, options) {
         if (!url) return Easy.log('Invalid url');
 
-        function createXhr(method) {
+        function createXhr(method)
             if (doc.documentMode && (!method.match(/^(get|post|head|put|delete|options)$/i) || !window.XMLHttpRequest)) {
                 return new window.ActiveXObject("Microsoft.XMLHTTP");
-            } else if (window.XMLHttpRequest) {
+            else if (window.XMLHttpRequest)
                 return new window.XMLHttpRequest();
-            }
             throw ({ message: "This browser does not support XMLHttpRequest." });
         }
 

@@ -22,8 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         components: {
             config: {
-                // Comment this when using locally 
-                base: '/docs/'
+                base: '/easy/' // '/docs/' // -> Use this when local
             },
             elements: {
                 'top': "/components/top",
