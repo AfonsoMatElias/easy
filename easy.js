@@ -681,7 +681,7 @@
             var keys = queryStr.split('&');
             forEach(keys, (function(key) {
                 var pair = key.split('=');
-                this[pair[0]] = pair[1]
+                this[pair[0]] = (pair[1] || '').split('#')[0]
             }).bind(this));
         }
     }
