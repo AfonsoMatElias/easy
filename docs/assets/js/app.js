@@ -22,7 +22,9 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         components: {
             config: {
-                base: '/easy/' // '/docs/' // -> Use this when local
+                // '/docs/' -> Use this when local
+                // '/easy/' -> Use to push on github
+                base: '/easy/' 
             },
             elements: {
                 'top': "/components/top",
