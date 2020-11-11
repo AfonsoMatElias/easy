@@ -1,0 +1,19 @@
+<div id="app">
+    <button on:click="counterBtn1++">{{ 'Count Ever: ' + counterBtn1 }}</button>
+    <button on:click.once="counterBtn2++">{{ 'Count Once: ' + counterBtn2 }}</button>
+    <button on:click="reset">Reset</button>
+</div>
+
+<script>
+    var app = new Easy('#app', {
+        data: {
+            // Variables
+            counterBtn1: 0,
+            counterBtn2: 0,
+            // Methods
+            reset: function () {
+                this.data.counterBtn1 = this.data.counterBtn2 = 0;
+            }
+        }
+    });
+</script>

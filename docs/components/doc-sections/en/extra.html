@@ -7,7 +7,8 @@
     <p> Easy, also provides you some extensions methods to your code, they are small, simple, easily rememberable, and
         can be very useful... Let's see them: </p>
 
-    <pre><code class="javascript hljs">
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
     // HTMLElement.node(...) -> executes querySelector method
     var element = document.node('#node-id'); 
     
@@ -54,11 +55,11 @@
 
     var keys = myObject.keys(function(key, value){
         ...
-    });
-    </code></pre>
+    });</textarea>
+    </div>
 
     <br>
-    
+
     <h2> So far we know almost everything about <span class="mark-el">Easy.js</span> </h2>
     <p class="show-case"> We hope you enjoyed it so far, we thank you very much for following the easy.js documentation.
     </p>
@@ -70,15 +71,18 @@
 
     <p class="show-case"> What if we say that there is a simple a way to request data from a server, like doing this:
     </p>
-    <pre e-ignore><code class="html hljs">
-    &lt;ul&gt;
-        &lt;li e-tmp="users"&gt; 
-            {{ id }}, {{ name }}
-        &lt;/li&gt;
-    &lt;/ul&gt;
-    </code></pre>
 
-    <p class="show-case"> Want to learn more? Follow on <a class="mark-el" href="docs.connectors.html"> Connectors </a></p>
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <ul>
+        <li e-tmp="users"> 
+            {{ id }}, {{ name }}
+        </li>
+    </ul></textarea>
+    </div>
+
+    <p class="show-case"> Want to learn more? Follow on <a class="mark-el" href="docs.connectors.html"> Connectors </a>
+    </p>
 </section>
 <script>
     this.mounted = function (el) {

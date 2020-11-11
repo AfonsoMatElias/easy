@@ -1,0 +1,27 @@
+<div id="app">
+    <button on:click="exposeData">Load Content</button> 
+    <label e-def="{ message: 'Waiting 😴' }" e-content="{{ message }}">Message</label>
+
+    <div id="image-container" style="width: 300; height: 300;" wait-data="image-data">
+        <h4 e-skeleton="sk-1">{{ imageTitle }}</h4><br>
+        <div class="image" e-skeleton="sk-1">
+            <img e-src="{{ imageUrl }}" width="190" height="145">
+        </div>
+    </div>
+</div>
+
+<script>
+    var app = new Easy('#app', {
+        data: {
+            exposeData: function () {
+                this.expose('image-data', {
+                    imageTitle: 'Skeleton Moon Walking 😎',
+                    imageUrl: 'https://cdn.lowgif.com/full/3abd67deb9ccc359-moonwalk-gif-find-share-on-giphy.gif'
+                })
+                var container = document.node('#image-container');
+                container.clearSkeleton('sk-1');
+                this.data.message = 'Loaded 👌'
+            }
+        }
+    });
+</script>

@@ -74,7 +74,7 @@ i {
     --color-popup: #fafafa;
     --color-row: #f6f6f6;
 
-    --color-editor-screen: #f0f0f080;
+    --color-editor-screen: #f6f6f6;
     --color-editor-caret: #343842;
     --color-editor-border: #efefef;
     --color-editor-result-screen: #fcfcfc;
@@ -541,9 +541,38 @@ a.active-doc-menu, a.active-doc-menu * {
     color: var(--color-text);
 }
 
+.tutorial-page .tutorial-menu .content .text .actions-container {
+    height: 80px;
+    display: flex;
+}
+
+.tutorial-page .tutorial-menu .content .text .actions-container>div {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.tutorial-page .tutorial-menu .content .text .actions-container .right {
+    justify-content: flex-end;
+}
+
+.tutorial-page .tutorial-menu .content .text .actions-container .right a {
+    border-radius: 4px;
+    background-color: var(--color-blue);
+    color: var(--color-white-text);
+    border: 1px solid transparent;
+    padding: 6px 18px;
+}
+
+.tutorial-page .tutorial-menu .content .text .actions-container .right a:hover {
+    background-color: transparent;
+    border-color: var(--color-blue);
+    color: var(--color-blue);
+}
+
 .tutorial-page .tutorial-menu .content .edit-content {
     top: 0;
-} 
+}
 
 .doc-page .doc-menu {
     width: 335px;
@@ -756,6 +785,10 @@ ul.top-menu-opened {
     line-height: 1.5rem;
 }
 
+.section .code-container {
+    margin: 20px 0;
+}
+
 .edit-content {
     position: absolute;
     cursor: pointer;
@@ -922,44 +955,22 @@ ul.top-menu-opened {
     cursor: pointer;
 }
 
-.result,
-pre {
+.result {
     position: relative;
     max-width: 740px;
-    margin: 25px 0;
-    border-radius: 2px;
-}
-
-pre {
-    padding: 0 !important;
-    background-color: transparent !important;
-    font-family: Consolas, 'Courier New', monospace;
-}
-
-pre code {
-    overflow-x: auto;
-    font-size: 11.6pt;
-    line-height: 22px;
-    display: block;
-    border-radius: 2px;
-    color: var(--color-text);
-    padding: 0px 10px !important;
-    background-color: var(--color-editor-screen) !important;
-    font-family: Consolas, 'Courier New', monospace;
-}
-
-.result {
+    border-radius: 4px;
     overflow-x: auto;
     font-size: 11.6pt;
     line-height: 22px;
     border-radius: 2px;
     color: var(--color-text);
-    padding-right: 0;
-    background-color: var(--color-soft-transparency);
+    background-color: var(--color-editor-screen);
+    padding: 18px 8px;
+    margin-bottom: 20px;
 }
 
 .result>* {
-    margin: 24px;
+    margin: 0 8px;
 }
 
 pre code * {
@@ -1202,6 +1213,88 @@ pre code.bat.hljs::after {
     font-size: 65px;
     font-weight: 600;
 }
+
+/* CodeMirror */
+.CodeMirror {
+    background-color: transparent!important;
+    margin: 0;
+}
+
+.code-container>.CodeMirror {
+    height: auto;
+}
+
+.code-container  {
+    background-color: var(--color-editor-screen);
+    overflow-x: auto;
+    font-size: 11.6pt;
+    line-height: 22px;
+    border-radius: 2px;
+    position: relative;
+    padding: 18px 8px;
+    max-width: 740px;
+}
+
+.code-container::after {
+    content: attr(code-ext);
+    font-family: Consolas, 'Courier New', monospace;
+    position: absolute;
+    top: 1px;
+    right: 8px;
+    color: var(--color-soft-border);
+    text-align: right;
+    font-size: 0.9em;
+    height: 15px;
+    font-weight: 600;
+}
+
+.CodeMirror.cm-s-default .cm-tag.cm-bracket {
+    color: #808080;
+}
+
+.CodeMirror.cm-s-default .cm-tag {
+    color: #569cd6;
+}
+
+.CodeMirror.cm-s-default .cm-attribute {
+    color: #87c2e2;
+}
+
+.CodeMirror.cm-s-default .cm-string {
+    color: #c97859;
+}
+
+.CodeMirror.cm-s-default .cm-comment {
+    color: #6a9955;
+}
+
+.dark-theme .CodeMirror.cm-s-default .cm-variable,
+.CodeMirror.cm-s-default .cm-def {
+    color: #8fc4df;
+}
+
+.dark-theme .CodeMirror.cm-s-default .cm-keyword {
+    color: #c586c0;
+}
+
+.light-theme .CodeMirror.cm-s-default span[role="presentation"] {
+    color: var(--color-text);
+}
+
+.dark-theme .CodeMirror.cm-s-default span[role="presentation"] {
+    color: #d4d4d4;
+}
+
+.dark-theme .CodeMirror.cm-s-default .CodeMirror-cursor {
+    border-color: #d4d4d4;
+}
+
+.dark-theme .CodeMirror.cm-s-default .CodeMirror-simplescroll-vertical,
+.dark-theme .CodeMirror.cm-s-default .CodeMirror-simplescroll-horizontal {
+    background-color: var(--color-scroll-track);
+}
+
+/* End CodeMirror */
 
 /* Animations classes */
 .page-loading {

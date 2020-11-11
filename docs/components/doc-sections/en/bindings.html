@@ -1,6 +1,7 @@
 <section class="section">
-    <a href="https://github.com/AfonsoMatElias/easy/blob/6a729b7284758c6064eaadb4dc6b23fde4081aaf/docs/components/doc-sections/en/bindings.html" 
-        title="Help us improve this documentation on github!" class="edit-content"><span class="fa fa-pencil"></span></a>
+    <a href="https://github.com/AfonsoMatElias/easy/blob/6a729b7284758c6064eaadb4dc6b23fde4081aaf/docs/components/doc-sections/en/bindings.html"
+        title="Help us improve this documentation on github!" class="edit-content"><span
+            class="fa fa-pencil"></span></a>
 
     <h1> <a id="bindings"> Bindings </a> </h1>
 
@@ -12,14 +13,17 @@
 
     <div e-if="typeof noApp === 'undefined'">
         <div e-ignore>
-            <pre><code class="example html hljs">
-    &lt;div id="app3"&gt;
-        &lt;input type="text" value="{{ value }}" /&gt;
-        &lt;h4&gt; {{ value }} &lt;/h4&gt;
-    &lt;/div&gt;
-            </code></pre>
-        
-            <pre><code class="javascript hljs">
+
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app3">
+        <input type="text" value="{{ value }}" />
+        <h4> {{ value }} </h4>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
     var app3 = new Easy('#app3', {
         data: {
             value: 'Type something!'
@@ -31,8 +35,9 @@
             }
         }
     });
-            </code></pre>
-        
+          </textarea>
+            </div>
+
             <div class="result"></div>
         </div>
     </div>
@@ -42,43 +47,48 @@
         If we don't want to do it this way, we can still use the command
         <span class="note mark-el">e-<i>property</i>="{{ dataProperty }}"</span>,
         it creates the property after being compiled. This commands is very versatile,
-        we will go into details about it in the <a href="docs.page.2.html#cmd_e" class="note mark-el">commands</a> section.
+        we will go into details about it in the <a href="docs.page.2.html#cmd_e" class="note mark-el">commands</a>
+        section.
     </p>
 
-    <pre e-ignore><code class="html hljs">
-    &lt;div id="app3"&gt;
-        &lt;input type="text" e-value="{{ value }}" /&gt;
-        &lt;h4 e-title="{{ value }}" &gt; Hello! &lt;/h4&gt;
-    &lt;/div&gt;
-    </code></pre>
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <div id="app">
+        <input type="text" value="{{ value }}" />
+        <h4> {{ value }} </h4>
+    </div></textarea>
+    </div>
 
     <h3> <a id="bind_two_way"> Two Way </a> </h3>
     <p>
         We can achieve Two Way Data Binding using the command <span
             class="note mark-el">e-bind:<i>property</i>="dataProperty"</span>,
         by default it binds <span class="note">value</span> property, it means that if we want
-        to bind the property value of an input we can define like this 
+        to bind the property value of an input we can define like this
         <span class="note mark-el">e-bind="dataProperty"</span>.
     </p>
 
     <div e-if="typeof noApp === 'undefined'">
         <div e-ignore>
-            <pre><code class="example html hljs">
-    &lt;div id="app4"&gt;
-        &lt;input type="text" e-bind:value="value" /&gt; &lt;br&gt;
-        &lt;input type="text" e-bind="value" /&gt;
-        &lt;h4&gt; {{ value }} &lt;/h4&gt;
-    &lt;/div&gt;
-            </code></pre>
-        
-            <pre><code class="javascript hljs">
+
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app4">
+        <input type="text" e-bind:value="value" /> <br>
+        <input type="text" e-bind="value" />
+        <h4> {{ value }} </h4>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
     var app4 = new Easy('#app4', {
         data: {
             value: 'Type something!'
         }
-    });
-            </code></pre>
-        
+    });</textarea>
+            </div>
+
             <div class="result"></div>
         </div>
     </div>

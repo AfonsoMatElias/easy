@@ -11,9 +11,10 @@
         constructor expects two parameters:
     </p>
 
-    <pre><code class="javascript hljs">
-    var app = new Easy(element, options);
-    </code></pre>
+    <div class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    var app = new Easy(element, options);</textarea>
+    </div>
 
     <h3> <a id="inst_el"> Element </a> </h3>
     <p>
@@ -40,7 +41,8 @@
         are:
     </p>
 
-    <pre><code class="javascript hljs">
+    <div class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
     var app = new Easy('body', {
         // The configuration of the instance
         config: { ... },
@@ -56,8 +58,8 @@
 
         // The components that the instance will inject in your app
         components: { ... }
-    });
-    </code></pre>
+    });</textarea>
+    </div>
 
     <h3> <a id="prop_config">Config Property</a> </h3>
     <p>
@@ -109,19 +111,22 @@
 
     <div e-if="typeof noApp === 'undefined'">
         <div e-ignore>
-            <pre><code class="example html hljs">
-    &lt;div id="app1"&gt;
-        &lt;h4&gt; {{ message }} &lt;/h4&gt;
-    &lt;/div&gt;
-            </code></pre>
 
-            <pre><code class="javascript hljs">
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app1">
+        <h4> {{ message }} </h4>
+    </div></textarea>
+            </div>
+            
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
     var app1 = new Easy('#app1', {
         data: {
             message: 'Hello World!'
         }
-    });
-            </code></pre>
+    });</textarea>
+            </div>
 
             <div class="result"></div>
         </div>
@@ -158,14 +163,16 @@
 
     <div e-if="typeof noApp === 'undefined'">
         <div e-ignore>
-            <pre><code class="example html hljs">
-    &lt;div id="app2"&gt;
-        &lt;h4&gt; Mounted at: {{ mountedHook }} &lt;/h4&gt;
-        &lt;h4&gt; Loaded at: {{ loadedHook }} &lt;/h4&gt;
-    &lt;/div&gt;
-            </code></pre>
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+   <div id="app2">
+        <h4> Mounted at: {{ mountedHook }} </h4>
+        <h4> Loaded at: {{ loadedHook }} </h4>
+    </div></textarea>
+            </div>
 
-            <pre><code class="javascript hljs">
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
     var app2 = new Easy('#app2', {
         data: {
             mountedHook: '',
@@ -177,8 +184,8 @@
         loaded: function(){
             this.data.loadedHook = getDateTime()
         }
-    });
-            </code></pre>
+    });</textarea>
+            </div>
 
             <div class="result"></div>
         </div>

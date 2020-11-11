@@ -1,0 +1,47 @@
+<div id="app">
+    <inc src="header"></inc><br>
+
+    <div class="main-container">
+        <h1>App Content</h1>
+    </div>
+
+    <br><inc src="footer"></inc>
+</div>
+
+<script>
+    var shared = { appName: 'ACNE', version: 'v0.0.1'  };
+    var app = new Easy('#app', {
+        data: {
+            description: 'This is an awesome application',
+            shared: shared
+        },
+        components: {
+            elements: {
+                'header':{
+                    template: editor.tab('header'),
+                    data: shared
+                },
+                'footer':{
+                    template: editor.tab('footer'),
+                    data: shared
+                },
+            }
+        }
+    });
+</script>
+<!-- comp -->
+<!-- header -->
+<header>
+    <div>
+        <b><a>{{ appName }}</a></b>
+    </div>
+    <br>
+    <nav>
+        <a> Home </a> | <a> About </a>
+    </nav>
+</header>
+<!-- comp -->
+<!-- footer -->
+<footer>
+    <small>&copy; - {{ appName }} Today, version {{ version }}</small>
+</footer>

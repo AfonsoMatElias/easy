@@ -26,13 +26,14 @@
             element</span> (a container element).
     </p>
 
-    <pre e-ignore><code class="HTML hljs">
-    &lt;!-- Inc tag --&gt;
-    &lt;inc src="nameId"&gt; &lt;/inc&gt;
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <!-- Inc tag -->
+    <inc src="nameId"></inc>
     
-    &lt;!-- Official DOM tag --&gt;
-    &lt;div inc-src="nameId"&gt; &lt;/div&gt;
-    </code></pre>
+    <!-- Official DOM tag -->
+    <div inc-src="nameId"></div></textarea>
+    </div>
 
     <h3> <a id="comp_cloned"> Cloned </a> </h3>
     <p>
@@ -47,26 +48,30 @@
 
     <div e-if="typeof noApp === 'undefined'">
         <div e-ignore>
-            <pre><code class="example HTML hljs">
-    &lt;div id="app26"&gt;
-        &lt;!-- Copying --&gt;
-        &lt;div inc-tmp="app-logo"&gt;
-            &lt;label&gt; Logo &lt;/label&gt;
-        &lt;/div&gt;
-        
-        &lt;!-- Pasting --&gt;
-        &lt;inc src="@app-logo"&gt; &lt;/inc&gt;
-        
-        &lt;!-- Pasting --&gt;
-        &lt;div inc-src="@app-logo"&gt; &lt;/div&gt;
-    &lt;/div&gt;
-    </code></pre>
 
-            <pre><code class="javascript hljs">
-    new Easy('#app26', {
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app26">
+        <!-- Copying -->
+        <div inc-tmp="app-logo">
+            <label> Logo </label>
+        </div>
+        
+        <!-- Pasting -->
+        <inc src="@app-logo"> </inc>
+        
+        <!-- Pasting -->
+        <div inc-src="@app-logo"> </div>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
+    var app26 = new Easy('#app26', {
         data: {}
-    });
-    </code></pre>
+    });</textarea>
+            </div>
+            <!-- End -->
 
             <div class="result"></div>
         </div>
@@ -88,7 +93,8 @@
         where we define the <i class="note mark-el">nameId</i> with the <i class="note mark-el">optionsObject</i>.
     </p>
 
-    <pre><code class="javascript hljs">
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
     var app = new Easy('#app', {
         // Registering directly in the instance
         components: {
@@ -110,14 +116,15 @@
         'left-side-bar': {
             url: 'left-side-bar.html'
         }
-    });
-    </code></pre>
+    });</textarea>
+    </div>
 
     <p>
         In Easy Options the component object has the following struture:
     </p>
 
-    <pre><code class="javascript hljs">
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
     {
         components : {
             config: {
@@ -147,8 +154,8 @@
                 }
             }
         }
-    }
-    </code></pre>
+    }</textarea>
+    </div>
 
     <ul>
         <li> <span class="note mark-el">config.keepData</span> &ndash; used to allow to kept all
@@ -227,21 +234,22 @@
         like (<i class="note">easy-sAb_c123</i>) to the rules of the style.
     </p>
 
-    <pre e-ignore><code class="HTML hljs">
-    &lt;!-- Global Style --&gt;    
-    &lt;style&gt;
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <!-- Global Style -->
+    <style>
         .p {
             color: red;
         }
-    &lt;/style&gt;
+    </style>
         
-    &lt;!-- Scoped Style --&gt;    
-    &lt;style scoped&gt;    
+    <!-- Scoped Style -->
+    <style scoped>    
         .p {
             color: red;
         }
-    &lt;/style&gt;
-    </code></pre>
+    </style></textarea>
+    </div>
 
     <h3> <a id="comp_root"> Root Element </a> </h3>
     <p>
@@ -320,7 +328,8 @@
     <h3> <a id="comp_exporting"> Exporting </a> </h3>
     <p>
         The function that is used to export data from the script to the template is <span class="mark-el">export</span>.
-        To be able to export the data, it needs to be defined as following: <i class="note mark-el">this.export({...})</i>.
+        To be able to export the data, it needs to be defined as following: <i
+            class="note mark-el">this.export({...})</i>.
     </p>
 
     <div class="block-note info">
@@ -334,12 +343,13 @@
         At the end a component has the following form:
     </p>
 
-    <pre e-ignore><code class="HTML hljs">
-    &lt;div&gt;
-        &lt;h3 on:click="doSomeThing" &gt; {{ message }} &lt;/h3&gt;
-    &lt;/div&gt;
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <div>
+        <h3 on:click="doSomeThing" > {{ message }} </h3>
+    </div>
 
-    &lt;script&gt;
+    <script>
         var easy = this.Easy;
 
         this.created = function(el){}
@@ -354,14 +364,14 @@
             /* Methods */
             doSomeThing: function(){}
         });
-    &lt;/script&gt;
+    </script>
 
-    &lt;style scoped&gt;
+    <style scoped>
         h3 {
             color: gray;
         }
-    &lt;/style&gt;
-    </code></pre>
+    </style></textarea>
+    </div>
 
     <h3> <a id="comp_data"> Inc with data </a> </h3>
     <p>
@@ -378,9 +388,10 @@
         </p>
     </div>
 
-    <pre e-ignore><code class="HTML hljs">
-    &lt;inc data="{ appName: 'My App' }" src="myComponent"&gt; &lt;/inc&gt;
-    </code></pre>
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <inc data="{ appName: 'My App' }" src="myComponent"> </inc></textarea>
+    </div>
 
     <h3> <a id="comp_delimiter"> Inc with Delimiter </a> </h3>
     <p>
@@ -389,9 +400,10 @@
         <i class="note warn-border">Only one delimiter can be passed</i>.
     </p>
 
-    <pre e-ignore><code class="HTML hljs">
-    &lt;inc src="{{ currentTab }}"&gt; &lt;/inc&gt;
-    </code></pre>
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <inc src="{{ currentTab }}"> </inc></textarea>
+    </div>
 
     <h3> <a id="comp_on"> Inc with `on` Method </a> </h3>
     <p>
@@ -421,9 +433,10 @@
         <i class="note warn-border">The data from script will be reloaded</i>.
     </p>
 
-    <pre e-ignore><code class="HTML hljs">
-    &lt;inc src="registration-form" keep-alive &gt; &lt;/inc&gt;
-    </code></pre>
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <inc src="registration-form" keep-alive></inc></textarea>
+    </div>
 
     <h3> <a id="comp_nesting_content"> Nesting Content </a> </h3>
     <p>
@@ -433,26 +446,28 @@
     </p>
 
     <label>DOM</label>
-    <pre e-ignore><code class="HTML hljs">
-    &lt;inc src="app-input" data="{ 
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <inc src="app-input" data="{ 
         field: 'name'
         label: 'Name', 
         msg: 'Field cannot be empty' 
-    }" &gt; 
-        &lt;content&gt;
-            &lt;input type="text" name="{{ field }}" /&gt;
-        &lt;/content&gt;
-    &lt;/inc&gt;
-    </code></pre>
+    }"> 
+        <content>
+            <input type="text" name="{{ field }}" />
+        </content>
+    </inc></textarea>
+    </div>
 
     <label>Component</label>
-    <pre e-ignore><code class="HTML hljs">
-    &lt;div&gt;
-        &lt;label&gt; {{ label }} &lt;/label&gt;
-        &lt;content&gt;&lt;/content&gt;
-        &lt;span&gt; {{ msg }} &lt;/span&gt;
-    &lt;/div&gt;
-    </code></pre>
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <div>
+        <label> {{ label }} </label>
+        <content></content>
+        <span> {{ msg }} </span>
+    </div></textarea>
+    </div>
 
     <b> What about multiple contents</b>
     <p>
@@ -461,40 +476,43 @@
     </p>
 
     <label>DOM</label>
-    <pre e-ignore><code class="HTML hljs">
-    &lt;inc src="table" data="{ users: users }" &gt; 
-        &lt;content ident="head"&gt;
-            &lt;label&gt; First Name &lt;/label&gt;
-            &lt;label&gt; Last Name &lt;/label&gt;
-            &lt;label&gt; Country &lt;/label&gt;
-        &lt;/content&gt;
-        &lt;content ident="body"&gt;
-            &lt;div e-for="users"&gt;
-                &lt;label&gt; {{ firstName }} &lt;/label&gt;
-                &lt;label&gt; {{ lastName }} &lt;/label&gt;
-                &lt;label&gt; {{ country}} &lt;/label&gt;
-            &lt;/div&gt;
-        &lt;/content&gt;
-    &lt;/inc&gt;
-    </code></pre>
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <inc src="table" data="{ users: users }" > 
+        <content ident="head">
+            <label> First Name </label>
+            <label> Last Name </label>
+            <label> Country </label>
+        </content>
+        <content ident="body">
+            <div e-for="users">
+                <label> {{ firstName }} </label>
+                <label> {{ lastName }} </label>
+                <label> {{ country}} </label>
+            </div>
+        </content>
+    </inc></textarea>
+    </div>
 
     <label>Component</label>
-    <pre e-ignore><code class="HTML hljs">
-    &lt;div&gt;
-        &lt;div class="app-table"&gt;
-            &lt;div class="head"&gt;
-                &lt;content ident="head"&gt;&lt;/content&gt;
-            &lt;/div&gt;
-            &lt;div class="body"&gt;
-                &lt;content ident="body"&gt;&lt;/content&gt;
-            &lt;/div&gt;
-        &lt;/div&gt;                        
-    &lt;/div&gt;
-    </code></pre>
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <div>
+        <div class="app-table">
+            <div class="head">
+                <content ident="head"></content>
+            </div>
+            <div class="body">
+                <content ident="body"></content>
+            </div>
+        </div>                        
+    </div></textarea>
+    </div>
 
     <div class="block-note info">
         <p>
-            For live usage, you may keep learning in Tutorial Page. <a i:href="/tutorial/components" class="mark-el">Take me
+            For live usage, you may keep learning in Tutorial Page. <a i:href="/tutorial/components"
+                class="mark-el">Take me
                 there</a>!
         </p>
     </div>
@@ -502,37 +520,38 @@
     <h3> <a id="comp_nesting_includers"> Nesting Includers</a>
     </h3>
     <p>
-        Includers can be easily nested, following the same line of thought with <a
-            class="mark-el">Nesting Content</a>, just put <i class="note mark-el">inc</i> tag inside the <i
-            class="note mark-el">content</i> tag.
+        Includers can be easily nested, following the same line of thought with <a class="mark-el">Nesting Content</a>,
+        just put <i class="note mark-el">inc</i> tag inside the <i class="note mark-el">content</i> tag.
     </p>
 
     <label>DOM</label>
-    <pre e-ignore><code class="HTML hljs">
-    &lt;inc src="modal" data="{ 
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <inc src="modal" data="{ 
                 modalName: 'Person Registration', 
                 body: 'modal-registration' 
-            }" &gt;
-        &lt;content&gt;
-            &lt;inc src="{{ body }}"&gt;&lt;/inc&gt;
-        &lt;/content&gt;
-    &lt;/inc&gt;
-    </code></pre>
+            }">
+        <content>
+            <inc src="{{ body }}"></inc>
+        </content>
+    </inc></textarea>
+    </div>
 
     <label>Component</label>
-    <pre e-ignore><code class="HTML hljs">
-    &lt;div&gt;
-        &lt;div class="app-modal"&gt;
-            &lt;div class="head"&gt;
-                &lt;span&gt; {{ modalName }} &lt;/span&gt;
-                &lt;span class="close-modal"&gt; x &lt;/span&gt;
-            &lt;/div&gt;
-            &lt;div class="body"&gt;
-                &lt;content ident="body"&gt;&lt;/content&gt;
-            &lt;/div&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-    </code></pre>
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <div>
+        <div class="app-modal">
+            <div class="head">
+                <span> {{ modalName }} </span>
+                <span class="close-modal"> x </span>
+            </div>
+            <div class="body">
+                <content ident="body"></content>
+            </div>
+        </div>
+    </div></textarea>
+    </div>
 
     <div class="block-note info">
         <p>

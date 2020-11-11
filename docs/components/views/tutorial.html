@@ -1,0 +1,355 @@
+<div class="main-view tutorial-page" e-def="{ sMenuClosed: false, chaptersClosed: true }">
+    <!-- <div class="is-in-development">This page is in development process, Please wait!</div> -->
+    <aside class="tutorial-menu" e-class="{ 'side-menu-closed' : sMenuClosed }">
+        <!-- Navegation -->
+        <div class="top">
+            <div class="prev">
+                <span ident="prev" on:click="checkNavegation" title="{{ topic.prev.name }}"
+                    class="center-icon fa fa-angle-left"></span>
+            </div>
+            <div class="menu-btn-container">
+                <div class="menu-btn" on:click="chaptersClosed = !chaptersClosed">
+                    <span></span>
+                </div>
+            </div>
+            <div class="dir">
+                <h4 class="current-menu" e-content="{{ topic.name }}"> Topic </h4>
+            </div>
+            <div class="next">
+                <span ident="next" on:click="checkNavegation" title="{{ topic.next.name }}"
+                    class="center-icon fa fa-angle-right"></span>
+            </div>
+        </div>
+
+        <!-- Menu Navegation -->
+        <div class="menu nice-scroll hide-it" e-class="{ 'hide-it' : chaptersClosed }">
+            <ul>
+                <li sec> <a i:href="/tutorial/introduction">
+                        <h3>Introduction</h3>
+                    </a> </li>
+                <li sec> <a i:href="/tutorial/instance">
+                        <h3> Instance </h3>
+                    </a>
+                    <ul>
+                        <li> <a mark="#inst_el"> Element </a> </li>
+                        <li> <a mark="#inst_options"> Options </a> </li>
+                        <li> <a mark="#properties"> <b>Properties</b> </a>
+                            <ul>
+                                <li> <a mark="#prop_config"> Config Property </a> </li>
+                                <li> <a mark="#prop_data"> Data Property </a> </li>
+                                <li> <a mark="#prop_hooks"> Instance Hooks </a> </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li sec> <a i:href="/tutorial/delimiters"> 
+                        <h3> Delimiters </h3>
+                    </a>
+                    <ul>
+                        <li> <a mark="#dlm_easy"> Easy </a> </li>
+                        <li> <a mark="#dlm_common"> Common </a> </li>
+                    </ul>
+                </li>
+                <li sec> <a i:href="/tutorial/bindings">
+                        <h3>Bindings</h3>
+                    </a>
+                    <ul>
+                        <li> <a mark="#bind_one_way"> One Way </a> </li>
+                        <li> <a mark="#bind_two_way"> Two Way </a> </li>
+                    </ul>
+                </li>
+                <li sec> <a i:href="/tutorial/commands">
+                        <h3>Commands</h3>
+                    </a>
+                    <ul>
+                        <li> <a mark="#cmd_data"> data </a> </li>
+                        <li> <a mark="#cmd_wait_data"> wait-data </a> </li>
+                        <li> <a mark="#cmd_e_content"> e-content </a> </li>
+                        <li> <a mark="#cmd_e_skeleton"> e-skeleton </a> </li>
+                        <li> <a mark="#cmd_e_def"> e-def </a> </li>
+                        <li> <a mark="#cmd_e_if"> e-if </a> </li>
+                        <li> <a mark="#cmd_e_show"> e-show </a> </li>
+                        <li> <a mark="#cmd_e_for"> <b>e-for</b> </a>
+                            <ul>
+                                <li> <a mark="#cmd_e_for_filter"> Filters </a> </li>
+                                <li> <a mark="#cmd_e_for_filter_g_filter"> Global Filter </a> </li>
+                                <li> <a mark="#cmd_e_for_filter_tg_filter"> Targeted Filter </a> </li>
+                                <li> <a mark="#cmd_e_for_filter_d_filter"> Direct Filter </a> </li>
+                                <li> <a mark="#cmd_e_for_filter_f_filter"> Function Filter </a> </li>
+                            </ul>
+                        </li>
+                        <li> <a mark="#cmd_e_order"> e-order </a> </li>
+                        <li> <a mark="#cmd_e_anm"> e-anm </a> </li>
+                        <li> <a mark="#cmd_e_toggle"> e-toggle </a> </li>
+                        <li> <a mark="#cmd_e"> e-[something] </a> </li>
+                    </ul>
+                </li>
+                <li sec> <a i:href="/tutorial/events">
+                        <h3>Events</h3>
+                    </a>
+                    <ul>
+                        <li> <a mark="#events_standard"> Standard </a> </li>
+                        <li> <a mark="#events_easy"> Easy </a> </li>
+                        <li> <a mark="#events_custom"> Custom </a> </li>
+                        <li> <a mark="#events_modifiers"> Modifiers </a> </li>
+                    </ul>
+                </li>
+                <li sec> <a i:href="/tutorial/methods">
+                        <h3> Methods </h3>
+                    </a>
+                    <ul>
+                        <li><a mark="#method_setData"> setData </a></li>
+                        <li><a mark="#method_on"> on </a></li>
+                        <li><a mark="#method_off"> off </a></li>
+                        <li><a mark="#method_emit"> emit </a></li>
+                        <li><a mark="#method_expose"> expose </a></li>
+                        <li><a mark="#method_retrieve"> retrieve </a></li>
+                        <li><a mark="#method_tojsobj"> toJsObj </a></li>
+                        <li><a mark="#method_watch"> watch </a></li>
+                        <li><a mark="#method_set"> set </a></li>
+                    </ul>
+                </li>
+                <li sec> <a i:href="/tutorial/comps_incs">
+                        <h3>Components / Includers</h3>
+                    </a>
+                    <ul>
+                        <li> <a mark="#comp_cloned"> Cloned </a> </li>
+                        <li> <a mark="#comp_registered"> Registered </a> </li>
+                        <li> <a mark="#comp_registering"> Registering </a> </li>
+                        <li> <a mark="#comp_handing"> Handling Components </a> </li>
+                        <li> <a mark="#comp_format"> Component Format </a> </li>
+                        <li> <a mark="#comp_style"> Styles </a> </li>
+                        <li> <a mark="#comp_root"> Root Element </a> </li>
+                        <li> <a mark="#comp_script"> Scripts </a> </li>
+                        <li> <a mark="#comp_life_cycles"> <b>Lifecycles Hooks</b> </a>
+                            <ul>
+                                <li> <a mark="#comp_life_cycles_created"> Created </a> </li>
+                                <li> <a mark="#comp_life_cycles_mounted"> Mounted </a> </li>
+                                <li> <a mark="#comp_life_cycles_loaded"> Loaded </a> </li>
+                                <li> <a mark="#comp_life_cycles_destroyed"> Destroyed </a> </li>
+                            </ul>
+                        </li>
+                        <li> <a mark="#comp_exporting"> Exporting </a> </li>
+                        <li> <a mark="#comp_data"> Inc with data </a> </li>
+                        <li> <a mark="#comp_delimiter"> Inc with Delimiter </a> </li>
+                        <li> <a mark="#comp_on"> Inc with `on` Method </a> </li>
+                        <li> <a mark="#comp_keep_alive"> Keep Alive </a> </li>
+                        <li> <a mark="#comp_nesting_content"> Nesting Content </a> </li>
+                        <li> <a mark="#comp_nesting_includers"> Nesting Includers </a> </li>
+                    </ul>
+                </li>
+                <li sec> <a i:href="/tutorial/routing">
+                        <h3>Routing</h3>
+                    </a>
+                    <ul>
+                        <li> <a mark="#routing_setting"> Setting </a> </li>
+                        <li> <a mark="#routing_navegation"> Navegation </a> </li>
+                        <li> <a mark="#routing_nesting"> Nesting Routes </a> </li>
+                        <li> <a mark="#routing_params"> Route Params </a> </li>
+                        <li> <a mark="#routing_pretty_url"> HTML5 Mode / Pretty URL </a> </li>
+                    </ul>
+                </li>
+            </ul>
+
+            </ul>
+        </div>
+
+        <!-- Content -->
+        <div class="content nice-scroll">
+            <div class="text">
+                <div class="text-container">
+                </div>
+                <div class="actions-container">
+                    <div class="left"></div>
+                    <div class="right" data="topic.next">
+                        <a e-show="url" i:href="{{ url }}" title="{{ name }}">Next</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alternator">
+                <button on:click="sMenuClosed = !sMenuClosed">Editor</button>
+            </div>
+        </div>
+    </aside>
+    <div class="tutorial-presentation">
+        <inc src="editor" wait-data="tutorial"></inc>
+    </div>
+</div>
+<script>
+    var component = this;
+    var $easy = this.Easy;
+    var loadableSections = {
+        'introduction': 'Introduction',
+        'instance': 'Instance',
+        'delimiters': 'Delimiters',
+        'bindings': 'Bindings',
+        'commands': 'Commands',
+        'events': 'Events',
+        'methods': 'Methods',
+        'comps_incs': 'Components / Includers',
+        'routing': 'Routing'
+    };
+
+    this.mounted = function (el) {
+        var params = this.getParams();
+        var container = el.node('.content>.text>.text-container');
+
+        // Storing the topic
+        var topicName = params.topic;
+        var topicFound = loadableSections[params.topic];
+
+        var isComponent = (topicName == 'comps_incs');
+
+        // Checking if the topic was not found
+        if (!topicFound) {
+            // If it was not found, set the the default
+            var hash = ''; // Store the hash if it was defined
+            topicName = 'introduction';
+            topicFound = 'Introduction';
+
+            // Set the hash if it was defined
+            if ($easy.options.components.config.usehash) hash = '#'
+
+            // Building the url
+            var newUrl = document.head.node('base').href + hash + '/tutorial/' + topicName;
+
+            // Setting the page url
+            history.replaceState(null, null, newUrl);
+        }
+
+        // Adding the includaer element in the container
+        container.innerHTML = '<inc src="' + (isComponent ? 'components' : topicName)  + '" data="{ noApp: true }"></inc>'
+
+        // Setting the title
+        document.title =  'Tutorial • ' + topicFound; 
+
+        // Loading the example
+        loadFile.call($easy, '/examples/tutorial/' + topicName + '.html', function (content) {
+
+            var splitted = content.split('<!-- comp -->');
+            var main = splitted[0];
+            var tabs;
+            if (splitted.length > 1){
+                splitted.shift();
+
+                tabs = splitted.map(function (inc, index) {
+                    var $content = inc.trim();
+                    var identifier = $content.split('\r\n')[0];
+
+                    var name = identifier.replace('<!--', '').replace('-->', '').trim();
+                    var $content = $content.replace(identifier, '').trim();
+                    return {
+                        id: 'comp-' + index,
+                        content: $content,
+                        name: name, 
+                    };
+                });
+            }
+
+            // Exposing the content fof the editor
+            $easy.expose('tutorial', {
+                name: 'Tutorial',
+                type: 'expanded',
+                resizable: 'y',
+                content: main,
+                tabs: tabs
+            });
+        });
+    }
+
+    this.loaded = function (el) {
+        this.Easy.routing.markActive(document.node('.tutorial-anchor'))
+
+        var topics = {};
+        var sections = el.nodes('[sec]');
+        var textPresentationContainer = el.node('.tutorial-page .tutorial-menu>.content');
+        var sectionText = function (sec) {
+            return sec.children[0].node('h3').textContent.trim()
+        }
+
+        for (let i = 0; i < sections.length; i++) {
+            var item = sections[i];
+            // Getting the global anchor
+            var anchor = item.children[0];
+            // Getting the route of the base anchor
+            var globalHref = anchor.href;
+            // Getting all the markers inside of it
+            var markers = item.nodes('a[mark]');
+
+            topics[globalHref] = {
+                text: sectionText(item),
+                element: item
+            };
+
+            for (let k = 0; k < markers.length; k++) {
+                var marker = markers[k];
+
+                // Setting the href
+                marker.href = globalHref;
+                // Addin the click event
+                marker.listen('click', function (evt) {
+                    if (location.href == evt.base.href) {
+                        evt.preventDefault();
+
+                        // Getting the value of the mark point
+                        var markPoint = evt.base.valueIn('mark');
+
+                        // Getting the point
+                        var point = el.node('a[id="' + markPoint.substr(1) + '"]');
+
+                        // Check it the point was found
+                        if (!point) return;
+
+                        // Moving the view
+                        textPresentationContainer.scrollTop = point.offsetTop + 15;
+
+                        // Closing the menu component
+                        component.data.chaptersClosed = true;
+                    }
+                });
+            }
+        }
+
+        var topic = topics[location.href];
+        if (topic) {
+            component.data.topic.name = topic.text;
+            var next = topic.element.nextElementSibling;
+            var previous = topic.element.previousElementSibling;
+
+            if (next) {
+                component.data.topic.next.name = sectionText(next);
+                component.data.topic.next.url = next.children[0].href;
+            }
+
+            if (previous) {
+                component.data.topic.prev.name = sectionText(previous);
+                component.data.topic.prev.url = previous.children[0].href;
+            }
+        } else {
+            component.data.topic.name = 'No Topic';
+        }
+    }
+
+    this.export({
+        topic: {
+            name: '',
+            next: {
+                name: '',
+                url: ''
+            },
+            prev: {
+                name: '',
+                url: ''
+            },
+        },
+
+        // Methods
+        checkNavegation: function (evt) {
+            var ident = evt.base.attributes.ident;
+            var topic = component.data.topic[ident.value];
+            if (!topic.url) return;
+            location.href = topic.url;
+        }
+    });
+</script>

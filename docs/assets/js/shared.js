@@ -12,45 +12,68 @@ function codeToStr(c) {
     return t.substr(0, t.length - 1);
 }
 
-function createEl(appNode) {
+function createEl(content) {
     var el = document.createElement('div');
-    el.innerHTML = appNode.innerText;
+    el.innerHTML = content;
     var $el = el.children[0];
+    // Prevent the defalt compilation
     $el.$prevent = true;
     return $el;
 }
 
 function appExector(element, noApp) {
-    // Executing apps
-    if (!noApp) {
-        var $ad = 'config: { useDOMLoadEvent: false }, data:';
-        var $codes = element.querySelectorAll('.example');
-        for (var i = 0; i < $codes.length; i++) {
-            var $html = $codes[i].parentNode;
-            var $script = $html.nextElementSibling;
-            var $result = $script.nextElementSibling;
-            var $resultEl = createEl($html);
-            $result.appendChild($resultEl);
+    new Promise(function (res) {
+            res()
+        })
+        .then(function () {
 
-            // Highlighting the block
-            hljs.highlightBlock($script);
+            var codes = element.nodes('textarea[cm-lang]');
+            for (let i = 0; i < codes.length; i++) {
+                var code = codes[i];
+                code.parentNode.editor = CodeMirror.fromTextArea(code, {
+                    readOnly: true,
+                    mode: code.valueIn('cm-lang'),
+                    scrollbarStyle: 'simple'
+                });
+            }
 
-            eval($script.innerText.replace('data:', $ad));
+            // Executing apps
+            if (!noApp) {
+                var $ad = 'config: { useDOMLoadEvent: false }, data:';
+                var $codes = element.querySelectorAll('div[execute]');
+                for (var i = 0; i < $codes.length; i++) {
 
-            // Adding the app to the window object
-            window[$resultEl.id] = eval($resultEl.id);
-        }
-    }
+                    // The Main HTML Element
+                    var $html = $codes[i];
 
-    var codes = element.querySelectorAll('code');
-    for (var i = 0; i < codes.length; i++)
-        hljs.highlightBlock(codes[i]);
+                    // The Script Element
+                    var $script = $html.nextElementSibling;
+                    
+                    // The script content 
+                    var $scriptContent = $script.editor.getValue();
+                    
+                    // The Display element
+                    var $display = $script.nextElementSibling;
+
+                    // Creating the element
+                    var $resultExecutableElement = createEl($html.editor.getValue());
+
+                    // Adding to the DOM
+                    $display.appendChild($resultExecutableElement);
+
+                    // Adding a peace of code that disable `DOMLoadEvent` usage
+                    eval($scriptContent.replace('data:', $ad));
+
+                    // Adding the easy app to the window object
+                    window[$resultExecutableElement.id] = eval($resultExecutableElement.id);
+                }
+            }
+        });
 }
 
 function getDateTime() {
     return new Date().toJSON().split('T').map(function (v, i) {
-        if (i == 1)
-            return v.substr(0, v.length - 1);
+        if (i == 1) return v.substr(0, v.length - 1);
         return v;
     }).join(' ');
 }
@@ -64,7 +87,7 @@ function scrollByAnchor(el) {
         presentation.scrollTop = anchor.offsetTop + 15;
     }
 
-    el.nodes('a').filter(function(anchor){ 
+    el.nodes('a').filter(function (anchor) {
         var href = anchor.attributes.href;
         if (!href || href.value[0] != '#') return;
         anchor.href = location.href + href.value;
@@ -153,4 +176,23 @@ function showModal() {
         '</content>' +
         '</inc>';
     this.el.appendChild(el.children[0]);
+}
+
+function loadFile(path, callback) {
+    this.http(location.origin + this.options.components.config.base + path, {
+        method: 'get',
+        headers: {
+            'Content-Type': 'text/html'
+        }
+    }).then(function (data) {
+        if (data.ok) {
+            callback(data.response);
+        } else {
+            throw ({
+                message: 'Unable to load the file: ' + path + '\nDescription: ' + data.statusText
+            });
+        }
+    }).catch(function (error) {
+        Easy.log(error);
+    });
 }

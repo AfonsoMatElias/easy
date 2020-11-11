@@ -16,7 +16,8 @@
         some additional specific properties for the routing are defined, which are:
     </p>
 
-    <pre><code class="javascript hljs">
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
     {
         components : {
             config: {
@@ -34,8 +35,8 @@
                 }
             }
         }
-    }
-    </code></pre>
+    }</textarea>
+    </div>
 
     <ul>
         <li> <span class="note mark-el">config.base</span> &ndash; used to define the base URI of the project.
@@ -68,18 +69,20 @@
     </ul>
 
     <label>HTML</label>
-    <pre e-ignore><code class="html hljs">
-    &lt;div id="routeApp"&gt;
-        &lt;nav&gt;
-            &lt;a :href="/home"&gt; Home &lt;/a&gt;
-            &lt;a :href="/about"&gt; About &lt;/a&gt;
-        &lt;/nav&gt;
-        &lt;main route-view&gt;&lt;/main&gt;
-    &lt;/div&gt;
-    </code></pre>
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <div id="routeApp">
+        <nav>
+            <a :href="/home"> Home </a>
+            <a :href="/about"> About </a>
+        </nav>
+        <main route-view></main>
+    </div></textarea>
+    </div>
 
     <label>Javascript</label>
-    <pre e-ignore><code class="javascript hljs">
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
     var routeApp = new Easy('#routeApp', {
         components: {
             elements: {
@@ -96,8 +99,8 @@
                 }
             }
         }
-    });
-    </code></pre>
+    });</textarea>
+    </div>
 
     <p>
         Whenever routing is used, it is mandatory to define the standard route (standard component)
@@ -138,15 +141,16 @@
         other hand, using <i class="note mark-el">i:href</i>, the addition of the class is ignored.
     </p>
 
-    <pre e-ignore><code class="html hljs">
-    &lt;!-- config.base='/my-project/' --&gt;
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <!-- config.base='/my-project/' -->
 
-    &lt;!-- Defined (Not Compiled) --&gt;
-    &lt;a :href="/home"&gt; Home &lt;/a&gt;
+    <!-- Defined (Not Compiled) -->
+    <a :href="/home"> Home </a>
     
-    &lt;!-- Compiled --&gt;
-    &lt;a href="/my-project/home"&gt; Home &lt;/a&gt;
-    </code></pre>
+    <!-- Compiled -->
+    <a href="/my-project/home"> Home </a></textarea>
+    </div>
 
     <h3> <a id="routing_nesting"> Nesting Routes </a> </h3>
     <p>
@@ -154,7 +158,8 @@
         The property expects an component element object having the child's nameId and its object.
     </p>
 
-    <pre e-ignore><code class="javascript hljs">
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
     var routeApp = new Easy('#routeApp', {
         components: {
             elements: {
@@ -177,8 +182,8 @@
                 }
             }
         }
-    });
-    </code></pre>
+    });</textarea>
+    </div>
 
     <div class="block-note info">
         <p>
@@ -195,16 +200,17 @@
         containing all the parameters of the route.
     </p>
 
-    <pre e-ignore><code class="html hljs">
-    &lt;div&gt;
-        &lt;!-- Compoment Content --&gt;
-    &lt;/div&gt;
-    &lt;script&gt;
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <div>
+        <!-- Compoment Content -->
+    </div>
+    <script>
         this.loaded = function (el) {
             var params = this.getParams();
         }
-    &lt;/script&gt;
-    </code></pre>
+    </script></textarea>
+    </div>
 
     <h3> <a id="routing_pretty_url"> HTML5 Mode / Pretty URL </a> </h3>
     <p>
@@ -231,13 +237,15 @@
         </li>
     </ol>
 
-    <pre e-ignore><code class="html hljs">
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
     &lt;head&gt;
-        &lt;base href="/" &gt;
-        ...
-    &lt;/head&gt;
-    </code></pre>
-    <pre e-ignore><code class="javascript hljs">
+        <base href="/" >
+    &lt;/head&gt;</textarea>
+    </div>
+
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
     var routeApp = new Easy('#routeApp', {
         components: {
             config: {
@@ -248,11 +256,12 @@
                 ...
             }
         }
-    });
-    </code></pre>
+    });</textarea>
+    </div>
 
     <h3> Apache Configuration Example </h3>
-    <pre e-ignore><code class="bat hljs">
+    <div e-ignore class="code-container" code-ext=".htcaccess">
+        <textarea cm-lang="powershell">
     RewriteEngine On
     
     # Setting the base path of the project
@@ -266,8 +275,9 @@
     # If the request file name is not a file
     RewriteCond %{REQUEST_FILENAME} !-f
     # Return the index.html file 
-    RewriteRule . index.html [L]
-    </code></pre>
+    RewriteRule . index.html [L]</textarea>
+    </div>
+
 </section>
 <script>
     this.mounted = function (el) {

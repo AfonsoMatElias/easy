@@ -11,14 +11,16 @@
                         </div>
 
                         <!-- List of tabs -->
-                        <div class="tab" e-for="tab of tabList" tab-id="{{ tab.id }}" on:click="selectTab">
+                        <div class="tab" title="Use editor.tab('{{ tab.name }}') to get the tab content"
+                            e-for="tab of tabList" tab-id="{{ tab.id }}" on:click="selectTab">
                             <label contenteditable tabindex="1" spellcheck="false"
-                                on:input="tab.name = event.base.textContent">New-Tab</label>
+                                on:input="tab.name = event.base.textContent">{{ tab.name || 'New-Tab' }}</label>
                             <i class="center-icon fa fa-close" on:click="(function(evt){
                                 evt.$data.scope.tabList.remove(tab.id);
                             })(event)"></i>
                         </div>
                     </div>
+
                     <div class="add-tab">
                         <i class="center-icon fa fa-plus" on:click="(function(evt) {
                             evt.$data.scope.tabList.push({ id: this.code(8), name: 'New-Tab' });
@@ -29,17 +31,13 @@
                 <!-- Screens -->
                 <div class="screens">
                     <div class="screen editor-screen" e-ignore screen-tab-id="main">
-                        <div class="screen-view html hljs nice-scroll" tabindex="-1" spellcheck="false"></div>
-                        <div class="screen-write nice-scroll" tabindex="-1" spellcheck="false" contenteditable="true">
-                        </div>
+                        <div class="screen-view"></div>
                     </div>
 
                     <!-- List of screens -->
                     <div class="screen editor-screen hide-it" screen-tab-id="{{ tab.id }}" find-me="{{ tab.name }}"
-                        e-for="tab of tabList" on:add="listenScreen(event.base)">
-                        <div e-ignore class="screen-view html hljs nice-scroll" tabindex="-1" spellcheck="false"></div>
-                        <div e-ignore class="screen-write nice-scroll" tabindex="2" spellcheck="false"
-                            contenteditable="true"></div>
+                        e-for="tab of tabList" on:add="configNewTab(event.base, tab)">
+                        <div e-ignore class="screen-view" tabindex="-1"></div>
                     </div>
                 </div>
 
@@ -88,57 +86,17 @@
     var evtResize, MOBILE_SIZE = 645;
     var $editorInstance;
     var tabConfig = {};
-
-    function addtab(n) {
-        var tab = '\u00a0\u00a0',
-            str = tab;
-        for (let i = 1; i <= n || 0; i++)
-            str += tab;
-        return str;
-    }
-
-    function updateView(view, write) {
-        view.innerHTML = write.innerHTML;
-        hljs.highlightBlock(view);
-    }
-
-    function listenScreen(div) {
-        var view = div.node('.screen-view');
-        var write = div.node('.screen-write');
-
-        write.onscroll = function () {
-            view.scrollTop = write.scrollTop;
-            view.scrollLeft = write.scrollLeft;
+    var editorBaseConfig = function (value) {
+        return {
+            value: value || '',
+            // lineNumbers: true,
+            mode: "htmlmixed",
+            scrollbarStyle: 'simple',
+            autoCloseBrackets: true,
+            autoCloseTags: true,
+            matchtags: true
         }
-
-        write.onkeydown = function (evt) {
-            if (evt.keyCode === 9) {
-                evt.preventDefault();
-                var range = window.getSelection().getRangeAt(0), n = 0;
-                var tabNode = document.createTextNode(addtab(n));
-                range.insertNode(tabNode);
-                range.setStartAfter(tabNode);
-                range.setEndAfter(tabNode);
-            }
-
-            if (evt.ctrlKey && evt.keyCode === 13)
-                $editorInstance.runCode();
-
-            // if (evt.keyCode === 13) {}
-
-            // if (view.innerHTML !== write.innerHTML)
-            //     updateView(view, write);
-        }
-
-        write.onkeyup = function (evt) {
-            if (view.innerHTML !== write.innerHTML)
-                updateView(view, write);
-        }
-
-        write.oninput = function (evt) {
-            updateView(view, write);
-        }
-    }
+    };
 
     this.mounted = function (element) {
         var editor = element.children[0];
@@ -172,19 +130,11 @@
             var instance = this;
             tabConfig.activeTab = editor.node('div[tab-id="main"]');
             var mainScreen = tabConfig.activeScreen = editor.node('div[screen-tab-id="main"]');
-            var view = editor.node('div[screen-tab-id="main"] .screen-view');
-            var write = editor.node('div[screen-tab-id="main"] .screen-write');
             var result = editor.node('.editor-result .screen').children[0];
-
-            if (!view || !write) {
-                console.error('[Editor]: Missing screens to be added: div.screen-view or div.screen-write.');
-                return;
-            }
 
             // Configuring the instance var
             instance.el = editor;
             instance.result = result;
-            instance.screen = write;
             instance.content = '';
             options = options || {};
 
@@ -204,9 +154,16 @@
 
             instance.tab = (function (name) {
                 var screen = editor.node('div[find-me="' + name + '"]');
-                if (screen)
-                    return screen.node('.screen-write').textContent;
-                return ''
+
+                if (!screen) {
+                    instance.console.add({
+                        type: 'warn',
+                        message: 'The tab `' + name + '` was not found.'
+                    });
+                    return '';
+                }
+
+                return screen.editor.getValue();
             }).bind(instance)
 
             // Confifuring the instance functions
@@ -274,10 +231,6 @@
                     instance.el.node('.editor-aside.editor-result'), instance.resizable);
             }
 
-            // events
-
-            listenScreen(mainScreen);
-
             $console.onclick = function (evt) {
                 var $class = 'open-extra',
                     fun = 'add';
@@ -285,13 +238,16 @@
                 consoleSection.classList[fun]($class);
             }
 
-            // Last executions
-            if (instance.content) {
-                write.innerText = instance.content;
-                updateView(view, write);
-                if (instance.run)
-                    runCode();
-            }
+            instance.editor = CodeMirror(mainScreen.children[0], editorBaseConfig(instance.content));
+
+            instance.editor.setOption("extraKeys", {
+                'Ctrl-Enter': function (cm) {
+                    instance.runCode()
+                },
+                'Cmd-Enter': function (cm) {
+                    instance.runCode()
+                }
+            });
 
             // functions
             function runCode() {
@@ -299,7 +255,7 @@
                 setConsoleIcon(icons.fine);
                 instance.console.clear();
                 // Execute your code...
-                var content = createTemplate(instance.screen.innerText);
+                var content = createTemplate(instance.editor.getValue());
                 var contentWindow = result.contentWindow;
                 if (contentWindow) {
                     // Reference storage
@@ -348,43 +304,13 @@
             function createTemplate(content) {
                 content = content || '';
                 var str = '<html lang="en"><head><meta charset="UTF-8"><title>Live Editor page<\/title>' +
-                    '<script src="'+ $easy.options.components.config.base +'assets/js/easy.js"><\/script>' +
-                    '<style> * html,body { padding:0; } { font-family: Arial, Helvetica, sans-serif; } ' +
+                    '<script src="' + $easy.options.components.config.base + 'assets/js/easy.js"><\/script>' +
+                    '<style> * { margin: 0; font-family: Arial, Helvetica, sans-serif; } body { padding: 20px 4px; }' +
                     'input, button { border: 1px solid lightgray; border-radius: 3px; } button { padding: 3px 10px; } </style>' +
                     '<\/head><body>' + content + '<\/body>' +
                     '<\/html>';
 
                 return str;
-            }
-
-            function codeToStr(c) {
-                var t = (c + '');
-                var len = 'function(){'.length;
-                len = t.startsWith('function () {') ? len + 2 : len;
-                t = t.substr(len);
-                return t.substr(0, t.length - 1);
-            }
-
-            function copyTextToClipboard(text) {
-                // Messages
-                var successful = 'Text successfully copied to clipboard';
-                var fail = 'Fail to copy the text, you need to copy it manually';
-                var textArea = document.createElement("textarea");
-                textArea.value = text;
-                // Avoid scrolling to bottom
-                textArea.style.display = "none";
-                document.body.appendChild(textArea);
-                textArea.focus();
-                textArea.select();
-
-                try {
-                    if (!document.execCommand('copy')) throw ({});
-                    showPopup(successful);
-                } catch (err) {
-                    showPopup(fail);
-                } finally {
-                    document.body.removeChild(textArea);
-                }
             }
 
             instance.runCode = runCode;
@@ -393,10 +319,13 @@
 
         // Editor initialization
         $editorInstance = element.$editor = new Editor(element,
-            this.Easy.extend.obj(this.scope, {
-                run: true
-            }));
+            this.Easy.extend.obj(this.scope));
 
+        // Add the tabs if exists
+        if (Array.isArray($editorInstance.tabs))
+            $comp.data.tabList = $editorInstance.tabs;
+
+        $editorInstance.runCode();
     }
 
     this.destroyed = function (element) {
@@ -407,7 +336,6 @@
         name: this.scope.name,
         showResult: false,
         tabList: [],
-        listenScreen: listenScreen,
         runCodeShowResult: function () {
             if ($editorInstance) {
                 $comp.data.showResult = true;
@@ -438,6 +366,19 @@
             // Storing the last position
             tabConfig.activeScreen = screen;
             tabConfig.activeTab = tab;
+
+            if (screen.editor) screen.editor.refresh();
+        },
+        configNewTab: function (tab, data) {
+            tab.editor = CodeMirror(tab.children[0], editorBaseConfig(data.content));
+            tab.editor.setOption("extraKeys", {
+                'Ctrl-Enter': function (cm) {
+                    if ($editorInstance) $editorInstance.runCode()
+                },
+                'Cmd-Enter': function (cm) {
+                    if ($editorInstance) $editorInstance.runCode()
+                }
+            });
         }
     });
 </script>
@@ -467,6 +408,22 @@
         min-height: 75px;
     }
 
+    .editor .editor-html .screen-view {
+        flex: 1;
+        border-left: 15px solid var(--color-soft-transparency);
+        padding: 4px;
+        position: relative;
+    }
+
+    .editor .editor-html .screen-view .CodeMirror {
+        height: auto;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        top: 0;
+    }
+
     .editor .editor-result {
         border: 1px solid var(--color-editor-border);
         flex: 1.5;
@@ -494,40 +451,18 @@
         outline: none;
     }
 
-    .editor-aside .screen *,
     .editor-aside .extra-area .text,
     .editor-aside .extra-area .message * {
         font-family: Consolas, 'Courier New', monospace;
     }
 
     .editor-aside .editor-screen {
-        border-left: 20px solid var(--color-light-grey);
         display: flex;
         position: relative;
     }
 
-    .editor-aside .editor-screen>div {
-        white-space: nowrap;
-        position: absolute;
-        overflow: auto;
-        padding: 6px;
-        bottom: 0;
-        right: 0;
-        left: 0;
-        top: 0;
-    }
-
-    .editor-aside .editor-screen .screen-write {
-        color: transparent;
-        caret-color: var(--color-editor-caret) !important;
-    }
-
     .editor-aside .editor-screen>div:nth-child(1) {
         background-color: var(--color-editor-screen);
-    }
-
-    .editor-aside .editor-screen [contenteditable] {
-        outline: none;
     }
 
     .editor-aside .top {
@@ -698,6 +633,7 @@
 
     .editor .extra-area .message .line {
         margin: 4px 0;
+        display: block;
     }
 
     .editor .extra-area .message .error {
@@ -717,7 +653,6 @@
     }
 
     /* Editor */
-
     /* Mobile type */
     .editor.mobile>.main>span,
     .editor.mobile .editor-result {

@@ -22,7 +22,8 @@
         </li>
     </ul>
 
-    <pre><code class="javascript hljs">
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
     var app = new Easy('#my-app', {
         data: {
             firstName: 'Maria',
@@ -32,8 +33,8 @@
     app.setData({
         lastName: 'Matumona',
         country: 'Angola'
-    });
-    </code></pre>
+    });</textarea>
+    </div>
 
     <h3><a id="method_on">on</a></h3>
     <p>
@@ -55,13 +56,14 @@
                 }</span>. </li>
     </ul>
 
-    <pre><code class="javascript hljs">
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
     var app = new Easy('#my-app');
 
     app.on('eventName', function(data) {
         // Todo: your code here...
-    });
-    </code></pre>
+    });</textarea>
+    </div>
 
     <h3><a id="method_off">off</a></h3>
     <p>
@@ -82,15 +84,16 @@
                 }</span>. </li>
     </ul>
 
-    <pre><code class="javascript hljs">
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
     var app = new Easy('#my-app');
 
     var event = app.on('eventName', function(data) {
         // Todo: your code here...
     });
 
-    app.off('eventName', event.callback);
-    </code></pre>
+    app.off('eventName', event.callback);</textarea>
+    </div>
 
     <h3><a id="method_emit">emit</a></h3>
     <p>
@@ -110,15 +113,16 @@
             event after being called the first time. </li>
     </ul>
 
-    <pre><code class="javascript hljs">
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
     var app = new Easy('#my-app');
 
     var event = app.on('eventName', function(data) {
         // Todo: your code here...
     });
     
-    app.emit('eventName', { name: 'transfered data' });
-    </code></pre>
+    app.emit('eventName', { name: 'transfered data' });</textarea>
+    </div>
 
     <h3><a id="method_expose">expose</a></h3>
     <p>
@@ -137,11 +141,12 @@
             exposition if there is already some exposed data with the same name. </li>
     </ul>
 
-    <pre><code class="javascript hljs">
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
     var app = new Easy('#my-app');
 
-    app.expose('userInfo', { name: 'Maria', roles: ['admin', 'manager'] });
-    </code></pre>
+    app.expose('userInfo', { name: 'Maria', roles: ['admin', 'manager'] });</textarea>
+    </div>
 
     <h3><a id="method_retrieve">retrieve</a></h3>
     <p>
@@ -158,15 +163,16 @@
         </li>
     </ul>
 
-    <pre><code class="javascript hljs">
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
     var app = new Easy('#my-app');
 
     // Exposing data
     app.expose('userInfo', { name: 'Maria', roles: ['admin', 'manager'] });
     
     // Retrieving the exposed data
-    var data = app.retrive('userInfo');
-    </code></pre>
+    var data = app.retrive('userInfo');</textarea>
+    </div>
 
     <h3><a id="method_tojsobj">toJsObj</a></h3>
     <p>
@@ -213,50 +219,53 @@
 
     <div e-if="typeof noApp === 'undefined'">
         <div e-ignore>
-            <pre><code class="example html hljs">
-    &lt;div id="app25"&gt;        
-        &lt;form on:submit.preventDefault="generate"&gt;
+
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app25">        
+        <form on:submit.preventDefault="generate">
             
-            &lt;label&gt; First Name &lt;/label&gt; &lt;br&gt;
-            &lt;input type="text" name="firstName" /&gt; &lt;br&gt;
+            <label> First Name </label> <br>
+            <input type="text" name="firstName" /> <br>
             
-            &lt;label&gt; Last Name &lt;/label&gt; &lt;br&gt;
-            &lt;input type="text" name="lastName" /&gt; &lt;br&gt;
+            <label> Last Name </label> <br>
+            <input type="text" name="lastName" /> <br>
             
-            &lt;!--  Build an phones property as an array --&gt;
-            &lt;div e-build="phones" e-array&gt; 
-                &lt;label&gt; Country Code &lt;/label&gt; &lt;br&gt;
-                &lt;input type="text" name="code" /&gt; &lt;br&gt;
+            <!--  Build an phones property as an array -->
+            <div e-build="phones" e-array> 
+                <label> Country Code </label> <br>
+                <input type="text" name="code" /> <br>
                 
-                &lt;label&gt; Number &lt;/label&gt; &lt;br&gt;
-                &lt;input type="text" name="number" /&gt;
-            &lt;/div&gt;
+                <label> Number </label> <br>
+                <input type="text" name="number" />
+            </div>
             
-            &lt;!--  Build an identification property as an object --&gt;
-            &lt;div e-build="identification"&gt;
-                &lt;label&gt; Type &lt;/label&gt; &lt;br&gt;
-                &lt;select name="type"&gt; 
-                    &lt;option&gt; Id Card &lt;/option&gt;
-                    &lt;option&gt; Passport &lt;/option&gt;
-                &lt;/select&gt; &lt;br&gt;
+            <!--  Build an identification property as an object -->
+            <div e-build="identification">
+                <label> Type </label> <br>
+                <select name="type"> 
+                    <option> Id Card </option>
+                    <option> Passport </option>
+                </select> <br>
 
-                &lt;label&gt; Code &lt;/label&gt; &lt;br&gt;
-                &lt;input type="text" name="code" /&gt;
-            &lt;/div&gt;
+                <label> Code </label> <br>
+                <input type="text" name="code" />
+            </div>
         
-            &lt;button type="submit"&gt; Submit &lt;/button&gt;    
+            <button type="submit"> Submit </button>    
 
-        &lt;/form&gt;
-        &lt;br&gt; &lt;br&gt;
+        </form>
+        <br> <br>
         
-        &lt;label&gt; Result &lt;/label&gt; &lt;br&gt;
-        &lt;div&gt; 
+        <label> Result </label> <br>
+        <div> 
             {{ resultObj }}
-        &lt;/div&gt;
-    &lt;/div&gt;
-    </code></pre>
+        </div>
+    </div></textarea>
+            </div>
 
-            <pre><code class="javascript hljs">
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
     var app25 = new Easy('#app25', {
         data: {
             /* Variables */
@@ -267,8 +276,9 @@
                 this.data.resultObj = this.toJsObj(evt.base);
             }
         }
-    });
-    </code></pre>
+    });</textarea>
+            </div>
+            <!-- End -->
 
             <div class="result"></div>
         </div>
@@ -299,7 +309,8 @@
             can be used to destroy the watch listern. </li>
     </ul>
 
-    <pre><code class="javascript hljs">
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
     var app = new Easy('#my-app', {
         data: {
             firstName: 'Neves',
@@ -310,8 +321,8 @@
     var watch = app.watch('firstName', function(newValue, oldValue){
         // Todo: your code here...
         watch.destroy();
-    });
-    </code></pre>
+    });</textarea>
+    </div>
 
     <h3><a id="method_set">set</a></h3>
     <p>
@@ -330,21 +341,20 @@
         </li>
     </ul>
 
-    <pre><code class="javascript hljs">
-    /*
-    As all the apps share the same Easy.js Style you can use any app to
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    /* As all the apps share the same Easy.js Style you can use any app to
     make this change.
 
-    Open the browser console and run first code
-    */
+    Open the browser console and run first code */
     app1.set('skeleton', {
         background: '#444546',
         wave: '#747576'
     });
 
     /* Run this one to restore the values */
-    app1.set('skeleton');
-    </code></pre>
+    app1.set('skeleton');</textarea>
+    </div>
 
     <li><b>delimiter</b> &ndash; allow to add a delimiter into the Easy compiler. Its sintax is 
         instance.set('delimiter', object).</li>
@@ -355,15 +365,16 @@
         </li>
     </ul>
 
-    <pre><code class="javascript hljs">
-    app1.set('delimiter, {
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    app1.set('delimiter', {
         name: 'myDelimiter',
         delimiter: {
-            open: '',
-            close: ''
+            open: '<%',
+            close: '%>'
         }
-    });
-    </code></pre>
+    });</textarea>
+    </div>
 
     <p>
         All the available delimiters can be seen in the property <span class="note mark-el">instance.delimiters</span>.

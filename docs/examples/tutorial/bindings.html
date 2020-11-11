@@ -1,0 +1,20 @@
+<div id="app">
+    <!-- One Way Data Binding -->
+    <input type="text" value="{{ value }}" /><br>
+
+    <!-- Two Ways Data Binding -->
+    <input type="text" e-bind="value" /><br>
+
+    <!-- Two Ways Data Binding -->
+    <input type="text" e-bind:value="value" /><br>
+
+    <h4> {{ value }} </h4>
+</div>
+
+<script>
+    var app = new Easy('#app', {
+        data: {
+            value: 'Change me!',
+        }
+    });
+</script>

@@ -1,5 +1,4 @@
 // Everything that needs to be executed when the documentation page runs 
-hljs.initHighlightingOnLoad();
 document.addEventListener('DOMContentLoaded', function () {
     activeMenuOnScroll();
     var url = location.origin + location.pathname;

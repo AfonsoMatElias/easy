@@ -33,27 +33,30 @@
 
     <div e-if="typeof noApp === 'undefined'">
         <div e-ignore>
-            <pre><code class="example html hljs">
-    &lt;div id="app5"&gt;
-        &lt;div&gt;
-            &lt;h4&gt; {{ value }} &lt;/h4&gt;
-        &lt;/div&gt;
 
-        &lt;div data="scope1"&gt;
-            &lt;h4&gt; 1st {{ value }} &lt;/h4&gt;
-        &lt;/div&gt;
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app5">
+        <div>
+            <h4> {{ value }} </h4>
+        </div>
 
-        &lt;div data="scope2"&gt;
-            &lt;h4&gt; 2nd {{ value }} &lt;/h4&gt;
+        <div data="scope1">
+            <h4> 1st {{ value }} </h4>
+        </div>
 
-            &lt;div data&gt;
-                &lt;h4&gt; I am in Scope 2 element, but, {{ value }}  &lt;/h4&gt;
-            &lt;/div&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-    </code></pre>
+        <div data="scope2">
+            <h4> 2nd {{ value }} </h4>
 
-            <pre><code class="javascript hljs">
+            <div data>
+                <h4> I am in Scope 2 element, but, {{ value }}  </h4>
+            </div>
+        </div>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
     var app5 = new Easy('#app5', {
         data: {
             value: 'This is a value from main scope 🙂',
@@ -64,8 +67,8 @@
                 value: 'This is a value from 2nd scope'
             }
         }
-    });
-    </code></pre>
+    });</textarea>
+            </div>
 
             <div class="result"></div>
         </div>
@@ -78,33 +81,37 @@
 
     <div e-if="typeof noApp === 'undefined'">
         <div e-ignore>
-            <pre><code class="example html hljs">
-    &lt;div id="app6"&gt;
-        &lt;div data="this.reactive(function(){
+
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app6">
+        <div data="this.reactive(function(){
             return { name: person.name, country: 'Angola' }
-        })" &gt;
+        })" >
 
-            &lt;h4&gt; {{ name }} &lt;/h4&gt;
-            &lt;h4&gt; {{ country }} &lt;/h4&gt;
+            <h4> {{ name }} </h4>
+            <h4> {{ country }} </h4>
 
-            &lt;br&gt;<i> Lets prove that they are reactives </i> &lt;br&gt;
+            <br><i> Lets prove that they are reactives </i> <br>
             
-            &lt;input type="text" e-bind="name" /&gt;
-            &lt;input type="text" e-bind="country" /&gt;
+            <input type="text" e-bind="name" />
+            <input type="text" e-bind="country" />
 
-        &lt;/div&gt;
-    &lt;/div&gt;
-            </code></pre>
+        </div>
+    </div></textarea>
+            </div>
 
-            <pre><code class="javascript hljs">
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
     var app6 = new Easy('#app6', {
         data: {
             person: {
                 name: 'Afonso Matumona'
             }
         }
-    });
-            </code></pre>
+    });</textarea>
+            </div>
+            <!-- End -->
 
             <div class="result"></div>
         </div>
@@ -120,17 +127,19 @@
 
     <div e-if="typeof noApp === 'undefined'">
         <div e-ignore>
-            <pre><code class="example html hljs">
-    &lt;div id="app7"&gt;
-        &lt;button on:click="load" &gt; Load Remain &lt;/button&gt;
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app7">
+        <button on:click="load" > Load Remain </button>
         
-        &lt;h4&gt;
-            {{ message }}! &lt;span wait-data="waitForMe"&gt; {{ message }} &lt;/span&gt;
-        &lt;/h4&gt;
-    &lt;/div&gt;
-            </code></pre>
+        <h4>
+            {{ message }}! <span wait-data="waitForMe"> {{ message }} </span>
+        </h4>
+    </div></textarea>
+            </div>
 
-            <pre><code class="javascript hljs">
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
     var app7 = new Easy('#app7', {
         data: {
             /* Variables */
@@ -141,8 +150,9 @@
                 this.expose('waitForMe', { message: 'how are you? 😀' });
             }
         }
-    });
-            </code></pre>
+    });</textarea>
+            </div>
+            <!-- End -->
 
             <div class="result"></div>
         </div>
@@ -169,24 +179,27 @@
         compiled.
     </p>
 
-    <p>
+    <p e-show="typeof noApp === 'undefined'">
         Let's redo the example.
     </p>
 
     <div e-if="typeof noApp === 'undefined'">
         <div e-ignore>
-            <pre><code class="example html hljs">
-    &lt;div id="app8"&gt;
-        &lt;button on:click="load" &gt; Load Remain &lt;/button&gt;
-        
-        &lt;div&gt;
-            &lt;h4&gt; {{ message }}! &lt;/h4&gt;
-            &lt;h4 wait-data="waitForMe" e-content="{{ message }}"&gt; ... &lt;/h4&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-            </code></pre>
 
-            <pre><code class="javascript hljs">
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app8">
+        <button on:click="load" > Load Remain </button>
+        
+        <div>
+            <h4> {{ message }}! </h4>
+            <h4 wait-data="waitForMe" e-content="{{ message }}"> ... </h4>
+        </div>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
     var app8 = new Easy('#app8', {
         data: {
             /* Variables */
@@ -197,8 +210,9 @@
                 this.expose('waitForMe', { message: 'how are you? 😀' });
             }
         }
-    });
-            </code></pre>
+    });</textarea>
+            </div>
+            <!-- End -->
 
             <div class="result"></div>
         </div>
@@ -229,18 +243,21 @@
 
     <div e-if="typeof noApp === 'undefined'">
         <div e-ignore>
-            <pre><code class="example html hljs">
-    &lt;div id="app9"&gt;
-        &lt;button on:click="load" &gt; Load Remain &lt;/button&gt;
-        
-        &lt;div&gt;
-            &lt;h4&gt; {{ message }}! &lt;/h4&gt;
-            &lt;h4 wait-data="waitForMe" e-skeleton e-content="{{ message }}" &gt; Waiting &lt;/h4&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-            </code></pre>
 
-            <pre><code class="javascript hljs">
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app9">
+        <button on:click="load" > Load Remain </button>
+        
+        <div>
+            <h4> {{ message }}! </h4>
+            <h4 wait-data="waitForMe" e-skeleton e-content="{{ message }}" > Waiting </h4>
+        </div>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
     var app9 = new Easy('#app9', {
         data: {
             /* Variables */
@@ -251,8 +268,9 @@
                 this.expose('waitForMe', { message: 'how are you? 😀' });
             }
         }
-    });
-            </code></pre>
+    });</textarea>
+            </div>
+            <!-- End -->
 
             <div class="result"></div>
         </div>
@@ -277,15 +295,18 @@
 
     <div e-if="typeof noApp === 'undefined'">
         <div e-ignore>
-            <pre><code class="example html hljs">
-    &lt;div id="app10"&gt;
-        &lt;h4 e-skeleton="skeleton1"&gt; {{ message }}! &lt;/h4&gt;
-        
-        &lt;button on:click="removeSkeleton" &gt; Remove Skeleton&lt;/button&gt;
-    &lt;/div&gt;
-            </code></pre>
 
-            <pre><code class="javascript hljs">
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app10">
+        <h4 e-skeleton="skeleton1"> {{ message }}! </h4>
+        
+        <button on:click="removeSkeleton" > Remove Skeleton</button>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
     var app10 = new Easy('#app10', {
         data: {
             /* Variables */
@@ -296,8 +317,9 @@
                 this.el.clearSkeleton('skeleton1');
             }
         }
-    });
-            </code></pre>
+    });</textarea>
+            </div>
+            <!-- End -->
 
             <div class="result"></div>
         </div>
@@ -314,19 +336,23 @@
 
     <div e-if="typeof noApp === 'undefined'">
         <div e-ignore>
-            <pre><code class="example html hljs">
-    &lt;div id="app11"&gt;        
-        &lt;div e-def="{ myProp: 'I was created dynamically' }"&gt; 
-            {{ myProp }}! 
-        &lt;/div&gt;
-    &lt;/div&gt;
-            </code></pre>
 
-            <pre><code class="javascript hljs">
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app11">        
+        <div e-def="{ myProp: 'I was created dynamically' }"> 
+            {{ myProp }}! 
+        </div>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
     var app11 = new Easy('#app11', {
         data: {}
-    });
-            </code></pre>
+    });</textarea>
+            </div>
+            <!-- End -->
 
             <div class="result"></div>
         </div>
@@ -350,29 +376,33 @@
 
     <div e-if="typeof noApp === 'undefined'">
         <div e-ignore>
-            <pre><code class="html example hljs">
-    &lt;div id="app12"&gt;
-        &lt;input type="number" e-bind="binary" /&gt; &lt;br&gt; 
-        
-        &lt;p e-if="binary == 1"&gt; 
-            {{ binary }} is on 🙂
-        &lt;/p&gt;
-        &lt;p e-else-if="binary == 0"&gt; 
-            {{ binary }} is off 🙁
-        &lt;/p&gt;
-        &lt;p e-else&gt; 
-            {{ binary }} is not binary 🤨
-        &lt;/p&gt;
-    &lt;/div&gt;
-            </code></pre>
 
-            <pre><code class="javascript hljs">
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app12">
+        <input type="number" e-bind="binary" /> <br> 
+        
+        <p e-if="binary == 1"> 
+            {{ binary }} is on 🙂
+        </p>
+        <p e-else-if="binary == 0"> 
+            {{ binary }} is off 🙁
+        </p>
+        <p e-else> 
+            {{ binary }} is not binary 🤨
+        </p>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
     var app12 = new Easy('#app12', {
         data: {
             binary: 1
         }
-    });
-            </code></pre>
+    });</textarea>
+            </div>
+            <!-- End -->
 
             <div class="result"></div>
         </div>
@@ -390,23 +420,27 @@
 
     <div e-if="typeof noApp === 'undefined'">
         <div e-ignore>
-            <pre><code class="example html hljs">
-    &lt;div id="app13"&gt;
-        &lt;button on:click="show = !show"&gt; toggle {{ show ? '🙉' : '🙈' }} &lt;/button&gt;
 
-        &lt;div e-show="show"&gt; 
-            &lt;p&gt; Want to hide me? Click on toggle&lt;/p&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-            </code></pre>
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app13">
+        <button on:click="show = !show"> toggle {{ show ? '🙉' : '🙈' }} </button>
 
-            <pre><code class="javascript hljs">
+        <div e-show="show"> 
+            <p> Want to hide me? Click on toggle</p>
+        </div>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
     var app13 = new Easy('#app13', {
         data: {
             show: true
         }
-    });
-            </code></pre>
+    });</textarea>
+            </div>
+            <!-- End -->
 
             <div class="result"></div>
         </div>
@@ -435,28 +469,32 @@
 
     <div e-if="typeof noApp === 'undefined'">
         <div e-ignore>
-            <pre><code class="example html hljs">
-    &lt;div id="app14"&gt;
-        &lt;h4&gt; Primitives&lt;/h4&gt;
-        &lt;ul&gt; 
-            &lt;li e-for="fruit of fruits" &gt; {{ fruit }} &lt;/li&gt;
-        &lt;/ul&gt;
-        
-        &lt;h4&gt; Objects&lt;/h4&gt;
-        &lt;ul&gt; 
-            &lt;li e-for="foods" &gt; {{ name }} &lt;/li&gt;
-        &lt;/ul&gt;
-    &lt;/div&gt;
-            </code></pre>
 
-            <pre><code class="javascript hljs">
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app14">
+        <h4> Primitives</h4>
+        <ul> 
+            <li e-for="fruit of fruits" > {{ fruit }} </li>
+        </ul>
+        
+        <h4> Objects</h4>
+        <ul> 
+            <li e-for="foods" > {{ name }} </li>
+        </ul>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
     var app14 = new Easy('#app14', {
         data: {
             fruits: [ 'Bananas', 'Mango' ],
             foods: [ { name: 'Rice' }, { name: 'Beans' } ],
         }
-    });
-            </code></pre>
+    });</textarea>
+            </div>
+            <!-- End -->
 
             <div class="result"></div>
         </div>
@@ -464,10 +502,13 @@
 
     <p>
         Into <i class="mark-el">e-for</i> expression, two variables can be defined, the <i class="mark-el">item</i>
-        and the <i class="mark-el">index</i> of the item, using `rerenderOnArrayChange: <iclass="mark-el">false</i>` 
-        whenever the array changes, like for eg: `array.shift()` the index variable won't auto update because there is not 
-        a physical binding between this <i class="mark-el">index</i> with the <i class="mark-el">index of this item in the 
-            array</i>. In the other hand, using `rerenderOnArrayChange: <i class="mark-el">true</i>`, whenever the array 
+        and the <i class="mark-el">index</i> of the item, using `rerenderOnArrayChange: <iclass="mark-el">false</i>`
+            whenever the array changes, like for eg: `array.shift()` the index variable won't auto update because there
+            is not
+            a physical binding between this <i class="mark-el">index</i> with the <i class="mark-el">index of this item
+                in the
+                array</i>. In the other hand, using `rerenderOnArrayChange: <i class="mark-el">true</i>`, whenever the
+            array
             changes, all the items of the array will be re-rendered in the UI, meaning the index variable updates too.
     </p>
 
@@ -490,28 +531,32 @@
 
     <div e-if="typeof noApp === 'undefined'">
         <div e-ignore>
-            <pre><code class="example html hljs">
-    &lt;div id="app15"&gt;
-        &lt;input type="text" 
+
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app15">
+        <input type="text" 
                 e-def="{ search: '' }" 
                 e-bind="search" 
-                placeholder="Search for food" /&gt;
+                placeholder="Search for food" />
         
-        &lt;ul&gt; 
-            &lt;li e-for="food of foods | search"&gt; 
+        <ul> 
+            <li e-for="food of foods | search"> 
                 {{ food.name }} 
-            &lt;/li&gt;
-        &lt;/ul&gt;
-    &lt;/div&gt;
-            </code></pre>
+            </li>
+        </ul>
+    </div></textarea>
+            </div>
 
-            <pre><code class="javascript hljs">
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
     var app15 = new Easy('#app15', {
         data: {
             foods: [ { name: 'Rice' }, { name: 'Beans' } ],
         }
-    });
-            </code></pre>
+    });</textarea>
+            </div>
+            <!-- End -->
 
             <div class="result"></div>
         </div>
@@ -528,28 +573,32 @@
 
     <div e-if="typeof noApp === 'undefined'">
         <div e-ignore>
-            <pre><code class="example html hljs">
-    &lt;div id="app16"&gt;
-        &lt;input type="text" 
+
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app16">
+        <input type="text" 
                 e-def="{ search: '' }" 
                 e-bind="search" 
-                placeholder="Search for food" /&gt;
+                placeholder="Search for food" />
         
-        &lt;ul&gt; 
-            &lt;li e-for="food of foods | search:name,price"&gt; 
+        <ul> 
+            <li e-for="food of foods | search:name,price"> 
                 {{ food.name }}, {{ food.price }} 💰 
-            &lt;/li&gt;
-        &lt;/ul&gt;
-    &lt;/div&gt;
-            </code></pre>
+            </li>
+        </ul>
+    </div></textarea>
+            </div>
 
-            <pre><code class="javascript hljs">
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
     var app16 = new Easy('#app16', {
         data: {
             foods: [ { name: 'Rice', price: 10 }, { name: 'Beans', price: 15 } ]
         }
-    });
-            </code></pre>
+    });</textarea>
+            </div>
+            <!-- End -->
 
             <div class="result"></div>
         </div>
@@ -565,23 +614,31 @@
 
     <div e-if="typeof noApp === 'undefined'">
         <div e-ignore>
-            <pre><code class="example html hljs">
-    &lt;div id="app17"&gt;
-        &lt;ul&gt; 
-            &lt;li e-for="food of foods | :price >= 15"&gt; 
-                {{ food.name }}, {{ food.price }} 💰 
-            &lt;/li&gt;
-        &lt;/ul&gt;
-    &lt;/div&gt;
-            </code></pre>
 
-            <pre><code class="javascript hljs">
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app17">
+        <ul> 
+            <li e-for="food of foods | :price >= 15"> 
+                {{ food.name }}, {{ food.price }} 💰 
+            </li>
+        </ul>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
     var app17 = new Easy('#app17', {
         data: {
-            foods: [ { name: 'Rice', price: 10 }, { name: 'Beans', price: 15 }, { name: 'Meat', price: 20 } ]
+            foods: [ 
+                { name: 'Rice', price: 10 }, 
+                { name: 'Beans', price: 15 }, 
+                { name: 'Meat', price: 20 }
+            ]
         }
-    });
-            </code></pre>
+    });</textarea>
+            </div>
+            <!-- End -->
 
             <div class="result"></div>
         </div>
@@ -598,21 +655,28 @@
 
     <div e-if="typeof noApp === 'undefined'">
         <div e-ignore>
-            <pre><code class="example html hljs">
-    &lt;div id="app18"&gt;
-        &lt;ul&gt; 
-            &lt;li e-for="food of foods | foodFilter"&gt; 
-                {{ food.name }}, {{ food.price }} 💰 
-            &lt;/li&gt;
-        &lt;/ul&gt;
-    &lt;/div&gt;
-            </code></pre>
 
-            <pre><code class="javascript hljs">
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app18">
+        <ul> 
+            <li e-for="food of foods | foodFilter"> 
+                {{ food.name }}, {{ food.price }} 💰 
+            </li>
+        </ul>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
     var app18 = new Easy('#app18', {
         data: {
             /* Variables */
-            foods: [ { name: 'Rice', price: 10 }, { name: 'Beans', price: 15 }, { name: 'Meat', price: 20 } ],
+            foods: [ 
+                { name: 'Rice', price: 10 }, 
+                { name: 'Beans', price: 15 }, 
+                { name: 'Meat', price: 20 }
+            ],
             
             /* Methods */
             foodFilter: function(array){
@@ -621,174 +685,188 @@
                 })
             }
         }
-    });
-            </code></pre>
+    });</textarea>
+            </div>
+            <!-- End -->
 
             <div class="result"></div>
         </div>
     </div>
 
-    <h3> <a id=""Array Change Detection </a> </h3>
-    <p>
-        Easy links with the main methods of an array, making them become reactive, the methods
-        are:
-    </p>
+    <h3> <a id="" Array Change Detection </a> </h3> <p>
+            Easy links with the main methods of an array, making them become reactive, the methods
+            are:
+            </p>
 
-    <ul>
-        <li> <span class="note mark-el"> push() </span> </li>
-        <li> <span class="note mark-el"> pop() </span> </li>
-        <li> <span class="note mark-el"> unshift() </span> </li>
-        <li> <span class="note mark-el"> shift() </span> </li>
-        <li> <span class="note mark-el"> splice() </span> </li>
-    </ul>
+            <ul>
+                <li> <span class="note mark-el"> push() </span> </li>
+                <li> <span class="note mark-el"> pop() </span> </li>
+                <li> <span class="note mark-el"> unshift() </span> </li>
+                <li> <span class="note mark-el"> shift() </span> </li>
+                <li> <span class="note mark-el"> splice() </span> </li>
+            </ul>
 
-    <div class="block-note info">
-        <p>
-            If we use some method that changes the array even if it is not in the list above
-            the user interface will be updated too.
-        </p>
-    </div>
+            <div class="block-note info">
+                <p>
+                    If we use some method that changes the array even if it is not in the list above
+                    the user interface will be updated too.
+                </p>
+            </div>
 
-    <div class="block-note dont">
-        <p>
-            Easy cannot detect changes when we modify the length of the array. e.g.: <span class="note att-border">
-                array.length = newLength </span>. If will not have effects in to the user interface.
-        </p>
-    </div>
+            <div class="block-note dont">
+                <p>
+                    Easy cannot detect changes when we modify the length of the array. e.g.: <span
+                        class="note att-border">
+                        array.length = newLength </span>. If will not have effects in to the user interface.
+                </p>
+            </div>
 
-    <h3> <a id="cmd_e_order"> e-order </a> </h3>
-    <p>
-        Sorts a list according to the condition passed in the command's expression. Its syntax
-        is
-        <span class="note mark-el">e-order="<i>OrderType</i>:<i>PropertyToBeOrdered</i>"</span>.
-        The order types are: <span class="note mark-el">asc</span>, for ascending and
-        <span class="note mark-el">des</span>, for descending.
-    </p>
+            <h3> <a id="cmd_e_order"> e-order </a> </h3>
+            <p>
+                Sorts a list according to the condition passed in the command's expression. Its syntax
+                is
+                <span class="note mark-el">e-order="<i>OrderType</i>:<i>PropertyToBeOrdered</i>"</span>.
+                The order types are: <span class="note mark-el">asc</span>, for ascending and
+                <span class="note mark-el">des</span>, for descending.
+            </p>
 
-    <pre e-ignore><code class="html hljs">
-    &lt;ul&gt; 
-        &lt;li e-for="food of foods" e-order="asc:name"&gt; 
+            <div e-ignore class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <ul> 
+        <li e-for="food of foods" e-order="asc:name"> 
             {{ food.name }}, {{ food.price }} 💰 
-        &lt;/li&gt;
-    &lt;/ul&gt;
-    </code></pre>
+        </li>
+    </ul></textarea>
+            </div>
 
-    <div class="block-note info">
-        <p e-ignore>
-            The command accepts delimiters, this means that it can be defined like this,
-            e.g.: <span class="note mark-el">e-order="{{orderType}}:{{orderBy}}"</span>
-        </p>
-    </div>
+            <div class="block-note info">
+                <p e-ignore>
+                    The command accepts delimiters, this means that it can be defined like this,
+                    e.g.: <span class="note mark-el">e-order="{{orderType}}:{{orderBy}}"</span>
+                </p>
+            </div>
 
-    <h3> <a id="cmd_e_anm"> e-anm </a> </h3>
-    <p>
-        It is a simple way to animate the insertion of an element in the DOM. Its syntax is
-        <span class="note mark-el">e-anm="<i>direction</i>"</span>.
-    </p>
+            <h3> <a id="cmd_e_anm"> e-anm </a> </h3>
+            <p>
+                It is a simple way to animate the insertion of an element in the DOM. Its syntax is
+                <span class="note mark-el">e-anm="<i>direction</i>"</span>.
+            </p>
 
-    <ul>
-        <li> <span class="note mark-el">up</span> &ndash; performs the animation starting from
-            the bottom to the top, ascending and gradually increasing the opacity. </li>
-        <li> <span class="note mark-el">down</span> &ndash; performs the animation starting
-            from the top to the bottom, descending and gradually increasing the opacity.</li>
-        <li> <span class="note mark-el">left</span> &ndash; performs the animation starting
-            from the right to the left, scrolling and gradually increasing the opacity. </li>
-        <li> <span class="note mark-el">right</span> &ndash; performs the animation starting
-            from the left to the right, scrolling and gradually increasing the opacity. </li>
-    </ul>
+            <ul>
+                <li> <span class="note mark-el">up</span> &ndash; performs the animation starting from
+                    the bottom to the top, ascending and gradually increasing the opacity. </li>
+                <li> <span class="note mark-el">down</span> &ndash; performs the animation starting
+                    from the top to the bottom, descending and gradually increasing the opacity.</li>
+                <li> <span class="note mark-el">left</span> &ndash; performs the animation starting
+                    from the right to the left, scrolling and gradually increasing the opacity. </li>
+                <li> <span class="note mark-el">right</span> &ndash; performs the animation starting
+                    from the left to the right, scrolling and gradually increasing the opacity. </li>
+            </ul>
 
-    <pre e-ignore><code class="html hljs">
-    &lt;ul&gt; 
-        &lt;li e-for="food of foods" e-anm="up"&gt; 
+            <div e-ignore class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <ul> 
+        <li e-for="food of foods" e-anm="up"> 
             {{ food.name }}, {{ food.price }} 💰 
-        &lt;/li&gt;
-    &lt;/ul&gt;
-    </code></pre>
+        </li>
+    </ul></textarea>
+            </div>
 
-    <h3> <a id="cmd_e_toggle"> e-toggle </a> </h3>
-    <p>
-        Allows you to toggle a property on an element, setting the value to <span class="note mark-el">true</span> when
-        set.
-        Its syntax is <span class="note mark-el">e-toggle:<i>property</i>="dataProperty"</span>.
-    </p>
+            <h3> <a id="cmd_e_toggle"> e-toggle </a> </h3>
+            <p>
+                Allows you to toggle a property on an element, setting the value to <span
+                    class="note mark-el">true</span> when
+                set.
+                Its syntax is <span class="note mark-el">e-toggle:<i>property</i>="dataProperty"</span>.
+            </p>
 
-    <div e-if="typeof noApp === 'undefined'">
-        <div e-ignore>
-            <pre><code class="example html hljs">
-    &lt;div id="app19"&gt;
-        &lt;input type="text" e-toggle:disabled="locked" placeholder="Type your name" /&gt;
-        &lt;button on:click="locked = !locked"&gt; 
+            <div e-if="typeof noApp === 'undefined'">
+                <div e-ignore>
+
+                    <div execute class="code-container" code-ext=".html">
+                        <textarea cm-lang="text/html">
+    <div id="app19">
+        <input type="text" e-toggle:disabled="locked" placeholder="Type your name" />
+        <button on:click="locked = !locked"> 
             {{ locked ? 'Locked 🔒' : 'Unlocked 🔓' }} 
-        &lt;/button&gt;
-    &lt;/div&gt;
-            </code></pre>
+        </button>
+    </div></textarea>
+                    </div>
 
-            <pre><code class="javascript hljs">
+                    <div class="code-container" code-ext=".js">
+                        <textarea cm-lang="javascript">
     var app19 = new Easy('#app19', {
         data: {
             locked: false
         }
-    });
-            </code></pre>
+    });</textarea>
+                    </div>
+                    <!-- End -->
 
-            <div class="result"></div>
-        </div>
-    </div>
+                    <div class="result"></div>
+                </div>
+            </div>
 
 
-    <h3> <a id="cmd_e"> e-[something] </a> </h3>
-    <p>
-        As we said above, it is the most versatile command according to the defined expression,
-        because on the one hand it creates a property after being compiled and on the other it
-        creates the property and toggles a value on it.
-    </p>
+            <h3> <a id="cmd_e"> e-[something] </a> </h3>
+            <p>
+                As we said above, it is the most versatile command according to the defined expression,
+                because on the one hand it creates a property after being compiled and on the other it
+                creates the property and toggles a value on it.
+            </p>
 
-    <p>
-        The sintax for simply property creation is <span class="note mark-el">e-<i>property</i>="expression"</span>.
-        In this case the expression must contain delimiter, otherwise it will not be compiled.
-    </p>
+            <p>
+                The sintax for simply property creation is <span
+                    class="note mark-el">e-<i>property</i>="expression"</span>.
+                In this case the expression must contain delimiter, otherwise it will not be compiled.
+            </p>
 
-    <pre e-ignore><code class="html hljs">
-    &lt;div id="app19"&gt;
-        &lt;img e-src="{{ imgUrl }}" src="default.png" srcset="fail-onload.png" /&gt;
-    &lt;/div&gt;
-    </code></pre>
+            <div e-ignore class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app">
+        <img e-src="{{ imgUrl }}" src="default.png" srcset="fail-onload.png" />
+    </div></textarea>
+            </div>
 
-    <p>
-        The sintax for property creation (if it does not exists) and toggleable value is
-        <span class="note mark-el">e-<i>property</i>="{ valueToToggle : condition }"</span>.
-        <br>
-        <span class="note att-border">Do not use delimiters in the expression</span>.
-    </p>
+            <p>
+                The sintax for property creation (if it does not exists) and toggleable value is
+                <span class="note mark-el">e-<i>property</i>="{ valueToToggle : condition }"</span>.
+                <br>
+                <span class="note att-border">Do not use delimiters in the expression</span>.
+            </p>
 
-    <div e-if="typeof noApp === 'undefined'">
-        <div e-ignore>
-            <pre><code class="example html hljs">
-    &lt;div id="app20"&gt;        
-        &lt;style&gt; 
+            <div e-if="typeof noApp === 'undefined'">
+                <div e-ignore>
+
+                    <div execute class="code-container" code-ext=".html">
+                        <textarea cm-lang="text/html">
+    <div id="app20">        
+        <style> 
         .yellow-class {
-            background-color: yellow;
+            border-color: yellow;
         } 
-    &lt;/style&gt;
+    </style>
 
-        &lt;button on:click="isYellow = !isYellow" 
-                    e-class="{ 'yellow-class' : isYellow }"&gt; 
+        <button on:click="isYellow = !isYellow" 
+                    e-class="{ 'yellow-class' : isYellow }"> 
             Click Me
-        &lt;/button&gt;
-    &lt;/div&gt;
-            </code></pre>
+        </button>
+    </div></textarea>
+                    </div>
 
-            <pre><code class="javascript hljs">
+                    <div class="code-container" code-ext=".js">
+                        <textarea cm-lang="javascript">
     var app20 = new Easy('#app20', {
         data: {
             isYellow: false
         }
-    });
-            </code></pre>
+    });</textarea>
+                    </div>
+                    <!-- End -->
 
-            <div class="result"></div>
-        </div>
-    </div>
+                    <div class="result"></div>
+                </div>
+            </div>
 
 
 </section>

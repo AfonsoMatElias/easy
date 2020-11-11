@@ -33,19 +33,22 @@
 
     <div e-if="typeof noApp === 'undefined'">
         <div e-ignore>
-            <pre><code class="example html hljs">
-    &lt;div id="app21"&gt;        
-        &lt;button on:click="count++"&gt; 
+
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app21">        
+        <button on:click="count++"> 
             Clicked {{ count }} {{ count > 1 ? 'times' : 'time' }}
-        &lt;/button&gt;
+        </button>
 
-        &lt;button on:click="resetCounter()" e-toggle:disabled="!count" &gt; 
+        <button on:click="resetCounter()" e-toggle:disabled="!count" > 
             {{ count === 0 ? 'Setted ' :  'Click to reset' }}
-        &lt;/button&gt;
-    &lt;/div&gt;
-    </code></pre>
+        </button>
+    </div></textarea>
+            </div>
 
-            <pre><code class="javascript hljs">
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
     var app21 = new Easy('#app21', {
         data: {
             /* Variables */
@@ -56,8 +59,9 @@
                 this.data.count = 0;
             }
         }
-    });
-    </code></pre>
+    });</textarea>
+            </div>
+            <!-- End -->
 
             <div class="result"></div>
         </div>
@@ -90,17 +94,20 @@
 
     <div e-if="typeof noApp === 'undefined'">
         <div e-ignore>
-            <pre><code class="example html hljs">
-    &lt;div id="app22"&gt;
-        &lt;ul&gt; 
-            &lt;li e-for="food of foods" on:add="addEmoji"&gt; 
-                {{ food.name }} 
-            &lt;/li&gt;
-        &lt;/ul&gt;
-    &lt;/div&gt;
-    </code></pre>
 
-            <pre><code class="javascript hljs">
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app22">
+        <ul> 
+            <li e-for="food of foods" on:add="addEmoji"> 
+                {{ food.name }} 
+            </li>
+        </ul>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
     var app22 = new Easy('#app22', {
         data: {
             /* Variables */
@@ -118,8 +125,9 @@
                 }
             }
         }
-    });
-    </code></pre>
+    });</textarea>
+            </div>
+            <!-- End -->
 
             <div class="result"></div>
         </div>
@@ -141,16 +149,19 @@
 
     <div e-if="typeof noApp === 'undefined'">
         <div e-ignore>
-            <pre><code class="example html hljs">
-    &lt;div id="app23"&gt;
-        &lt;input on:keyup="emitEvent(event.target.value)" 
-                type="text" placeholder="Type to change" /&gt;
 
-        &lt;p on:changetext="changeTextCallback"&gt; Type something in the input! &lt;/p&gt;
-    &lt;/div&gt;
-    </code></pre>
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app23">
+        <input on:keyup="emitEvent(event.target.value)" 
+                type="text" placeholder="Type to change" />
 
-    <pre><code class="javascript hljs">
+        <p on:changetext="changeTextCallback"> Type something in the input! </p>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
     var app23 = new Easy('#app23', {
         data: {
             emitEvent: function(value){
@@ -160,8 +171,9 @@
                 target.innerText = text; 
             }
         }
-    });
-    </code></pre>
+    });</textarea>
+            </div>
+            <!-- End -->
 
             <div class="result"></div>
         </div>
@@ -216,21 +228,25 @@
 
     <div e-if="typeof noApp === 'undefined'">
         <div e-ignore>
-            <pre><code class="example html hljs">
-    &lt;div id="app24"&gt;        
-        &lt;button on:click.once="count++"&gt; 
-            Clicked {{ count }}
-        &lt;/button&gt;
-    &lt;/div&gt;
-    </code></pre>
 
-            <pre><code class="javascript hljs">
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app24">        
+        <button on:click.once="count++"> 
+            Clicked {{ count }}
+        </button>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
     var app24 = new Easy('#app24', {
         data: {
             count: 0
         }
-    });
-    </code></pre>
+    });</textarea>
+            </div>
+            <!-- End -->
 
             <div class="result"></div>
         </div>

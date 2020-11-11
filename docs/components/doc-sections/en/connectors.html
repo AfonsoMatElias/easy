@@ -52,7 +52,8 @@
         </li>
     </ul>
 
-    <pre><code class="javascript hljs">
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
     var app = new Easy('#app');
 
     app.create('user', { name: 'Maria', country: 'Angola' })
@@ -61,8 +62,8 @@
        })
        .catch(function(err){
             console.error(err);  
-       });
-    </code></pre>
+       });</textarea>
+    </div>
 
     <p>
         <span class="note mark-el">read</span> &ndash; performs the <i class="mark-el">read</i> method in the connector
@@ -77,7 +78,8 @@
         </li>
     </ul>
 
-    <pre e-ignore><code class="javascript hljs">
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
     var app = new Easy('#app');
 
     app.read('users')
@@ -86,8 +88,8 @@
        })
        .catch(function(err){
             console.error(err);  
-       });
-    </code></pre>
+       });</textarea>
+    </div>
 
     <p>
         <span class="note mark-el">update</span> &ndash; performs the <i class="mark-el">update</i> method in the
@@ -103,7 +105,8 @@
         </li>
     </ul>
 
-    <pre e-ignore><code class="javascript hljs">
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
     var app = new Easy('#app');
 
     app.update('user', { name: 'Formosa' }, 1)
@@ -112,8 +115,8 @@
        })
        .catch(function(err){
             console.error(err);  
-       });
-    </code></pre>
+       });</textarea>
+    </div>
 
     <p>
         <span class="note mark-el">delete</span> &ndash; performs the <i class="mark-el">delete</i> method in the
@@ -126,16 +129,18 @@
         </li>
     </ul>
 
-    <pre e-ignore><code class="javascript hljs">
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
     var app = new Easy('#app');
+
     app.delete('user', 1)
        .then(function(data){
             console.log(data);  
        })
        .catch(function(err){
             console.error(err);  
-       });
-    </code></pre>
+       });</textarea>
+    </div>
 
     <p>
         <span class="note mark-el">getOne</span> &ndash; performs the <i class="mark-el">getOne</i> method in the
@@ -150,16 +155,18 @@
         </li>
     </ul>
 
-    <pre e-ignore><code class="javascript hljs">
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
     var app = new Easy('#app');
+
     app.getOne('user', 1)
        .then(function(data){
             console.log(data);  
        })
        .catch(function(err){
             console.error(err);  
-       });
-    </code></pre>
+       });</textarea>
+    </div>
 
     <p>
         <span class="note mark-el">request</span> &ndash; used to get command request object. It expects two
@@ -179,7 +186,8 @@
         The struture of the request object is:
     </p>
 
-    <pre e-ignore><code class="javascript hljs">
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
     {
         // An unique code
         $code: String,
@@ -201,8 +209,8 @@
 
         // The scope object
         $scope: Object
-    }
-    </code></pre>
+    }</textarea>
+    </div>
 
     <h3> <a id="conn_commands"> <b>Commands</b> </a> </h3>
     <p>
@@ -216,14 +224,15 @@
         the request is completed.
     </p>
 
-    <pre e-ignore><code class="html hljs">
-    &lt;ul&gt;
-        &lt;li e-tmp="users"&gt;
-            &lt;label&gt; {{ name }} &lt;label&gt;
-            &lt;label&gt; {{ country }} &lt;label&gt;
-        &lt;/li&gt;
-    &lt;/ul&gt;
-    </code></pre>
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <ul>
+        <li e-tmp="users">
+            <label> {{ name }} </label>
+            <label> {{ country }} </label>
+        </li>
+    </ul></textarea>
+    </div>
 
     <h4> <a id="conn_c_tmp_w_filter"> e-tmp with e-id </a> </h4>
     <p>
@@ -231,15 +240,16 @@
         attribute to extra parameter.
     </p>
 
-    <pre e-ignore><code class="html hljs">
-    &lt;ul&gt;
-        &lt;!-- Getting only active users --&gt;
-        &lt;li e-tmp="users" e-id="active"&gt;
-            &lt;label&gt; {{ name }} &lt;label&gt;
-            &lt;label&gt; {{ country }} &lt;label&gt;
-        &lt;/li&gt;
-    &lt;/ul&gt;
-    </code></pre>
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <ul>
+        <!-- Getting only active users -->
+        <li e-tmp="users" e-id="active">
+            <label> {{ name }} </label>
+            <label> {{ country }} </label>
+        </li>
+    </ul></textarea>
+    </div>
 
     <div class="block-note info">
         <p>
@@ -255,14 +265,15 @@
         provided by easy.js.
     </p>
 
-    <pre e-ignore><code class="html hljs">
-    &lt;ul e-def="{ search: '' }"&gt; 
-        &lt;li e-tmp="users" e-filter="search"&gt; 
-            &lt;label&gt; {{ name }} &lt;label&gt;
-            &lt;label&gt; {{ country }} &lt;label&gt;
-        &lt;/li&gt;
-    &lt;/ul&gt;
-    </code></pre>
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <ul e-def="{ search: '' }"> 
+        <li e-tmp="users" e-filter="search"> 
+            <label> {{ name }} </label>
+            <label> {{ country }} </label>
+        </li>
+    </ul></textarea>
+    </div>
 
     <h4> <a id="conn_c_tmp_w_order"> e-tmp with e-order </a> </h4>
     <p>
@@ -270,14 +281,15 @@
         the same of the <i class="note mark-el">e-for</i> order.
     </p>
 
-    <pre e-ignore><code class="html hljs">
-    &lt;ul&gt; 
-        &lt;li e-tmp="users" e-order="asc:country"&gt; 
-            &lt;label&gt; {{ name }} &lt;label&gt;
-            &lt;label&gt; {{ country }} &lt;label&gt;
-        &lt;/li&gt;
-    &lt;/ul&gt;
-    </code></pre>
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <ul> 
+        <li e-tmp="users" e-order="asc:country"> 
+            <label> {{ name }} </label>
+            <label> {{ country }} </label>
+        </li>
+    </ul></textarea>
+    </div>
 
     <h4> <a id="conn_c_fill"> e-fill with e-id </a> </h4>
     <p>
@@ -288,12 +300,13 @@
         <span class="note warn-border">The <i class="mark-el">e-id</i> attribute is mandatory</span>.
     </p>
 
-    <pre e-ignore><code class="html hljs">
-    &lt;div e-fill="users" e-id="1"&gt; 
-        Name: &lt;label&gt; {{ name }} &lt;label&gt;
-        Country: &lt;label&gt; {{ country }} &lt;label&gt;
-    &lt;/div&gt;
-    </code></pre>
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <div e-fill="users" e-id="1"> 
+        Name: <label> {{ name }} </label>
+        Country: <label> {{ country }} </label>
+    </div></textarea>
+    </div>
 
     <h4> <a id="conn_c_req"> e-req </a> </h4>
     <p>
@@ -302,16 +315,17 @@
         request according to the expression provided. The syntax is: <br>
     </p>
 
-    <pre e-ignore><code class="html hljs">
-    &lt;!-- Any request type --&gt;
-    &lt;element 
-    e-req="{
-        $code: String (Optional),
-        $url: String,
-        $type: String,
-        $id: String
-    }"/&gt;
-    </code></pre>
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <!-- Any request type -->
+    <element 
+        e-req="{
+            $code: String (Optional),
+            $url: String,
+            $type: String,
+            $id: String
+        }"/></textarea>
+    </div>
 
     <ul>
         <li> <i class="mark-el">$code</i> &ndash; the unique code of this request, used to get an specific
@@ -325,35 +339,36 @@
             of <i class="note mark-el">read</i>.</li>
     </ul>
 
-    <pre e-ignore><code class="html hljs">
-    &lt;!-- Requesting Many --&gt;
-    &lt;ul&gt;
-        &lt;li e-req="{ 
-            $url: 'users',
-            $code: 'all-users'
-        }"&gt;
-            &lt;label&gt; {{ name }} &lt;label&gt;
-            &lt;label&gt; {{ country }} &lt;label&gt;
-        &lt;/li&gt;
-    &lt;/ul&gt;
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <!-- Requesting Many -->
+    <ul>
+        <li e-req="{ 
+                $url: 'users',
+                $code: 'all-users'
+            }">
+            <label> {{ name }} </label>
+            <label> {{ country }} </label>
+        </li>
+    </ul>
 
-    &lt;!-- Requesting One --&gt;
-    &lt;div e-req="{
-        $type: 'one',
-        $url: 'users', 
-        $id: 1
-    }"&gt; 
-        Name: &lt;label&gt; {{ name }} &lt;label&gt;
-        Country: &lt;label&gt; {{ country }} &lt;label&gt;
-    &lt;/div&gt;
+    <!-- Requesting One -->
+    <div e-req="{
+            $type: 'one',
+            $url: 'users', 
+            $id: 1
+        }"> 
+        Name: <label> {{ name }} </label>
+        Country: <label> {{ country }} </label>
+    </div>
     
-    &lt;script&gt; 
+    <script> 
         var app = new Easy('#app');
         app.request('all-users', function(req){
             console.log(req);
         });
-    &lt;/script&gt;
-    </code></pre>
+    </script></textarea>
+    </div>
 
     <div class="block-note warn">
         <p>
@@ -370,14 +385,15 @@
         <i class="mark-el">e-fill</i> or <i class="mark-el">e-req:'one'</i> creates for the result.
     </p>
 
-    <pre e-ignore><code class="html hljs">
-    &lt;ul&gt;
-        &lt;li e-tmp="users" e-use="user"&gt;
-            &lt;label&gt; {{ user.name }} &lt;label&gt;
-            &lt;label&gt; {{ user.country }} &lt;label&gt;
-        &lt;/li&gt;
-    &lt;/ul&gt;
-    </code></pre>
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <ul>
+        <li e-tmp="users" e-use="user">
+            <label> {{ user.name }} </label>
+            <label> {{ user.country }} </label>
+        </li>
+    </ul></textarea>
+    </div>
 
     <h3> <a id="conn_available"> Available </a> </h3>
     <p>
@@ -404,7 +420,8 @@
             <i class="note mark-el">type</i>, <i class="note mark-el">headers</i>, etc. </li>
     </ul>
 
-    <pre e-ignore><code class="javascript hljs">
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
     // Configuration example
     new EasyConnector('http://localhost:3000/api/', {
         type: 'json',
@@ -412,8 +429,8 @@
             "Accept": "application/json",
             "Content-Type": "application/json"
         }
-    });
-    </code></pre>
+    });</textarea>
+    </div>
 
     <p>
         In the main response return, only actually data need to be returned, if the response come into an object like
@@ -423,15 +440,16 @@
         </span>, we need to access the `data` property and return it like this:
     </p>
 
-    <pre e-ignore><code class="javascript hljs">
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
     ...
     new Promise(function (resolve, reject) {
         ...
         var response = { data: [1,2,3], errors: [], success: true }; 
     
         return resolve($easy.return(true, 'Ok', response.data));
-    });
-    </code></pre>
+    });</textarea>
+    </div>
 
     <div class="block-note info">
         <p>

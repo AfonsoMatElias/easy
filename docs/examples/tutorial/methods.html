@@ -1,0 +1,17 @@
+<div id="app">
+    <p><b>Name:</b> {{ firstName }} {{ lastName }}</p>
+    <p><b>Username:</b> {{ '@' + username }}</p>
+</div>
+
+<script>
+    var app = new Easy('#app', {
+        mounted: function () {
+            // This function Runs before main Compilation
+            this.setData({
+                firstName: 'Afonso',
+                lastName: 'Matumona',
+                username: 'AfonsoMatElias'
+            });
+        }
+    });
+</script>

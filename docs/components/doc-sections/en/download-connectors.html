@@ -10,19 +10,19 @@
     <h3> <a> Locally </a> </h3>
     <p> Use it locally, download the file and import it: </p>
 
-    <p> <a class="button-like" download target="_blank"
-            href="{{ app.connectors.ajax }}"> Download </a></p>
+    <p> <a class="button-like" download target="_blank" href="{{ app.connectors.ajax }}"> Download </a></p>
 
-    <pre><code class="html hljs">
-    &lt;script src="js/easy.ajax.js"&gt;&lt;/script&gt;
-    </code></pre>
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <script src="js/easy.ajax.js"></script></textarea>
+    </div>
 
     <p> Or, use... </p>
-
     <h3> <a> CDN </a> </h3>
-    <pre><code class="html hljs">
-    &lt;script src="{{ app.connectors.ajaxCdn }}"&gt;&lt;/script&gt;
-    </code></pre>
+    <div class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <script src="{{ app.connectors.ajaxCdn }}"></script></textarea>
+    </div>
 
     <br>
     <h2> Add Your Connector Here, <a class="mark-el"
