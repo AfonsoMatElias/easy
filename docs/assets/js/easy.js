@@ -1,5 +1,5 @@
 /**
- * Easy.js @version v2.0.1 Release
+ * Easy.js @version v2.0.2 Release
  * Released under the MIT License.
  * (c) 2019 @author Afonso Matumona
  */
