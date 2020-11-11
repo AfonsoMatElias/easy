@@ -1510,11 +1510,11 @@
                                 else base.style.display = 'none';
                             }
 
-                            getter = function (_, prop) {
+                            getter = function (obj, prop) {
                                 var watch = $easy.watch(prop.property, function () {
                                     verifyShowValue();
                                     if (!base.isConnected) watch.destroy();
-                                });
+                                }, obj);
                             }
 
                             verifyShowValue(); unget();
@@ -1572,7 +1572,7 @@
                                 if ( $attr.name === 'e-else' ) break; // Break on else
                             } while(1);
 
-                            getter = function (_, prop) {
+                            getter = function (obj, prop) {
                                 var watch = $easy.watch(prop.property, function () {
                                     verifyChainCondition();
                                     var  isDestroy = true;
@@ -1582,7 +1582,7 @@
                                     });
 
                                     if (isDestroy) watch.destroy();
-                                });
+                                }, obj);
                             }
                             verifyChainCondition(); unget();
                         }
@@ -2581,7 +2581,7 @@
                 // Creates a comment with some identifier
                 create: function (id, options) {
                     if (!options) options = {};
-                    var comment = doc.createComment('e');
+                    var comment = setEasy(doc.createComment('e'));
                     comment.easy = true;
                     comment.$id = id || $easy.code(8);
                     options.keys(function (key, value) { comment[key] = value; });
@@ -2608,16 +2608,6 @@
             }
             // Objtec for ui commands like: if, for, show...
             this.cmd = {
-                show: function (elem, $data) {
-                    if (isNull($data)) $data = {};
-                    var exp = elem.$e.typeValue;
-                    var res = fn.eval(exp, $data) ? true : false;
-                    if (new String(res).toLowerCase() === 'false') 
-                        elem.style.display = 'none';
-                    else if (new String(res).toLowerCase() === 'true')
-                        elem.style.display = '';
-                    return res;
-                },
                 for: function (obj) {
                     var el = obj.el,
                         array = obj.array,

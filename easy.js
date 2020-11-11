@@ -2581,7 +2581,7 @@
                 // Creates a comment with some identifier
                 create: function (id, options) {
                     if (!options) options = {};
-                    var comment = doc.createComment('e');
+                    var comment = setEasy(doc.createComment('e'));
                     comment.easy = true;
                     comment.$id = id || $easy.code(8);
                     options.keys(function (key, value) { comment[key] = value; });
