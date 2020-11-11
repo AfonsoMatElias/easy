@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function () {
             config: {
                 // '/docs/' -> Use this when local
                 // '/easy/' -> Use to push on github
-                base: '/easy/' 
+                base: '/docs/' 
             },
             elements: {
                 'top': "/components/top",

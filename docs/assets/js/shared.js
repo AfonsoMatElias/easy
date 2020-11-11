@@ -12,7 +12,7 @@ function codeToStr(c) {
     return t.substr(0, t.length - 1);
 }
 
-function createEl(content) {
+function createNotCompilableElement(content) {
     var el = document.createElement('div');
     el.innerHTML = content;
     var $el = el.children[0];
@@ -56,7 +56,7 @@ function appExector(element, noApp) {
                     var $display = $script.nextElementSibling;
 
                     // Creating the element
-                    var $resultExecutableElement = createEl($html.editor.getValue());
+                    var $resultExecutableElement = createNotCompilableElement($html.editor.getValue());
 
                     // Adding to the DOM
                     $display.appendChild($resultExecutableElement);

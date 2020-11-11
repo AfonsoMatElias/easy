@@ -234,15 +234,20 @@
                 splitted.shift();
 
                 tabs = splitted.map(function (inc, index) {
-                    var $content = inc.trim();
-                    var identifier = $content.split('\r\n')[0];
+                    var div = document.createElement('div');
+                    // Making an element from the content
+                    div.innerHTML = inc.trim();
+                    var $el = div.node('[tab-name]');
 
-                    var name = identifier.replace('<!--', '').replace('-->', '').trim();
-                    var $content = $content.replace(identifier, '').trim();
+                    // Getting the tab name
+                    var name = $el.valueIn('tab-name');
+                    // Removing the name in the element
+                    $el.removeAttribute('tab-name');
+
                     return {
                         id: 'comp-' + index,
-                        content: $content,
-                        name: name, 
+                        content: div.innerHTML,
+                        name: name || 'tab' + index, 
                     };
                 });
             }
