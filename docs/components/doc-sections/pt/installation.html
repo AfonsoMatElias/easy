@@ -1,0 +1,62 @@
+<section class="section">
+    <a href="https://github.com/AfonsoMatElias/easy/blob/6a729b7284758c6064eaadb4dc6b23fde4081aaf/docs/components/doc-sections/pt/installation.html"
+        title="Help us improve this documentation on github!" class="edit-content"><span
+            class="fa fa-pencil"></span></a>
+
+    <h1> <a id="installation"> Instalação (Installation) </a> </h1>
+    <p>
+        É facilmente adicionado a um projeto web, assim como as outras bibliotecas e frameworks, e para isso existem
+        duas maneiras.
+    </p>
+
+    <h3> <a id="install_local"> Localmente </a> </h3>
+    <p>
+        Para usar localmente, precisamos baixá-lo e importá-lo.
+    </p>
+
+    <p>
+        <a class="button-like" download href="{{ app.url }}"> Baixar </a>
+    </p>
+
+    <div class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <script src="js/easy.js"></script></textarea>
+    </div>
+
+    <p> Ou, podes usar... </p>
+
+    <h3> <a id="install_cdn"> CDN </a> </h3>
+    <p>
+        Usando <a href="https://www.cloudflare.com/learning/cdn/what-is-a-cdn/" target="_blank" class="mark-a"
+            rel="noopener noreferrer">CDN</a> é um pouco mais simples porque a única coisa que deve ser feita é
+        importá-lo e está feito.
+    </p>
+
+    <div class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <script src="{{ app.cdn }}"></script></textarea>
+    </div>
+
+</section>
+<script>
+    this.mounted = function (el) {
+        appExector(el);
+        scrollByAnchor(el);
+    }
+
+    this.loaded = function (el) {
+        // disabling the anchors
+        if (this.scope.hasOwnProperty('modalName')) {
+            var anchors = el.nodes('a[id]');
+            for (var i = 0; i < anchors.length; i++) {
+                anchors[i].onclick = function (evt) {
+                    return evt.preventDefault();
+                }
+            }
+        }
+    }
+
+    this.export({
+        app: this.Easy.data.app
+    });
+</script>

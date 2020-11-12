@@ -21,9 +21,8 @@
     <p>
         There are two types of components, <span class="note mark-el">Cloned</span> and <span
             class="note-mark-el">Registered</span>, and these two forms can be imported/included
-        in the
-        same way, using the tag <span class="note mark-el">inc</span> or using a <span class="note mark-el">Official DOM
-            element</span> (a container element).
+        in the same way, using the tag <span class="note mark-el">inc</span> or using a <span
+            class="note mark-el">Official DOM element</span> (a container element).
     </p>
 
     <div e-ignore class="code-container" code-ext=".html">
@@ -39,11 +38,10 @@
     <p>
         These are components that is based on a copy of an element during compilation, it is
         like a copy and paste. It can be achived by defining <span class="note mark-el">inc-tmp="<i>nameId</i>"</span>
-        (means include template) to the
-        element that needs to be
-        copied and include it where it needs to pasted, but define <span class="note mark-el">@</span> before the nameId
-        value,
-        it tells <span class="note">Easy</span> that it's Cloned One.
+        (means include template) to the element that needs to be
+        copied and include it where it needs to pasted, but define <span class="note mark-el">@</span> before the
+        `nameId`
+        value, it tells <span class="note">Easy</span> that it's Cloned One.
     </p>
 
     <div e-if="typeof noApp === 'undefined'">
@@ -80,7 +78,7 @@
     <h3> <a id="comp_registered"> Registered</a> </h3>
     <p>
         These are the components that are registered directly in the instance, it can be done
-        when the <span class="note mark-el">Easy Class</span> or using the component manager
+        in <span class="note mark-el">Easy Class</span> or using the component manager
         object in <span class="note mark-el">instance.components</span>.
     </p>
 
@@ -111,7 +109,7 @@
     });
 
     // Adding or Registering new component
-    // This function adds directly the elements property
+    // This function adds directly the `elements` property
     app.components.add({
         'left-side-bar': {
             url: 'left-side-bar.html'
@@ -120,7 +118,7 @@
     </div>
 
     <p>
-        In Easy Options the component object has the following struture:
+        In Easy Options the components object has the following structure:
     </p>
 
     <div e-ignore class="code-container" code-ext=".js">
@@ -163,27 +161,27 @@
 
         <li> <span class="note mark-el">elements</span> &ndash; used to define all the
             components elements. On the left side goes the <i class="note mark-el">nameId</i>,
-            an the right side goes the <span class="mark-el">String componentPath</span>
+            and the right side goes the <span class="mark-el">String componentPath</span>
             (From the server) or the <span class="mark-el">Options Object</span>.</li>
 
         <li> <span class="note mark-el">nameId.url</span> &ndash; represents the component path.
             It uses the <span class="note mark-el">config.base</span> to request the file from
             the server. <span class="note">The extension .html is optional</span>. </li>
 
-        <li> <span class="note mark-el">nameId.template</span> &ndash; represents hardcode html
-            template. <span class="note att-border"> Do not use together with <i class="mark-el">nameId.url</i> </span>
+        <li> <span class="note mark-el">nameId.template</span> &ndash; represents raw html code for
+            template. <span class="note att-border"> Do not use together with <i class="mark-el">nameId.url</i>. </span>
         </li>
 
         <li> <span class="note mark-el">nameId.restrictions</span> &ndash; allow to add check
-            conditions before the component request. It expects an array of functions that retuns
+            conditions before the component request. It expects an array of functions that returns
             a <span class="note mark-el">Boolean</span>, <span class="mark-el">true</span> for
-            checked and <span class="mark-el">false</span> for unchecked. </li>
+            allowed, and <span class="mark-el">false</span> for not allowed. </li>
 
         <li> <span class="note mark-el">nameId.store</span> &ndash; allow to store the component
             when it request in the first time. The default value is <span class="note mark-el">true</span>. </li>
 
-        <li> <span class="note mark-el">nameId.data</span> &ndash; represents data that wll be
-            injected in the component when it loads. </li>
+        <li> <span class="note mark-el">nameId.data</span> &ndash; represents data that will be
+            injected in the component compiling process. </li>
     </ul>
 
     <h3> <a id="comp_handing"></a> Handling Components </h3>
@@ -231,7 +229,7 @@
     <p>
         The style tag here works as expected, by default the styles is global to define it has a
         scope one just add the <i class="note mark-el">scoped</i> attribute. This adds a class
-        like (<i class="note">easy-sAb_c123</i>) to the rules of the style.
+        like <i class="note">easy-sAb_c123</i> to the rules of the style.
     </p>
 
     <div e-ignore class="code-container" code-ext=".html">
@@ -255,14 +253,14 @@
     <p>
         A block element like a div that will be added to de DOM. If it was not defined an error
         will be showing say:
-        <b>The component 'nameId' seems to be empty or it has not a root element eg.:
+        <b>The component 'nameId' seems to be empty or it has not a root element, e.g.:
             <i class="note code">&lt;div&gt;&lt;/div&gt;</i>, to included.</b>
     </p>
 
     <h3> <a id="comp_script"> Scripts </a> </h3>
     <p>
-        A block containing the JavaScript code that runs when the component is created a scrips
-        are imported. The context (<i class="mark-el">this</i>) the component instance.
+        A block containing the JavaScript code that runs when the component is created.
+        The context (<i class="mark-el">this</i>) is the component instance.
     </p>
 
     <p>
@@ -280,48 +278,47 @@
 
     <h3> <a id="comp_life_cycles"> Lifecycles Hooks </a> </h3>
     <p>
-        These are functions that are called at some stages in the component's life, They
+        These are functions that are called at some stages in the component's life, which are:
     </p>
 
     <h4> <a id="comp_life_cycles_created"> Created </a> </h4>
     <p>
-        This is the hook that is called when the component was created. It can be define as
+        This is the hook that is called when the component was created. It can be defined as
         following:
         <i class="note mark-el">this.created = function(element){...}</i>. The component root
-        element is passed as first parameter.
+        element is passed as the first parameter.
     </p>
 
     <h4> <a id="comp_life_cycles_mounted"> Mounted </a> </h4>
     <p>
         This is the hook that is called when the component was mounted or added to the DOM. It
-        can be define as following:
+        can be defined as following:
         <i class="note mark-el">this.mounted = function(element){...}</i>. The component root
-        element is passed as first parameter.
+        element is passed as the first parameter.
     </p>
 
     <h4> <a id="comp_life_cycles_loaded"> Loaded </a> </h4>
     <p>
         This is the hook that is called when the component was loaded or compiled. It can be
-        define as following:
+        defined as following:
         <i class="note mark-el">this.loaded = function(element){...}</i>. The component root
-        element is passed as first parameter.
+        element is passed as the first parameter.
     </p>
 
     <h4> <a id="comp_life_cycles_destroyed"> Destroyed </a>
     </h4>
     <p>
         This is the hook that is called when the component was destroyed or removed from the
-        DOM. It can be define as following:
+        DOM. It can be defined as following:
         <i class="note mark-el">this.destroyed = function(element){...}</i>. The component root
-        element is passed as first parameter.
+        element is passed as the first parameter.
     </p>
 
     <div class="block-note warn">
         <p>
             It is recommended to put any data request (<i class="note">fetch</i>) in
             <i class="note mark-el">created</i> or <i class="note mark-el">mounted</i> hooks,
-            according to speed of the response, the component will be shown with data
-            already.
+            according to speed of the response, the component should be shown with data already.
         </p>
     </div>
 
@@ -377,7 +374,7 @@
     <p>
         An includer can be combined with <i class="note mark-el">data command</i> to pass data
         in the component. This data can be accessed in the property
-        <i class="note mark-el">this.scope</i> inside of the component's script.
+        <i class="note mark-el">this.data</i> inside of the component's script.
     </p>
 
     <div class="block-note info">
@@ -407,12 +404,12 @@
 
     <h3> <a id="comp_on"> Inc with `on` Method </a> </h3>
     <p>
-        There are built-in events for includers that allow us to listen to a diferents states of an includer,
+        There are built-in events for includers that allow us to listen to a differents states of an includer,
         which are:
     </p>
 
     <ul>
-        <li> <span class="note mark-el">incRequested</span> &ndash; this event is dispatched when the DOM requestes
+        <li> <span class="note mark-el">incRequested</span> &ndash; this event is dispatched when the DOM requests
             an includer. </li>
         <li> <span class="note mark-el">incMounted</span> &ndash; this event is dispatched when an includer is
             mounted in the DOM. </li>
@@ -471,14 +468,14 @@
 
     <b> What about multiple contents</b>
     <p>
-        In this we add <i class="note mark-el">ident</i> property in the <i class="note mark-el">content</i> tag, it
+        In this case, we add <i class="note mark-el">ident</i> attribute in the <i class="note mark-el">content</i> tag, it
         makes Easy identify where each content will be placed.
     </p>
 
     <label>DOM</label>
     <div e-ignore class="code-container" code-ext=".html">
         <textarea cm-lang="text/html">
-    <inc src="table" data="{ users: users }" > 
+    <inc src="table" data="{ users: users }"> 
         <content ident="head">
             <label> First Name </label>
             <label> Last Name </label>
@@ -488,7 +485,7 @@
             <div e-for="users">
                 <label> {{ firstName }} </label>
                 <label> {{ lastName }} </label>
-                <label> {{ country}} </label>
+                <label> {{ country }} </label>
             </div>
         </content>
     </inc></textarea>
@@ -511,7 +508,7 @@
 
     <div class="block-note info">
         <p>
-            For live usage, you may keep learning in Tutorial Page. <a i:href="/tutorial/components"
+            For live usage, you may keep learning in Tutorial Page. <a i:href="/tutorial/comps_incs"
                 class="mark-el">Take me
                 there</a>!
         </p>
@@ -547,7 +544,7 @@
                 <span class="close-modal"> x </span>
             </div>
             <div class="body">
-                <content ident="body"></content>
+                <content></content>
             </div>
         </div>
     </div></textarea>

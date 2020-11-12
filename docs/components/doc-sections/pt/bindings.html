@@ -1,5 +1,5 @@
 <section class="section">
-    <a href="https://github.com/AfonsoMatElias/easy/blob/6a729b7284758c6064eaadb4dc6b23fde4081aaf/docs/components/doc-sections/en/bindings.html"
+    <a href="https://github.com/AfonsoMatElias/easy/blob/6a729b7284758c6064eaadb4dc6b23fde4081aaf/docs/components/doc-sections/pt/bindings.html"
         title="Help us improve this documentation on github!" class="edit-content"><span
             class="fa fa-pencil"></span></a>
 
@@ -7,8 +7,8 @@
 
     <h3> <a id="bind_one_way"> One Way </a> </h3>
     <p>
-        We can achieve One Way Data Binding simply by defining the delimiter in the space or
-        attribute we need the value to be.
+        Podemos alcançar o vinculação de dados unilateral (One Way) simplesmente definindo o delimitador no espaço ou
+        atributo que precisamos que o valor esteja.
     </p>
 
     <div e-if="typeof noApp === 'undefined'">
@@ -17,8 +17,8 @@
             <div execute class="code-container" code-ext=".html">
                 <textarea cm-lang="text/html">
     <div id="app3">
-        <input type="text" value="{{ value }}" />
-        <h4> {{ value }} </h4>
+        <input type="text" value="{{ valor }}" />
+        <h4> {{ valor }} </h4>
     </div></textarea>
             </div>
 
@@ -26,12 +26,12 @@
                 <textarea cm-lang="javascript">
     var app3 = new Easy('#app3', {
         data: {
-            value: 'Type something!'
+            valor: 'Digite alguma coisa!'
         },
         loaded: function(el) {
             var self = this;
             el.node('input').onkeyup = function(evt) {
-                self.data.value = evt.target.value;
+                self.data.valor = evt.target.value;
             }
         }
     });
@@ -44,28 +44,26 @@
 
 
     <p e-ignore>
-        If we don't want to do it this way, exposing the delimiter in the actual element attribute, we can still use
-        the command <span class="note mark-el">e-<i>attribute</i>="{{ expression }}"</span>,
-        it creates the attribute after being compiled. This commands is very versatile,
-        we will go into details about it in the <a href="docs.html?load=sctn2#cmd_e" class="note mark-el">commands</a>
-        section.
+        Se não quisermos fazer deste jeito, espondo o delimitador no atributo do elemento, ainda podemos usar um
+        comando <span class="note mark-el">e-<i>atributo</i>="{{ expressão }}"</span>, vai criar o atributo depois do
+        elemento ser compilado. É um comando muito versátil, entraremos em detalhes na secção de <a
+            href="docs.html?load=sctn2#cmd_e" class="note mark-el">Comandos (commands)</a>.
     </p>
 
     <div e-ignore class="code-container" code-ext=".html">
         <textarea cm-lang="text/html">
     <div id="app">
-        <input type="text" e-value="{{ value }}" />
-        <h4> {{ value }} </h4>
+        <input type="text" e-value="{{ valor }}" />
+        <h4> {{ valor }} </h4>
     </div></textarea>
     </div>
 
     <h3> <a id="bind_two_way"> Two Way </a> </h3>
-    <p>        
-        We can achieve Two Way Data Binding using the command <span
-            class="note mark-el">e-bind:<i>attribute</i>="scopeProperty"</span>,
-        by default it binds <span class="note">value</span> attribute, it means that if we want
-        to bind the property value of an input we can define like this
-        <span class="note mark-el">e-bind="scopeProperty"</span>.
+    <p>
+        Podemos alcançar a vinculação de dados bidirecional usando o comando <span
+            class="note mark-el">e-bind:<i>atributo</i>="propriedadeDoEscopo"</span>, por padrão ele vincula ao attributo
+        <span class="note">value</span>, isto significa que se quisermos vincular ao atributo `value` não podemos fazer
+        simplesmente deste jeito <span class="note mark-el">e-bind="propriedadeDoEscopo"</span>.
     </p>
 
     <div e-if="typeof noApp === 'undefined'">
@@ -74,9 +72,9 @@
             <div execute class="code-container" code-ext=".html">
                 <textarea cm-lang="text/html">
     <div id="app4">
-        <input type="text" e-bind:value="value" /> <br>
-        <input type="text" e-bind="value" />
-        <h4> {{ value }} </h4>
+        <input type="text" e-bind:value="valor" /> <br>
+        <input type="text" e-bind="valor" />
+        <h4> {{ valor }} </h4>
     </div></textarea>
             </div>
 
@@ -84,7 +82,7 @@
                 <textarea cm-lang="javascript">
     var app4 = new Easy('#app4', {
         data: {
-            value: 'Type something!'
+            valor: 'Digite alguma coisa!'
         }
     });</textarea>
             </div>

@@ -72,7 +72,7 @@ i {
     --color-disable: #efefef;
     --color-soft-transparency: #f0f0f08a;
     --color-popup: #fafafa;
-    --color-row: #f6f6f6;
+    --color-row: #f3f3f3;
 
     --color-editor-screen: #f6f6f6;
     --color-editor-caret: #343842;
@@ -247,6 +247,39 @@ nav ul>li>span {
     color: var(--color-text);
 }
 
+nav ul>li {
+    position: relative;
+}
+
+nav ul>li .wrapper {
+    position: absolute;
+    background-color: var(--color-bg);
+    box-shadow: var(--set-shadow);
+    border-radius: 5px;
+    padding: 6px;
+    color: var(--color-text);
+    top: 26px;
+    z-index: 5;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+nav ul>li .wrapper .item {
+    display: flex;
+    padding: 6px;
+    margin: 3px;
+    border-radius: 4px;
+    transition: background-color .4s;
+}
+
+nav ul>li .wrapper .item:hover {
+    background-color: var(--color-row);
+}
+
+nav ul>li .wrapper .item .ident {
+    width: 35px;
+}
+
 nav .logo {
     position: relative;
     left: 10px;
@@ -381,7 +414,7 @@ a.active-doc-menu, a.active-doc-menu * {
 .card {
     color: var(--color-text);
     width: 320px;
-    height: 180px;
+    height: 200px;
     margin: 10px 20px;
     border-radius: 4px;
     overflow: hidden;

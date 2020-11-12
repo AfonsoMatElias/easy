@@ -1,0 +1,254 @@
+<section class="section">
+    <a href="https://github.com/AfonsoMatElias/easy/blob/6a729b7284758c6064eaadb4dc6b23fde4081aaf/docs/components/doc-sections/pt/events.html"
+        title="Help us improve this documentation on github!" class="edit-content"><span
+            class="fa fa-pencil"></span></a>
+
+    <h1> <a id="events"> Eventos (Events) </a> </h1>
+    <p>
+        Podemos usar <span class="note mark-el">on:</span> para ouvir eventos DOM e executar algum código javascript
+        quando ele for emitido. Em alguns exemplos acima, usamos o evento click, então imaginamos que você deve estar um
+        pouco familiarizado com ele.
+    </p>
+
+    <p>
+        Easy events podem ser classificados em 3 tipos, que são: <span class="note">Padrão</span> DOM, <span
+            class="note">Easy</span> e Eventos <span class="note">Customizado</span>. Para todos eles, eles são
+        definidos como se segue: <span class="note mark-el">on:<i>nomeevento</i>="função/expressão"</span>.
+    </p>
+
+    <p>
+        Quando os eventos Standard e Easy são emitidos, o objeto de evento pode ser acessado na variável
+        <span class="note">event</span>. Isto contem a propriedade <span class="note mark-el">base</span>,
+        que é passado o elemento associado ao evento, e a propriedade <span class="note">$data</span>, tendo o objecto o
+        objecto do escopo actual, ela está dividido em: <span class="note">
+            { model:{ <i class="mark-el">No caso de e-for</i> },
+            scope: { <i class="mark-el"> O escopo do elemento acima (parent)</i> } }</span>
+    </p>
+
+    <h3> <a id="events_standard"> Standard</a> </h3>
+    <p>
+        Estes são os objecto padrão do DOM, como onclick, ondblclick, onkeyup, etc.
+    </p>
+
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app21">        
+        <button on:click="count++"> 
+            Clicado {{ count }} {{ count > 1 ? 'vezes' : 'vez' }}
+        </button>
+
+        <button on:click="resetCounter()" e-toggle:disabled="!count" > 
+            {{ count === 0 ? 'Configurado ' :  'Clique para reconfigurar' }}
+        </button>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
+    var app21 = new Easy('#app21', {
+        data: {
+            /* Variáveis */
+            count: 0,
+
+            /* Métodos */
+            resetCounter: function() {
+                this.data.count = 0;
+            }
+        }
+    });</textarea>
+            </div>
+            <!-- End -->
+
+            <div class="result"></div>
+        </div>
+    </div>
+
+    <h3> <a id="events_easy"> Easy </a> </h3>
+    <p>
+
+        São eventos internos do Easy, dos quais podemos citar:
+    </p>
+
+    <ul>
+        <li> <span class="note mark-el">compiled</span> &ndash; este evento é despachado quando um elemento que contém o
+            evento é totalmente compilado. </li>
+        <li> <span class="note mark-el">data</span> &ndash; este evento é despachado quando um elemento contendo o
+            comando de dados é compilado. </li>
+        <li> <span class="note mark-el">add</span> &ndash; este evento é emitido quando um elemento do comando e-for é
+            inserido no DOM. Funciona com <a href="docs.connectors.html" class="note mark-el">connectors</a> e com
+            `e-for`.
+        </li>
+        <li> <span class="note mark-el">empty</span> &ndash; este evento é emitido quando o array passado no comando
+            e-for está vazio. Funciona com <a href="docs.connectors.html" class="note mark-el">connectors</a> e com
+            `e-for`. </li>
+        </li>
+        <li> <span class="note mark-el">response</span> &ndash; este evento é emitido quando obtemos alguma resposta a
+            uma requisição feita usando um <a href="docs.connectors.html" class="note mark-el">connector</a>.
+        </li>
+        <li> <span class="note mark-el">fail</span> &ndash; este evento é emitido quando uma solicitação feita usando
+            um<a href="docs.connectors.html" class="note mark-el">connector</a> fails. </li>
+    </ul>
+
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app22">
+        <ul> 
+            <li e-for="comida of comidas" on:add="addEmoji"> 
+                {{ comida.nome }} 
+            </li>
+        </ul>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
+    var app22 = new Easy('#app22', {
+        data: {
+            /* Variables */
+            comidas: [ { nome: 'Arroz' }, { nome: 'Carne' } ],
+            
+            /* Methods */
+            addEmoji: function(evt){
+                switch(evt.$data.model.comida.name) {
+                    case 'Arroz':
+                        evt.target.innerHTML += ' 🍚';
+                        break;
+                    case 'Carne':
+                        evt.target.innerHTML += ' 🥩';
+                        break;
+                }
+            }
+        }
+    });</textarea>
+            </div>
+            <!-- End -->
+
+            <div class="result"></div>
+        </div>
+    </div>
+
+    <h3> <a id="events_custom"> Custom </a> </h3>
+    <p>
+        Estes são os eventos que podemos definir livremente os nomes de acordo com o nosso gosto.
+        <span class="note att-border">Não use nomes reservados</span>, que são nomes de eventos mencionados acima. Para
+        emitir esses eventos, usamos o método <span class="note mark-el">this.emit(nomeEvento, algumaDado)</span>.
+    </p>
+
+    <p>
+        O callback deste evento tem como o <span class="mark-el">primeiro argumento</span> os dados são emitidos e como
+        o <span class="mark-el">secondo argumento</span> o elemento associando ao evento.
+    </p>
+
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app23">
+        <input on:keyup="emitirEvento(event.target.value)" 
+                type="text" placeholder="Digite para alterar!" />
+
+        <p on:mudartexto="mudarTextCallback"> Digite alguma coisa no input! </p>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
+    var app23 = new Easy('#app23', {
+        data: {
+            emitirEvento: function(valor){
+                this.emit('mudartexto', valor);
+            },
+            mudarTextCallback: function(text, target){
+                target.innerText = text; 
+            }
+        }
+    });</textarea>
+            </div>
+            <!-- End -->
+
+            <div class="result"></div>
+        </div>
+    </div>
+
+    <div class="block-note warn">
+        <p>
+            Pule esta explicação se você entendeu o exemplo acima, porque pode ser entediante!
+        </p>
+    </div>
+
+    <p>
+        Vamos explicar o que está acontecendo neste exemplo: <br> Sempre que uma tecla é pressionada dentro da entrada,
+        isso irá chamar a função <span class="note">emitirEvento</span> passando o valor do input onde chama o
+        método<span class="note">this.emit(...)</span> passando o <span class="note">valor</span> na emissão, isso chama
+        a função <span class="note">mudarTextCallback</span> que altera o texto de destino para o valor emitido.
+    </p>
+
+    <div class="block-note warn">
+        <p>
+            Lembre-se sempre de escrever os nomes dos eventos em letras minúsculas.
+        </p>
+    </div>
+
+    <h3> <a id="events_modifiers"> Modifiers </a> </h3>
+    <p>
+        Para adicionar modificadores aos eventos, use <span class="note mark-el">.</span> (ponto) depois do nomeEvento.
+        A sintaxe é <span class="note mark-el">on:nomeEvento.modificador1.modificador2="expressão"</span>
+    </p>
+
+    <p>
+        Os seguintes modificadores estão disponíveis:
+    </p>
+
+    <ul>
+        <li> <span class="note mark-el">preventDefault</span> &ndash; chama <span
+                class="note">event.preventDefault()</span> antes de corer o evento. </li>
+        <li> <span class="note mark-el">stoPropagation</span> &ndash; chama <span
+                class="note">event.stopPropagation()</span>, evitando que o evento chegue ao próximo elemento. </li>
+        <li> <span class="note mark-el">once</span> &ndash; remove o evento após a primeira vez que ele é executado. </li>
+    </ul>
+
+    <p>
+        Os modificadores podem ser encadeados, exemplo:
+        <span class="note mark-el">on:click.stopPropagation.once="facaAlgumaCoisa"</span>
+    </p>
+
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app24">        
+        <button on:click.once="count++"> 
+            Clicado {{ count }}
+        </button>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
+    var app24 = new Easy('#app24', {
+        data: {
+            count: 0
+        }
+    });</textarea>
+            </div>
+            <!-- End -->
+
+            <div class="result"></div>
+        </div>
+    </div>
+
+</section>
+<script>
+    this.mounted = function (el) {
+        appExector(el);
+        scrollByAnchor(el);
+    }
+</script>

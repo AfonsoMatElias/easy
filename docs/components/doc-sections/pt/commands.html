@@ -1,0 +1,846 @@
+<section class="section">
+    <a href="https://github.com/AfonsoMatElias/easy/blob/6a729b7284758c6064eaadb4dc6b23fde4081aaf/docs/components/doc-sections/pt/commands.html"
+        title="Help us improve this documentation on github!" class="edit-content"><span
+            class="fa fa-pencil"></span></a>
+
+    <h1> <a id="commands"> Comandos (Commands) </a> </h1>
+    <p>
+        O Easy possui alguns comandos que são usados como atributos em elementos, cada um tem sua peculiaridade e forma
+        de usá-lo, vamos explicar cada passo à passo como e onde pode ser usado.
+    </p>
+
+    <h3> <a id="cmd_data"> data </a> </h3>
+    <p>
+        Permite criar um escopo para um determinado elemento, a sintaxe é <span
+            class="note mark-el">data="{...}"</span>, se for definido sem conteudo o elemento terá o escopo principal,
+        instance.data.
+    </p>
+
+    <p>
+        Sempre que um escopo é criado, uma propriedade <i class="mark-el">$scope</i> é adicionada ao novo escopo,
+        fazendo com que o escopo acima possa sem acessado a partir do novo escopo. Esperamos que isso não o confunda 😅!
+    </p>
+
+    <p>
+        Se definirmos um <a href="https://www.dyn-web.com/tutorials/object-literal/" class="mark-el">Object Literal</a>,
+        saiba que estas propriedades são temporarias e por padrão elas <span class="note warn-border"> não são
+            reactivas</span>,
+        a não ser que um objecto com propriedades já reactivas é passado ou se passarmos no método <span
+            class="note">this.reactive(...)</span>, espera uma função retornando um objecto, e retorna o objecto
+        reactivo.
+    </p>
+
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app5">
+        <div>
+            <h4> {{ valor }} </h4>
+        </div>
+
+        <div data="scope1">
+            <h4> {{ valor }} </h4>
+        </div>
+
+        <div data="scope2">
+            <h4> {{ valor }} </h4>
+
+            <div data>
+                <h4> Estou no elemento com escopo 2 element, mas, {{ valor }}  </h4>
+            </div>
+        </div>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
+    var app5 = new Easy('#app5', {
+        data: {
+            valor: 'Este é o valor do escopo principal 🙂',
+            scope1: {
+                valor: 'Este é o valor do primeiro escopo'
+            },
+            scope2: {
+                valor: 'Este é o valor do segundo escopo'
+            }
+        }
+    });</textarea>
+            </div>
+
+            <div class="result"></div>
+        </div>
+    </div>
+
+    <p e-if="typeof noApp === 'undefined'">
+        Agora vamos ver como criar um escopo com propriedades reativas, usando a função reativa.
+    </p>
+
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app6">
+        <div data="this.reactive(function(){
+            return { nome: pessoa.nome, pais: 'Angola' }
+        })">
+
+            <h4> {{ nome }} </h4>
+            <h4> {{ pais }} </h4>
+
+            <br><i> Vamos provar que elas são reactivas </i> <br>
+            
+            <input type="text" e-bind="nome" />
+            <input type="text" e-bind="pais" />
+
+        </div>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
+    var app6 = new Easy('#app6', {
+        data: {
+            pessoa: {
+                nome: 'Afonso Matumona'
+            }
+        }
+    });</textarea>
+            </div>
+            <!-- End -->
+
+            <div class="result"></div>
+        </div>
+    </div>
+
+    <h3> <a id="cmd_wait_data"> wait-data </a> </h3>
+    <p>
+        Permite que o elemento seja ignorado na compilação, esperando que os seus dados sejam forneceidos. É definido
+        como se segue: <span class="note mark-el">wait-data="dataID"</span>. Para fornecer os dados, usamos a
+        método:<span class="note mark-el">instance.expose('dataId', {...})</span>.
+    </p>
+
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app7">
+        <button on:click="carregar" > Carregar Restante </button>
+        
+        <h4>
+            {{ mensagem }}! <span wait-data="esperePorMim"> {{ mensagem }} </span>
+        </h4>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
+    var app7 = new Easy('#app7', {
+        data: {
+            /* Variáveis */
+            mensagem: 'Olá',
+
+            /* Métodos */
+            carregar: function(){
+                this.expose('esperePorMim', { mensagem: 'Como estás? 😀' });
+            }
+        }
+    });</textarea>
+            </div>
+            <!-- End -->
+
+            <div class="result"></div>
+        </div>
+    </div>
+
+    <div class="block-note info">
+        <p>
+            O dado no passado método expose para o wait-data, automaticamente se tornam reactivos, então não é
+            necessário usar o método <span class="note mark-el">reactive</span> neste comando.
+        </p>
+    </div>
+
+    <p>
+        Não sabemos você, mas para nós o resultado do exemplo acima um pouco feio com os delimitadores a vista,
+        felizmente temos o <span class="note">e-content</span>.
+    </p>
+
+    <h3> <a id="cmd_e_content"> e-content </a> </h3>
+    <p>
+        É uma forma de definir o que vai ser posto no container depois do elemento ter sido compilado.
+    </p>
+
+    <p e-show="typeof noApp === 'undefined'">
+        Vamos refazer o exemplo.
+    </p>
+
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app8">
+        <button on:click="carregar" > Carregar Restante </button>
+        
+        <div>
+            <h4> {{ mensagem }}! </h4>
+            <h4 wait-data="esperePorMim" e-content="{{ mensagem }}"> ... </h4>
+        </div>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
+    var app8 = new Easy('#app8', {
+        data: {
+            /* Variáveis */
+            mensagem: 'Olá',
+
+            /* Métodos */
+            carregar: function(){
+                this.expose('esperePorMim', { mensagem: 'Como estás? 😀' });
+            }
+        }
+    });</textarea>
+            </div>
+            <!-- End -->
+
+            <div class="result"></div>
+        </div>
+    </div>
+
+    <p>
+        Esta forma parece muito melhor, mas ainda podemos melhorá-lo, vamos combinar com um skeleton.
+    </p>
+
+    <h3> <a id="cmd_e_skeleton"> e-skeleton </a> </h3>
+    <p>
+        É uma forma de mostrar que a informação de uma área específica está sendo carregada, é usado em muitas
+        aplicações atuais.
+    </p>
+
+    <div class="block-note info">
+        <p>
+            Por favor não nos julgem pelo exemplo, ele pode não ter muito sentido, mas é apenas para mostrar como ele
+            funciona 😀.
+        </p>
+    </div>
+
+    <p e-if="typeof noApp === 'undefined'">
+        Vamos refazer o exemplo, novamente.
+    </p>
+
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app9">
+        <button on:click="load" > Carregar Restante </button>
+        
+        <div>
+            <h4> 
+                {{ mensagem }}! <span wait-data="esperePorMim" e-skeleton>{{ mensagem }}</span>
+            </h4>
+        </div>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
+    var app9 = new Easy('#app9', {
+        data: {
+            /* Variables */
+            mensagem: 'Olá',
+
+            /* Methods */
+            load: function(){
+                this.expose('esperePorMim', { mensagem: 'Como estás? 😀' });
+            }
+        }
+    });</textarea>
+            </div>
+            <!-- End -->
+
+            <div class="result"></div>
+        </div>
+    </div>
+
+    <p>
+        Quando o <span class="mark-el">e-skeleton</span> é definido em um elemento, ele assume a forma do mesmo
+        elemento, significando que o elemento deve ter um width e height definido (ou qualquer coisa que lhe dê uma
+        forma). E por padrão a cor do fundo é cinza claro e a onda é mais clara.
+    </p>
+
+    <p>
+        Há duas formas de usá-lo, <span class="note mark-el">e-skeleton</span> e <span
+            class="note mark-el">e-skeleton="algumId"</span>. Sem um identificador, o skeleton é removido depois do
+        elemento ter sido compilado. Com um identificador, o(s) skeleton(s) devem ser removidos manualmente usando o
+        método de extensão <span class="note">element.clearSkeleton(id)</span> ou remover simplesmente o atributo
+        `e-skeleton` do elemento.
+    </p>
+
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app10">
+        <h4 e-skeleton="skeleton1"> {{ mensagem }}! </h4>
+        
+        <button on:click="removerSkeleton">Remover Skeleton</button>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
+    var app10 = new Easy('#app10', {
+        data: {
+            /* Variáveis */
+            mensagem: 'Olá',
+
+            /* Métodos */
+            removerSkeleton: function(){
+                this.el.clearSkeleton('skeleton1');
+            }
+        }
+    });</textarea>
+            </div>
+            <!-- End -->
+
+            <div class="result"></div>
+        </div>
+    </div>
+
+    <h3> <a id="cmd_e_def"> e-def </a> </h3>
+    <p>
+        É forma curta do nome <span class="note">e-definer</span>, permite definir propridades (Reactivas) dinamicamente
+        no escopo presente. A sintaxe é <span class="note mark-el">e-def="{...}"</span>, ele espera um <a
+            href="https://www.dyn-web.com/tutorials/object-literal/" class="mark-el">Object
+            Literal</a>.
+    </p>
+
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app11">        
+        <div e-def="{ minhaProp: 'Eu fui criado dinamicamente' }"> 
+            {{ minhaProp }}! 
+        </div>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
+    var app11 = new Easy('#app11', {
+        data: {}
+    });</textarea>
+            </div>
+            <!-- End -->
+
+            <div class="result"></div>
+        </div>
+    </div>
+
+    <div class="block-note warn">
+        <p>
+            A ordem de definição é muito importante, o `e-def` deve ser definido sempre acima dos elementos que usaram
+            as propriedades definidas.
+        </p>
+    </div>
+
+    <h3> <a id="cmd_e_if"> e-if </a> </h3>
+    <p>
+        O <span class="note">e-if</span>, é um comando muito similar a directiva <span class="note">v-if</span> do <span
+            class="mark-el">Vue.js</span>... É usado renderizar um bloco (elemento). O bloco será apenas mostrado se o
+        valor da condição retornar um valor verdadeiro. Ele é acompanhado com os comandos `e-else-if` e `e-else`.
+    </p>
+
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app12">
+        <input type="number" e-bind="binario" /> <br> 
+        
+        <p e-if="binario == 1"> 
+            {{ binario }} é ligado 🙂
+        </p>
+        <p e-else-if="binario == 0"> 
+            {{ binario }} é desligado 🙁
+        </p>
+        <p e-else> 
+            {{ binario }} não é binário 🤨
+        </p>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
+    var app12 = new Easy('#app12', {
+        data: {
+            binario: 1
+        }
+    });</textarea>
+            </div>
+            <!-- End -->
+
+            <div class="result"></div>
+        </div>
+    </div>
+
+    <h3> <a id="cmd_e_show"> e-show </a> </h3>
+    <p>
+        O <span class="note">e-show</span>, é um comando muito similar a directiva <span class="note">v-show</span> do
+        <span class="mark-el">Vue.js</span>... É usado para mostrar um bloco condicionalemente, ele alterna a
+        propriedade <span class="note mark-el">display</span>. O bloco se torna visível se a expressão no comando é um
+        valor verdadeiro.
+    </p>
+
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app13">
+        <button on:click="mostrar = !mostrar"> Alternar {{ show ? '🙉' : '🙈' }} </button>
+
+        <div e-show="mostrar"> 
+            <p> Quer me esconder? Clique em `Alternar`.</p>
+        </div>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
+    var app13 = new Easy('#app13', {
+        data: {
+            mostrar: true
+        }
+    });</textarea>
+            </div>
+            <!-- End -->
+
+            <div class="result"></div>
+        </div>
+    </div>
+
+    <h3> <a id="cmd_e_for"> e-for </a> </h3>
+    <p>
+        O <span class="note">e-for</span>, é um comando muito similar a directiva <span class="note">v-for</span> do
+        <span class="mark-el">Vue.js</span>... É usado para renderizar uma lista de items baseado em um array. Pode ser
+        usado de duas formas, com uma variavel declarada ou não.
+    </p>
+
+    <p>
+        Há duas sintaxes para isso, a <b>forma curta</b> <span class="note mark-el">e-for="meuArray"</span>
+        normalmente usado quando é um array de `object literal`, e a <b>forma completa</b>
+        <span class="note mark-el">e-for="item of/in meuArray"</span> é obrigatório quando é um array de `primitivas` e
+        opcional quando são `object literal`.
+    </p>
+
+    <p>
+        Há uma grande diferença nas formas de usá-lo... Usando a <b>forma curta</b> um escopo é criado no bloco de cada
+        item do `e-for`, significando que para ter acesso ao escope acima deve ser usado a propridade <i
+            class="mark-el">$scope</i>, usando a <b>forma completa</b> nenhum escopo é criado.
+    </p>
+
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app14">
+        <h4> Primitivas</h4>
+        <ul> 
+            <li e-for="fruta of frutas" > {{ fruta }} </li>
+        </ul>
+        
+        <h4> Objectos</h4>
+        <ul> 
+            <li e-for="comidas" > {{ nome }} </li>
+        </ul>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
+    var app14 = new Easy('#app14', {
+        data: {
+            frutas: [ 'Bananas', 'Manga' ],
+            comidas: [ { nome: 'Arroz' }, { nome: 'Feijão' } ],
+        }
+    });</textarea>
+            </div>
+            <!-- End -->
+
+            <div class="result"></div>
+        </div>
+    </div>
+
+    <p>
+        Na expressão do <i class="mark-el">e-for</i>, duas variáveis podem ser definidas, o <i class="mark-el">item</i>
+        e o <i class="mark-el">índice</i> do item, usando `rerenderOnArrayChange: <i class="mark-el">false</i>`
+        sempre que o array sofrer alterações, como por exemplo: `array.shift()` o índice não será actualizado porque não
+        existe um vinculo físico entre o <i class="mark-el">índice</i> e o <i class="mark-el">item</i> do array.
+        Mas, usando `rerenderOnArrayChange: <i class="mark-el">true</i>`, sempre que o array sofrer alterações, todos os
+        itens serão renderizados novamente na UI, significando que os índices também serão actualizados.
+    </p>
+
+    <h4> <a id="cmd_e_for_filter"> Usando filtro no Array (Filter) </a> </h4>
+    <p>
+        O filtro do array do Easy é uma forma de filtrar dados enquanto está sendo renderizado. Para adicionar o filtro,
+        usamos <span class="note mark-el">|</span> depois da expressão do <a class="note mark-el">e-for</a>. <span
+            class="note mark-el">item of itens | expressaoDeFiltro</span>. Há quatro (4) formas de usar o filtro, que
+        são:
+    </p>
+
+    <h4> <a id="cmd_e_for_filter_g_filter"> 1. Filtro Global (Global Filter)
+        </a> </h4>
+    <p>
+        Executa o filtro em todas as propriedades dos itens que contêm o valor da propriedade configurada.
+    </p>
+
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app15">
+        <input type="text" 
+                e-def="{ pesquisar: '' }" 
+                e-bind="pesquisar" 
+                placeholder="Pesquise por comida" />
+        
+        <ul> 
+            <li e-for="comida of comidas | pesquisar"> 
+                {{ comida.nome }} 
+            </li>
+        </ul>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
+    var app15 = new Easy('#app15', {
+        data: {
+            comidas: [ { nome: 'Arroz' }, { nome: 'Feijão' } ],
+        }
+    });</textarea>
+            </div>
+            <!-- End -->
+
+            <div class="result"></div>
+        </div>
+    </div>
+
+    <h4> <a id="cmd_e_for_filter_tg_filter"> 2. Filtro Específico(Targeted filter) </a> </h4>
+    <p>
+        Executa o filtro em propriedades específicas itens que que contêm o valor da propriedade configurada.
+        O filtro deve ser definido como se segue: <span class="note mark-el">|
+            dataProperty:prop1,prop2...</span>
+    </p>
+
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app16">
+        <input type="text" 
+                e-def="{ pesquisar: '' }" 
+                e-bind="pesquisar" 
+                placeholder="Pesquise por comida" />
+        
+        <ul> 
+            <li e-for="comida of comidas | pesquisar:nome,preco"> 
+                {{ comida.nome }}, {{ comida.preco }} 💰 
+            </li>
+        </ul>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
+    var app16 = new Easy('#app16', {
+        data: {
+            comidas: [ { nome: 'Rice', preco: 10 }, { nome: 'Beans', preco: 15 } ]
+        }
+    });</textarea>
+            </div>
+            <!-- End -->
+
+            <div class="result"></div>
+        </div>
+    </div>
+
+    <h4> <a id="cmd_e_for_filter_d_filter"> 3. Fitro Direcionado (Direct filter)
+        </a> </h4>
+    <p>
+        Executa o filtro em uma propridade específica itens que com o valor configurado. O filtro deve ser definido como
+        se segue: <br>
+        <span class="note mark-el">| :prop1 === algumValor</span>
+    </p>
+
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app17">
+        <ul> 
+            <li e-for="comida of comidas | :preco >= 15"> 
+                {{ comida.nome }}, {{ comida.preco }} 💰 
+            </li>
+        </ul>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
+    var app17 = new Easy('#app17', {
+        data: {
+            comidas: [ 
+                { nome: 'Arroz', preco: 10 }, 
+                { nome: 'Feijão', preco: 15 }, 
+                { nome: 'Carne', preco: 20 }
+            ]
+        }
+    });</textarea>
+            </div>
+            <!-- End -->
+
+            <div class="result"></div>
+        </div>
+    </div>
+
+    <h4> <a id="cmd_e_for_filter_f_filter"> 4. Fitro Baseado a Função (Function filter) </a> </h4>
+    <p>
+        Executa o filtro dos itens baseado em uma função. O contexto (<span class="mark-el">this</span>)
+        da função é a instância do Easy. O array é o primeiro argumento da função. Ela espera um array como retorno.
+        O filtro dever ser definido como se segue: <br>
+        <span class="note mark-el">| :minhaFuncao</span>
+    </p>
+
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app18">
+        <ul> 
+            <li e-for="comida of comidas | foodFilter"> 
+                {{ comida.nome }}, {{ comida.preco }} 💰 
+            </li>
+        </ul>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
+    var app18 = new Easy('#app18', {
+        data: {
+            /* Variáveis */
+            comidas: [ 
+                { nome: 'Arroz', preco: 10 }, 
+                { nome: 'Feijão', preco: 15 }, 
+                { nome: 'Carne', preco: 20 }
+            ],
+            
+            /* Metodos */
+            foodFilter: function(array){
+                return array.filter(function(item){
+                    return item.preco <= 15;
+                })
+            }
+        }
+    });</textarea>
+            </div>
+            <!-- End -->
+
+            <div class="result"></div>
+        </div>
+    </div>
+
+    <h3> Detecção de mudança do Array </h3>
+    <p>
+        Easy liga com os principais métodos de um array, tornando-os reativos, os métodos são:
+    </p>
+
+    <ul>
+        <li> <span class="note mark-el"> push() </span> </li>
+        <li> <span class="note mark-el"> pop() </span> </li>
+        <li> <span class="note mark-el"> unshift() </span> </li>
+        <li> <span class="note mark-el"> shift() </span> </li>
+        <li> <span class="note mark-el"> splice() </span> </li>
+    </ul>
+
+    <div class="block-note info">
+        <p>
+            Se usarmos algum método que altere o array mesmo que não esteja na lista acima, o UI também será atualizada.
+        </p>
+    </div>
+
+    <div class="block-note dont">
+        <p>
+            O Easy não consegue detectar mudanças quando modificamos o comprimento do array. exemplo: <span
+                class="note att-border"> array.length = novoLength </span>. Não terá efeitos na UI.
+        </p>
+    </div>
+
+    <h3> <a id="cmd_e_order"> e-order </a> </h3>
+    <p>
+        Ordena uma lista de acordo com a condição passada na expressão do comando. Sua sintaxe é
+        <span class="note mark-el">e-order="<i>TipoOrdem</i>:<i>PropParaOrdenar</i>"</span>.
+        Os tipos de ordem são: <span class="note mark-el">asc</span>, para ascendente e <span
+            class="note mark-el">des</span>, para descendente.
+    </p>
+
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <ul> 
+        <li e-for="comida of comidas" e-order="asc:nome"> 
+            {{ comida.nome }}, {{ comida.preco }} 💰 
+        </li>
+    </ul></textarea>
+    </div>
+
+    <div class="block-note info">
+        <p e-ignore>
+
+            O comando aceita delimitadores, isso significa que pode ser definido assim,
+            exemplo: <span class="note mark-el">e-order="{{tipoOrdem}}:{{ordenarPor}}"</span>
+        </p>
+    </div>
+
+    <h3> <a id="cmd_e_anm"> e-anm </a> </h3>
+    <p>
+        É uma forma simples de animar a inserção de um elemento no DOM. Sua sintaxe é
+        <span class="note mark-el">e-anm="<i>direção</i>"</span>.
+    </p>
+
+    <ul>
+        <li> <span class="note mark-el">up</span> &ndash; executa a animação de baixo para cima, ascendendo e aumentando
+            gradualmente a opacidade. </li>
+        <li> <span class="note mark-el">down</span> &ndash; executa a animação de cima para baixo, descendo e aumentando
+            gradualmente a opacidade.</li>
+        <li> <span class="note mark-el">left</span> &ndash; executa a animação começando da direita para a esquerda,
+            rolando e aumentando gradualmente a opacidade. </li>
+        <li> <span class="note mark-el">right</span> &ndash; executa a animação começando da esquerda para a direita,
+            rolando e aumentando gradualmente a opacidade.</li>
+    </ul>
+
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <ul> 
+        <li e-for="comida of comidas" e-anm="up"> 
+            {{ comida.nome }}, {{ comida.preco }} 💰 
+        </li>
+    </ul></textarea>
+    </div>
+
+    <h3> <a id="cmd_e_toggle"> e-toggle </a> </h3>
+    <p>
+        Permite que você alterne um atributo em um elemento, definindo o valor <span class="note mark-el">true</span>
+        quando definido.
+        Sua sintaxe é <span class="note mark-el">e-toggle:<i>atributo</i>="propriedadeDoEscopo"</span>.
+    </p>
+
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app19">
+        <input type="text" e-toggle:disabled="bloqueado" placeholder="Digite seu nome" />
+        <button on:click="bloqueado = !bloqueado"> 
+            {{ bloqueado ? 'Bloqueado 🔒' : 'Desbloqueado 🔓' }} 
+        </button>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
+    var app19 = new Easy('#app19', {
+        data: {
+            bloqueado: false
+        }
+    });</textarea>
+            </div>
+            <!-- End -->
+
+            <div class="result"></div>
+        </div>
+    </div>
+
+
+    <h3> <a id="cmd_e"> e-[atributo] </a> </h3>
+    <p>
+        Como dissemos acima, é o comando mais versátil de acordo com a expressão definida, pois por um lado cria um
+        atributo depois de compilado e por outro cria o atributo e alterna um valor nele.
+    </p>
+
+    <p>
+        A sintaxe para criação de atributo é <span class="note mark-el">e-<i>atributo</i>="expressao"</span>.
+        Neste caso a expressão deve conter delimitador, caso contrário não será compilada.
+    </p>
+
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <div id="app">
+        <img e-src="{{ imgUrl }}" src="default.png" srcset="fail-onload.png" />
+    </div></textarea>
+    </div>
+
+    <p>
+        A sintaxe para criação de atributo (se não existe) com valor alternável é <span
+            class="note mark-el">e-<i>atributo</i>="{ 'valor-a-alternar' : condição }"</span>.
+        <br> <span class="note att-border">Não use delimitadores na expressao</span>.
+    </p>
+
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app20">        
+        <style> 
+        .yellow-class {
+            border-color: yellow;
+        } 
+    </style>
+
+        <button on:click="estaAmarelo = !estaAmarelo" 
+                    e-class="{ 'yellow-class' : estaAmarelo }"> 
+            Clique em mim
+        </button>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
+    var app20 = new Easy('#app20', {
+        data: {
+            estaAmarelo: false
+        }
+    });</textarea>
+            </div>
+            <!-- End -->
+
+            <div class="result"></div>
+        </div>
+    </div>
+
+
+</section>
+<script>
+    this.mounted = function (el) {
+        appExector(el);
+        scrollByAnchor(el);
+    }
+</script>

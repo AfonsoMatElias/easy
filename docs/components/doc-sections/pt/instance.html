@@ -1,0 +1,211 @@
+<section class="section">
+    <a href="https://github.com/AfonsoMatElias/easy/blob/6a729b7284758c6064eaadb4dc6b23fde4081aaf/docs/components/doc-sections/pt/instance.html"
+        title="Help us improve this documentation on github!" class="edit-content"><span
+            class="fa fa-pencil"></span></a>
+
+    <h1> <a id="instance"> Instância (Instance) </a> </h1>
+
+    <p>
+        Quando importarmos Easy, ele adicionará uma função ao objeto global (window), portanto, para começar a usá-lo,
+        precisamos criar uma nova instância da Class Easy. Este construtor espera dois parâmetros:
+    </p>
+
+    <div class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    var app = new Easy(element, options);</textarea>
+    </div>
+
+    <h3> <a id="inst_el"> Element </a> </h3>
+    <p>
+        O elemento é o parâmetro obrigatório que representa a seção que a instância controlará na aplicação, deve ser
+        passado como String no formato de Seletor CSS. <span class="note">#meuId</span>, <span
+            class="note">.minhaClass</span> or <span class="note">body</span>.
+    </p>
+
+    <h3> <a id="inst_options"> Options </a> </h3>
+    <p>
+        Options é o parâmetro opcional, que pode ser usado para definir dados iniciais, configuração da instância,
+        componentes (falaremos sobre isso mais tarde), etc. Se passado, deve ser um objeto contendo todas as informações
+        que precisamos quando a instância é criada.
+    </p>
+
+    <p>
+        Esta propriedade pode ser acessada do objecto da instância: <span class="note">instance.options</span>
+    </p>
+
+    <h3> <a id="properties"> Properties </a> </h3>
+    <p>
+        Conforme afirmado anteriormente, no parâmetro options podem ser definidas várias propriedades, que são:
+    </p>
+
+    <div class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    var app = new Easy('body', {
+        // A configuração da instância
+        config: { ... },
+
+        // Os dados iniciais da instância
+        data: { ... },
+
+        // A função que será chamada quando o conteúdo do DOM é carragado
+        mounted: function (el) { ... },
+
+        // A função que será chamada quando compilar todo o código
+        loaded: function (el) { ... },
+
+        // Os componentes que a instância vai injectar na sua aplicação
+        components: { ... }
+    });</textarea>
+    </div>
+
+    <h3> <a id="prop_config">Propriedade Config (Config Property)</a> </h3>
+    <p>
+        É um objeto que contém as configurações globais do Easy. Com a propriedade config, você pode definir:
+    </p>
+
+    <ul>
+        <li>
+            <span class="note mark-el">{ Boolean } log</span> &ndash; permite que os logs
+            (informações, erros e avisos) seja mostrados. O valor padrão é <span class="note mark-el">true</span>.
+        </li>
+        <li>
+            <span class="note mark-el">{ Boolean } deepIgnore</span> &ndash; permite ignorar todos os elementos que
+            estão dentro de container (mesmo aqueles que são adicionados mais tarde) quando usamos o comando <span
+                class="note">e-ignore</span> (Falaremos sobre isso na secção de <a href="docs.html?load?=sctn2#commands"
+                class=" mark-el">Comandos (Commands)</a>). <br>
+            <span class="note att-border">Cuidado, isso pode tornar a tua aplicação mais lenta.</span>
+        </li>
+        <li>
+            <span class="note mark-el">{ Boolean } useDOMLoadEvent</span> &ndash; permite que a instância use o evento
+            'DOMContentLoaded' quando estiver carregando a pagina. O valor padrão é
+            <span class="note mark-el">true</span>.
+        </li>
+        <li>
+            <span class="note mark-el">{ Object } skeleton</span> &ndash; define a cor do skeleton enquanto o elemento
+            está sendo carregado. ]E estruturado como segue: <br>
+            <span class="note mark-el"> { background: 'color', wave: 'color' } </span>
+            <br> Por padrão a cor do skeleton is cinza clara com as ondas mais claras.
+        </li>
+        <li>
+            <span class="note mark-el">{ Boolean } rerenderOnArrayChange</span> &ndash; esta é uma configuração
+            exclusiva do
+            <i class="note-mark-el">e-for</i> que permite renderizar novamente todos os itens do array quando o mesmo
+            sofrer uma alteração. Entraremos em mais detalhes na secção <a href="docs.html?load=sctn2#cmd_e_for"
+                class="mark-el">e-for</a>.
+        </li>
+    </ul>
+
+    <h3> <a id="prop_data">Data</a> </h3>
+    <p>
+        Como já mencionado, a propriedade data permite definir os dados que o aplicativo terá ao iniciar, porém existe
+        uma maneira de adicionar dados enquanto ele já está em execução com o método <span class="note">
+            app.setData(...) </span>. (Falaremos sobre isso na secção <a href="docs.html?load=sctn3#methods"
+            class=" mark-el"> métodos </a>).<br>
+
+        As propriedades definidas no <span class="note mark-el">data</span> não são propriedades normais, elas são
+        reactivas, significando que elas reagem a mudanças feitas a elas.
+    </p>
+
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app1">
+        <h4> {{ mensagem }} </h4>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
+    var app1 = new Easy('#app1', {
+        data: {
+            mensagem: 'Olá Mundo!'
+        }
+    });</textarea>
+            </div>
+
+            <div class="result"></div>
+        </div>
+    </div>
+
+    <p>
+        Esta propriedade pode ser acessada do objecto da instância: <span class="note">instance.data</span>,
+        Abra o console do teu navegador e digite: <span class="note">app1.data</span>.
+    </p>
+
+    <p>
+        É dentro da propriedade data que também precisam ser definidas as <i class="note mark-el">functions</i>, e elas
+        não respeitam os <i class="note mark-el">escopos</i> (Falaremos sobre isso mais tarde), elas podem ser acessadas
+        mesmo se um escopo foi criado.
+    </p>
+
+    <h3> <a id="prop_hooks"> Hooks da Instância (Instance Hooks) </a> </h3>
+    <p>
+        Há apenas dos Hooks principais na instância do Easy, que são:
+    </p>
+
+    <ul>
+        <li>
+            <span class="note mark-el">{ Function } mounted</span> &ndash; este hook é chamado quando o evento
+            DOMContentLoaded é emitido (Funciona deste jeito se a propriedade <a id="prop_config"
+                class="mark-el">useDOMLoadEvent</a>
+            é true, senão, será chamada logo que instância for criada).
+        </li>
+        <li>
+            <span class="note mark-el">{ Function } loaded</span> &ndash; este hook é chamado depois do elemento
+            principal (root) for compilado.
+        </li>
+    </ul>
+
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+   <div id="app2">
+        <h4> Mountado em: {{ mountedHook }} </h4>
+        <h4> Carregado em: {{ loadedHook }} </h4>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
+    var app2 = new Easy('#app2', {
+        data: {
+            mountedHook: '',
+            loadedHook: '',
+        },
+        mounted: function(){
+            this.data.mountedHook = getDateTime()
+        },
+        loaded: function(){
+            this.data.loadedHook = getDateTime()
+        }
+    });</textarea>
+            </div>
+
+            <div class="result"></div>
+        </div>
+    </div>
+
+    <div class="block-note warn">
+        <p>
+            O contexto destes hooks é instância e o elemento principal é passado como um argumento.
+        </p>
+    </div>
+
+    <div class="block-note info">
+        <p>
+            Podemos criar uma instância sem a variável, significando que a instância não poderá ser acessada pelo
+            console do navegador.
+        </p>
+    </div>
+
+</section>
+<script>
+    this.mounted = function (el) {
+        // Execute only if noApp is invalid
+        appExector(el, this.scope.noApp);
+        scrollByAnchor(el);
+    }
+</script>

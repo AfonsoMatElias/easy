@@ -34,8 +34,8 @@
         callback: Function, // The callback of the event
     }]
 
-    // To remove the Event Listener, use the return Array and the `removeEventListener`
-    document.removeEventListener(listenReturn[0].name, listenReturn[0].callback);
+    // To remove the Event Listener, use the returned Array and the `removeEventListener`
+    document.removeEventListener(listenReturn[0].event, listenReturn[0].callback);
 
     // Note: If you use the callback passed in the listen method won't work!
 

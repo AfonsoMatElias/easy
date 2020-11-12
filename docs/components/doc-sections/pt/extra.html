@@ -1,0 +1,92 @@
+<section class="section">
+    <a href="https://github.com/AfonsoMatElias/easy/blob/6a729b7284758c6064eaadb4dc6b23fde4081aaf/docs/components/doc-sections/pt/extra.html"
+        title="Help us improve this documentation on github!" class="edit-content"><span
+            class="fa fa-pencil"></span></a>
+
+    <h1><a>Extra</a></h1>
+    <p> Easy, também fornece alguns métodos de extensão para o seu código, eles são pequenos, simples, fáceis de
+        lembrar e podem ser muito úteis ... Vejamos:</p>
+
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    // HTMLElement.node(...) -> executa o método querySelector
+    var elemento = document.node('#node-id'); 
+    
+    // HTMLElement.nodes(...) -> executa o método querySelectorAll, 
+    // retorna um `Array` de elementos, não um `NodeList`
+    var elements = document.nodes('.node'); 
+    
+    // HTMLElement.listen(...), executa o método addEventListener, felizmente
+    // percorrer os elementos, quando usado com element.nodes(...)
+    document.node('#form-id').listen('submit', function(evt){
+        ...
+    });
+    
+    document.nodes('.menu-item').listen('click', function(evt){
+        // Você pode acessar o `elemento do event` em `evt.base` 
+        ...
+    });
+
+    // A `extensão listen` retorna:
+    [{
+        el: Element, // o elemento tendo o evento
+        event: String, // O nome do evento
+        callback: Function, // O callback do evento
+    }]
+
+    // Para remover um evento, use o Array retornado e o `removeEventListener`
+    document.removeEventListener(listenReturn[0].event, listenReturn[0].callback);
+
+    // Note: If you use the callback passed in the listen method won't work!
+
+    // HTMLElement.valueIn(...) -> permite obter e definir o valor em um atributo.
+
+    var value = element.valueIn('id'); // Retorna o valor de id `property`
+    value = element.valueIn('id', 'id-001'); // Define o id do atributo e retorna o valor
+    value = element.valueIn(); // Se usado desta forma, obtém o valor textContent
+
+    // HTMLElement.aboveMe(...) -> Obtenha o elemento acima (parent)
+    var parent = element.aboveMe(); // Retorna o elemento acima (parent)
+    parent = element.aboveMe('.myClass'); // Retorna o primeiro elemento acima (parent) com esta classe
+
+    // Object.keys(Function(Key, Value)) -> executa o método Object.keys(object),
+    // retorna todas as chaves ... Se uma função foi passada, ela faz um loop das chaves fornecendo
+    // a chave e o valor da propriedade
+
+    var keys = myObject.keys(function(key, value){
+        ...
+    });</textarea>
+    </div>
+
+    <br>
+
+    <h2> Até agora sabemos quase tudo sobre <span class="mark-el">Easy.js</span> </h2>
+    <p class="show-case"> Esperamos que tenha gostado até agora. Muito obrigado por seguir a documentação do easy.js.
+    </p>
+
+    <h3 style="text-align: center;"> Salute 🙂! </h3>
+    <br>
+
+    <h1> Mas, espera...!!!</h1>
+
+    <p class="show-case"> E se dissermos que existe uma maneira simples de requisitar dados de um servidor, como isto:
+    </p>
+
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <ul>
+        <li e-tmp="usuarios"> 
+            {{ id }}, {{ nome }}
+        </li>
+    </ul></textarea>
+    </div>
+
+    <p class="show-case"> Quer saber mais? Siga em <a class="mark-el" href="docs.connectors.html"> Conectores (Connectors) </a>
+    </p>
+</section>
+<script>
+    this.mounted = function (el) {
+        appExector(el);
+        scrollByAnchor(el);
+    }
+</script>

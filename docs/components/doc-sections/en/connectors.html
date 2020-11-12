@@ -19,7 +19,7 @@
 
     <h3> <a id="conn_methods"> Methods </a> </h3>
     <p>
-        Each easy instance has 5 methods that can be used to execute certain method in the connector instance,
+        Each `Easy` instance has 5 methods that can be used to execute certain method in the connector instance,
         which are:
     </p>
 
@@ -28,7 +28,7 @@
         <li> <span class="note mark-el">read(<i class="mark-el">path</i>, <i class="mark-el">extra</i>)</span> </li>
         <li> <span class="note mark-el">update(<i class="mark-el">path</i>, <i class="mark-el">object</i>, <i
                     class="mark-el">id</i>)</span> </li>
-        <li> <span class="note mark-el">delete(<i class="mark-el">path</i>, <i class="mark-el">object</i>)</span> </li>
+        <li> <span class="note mark-el">delete(<i class="mark-el">path</i>, <i class="mark-el">id</i>)</span> </li>
         <li> <span class="note mark-el">getOne(<i class="mark-el">path</i>, <i class="mark-el">id</i>) </span> </li>
         <li> <span class="note mark-el">request(<i class="mark-el">code</i>, <i class="mark-el">callback</i>) </span>
         </li>
@@ -56,7 +56,7 @@
         <textarea cm-lang="javascript">
     var app = new Easy('#app');
 
-    app.create('user', { name: 'Maria', country: 'Angola' })
+    app.create('users', { name: 'Maria', country: 'Angola' })
        .then(function(data){
             console.log(data);  
        })
@@ -109,7 +109,7 @@
         <textarea cm-lang="javascript">
     var app = new Easy('#app');
 
-    app.update('user', { name: 'Formosa' }, 1)
+    app.update('users', { name: 'Formosa' }, 1)
        .then(function(data){
             console.log(data);  
        })
@@ -133,7 +133,7 @@
         <textarea cm-lang="javascript">
     var app = new Easy('#app');
 
-    app.delete('user', 1)
+    app.delete('users', 1)
        .then(function(data){
             console.log(data);  
        })
@@ -159,7 +159,7 @@
         <textarea cm-lang="javascript">
     var app = new Easy('#app');
 
-    app.getOne('user', 1)
+    app.getOne('users', 1)
        .then(function(data){
             console.log(data);  
        })
@@ -183,7 +183,7 @@
     </ul>
 
     <p>
-        The struture of the request object is:
+        The structure of the request object is:
     </p>
 
     <div e-ignore class="code-container" code-ext=".js">
@@ -261,7 +261,7 @@
     <h4> <a id="conn_c_tmp_w_filter"> e-tmp with e-filter </a> </h4>
     <p>
         The list of values returned can also be filtered using e-filter command, the filter expression is
-        the same of the <i class="note mark-el">e-for</i> filter, it accepts all the diferents filters
+        the same of the <i class="note mark-el">e-for</i> filter, it accepts all the differents filters
         provided by easy.js.
     </p>
 
@@ -277,7 +277,7 @@
 
     <h4> <a id="conn_c_tmp_w_order"> e-tmp with e-order </a> </h4>
     <p>
-        The list of values returned can also be ordered e-order command, the order expression is
+        The list of values returned can also be ordered with e-order command, the order expression is
         the same of the <i class="note mark-el">e-for</i> order.
     </p>
 
@@ -295,7 +295,7 @@
     <p>
         Performs getOne request according to the path provided and render the result after the
         request is completed. The syntax is <i class="note mark-el">e-fill="path"</i>.
-        But, it need to be combined with <i class="note mark-el">e-id</i> that will the value of
+        But, it need to be combined with <i class="note mark-el">e-id</i> that will have the value of
         the id parameter. <br>
         <span class="note warn-border">The <i class="mark-el">e-id</i> attribute is mandatory</span>.
     </p>
@@ -317,7 +317,7 @@
 
     <div e-ignore class="code-container" code-ext=".html">
         <textarea cm-lang="text/html">
-    <!-- Any request type -->
+    <!-- Request Type -->
     <element 
         e-req="{
             $code: String (Optional),
@@ -381,7 +381,7 @@
     <h4> <a id="conn_c_use"> e-use </a> </h4>
     <p>
         This command is used to create a variable containing the request result. When used with <i
-            class="mark-el">e-tmp</i> or <i class="mark-el">e-req:'many'</i> creates for each result, and when used with
+            class="mark-el">e-tmp</i> or <i class="mark-el">e-req:'many'</i> creates for each item of the result, and when used with
         <i class="mark-el">e-fill</i> or <i class="mark-el">e-req:'one'</i> creates for the result.
     </p>
 
@@ -397,7 +397,7 @@
 
     <h3> <a id="conn_available"> Available </a> </h3>
     <p>
-        All the available connectors can be found in the connectors folder, and they can be downloaded using the <a
+        All the available connectors can be found in the connectors folder (github), and they can be downloaded using the <a
         on:click="showModal" class="note mark-el">download modal</a>.
     </p>
 
@@ -416,7 +416,7 @@
     <ul>
         <li> <i class="mark-el">baseUrl</i> &ndash; represents the base url of the server, it is normally the constante
             part of it. eg.: <i class="note mark-el">http://localhost:3000/api/</i> </li>
-        <li> <i class="mark-el">fetchOptions</i> &ndash; the object having the all the object that a request needs, like
+        <li> <i class="mark-el">fetchOptions</i> &ndash; the object having the all the options that a request needs, like
             <i class="note mark-el">type</i>, <i class="note mark-el">headers</i>, etc. </li>
     </ul>
 
@@ -467,7 +467,7 @@
     <div class="block-note info">
         <p>
             All the returned data become reactive after the resolve function, it means that if the data is an array we may 
-            easily use the push, pop, etc.
+            easily use the push, pop, etc, and the UI will change too.
         </p>
     </div>
 

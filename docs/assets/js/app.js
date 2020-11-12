@@ -1,4 +1,48 @@
+if (!localStorage._lang) localStorage._lang = 'en'; 
 document.addEventListener('DOMContentLoaded', function () {
+    var lang = localStorage._lang;
+    var content = {
+        en: {
+            cards: {
+                component: {
+                    header: 'Write in HTML file',
+                    text: 'Create your component with the styles (scoped or not) and scripts, embedded in a single pure HTML file.'
+                },
+                dom: {
+                    header: 'No Virtual DOM',
+                    text: 'Easy listens to each property (made available by the instance) in the application, when the property changes, it updates the element.'
+                },
+                reuse: {
+                    header: 'Reuse elements',
+                    text: 'Easy gives you the opportunity to reuse elements already defined in the application, as if it were a copy and paste.'
+                }
+            },
+            main: "What's <span class=\"note\">Easy.js</span>? Is a javascript library for building user interfaces, and"
+                +"helps in the web applications development, providing a synchronous interaction between user interfaces" 
+                +"and Javascript data. In some ways and commands, it is very similar to"
+                +"<span class=\"note\">Vue.js</span> and <span class=\"note\">Angular.js</span>, but it handles things"
+                +"differently!",
+            examples: {
+                hello: {
+                    header: 'Hello World Example',
+                    text: 'To begin showing some data in the UI is simple as you can see now... Some directives can be similar to Vue but, belive us, there are diferentes by the inside.'
+                },
+                sum: {
+                    header: 'Simple Sum Example',
+                    text: "Let's Two Way Data Bind now... <br>"
+                    +"We are using dynamic data property definition <i class=\"mark-el\">e-def</i>."
+                    +"In this type of binding when some value changes, it updates"
+                    +"the specific field in the element, it means that"
+                    +"your element will be always the same."
+                },
+                todo: {
+                    header: 'Todo List Example',
+                    text: "Let's make a TODO List App <br> You can manage your list as you expect."
+                },
+            },
+            learn: 'Want to Learn more?'
+        }
+    }
     var app = new Easy('#app-page', {
         config: {
             useDOMLoadEvent: false,
@@ -8,6 +52,21 @@ document.addEventListener('DOMContentLoaded', function () {
             darkMode: localStorage._dark ? (localStorage._dark == 'true' ? true : false) : false,
             themeIco: 'fa-moon-o',
             pageLoading: false,
+            showLanguageDropDown: false,
+            selectedLang: lang,
+            translations: [
+                {
+                    id: 'en',
+                    name: 'English'
+                },
+                {
+                    id: 'pt',
+                    name: 'Português'
+                }
+            ],
+
+            mainPage: content[lang],
+
             app: {
                 name: 'Easy',
                 version: 'v2.0.1',
@@ -78,11 +137,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             this.on('incFail', function () {
                 decreasePageLoaded();
-
-                // notify({
-                //     message: 'Página ou ficheiro não encontrado!',
-                //     type: 'error'
-                // });
             });
 
             // Theme handler
@@ -90,6 +144,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
             this.watch('darkMode', function (v) {
                 themeHandler.call(instance, v);
+            });
+
+            this.watch('selectedLang', function (v) {
+                if (localStorage._lang == v) return;
+
+                localStorage._lang = v;
+                location.reload();
             });
         },
         components: {
@@ -102,7 +163,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 'top': "/components/top",
                 'editor': "/components/editor",
                 'main': {
-                    url: "/components/views/main",
+                    url: '/components/views/'+ lang +'/main',
                     title: 'Easy',
                     route: '/',
                     isDefault: true
@@ -117,22 +178,22 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Modal
                 'modal': "/components/modal/modal",
                 // Modal Body
-                'download-connectors': '/components/doc-sections/en/download-connectors',
+                'download-connectors': '/components/doc-sections/'+ lang +'/download-connectors',
 
                 // Documentation compoments
-                'side-menu': "/components/doc-sections/en/side-menu",
-                'introduction': '/components/doc-sections/en/introduction',
-                'installation': '/components/doc-sections/en/installation',
-                'instance': '/components/doc-sections/en/instance',
-                'delimiters': '/components/doc-sections/en/delimiters',
-                'bindings': '/components/doc-sections/en/bindings',
-                'commands': '/components/doc-sections/en/commands',
-                'events': '/components/doc-sections/en/events',
-                'methods': '/components/doc-sections/en/methods',
-                'components': '/components/doc-sections/en/components',
-                'routing': '/components/doc-sections/en/routing',
-                'extra': '/components/doc-sections/en/extra',
-                'connectors': '/components/doc-sections/en/connectors',
+                'side-menu': '/components/doc-sections/'+ lang +'/side-menu',
+                'introduction': '/components/doc-sections/'+ lang +'/introduction',
+                'installation': '/components/doc-sections/'+ lang +'/installation',
+                'instance': '/components/doc-sections/'+ lang +'/instance',
+                'delimiters': '/components/doc-sections/'+ lang +'/delimiters',
+                'bindings': '/components/doc-sections/'+ lang +'/bindings',
+                'commands': '/components/doc-sections/'+ lang +'/commands',
+                'events': '/components/doc-sections/'+ lang +'/events',
+                'methods': '/components/doc-sections/'+ lang +'/methods',
+                'components': '/components/doc-sections/'+ lang +'/components',
+                'routing': '/components/doc-sections/'+ lang +'/routing',
+                'extra': '/components/doc-sections/'+ lang +'/extra',
+                'connectors': '/components/doc-sections/'+ lang +'/connectors',
                 
                 // Sections wrapper
                 'section-1': '/components/doc-sections/section.1',

@@ -1,0 +1,90 @@
+<!-- Including the introduction section -->
+<section class="section">
+    <h3> O que é Easy.js? </h3>
+
+    <p>
+        Easy.js, forma curta de <span style="color:var(--easy-yellow)">Easy</span>
+        and <span style="color:var(--easy-black)">Asyncronous Javascript</span>,
+        é uma biblioteca javascript para construção de interfaces de usuário, e auxilia no desenvolvimento de aplicações
+        web, proporcionando uma interação síncrona entre interfaces de usuário e dados no Javascript.
+    </p>
+
+    <p>
+        É uma biblioteca muito fácil de pegar, com um comando simples para ver os resultados na tela, é totalmente
+        voltada para o desenvolvimento front-end, pode ser usada para criar toda a aplicação como em partes específicas
+        dela. Também é bom na construção de aplicativos de página única (SPA - Single Page Application), pois tem o
+        conceito
+        de componentes da web.
+    </p>
+
+    <h3> Sem Virtual DOM? 🤔 </h3>
+
+    <p>
+        O Easy não utiliza o conceito Virtual DOM para atualizar os dados na UI, para isso, ela associa cada propriedade
+        da
+        instância atual aos campos onde foi solicitada na UI e sempre que ocorrer uma alteração na propriedade, ele
+        atualiza todos os campos associado ela.
+    </p>
+
+    <h3> Acerda do Tutorial </h3>
+
+    <p>
+        Essa documentação pressupõem que você já esteja familiarizado com <a class="mark-el" title="Learn HTML"
+            target="_blank" href="https://developer.mozilla.org/docs/Learn/HTML/Introduction_to_HTML">HTML</a>, <a
+            title="Learn Javascript" target="_blank" class="mark-el"
+            href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/A_re-introduction_to_JavaScript">JavaScript</a>
+        e <a title="Learn CSS" target="_blank" class="mark-el"
+            href="https://developer.mozilla.org/docs/Learn/CSS/First_steps">CSS</a> (opcional). Para cada capítulo do
+        tutorial, você terá um código de exemplo associado para ajudá-lo a entender as coisas passo a passo, como o
+        mesmo será feito com um editor, então poderá usá-lo para aplicar outros tópicos que não forem exemplificados.
+    </p>
+
+    <p>
+        A estrutura e o estilo das páginas do Tutorial foram baseados no <a class="mark-el"
+            href="https://svelte.dev">Svelte</a>, pois se encaixa perfeitamente no tipo que precisamos para explicar as
+        coisas.
+    </p>
+
+    <h3> Compatibilidade nos Navegadores </h3>
+
+    <p>
+        Easy foi testado em quase todos os navegadores populares, como:
+    </p>
+    <ul>
+        <li>Chrome</li>
+        <li>Firefox</li>
+        <li>Opera</li>
+        <li>Brave</li>
+        <li>IE (11) </li>
+    </ul>
+    <p>
+        <span class="note"> Easy não é suportado no IE 10 e as versões abaixo. </span>
+    </p>
+
+    <h3> Escala de Projectos </h3>
+    <p>
+        Um aplicativo da web totalmente desenvolvido com easy.js foi testado apenas com pequenos projetos, projetos
+        maiores ainda não foram testados.
+    </p>
+
+    <h3> Como adiciono no meu projecto? </h3>
+
+    <p>
+        Deixe-nos mostrar como, <a on:click="showModal" class="mark-el">Clique em mim</a>!
+    </p>
+
+    <h3> O Editor </h3>
+
+    <p>
+        Este é um <b>editor</b> simples ao vivo que nos permite compilar o código escrito nele, podemos usar tabs para
+        escrever outra parte do código (normalmente usado no conceito de componente). Para poder obter o conteudo da tab use
+        <i class="note mark-el">editor.tab(tabName)</i>. Quando estiver a definir o nome da tab (<i class="mark-el">tabName</i>)
+        não use espaços ou caracteres especiais, use hifen e sublinhados (<i class="mark-el">_</i>) para separar as palavras.
+    </p>
+</section>
+<script>
+    this.mounted = function (el) {
+        appExector(el);
+        scrollByAnchor(el);
+    }
+</script>

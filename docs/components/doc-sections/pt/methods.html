@@ -1,0 +1,396 @@
+<section class="section">
+    <a href="https://github.com/AfonsoMatElias/easy/blob/6a729b7284758c6064eaadb4dc6b23fde4081aaf/docs/components/doc-sections/en/methods.html" 
+    title="Help us improve this documentation on github!" class="edit-content"><span class="fa fa-pencil"></span></a>
+
+    <h1><a id="methods"> Methods </a></h1>
+    <p>
+        There are some built-in methods that can be used in the application, which are:
+    </p>
+
+    <h3><a id="method_setData">setData</a></h3>
+    <p>
+        It is used to define properties in the data scope. Its sintax is
+        <span class="note mark-el">instance.setData(object, targetObject)</span>.
+    </p>
+    <ul>
+        <li> <span class="note mark-el">{ Object } object</span> &ndash; represents object a
+            containing the properties that must be added to the scope. </li>
+        <li> <span class="note mark-el">{ Object } targetObject</span> &ndash; represents the
+            target scope to be added to the properties. It is optional, if not defined the
+            properties will be in the <span class="note mark-el">main scope</span>. </li>
+        <li> <span class="note mark-el">{ Object } returns</span> &ndash; the scope object.
+        </li>
+    </ul>
+
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    var app = new Easy('#my-app', {
+        data: {
+            firstName: 'Maria',
+        }
+    });
+
+    app.setData({
+        lastName: 'Matumona',
+        country: 'Angola'
+    });</textarea>
+    </div>
+
+    <h3><a id="method_on">on</a></h3>
+    <p>
+        It allows adding an event to the instance so that it can be used anywhere in the
+        application.
+        The method expects two parameters: <span class="note mark-el">instance.on(eventName,
+            callback)</span>.
+    </p>
+
+    <ul>
+        <li> <span class="note mark-el">{ String } eventName</span> &ndash; the name of the
+            event
+            to be added. </li>
+        <li> <span class="note mark-el">{ Function } callback</span> &ndash; the callback having
+            your code. </li>
+        <li> <span class="note mark-el">{ Object } returns</span> &ndash; an object having the
+            event name and the callback we can use to remove the event.
+            <span class="note">{ event: <i class="mark-el">String</i>, callback: <i class="mark-el">Function</i>
+                }</span>. </li>
+    </ul>
+
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    var app = new Easy('#my-app');
+
+    app.on('eventName', function(data) {
+        // Todo: your code here...
+    });</textarea>
+    </div>
+
+    <h3><a id="method_off">off</a></h3>
+    <p>
+        Allows you to remove an event added to the instance.
+        The method expects two parameters: <span class="note mark-el">instance.off(eventName,
+            callback)</span>.
+    </p>
+
+    <ul>
+        <li> <span class="note mark-el">{ String } eventName</span> &ndash; The name of the
+            event
+            to be removed. </li>
+        <li> <span class="note mark-el">{ Function } callback</span> &ndash; The callback
+            returned from <span class="note mark-el">on</span> method. </li>
+        <li> <span class="note mark-el">{ Object } returns</span> &ndash; an object having the
+            event name and the callback. <span class="note">{ event: <i class="mark-el">String</i>, callback: <i
+                    class="mark-el">Function</i>
+                }</span>. </li>
+    </ul>
+
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    var app = new Easy('#my-app');
+
+    var event = app.on('eventName', function(data) {
+        // Todo: your code here...
+    });
+
+    app.off('eventName', event.callback);</textarea>
+    </div>
+
+    <h3><a id="method_emit">emit</a></h3>
+    <p>
+        Allows you to issue a specific item, whether customized (events added in elements) or
+        added in the instance.
+        The method expects three parameters: <span class="note mark-el">instance.emit(eventName,
+            data, once)</span>.
+    </p>
+
+    <ul>
+        <li> <span class="note mark-el">{ String } eventName</span> &ndash; the name of the
+            event
+            to be emitted. </li>
+        <li> <span class="note mark-el">{ Object } data</span> &ndash; a data to be added to the
+            event callback. </li>
+        <li> <span class="note mark-el">{ Boolean } once</span> &ndash; allows you to remove the
+            event after being called the first time. </li>
+    </ul>
+
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    var app = new Easy('#my-app');
+
+    var event = app.on('eventName', function(data) {
+        // Todo: your code here...
+    });
+    
+    app.emit('eventName', { name: 'transfered data' });</textarea>
+    </div>
+
+    <h3><a id="method_expose">expose</a></h3>
+    <p>
+        It allows exposing an object, allowing it to be retrieved anywhere in the application.
+        By default, Easy uses to transfer data to a component.
+        The method expects three parameters: <span class="note mark-el">instance.expose(name,
+            data, force)</span>.
+    </p>
+
+    <ul>
+        <li> <span class="note mark-el">{ String } name</span> &ndash; the unique name (Or,
+            component name). </li>
+        <li> <span class="note mark-el">{ Object } data</span> &ndash; the object to be exposed.
+        </li>
+        <li> <span class="note mark-el">{ Boolean } force</span> &ndash; allows you to force the
+            exposition if there is already some exposed data with the same name. </li>
+    </ul>
+
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    var app = new Easy('#my-app');
+
+    app.expose('userInfo', { name: 'Maria', roles: ['admin', 'manager'] });</textarea>
+    </div>
+
+    <h3><a id="method_retrieve">retrieve</a></h3>
+    <p>
+        It allows to retrieve the exposed data. The method expects two parameters: <span
+            class="note mark-el">instance.remove(name, remove)</span>.
+    </p>
+
+    <ul>
+        <li> <span class="note mark-el">{ String } name</span> &ndash; the name of the exposed a
+            object. </li>
+        <li> <span class="note mark-el">{ Boolean } force</span> &ndash; Allows to remove the
+            exposed data after being retrieved. </li>
+        <li> <span class="note mark-el">{ Object } force</span> &ndash; the exposed object.
+        </li>
+    </ul>
+
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    var app = new Easy('#my-app');
+
+    // Exposing data
+    app.expose('userInfo', { name: 'Maria', roles: ['admin', 'manager'] });
+    
+    // Retrieving the exposed data
+    var data = app.retrive('userInfo');</textarea>
+    </div>
+
+    <h3><a id="method_tojsobj">toJsObj</a></h3>
+    <p>
+        It allows creating a structured javascript object based on the structure of the HTML
+        element. Object that can be sent to a server.
+    </p>
+
+    <p>
+        To be able to generate the struture, this method depends of some commands, whitch are:
+    </p>
+
+    <ul>
+        <li> <a id="method_tojsobj_build" class="note mark-el">
+                e-build </a> &ndash; allows you to build one object within another. The syntax
+            is <span class="note mark-el">e-build="<i>path</i>"</span>. The path always need to
+            be complete, from the base object untill the property it needs to create. When you
+            need to create an object inside of an array you don't need to put the property and
+            the index (property[0]) of the array, just property name, by the default it maps all
+            the array.</li>
+        <li> <a id="method_tojsobj_array" class="note mark-el">
+                e-array </a> &ndash; allows to build a array of the element where it is defined.
+            Even if it is not defined by default it creates an array if the elements repeats.
+
+        </li>
+    </ul>
+
+    <p>
+        The method expects three parameters: <span class="note mark-el">instance.toJsObj(selector, options,
+            onset)</span>.
+    </p>
+
+    <ul>
+        <li> <span class="note mark-el">{ String|Element } selector</span> &ndash; the selector
+            of the element to be generated or the element it self. </li>
+        <li> <span class="note mark-el">{ Object } options</span> &ndash; options that indicates
+            properties it needs to look and from this ones which property it needs to get the
+            value. Its sintax is <span class="note mark-el">{ names: '[property1],[property2]',
+                values: '[property1],[property2]' }</span>. The order really matters, it takes
+            what it finds first. The default value is <span class="note">{ names: <i class="mark-el">'[name]'</i>,
+                values: <i class="mark-el">'[value]'</i> }</span>. </li>
+        <li> <span class="note mark-el">{ Function} onset</span> &ndash; a function that will be
+            called whenever a property is setted. </li>
+    </ul>
+
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
+
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
+    <div id="app25">        
+        <form on:submit.preventDefault="generate">
+            
+            <label> First Name </label> <br>
+            <input type="text" name="firstName" /> <br>
+            
+            <label> Last Name </label> <br>
+            <input type="text" name="lastName" /> <br>
+            
+            <!--  Build an phones property as an array -->
+            <div e-build="phones" e-array> 
+                <label> Country Code </label> <br>
+                <input type="text" name="code" /> <br>
+                
+                <label> Number </label> <br>
+                <input type="text" name="number" />
+            </div>
+            
+            <!--  Build an identification property as an object -->
+            <div e-build="identification">
+                <label> Type </label> <br>
+                <select name="type"> 
+                    <option> Id Card </option>
+                    <option> Passport </option>
+                </select> <br>
+
+                <label> Code </label> <br>
+                <input type="text" name="code" />
+            </div>
+        
+            <button type="submit"> Submit </button>    
+
+        </form>
+        <br> <br>
+        
+        <label> Result </label> <br>
+        <div> 
+            {{ resultObj }}
+        </div>
+    </div></textarea>
+            </div>
+
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
+    var app25 = new Easy('#app25', {
+        data: {
+            /* Variables */
+            resultObj: {},
+
+            /* Methods */
+            generate: function(evt){
+                this.data.resultObj = this.toJsObj(evt.base);
+            }
+        }
+    });</textarea>
+            </div>
+            <!-- End -->
+
+            <div class="result"></div>
+        </div>
+    </div>
+
+    <div class="block-note info">
+        <p>
+            We can build complex objects with using this method, simply create the structure you
+            need.
+        </p>
+    </div>
+
+    <h3><a id="method_watch">watch</a></h3>
+    <p>
+        It is used to watch changes in specific property in the data scope. Its sintax is
+        <span class="note mark-el">instance.watch(propertyName, callback, targetObject)</span>.
+    </p>
+    <ul>
+        <li> <span class="note mark-el">{ String } propertyName</span> &ndash; represents the
+            name of the property in the data scope. </li>
+        <li> <span class="note mark-el">{ Object } callback</span> &ndash; represents the
+            callback where all the logic will be fired when the property changes. The first
+            argument is the new value and the second is the old value of the property. </li>
+        <li> <span class="note mark-el">{ Object } targetObject</span> &ndash; represents the
+            target scope having tje property to watch. It is optional, if not defined the
+            properties will be in the <span class="note mark-el">main scope</span>. </li>
+        <li> <span class="note mark-el">{ Object } returns</span> &ndash; the watch object, that
+            can be used to destroy the watch listern. </li>
+    </ul>
+
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    var app = new Easy('#my-app', {
+        data: {
+            firstName: 'Neves',
+            lastName: 'Manuel'
+        }
+    });
+
+    var watch = app.watch('firstName', function(newValue, oldValue){
+        // Todo: your code here...
+        watch.destroy();
+    });</textarea>
+    </div>
+
+    <h3><a id="method_set">set</a></h3>
+    <p>
+        It is used to set some <span class="mark-el">Easy</span> configuration. The method
+        expects two parameters, the first is the property to set and the second is the value
+        (Object Literal) to be setted. The available configurations are:
+    </p>
+
+    <li><b>skeleton</b> &ndash; allow to modify the background and/or wave of the skeleton values. Its sintax is
+        <i class="note mark-el">instance.set('skeleton', object)</i>.</li>
+
+    <ul>
+        <li> <span class="note mark-el">{ Object } object</span> &ndash; the object having the
+            value(s) it needs to modify.
+            <span class="note">{ background: <i class="mark-el">color</i>, wave: <i class="mark-el">color</i> }</span>
+        </li>
+    </ul>
+
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    /* As all the apps share the same Easy.js Style you can use any app to
+    make this change.
+
+    Open the browser console and run first code */
+    app1.set('skeleton', {
+        background: '#444546',
+        wave: '#747576'
+    });
+
+    /* Run this one to restore the values */
+    app1.set('skeleton');</textarea>
+    </div>
+
+    <li><b>delimiter</b> &ndash; allow to add a delimiter into the Easy compiler. Its sintax is 
+        instance.set('delimiter', object).</li>
+
+    <ul>
+        <li> <span class="note mark-el">{ Object } object</span> &ndash; the object having the
+            value(s) it needs to be added. The struture of the object is:
+        </li>
+    </ul>
+
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    app1.set('delimiter', {
+        name: 'myDelimiter',
+        delimiter: {
+            open: '<%',
+            close: '%>'
+        }
+    });</textarea>
+    </div>
+
+    <p>
+        All the available delimiters can be seen in the property <span class="note mark-el">instance.delimiters</span>.
+        These values is unalterable by this property.
+    </p>
+
+    <div class="block-note info">
+        <p>
+            Remind to the escape the open and close if its need, because it passes in Regular
+            Expression check.
+        </p>
+    </div>
+</section>
+<script>
+    this.mounted = function (el) {
+        appExector(el);
+        scrollByAnchor(el);
+    }
+</script>

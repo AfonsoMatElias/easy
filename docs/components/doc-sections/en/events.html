@@ -18,12 +18,12 @@
     </p>
 
     <p>
-        When Standard and Easy events are issued, the event object can be accessed in the
+        When Standard and Easy events are dispatched, the event object can be accessed in the
         <span class="note">event</span> variable. It contains the <span class="note mark-el">base</span>
         property, which is passed to the element that is associated with the event, and the
         <span class="note">$data</span> property, having the object of the current scope, this
         is divided into: <span class="note">{ model:{ <i class="mark-el">In case of e-for</i>
-            }, scope: { <i class="mark-el">It has the scope object it self</i> } }</span>
+            }, scope: { <i class="mark-el"> the parent element scope object </i> } }</span>
     </p>
 
     <h3> <a id="events_standard"> Standard</a> </h3>
@@ -79,10 +79,10 @@
             element containing the data command is compiled. </li>
         <li> <span class="note mark-el">add</span> &ndash; this event is emitted when an element
             of the e-for command is inserted into the DOM. It works with
-            <a href="docs.connectors.html" class="note mark-el">connectors</a>. </li>
+            <a href="docs.connectors.html" class="note mark-el">connectors</a> and `e-for`. </li>
         <li> <span class="note mark-el">empty</span> &ndash; this event is emitted when the
             array passed in the e-for command is empty. It works with
-            <a href="docs.connectors.html" class="note mark-el">connectors</a>. </li>
+            <a href="docs.connectors.html" class="note mark-el">connectors</a> and `e-for`. </li>
         </li>
         <li> <span class="note mark-el">response</span> &ndash; this event is emitted when we
             get some response to a request made using a

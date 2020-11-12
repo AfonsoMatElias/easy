@@ -1,0 +1,187 @@
+<div class="main-view">
+
+    <div class="main-divider section-space">
+        <div class="center-content high-element">
+            <div class="main-icon">
+                <img src="assets/img/main_ico.png">
+            </div>
+            <div class="main-text">
+                <p class="high-text" e-content="{{ app.version }}"> Version </p>
+                <p class="high-text"> Simpler & Cooler </p>
+                <a href="docs.html" class="high-btn"> Começar </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-divider card-section">
+        <div class="card-container">
+
+            <div class="card">
+                <div class="head">
+                    <p class="title"> Escreva em Ficheiro HTML </p>
+                </div>
+                <div class="body">
+                    <p>
+                        Crie seu componente com os estilos (com escopo definido ou não) e scripts, embutidos em um único
+                        arquivo HTML puro.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="head">
+                    <p class="title"> Sem Virtual DOM </p>
+                </div>
+                <div class="body">
+                    <p>
+                        O Easy escuta cada propriedade (disponibilizada pela instância) na aplicação, quando a
+                        propriedade muda, ele atualiza o elemento.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="head">
+                    <p class="title"> Reutilize elementos </p>
+                </div>
+                <div class="body">
+                    <p>
+                        O Easy dá a você a oportunidade de reutilizar elementos já definidos no aplicativo, como se
+                        fosse um copiar e colar.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="main-divider middle-content">
+        <div class="center-content">
+            <h3 class="main-page-description">
+                O que é <span class="note">Easy.js</span>? É uma biblioteca javascript para construção de interfaces de
+                usuário, e auxilia no desenvolvimento de aplicações web, proporcionando uma interação síncrona entre
+                interfaces de usuário e dados Javascript. Em algumas formas e comandos, é muito semelhante ao <span
+                    class="note">Vue.js</span> e <span class="note">Angular.js</span>, mas lida com as coisas de forma
+                diferente!
+            </h3>
+        </div>
+    </div>
+
+    <div class="main-divider middle-content editor-divider">
+        <div class="main-page-editor-container">
+            <div class="description">
+                <div>
+                    <h2>Exemplo Hello World</h2>
+                    <p>Começar a mostrar alguns dados na IU é simples, como você pode ver agora... Algumas diretivas
+                        podem ser semelhantes ao Vue, mas, acredite, existem diferenças por dentro.</p>
+                </div>
+            </div>
+            <inc src="editor" wait-data="hello-word"></inc>
+        </div>
+
+        <div class="main-page-editor-container">
+            <div class="description">
+                <div>
+                    <h2>Exemplo de Soma Simples </h2>
+                    <p>Vamos usar o Two Way Data agora...</p>
+                    <p>
+                        Estamos usando a definição de propriedade de dados dinâmicos <i class="mark-el">e-def</i>. Neste
+                        tipo de ligação quando algum valor muda, ele atualiza o campo específico no elemento, significa
+                        que seu elemento será sempre o mesmo.
+                    </p>
+                </div>
+            </div>
+            <inc src="editor" wait-data="sum-eg"></inc>
+        </div>
+
+        <div class="main-page-editor-container">
+            <div class="description">
+                <div>
+                    <h2>Exemplo de Todo List</h2>
+                    <p>Vamos fazer uma de TODO List App</p>
+                    <p>Você pode gerenciar seu array como se espera, e eles são reactivos às mudanças.</p>
+                </div>
+            </div>
+            <inc src="editor" wait-data="todo-eg"></inc>
+        </div>
+    </div>
+
+    <div class="main-divider middle-content">
+        <div class="center-content">
+            <div class="main-text">
+                <h3> Want to Learn more? </h3>
+                <a href="docs.html" class="high-btn"> Começar </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-divider botton-content">
+        <div class="center-content">
+            <div class="text-center">
+                <p> Lançado sob a <a href="https://opensource.org/licenses/MIT"> <b>MIT License</b>
+                    </a> </p>
+                <p>Copyright © 2019-Present, Afonso Matumona</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script>
+    this.loaded = function (el) {
+        // Load hello word example
+        this.Easy.expose('hello-word', {
+            name: 'Hello Word',
+            content: '<div id="app">\n' +
+                '   <h3> {{ message }} <\/h3>\n' +
+                '<\/div>\n\n' +
+                '<script>\n' +
+                '   var app = new Easy("#app", {\n' +
+                '       data: {\n' +
+                '           message: "Hello World!"\n' +
+                '       }\n' +
+                '   });\n' +
+                '<\/script>'
+        });
+
+        // Load calc example
+        this.Easy.expose('sum-eg', {
+            name: 'Simple Sum',
+            content: '<div id="app" e-def="{ first: 1, second: 2 }">\n' +
+                '   <input type="number" e-bind="first">\n' +
+                '   <input type="number" e-bind="second">\n\n' +
+                '   <h3> {{ first }} + {{ second }} = {{ first + second }} <\/h3>\n' +
+                '<\/div>\n\n' +
+                '<script>\n' +
+                '   var app = new Easy("#app");\n' +
+                '<\/script>'
+        });
+
+        // Load bind example
+        this.Easy.expose('todo-eg', {
+            name: 'Todo List',
+            content: '<div id="app">\n' +
+                '   <input type="text" e-bind="task"><br>\n' +
+                '   <button on:click="addTodo()">Add</button>\n' +
+                '   <label> {{ task }} <\/label><br><br>\n' +
+                '   <ol>\n' +
+                '       <li e-for="todo in todos"> {{ todo }} </li>\n' +
+                '   </ol>\n' +
+                '   <button on:click="todos = []">Clear</button>\n' +
+                '<\/div>\n\n' +
+                '<script>\n' +
+                '   var app = new Easy("#app", {\n' +
+                '       data: {\n' +
+                '           task: "",\n' +
+                '           todos: [ "Get Up", "Eat", "Code" ],\n' +
+                '           addTodo: function(){\n' +
+                '           this.data.todos.push(task);\n' +
+                '           this.data.task = "";\n' +
+                '          }\n' +
+                '       }\n' +
+                '   });\n' +
+                '<\/script>'
+        });
+    }
+    this.export(this.scope);
+</script>

@@ -1,0 +1,56 @@
+<section class="section">
+    <a href="https://github.com/AfonsoMatElias/easy/blob/6a729b7284758c6064eaadb4dc6b23fde4081aaf/docs/components/doc-sections/pt/delimiters.html"
+        title="Help us improve this documentation on github!" class="edit-content"><span
+            class="fa fa-pencil"></span></a>
+
+    <h1> <a id="delimiters"> Delimiters </a> </h1>
+
+    <p>
+        Por padrão, o Easy traz dois tipos de delimitadores, que são: <span class="note">easy</span> delimiter e o
+        <span class="note">common</span> delimiter que também é usado pelo Vue.js, Angular.js, e outros.
+    </p>
+
+    <p>
+        Os delimitadores abrem uma espaço no HTMl para execução de um trecho de código javascript, isto significa que
+        podemos executar qualquer código javascript puro como variáveis, funções, operadores ternários, etc. Só precisa
+        retornar um valor.
+    </p>
+
+    <p>
+        Sempre que um valor for um objecto ele torna-o em <a
+            href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/JSON"
+            class="note mark-el">JSON</a>.
+    </p>
+
+    <h3> <a id="dlm_easy"> Easy Delimiter </a> </h3>
+
+    <p e-ignore>
+        Para usar este delimitador basta fazer o seguinte: <span class="note">
+            <span class="mark-el">-e-</span> [Content] <span class="mark-el">-</span> </span>
+    </p>
+
+    <h3> <a id="dlm_easy"> Common Delimiter </a> </h3>
+
+    <p e-ignore>
+        Para usar este delimitador basta fazer o seguinte: <span class="note"> <span
+                class="mark-el">{{</span> [Content] <span class="mark-el">}}</span> </span>
+    </p>
+
+    <p>
+        Podemos consultar todos os delimitadores disponíveis na propriedade <span
+            class="note mark-el">instance.delimiters</span>. Estes valores são inalteráveis por esta propriedade.
+    </p>
+
+    <div class="block-note info">
+        <p>
+            Você pode o seu próprio delimitador, como desejas (Falaremos sobre isso mais depois).
+        </p>
+    </div>
+</section>
+<script>
+    this.mounted = function (el) {
+        appExector(el);
+
+        scrollByAnchor(el);
+    }
+</script>

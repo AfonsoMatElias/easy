@@ -1,0 +1,490 @@
+<section class="section">
+    <a href="https://github.com/AfonsoMatElias/easy/blob/6a729b7284758c6064eaadb4dc6b23fde4081aaf/docs/components/doc-sections/pt/connectors.html"
+        title="Help us improve this documentation on github!" class="edit-content"><span
+            class="fa fa-pencil"></span></a>
+
+    <h1> <a id="connectors"> Conectores (Connectors) </a> </h1>
+    <p>
+        Um conector é um objeto de classe que está associado a <i class="note mark-el">Easy</i> tornando-o capaz de
+        fazer requisições externas usando métodos integrados e comandos simples. Quando é importado, também cria uma
+        instância de si mesmo configurando essa instância no Easy Object. <br>
+        <a class="mark-el" on:click="showModal">Ver Todos Conectores Disponíveis</a>
+    </p>
+
+    <div class="block-note warn">
+        <p>
+            Os conectores não funcionam sozinhos, ele precisa localizar o script easy.js importado, caso contrário, ele
+            não será criado.
+        </p>
+    </div>
+
+    <h3> <a id="conn_methods"> Métodos (Methods) </a> </h3>
+    <p>
+        Cada instância do `Easy` possui 5 métodos que podem ser usados para executar determinado método na instância do
+        conector, que são:
+    </p>
+
+    <ul>
+        <li> <span class="note mark-el">create(<i class="mark-el">path</i>, <i class="mark-el">object</i>)</span> </li>
+        <li> <span class="note mark-el">read(<i class="mark-el">path</i>, <i class="mark-el">extra</i>)</span> </li>
+        <li> <span class="note mark-el">update(<i class="mark-el">path</i>, <i class="mark-el">object</i>, <i
+                    class="mark-el">id</i>)</span> </li>
+        <li> <span class="note mark-el">delete(<i class="mark-el">path</i>, <i class="mark-el">id</i>)</span> </li>
+        <li> <span class="note mark-el">getOne(<i class="mark-el">path</i>, <i class="mark-el">id</i>) </span> </li>
+        <li> <span class="note mark-el">request(<i class="mark-el">code</i>, <i class="mark-el">callback</i>) </span>
+        </li>
+    </ul>
+
+    <p>
+        Vamos explicar como cada método funciona.
+    </p>
+
+    <p>
+        <span class="note mark-el">create</span> &ndash; executa o método <i class="mark-el">add</i> na instância do
+        conector retornando uma promise. Espera dois parâmetros:
+    </p>
+
+    <ul>
+        <li> <i class="mark-el">path</i> &ndash; o caminho (path) onde o objeto precisa ser inserido. </li>
+        <li> <i class="mark-el">object</i> &ndash; o objecto (object) é um <i class="note mark-el">Object Literal</i> ou
+            um <i class="note mark-el">Element Form</i>, representa o objeto que será inserido. Quando passado um Form
+            Element, um objeto será gerado a partir do elemento. </li>
+        <li> <i class="mark-el">retorno (return)</i> &ndash; uma promessa (promise) de acordo com os dados configurados
+            na instância do conector.
+        </li>
+    </ul>
+
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    var app = new Easy('#app');
+
+    app.create('usuarios', { nome: 'Maria', pais: 'Angola' })
+       .then(function(data){
+            console.log(data);  
+       })
+       .catch(function(err){
+            console.error(err);  
+       });</textarea>
+    </div>
+
+    <p>
+        <span class="note mark-el">read</span> &ndash; executa o método <i class="mark-el">list</i> na instância do
+        conector retornando uma promise. Espera dois parâmetros:
+    </p>
+    <ul>
+        <li> <i class="mark-el">path</i> &ndash; o caminho (path) onde os objetos precisam ser lidos. </li>
+        <li> <i class="mark-el">extra (Optional)</i> &ndash; uma palavra extra que precisa ser concatenada com o caminho
+            (path) usando um <i class="note mark-el">/</i>. </li>
+        <li> <i class="mark-el">retorno (return)</i> &ndash; uma promessa (promise) de acordo com os dados configurados
+            na
+            instância do conector.
+        </li>
+    </ul>
+
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    var app = new Easy('#app');
+
+    app.read('usuarios')
+       .then(function(data){
+            console.log(data);  
+       })
+       .catch(function(err){
+            console.error(err);  
+       });</textarea>
+    </div>
+
+    <p>
+        <span class="note mark-el">update</span> &ndash; executa o método <i class="mark-el">update</i> na instância do
+        conector retornando uma promise. Espera três parâmetros:
+    </p>
+
+    <ul>
+        <li> <i class="mark-el">path</i> &ndash; o caminho (path) onde o objeto precisa ser actualizado. </li>
+        <li> <i class="mark-el">object</i> &ndash; the object is a <i class="note mark-el">Object Literal</i> or a
+            <i class="note mark-el">Form Element</i>, o objecto (object) é um <i class="note mark-el">Object Literal</i>
+            ou um <i class="note mark-el">Element Form</i>, representa o objeto que será inserido. Quando passado um
+            Form Element, um objeto será gerado a partir do elemento. </li>
+        <li> <i class="mark-el">id</i> &ndash; o único identificador (id) do objecto. </li>
+        <li> <i class="mark-el">retorno (return)</i> &ndash; uma promessa (promise) de acordo com os dados configurados
+            na instância do conector.
+        </li>
+    </ul>
+
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    var app = new Easy('#app');
+
+    app.update('usuarios', { nome: 'Formosa' }, 1)
+       .then(function(data){
+            console.log(data);  
+       })
+       .catch(function(err){
+            console.error(err);  
+       });</textarea>
+    </div>
+
+    <p>
+        <span class="note mark-el">delete</span> &ndash; executa o método <i class="mark-el">remove</i> na instância do
+        conector retornando uma promise. Espera dois parâmetros:
+    </p>
+    <ul>
+        <li> <i class="mark-el">path</i> &ndash; o caminho (path) onde os objeto precisa ser removido. </li>
+        <li> <i class="mark-el">id</i> &ndash; o único identificador (id) do objecto. </li>
+        <li> <i class="mark-el">retorno (return)</i> &ndash; uma promessa (promise) de acordo com os dados configurados
+            na instância do conector.
+        </li>
+    </ul>
+
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    var app = new Easy('#app');
+
+    app.delete('usuarios', 1)
+       .then(function(data){
+            console.log(data);  
+       })
+       .catch(function(err){
+            console.error(err);  
+       });</textarea>
+    </div>
+
+    <p>
+        <span class="note mark-el">getOne</span> &ndash; executa o método <i class="mark-el">getOne</i> na instância do
+        conector retornando uma promise. É obrigatório que apenas um resultado sejá retornado. Espera dois parâmetros:
+    </p>
+
+    <ul>
+        <li> <i class="mark-el">path</i> &ndash; o caminho (path) onde o objeto precisa ser lido. </li>
+        <li> <i class="mark-el">id</i> &ndash; o único identificador (id) do objecto. </li>
+        <li> <i class="mark-el">retorno (return)</i> &ndash; uma promessa (promise) de acordo com os dados configurados
+            na instância do conector.
+        </li>
+    </ul>
+
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    var app = new Easy('#app');
+
+    app.getOne('usuarios', 1)
+       .then(function(data){
+            console.log(data);  
+       })
+       .catch(function(err){
+            console.error(err);  
+       });</textarea>
+    </div>
+
+    <p>
+        <span class="note mark-el">request</span> &ndash; usado para obter o objecto de requisição dos comando. Espera
+        dois parâmetros:
+    </p>
+
+    <ul>
+        <li> <i class="mark-el">code</i> &ndash; o codigo único definido no objecto de requisição or ou a url de
+            requisição.
+        </li>
+        <li> <i class="mark-el">callback</i> &ndash; o função callback onde vai ser passado o objecto como primeiro
+            parâmetro. </li>
+    </ul>
+
+    <p>
+        A estrutura do objecto de requisição é:
+    </p>
+
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    {
+        // Um código único
+        $code: String,
+        
+        // A url da requisição
+        $url: String,
+
+        // O tipo de requisição 
+        $type: String,
+
+        // O valor do id da requisição
+        $id: String,
+
+        // The element of the request
+        $el: Element,
+
+        // Os dados da requisição
+        $data: Object,
+
+        // O objecto do escopo acima
+        $scope: Object
+    }</textarea>
+    </div>
+
+    <h3> <a id="conn_commands"> <b>Comandos (Commands)</b> </a> </h3>
+    <p>
+        Há comandos que podem ser usados com os conectores nos elementos HTML, que executam a requisição <i
+            class="note mark-el">read</i> ou a requisição <i class="note mark-el">getOne</i>.
+    </p>
+
+    <h4> <a id="conn_c_tmp"> e-tmp </a> </h4>
+    <p>
+        É a forma curta de e-template, executa a requisição `read` de acordo com o caminho fornecido, e renderiza todos
+        os resultados depois da requisição for terminada.
+    </p>
+
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <ul>
+        <li e-tmp="usuarios">
+            <label> {{ nome }} </label>
+            <label> {{ pais }} </label>
+        </li>
+    </ul></textarea>
+    </div>
+
+    <h4> <a id="conn_c_tmp_w_filter"> e-tmp com e-id (e-tmp with e-id) </a> </h4>
+    <p>
+        Executa a requisição `read` de acordo com o caminho fornecido, adicionando o valor do atributo <i
+            class="note mark-el">e-id</i>
+        no parâmetro extra.
+    </p>
+
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <ul>
+        <!-- Pegue sós os usuários activos -->
+        <li e-tmp="usuarios" e-id="activos">
+            <label> {{ nome }} </label>
+            <label> {{ pais }} </label>
+        </li>
+    </ul></textarea>
+    </div>
+
+    <div class="block-note info">
+        <p>
+            Também podia ser feito deste jeito:
+            <i class="note mark-el">e-tmp="usuarios/activos"</i>
+        </p>
+    </div>
+
+    <h4> <a id="conn_c_tmp_w_filter"> e-tmp com e-filter (e-tmp with e-filter) </a> </h4>
+    <p>
+        A lista de valores retornado também poder ser filtrada usando o comando `e-filter`, a expressão de filtro é
+        mesma com a de <i class="note mark-el">e-for</i>, o mesmo aceita os diferentes filtros fornecidos pelo easy.js.
+    </p>
+
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <ul e-def="{ pesquisar: '' }"> 
+        <li e-tmp="usuarios" e-filter="pesquisar"> 
+            <label> {{ nome }} </label>
+            <label> {{ pais }} </label>
+        </li>
+    </ul></textarea>
+    </div>
+
+    <h4> <a id="conn_c_tmp_w_order"> e-tmp com e-order (e-tmp with e-order) </a> </h4>
+    <p>
+        A lista de valores retornado também pode ser ordenado com o comando e-order, a expressão de ordenação é a mesma
+        com a de <i class="note mark-el">e-for</i>.
+    </p>
+
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <ul> 
+        <li e-tmp="usuarios" e-order="asc:pais"> 
+            <label> {{ nome }} </label>
+            <label> {{ pais }} </label>
+        </li>
+    </ul></textarea>
+    </div>
+
+    <h4> <a id="conn_c_fill"> e-fill with e-id </a> </h4>
+    <p>
+        Executa a requisição getOne de acordo com o caminho fornecido e renderiza o resultado depois da requisição
+        terminar. A sintaxe é <i class="note mark-el">e-fill="caminho"</i>. Mas, ela precisa ser combinada com <i
+            class="note mark-el">e-id</i> que terá o valor do parâmetro `id`. <br>
+        <span class="note warn-border">O atributo <i class="mark-el">e-id</i> é obrigatório.</span>.
+    </p>
+
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <div e-fill="usuarios" e-id="1"> 
+        Nome: <label> {{ nome }} </label>
+        País: <label> {{ pais }} </label>
+    </div></textarea>
+    </div>
+
+    <h4> <a id="conn_c_req"> e-req </a> </h4>
+    <p>
+        It's short of e-request, this is the versatile command, whicch can perform
+        <i class="note mark-el">e-tmp (read)</i> or <i class="note mark-el">e-fill (getOne)</i>
+        request according to the expression provided. The syntax is: <br>
+    </p>
+
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <!-- Request Type -->
+    <element 
+        e-req="{
+            $code: String (Opcional),
+            $url: String,
+            $type: String,
+            $id: String
+        }"/></textarea>
+    </div>
+
+    <ul>
+        <li> <i class="mark-el">$code</i> &ndash; o código único desta requisição, usado para pegar um objecto
+            especifíco de requisição.</li>
+        <li> <i class="mark-el">$url</i> &ndash; a url ou caminho do request.</li>
+        <li> <i class="mark-el">$type</i> &ndash; o tipo de requisição, que pode ser <i class="note mark-el">many</i> ou
+            <i class="note mark-el">one</i>. Se nada for definido, `many` será o valor padrão. </li>
+
+        <li> <i class="mark-el">$id</i> &ndash; O valor do <i class="mark-el">id</i>, no caso de <i
+                class="note mark-el">getOne</i> ou <i class="mark-el">extra</i> no caso de <i
+                class="note mark-el">read</i>.</li>
+    </ul>
+
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <!-- Requisitando: Many -->
+    <ul>
+        <li e-req="{ 
+                $url: 'usuarios',
+                $code: 'todos-usuarios'
+            }">
+            <label> {{ nome }} </label>
+            <label> {{ pais }} </label>
+        </li>
+    </ul>
+
+    <!-- Requisitando: One -->
+    <div e-req="{
+            $type: 'one',
+            $url: 'usuarios, 
+            $id: 1
+        }"> 
+        Nome: <label> {{ nome }} </label>
+        Pais: <label> {{ pais }} </label>
+    </div>
+    
+    <script> 
+        var app = new Easy('#app');
+        app.request('todos-usuarios', function(req){
+            console.log(req);
+        });
+    </script></textarea>
+    </div>
+
+    <div class="block-note warn">
+        <p>
+            Quando os comandos <i class="mark-el">e-tmp</i>, <i class="mark-el">e-fill</i> e <i
+                class="mark-el">e-req</i> são usados, um escopo é criado tendo o <i class="mark-el">objecto
+                requisição</i>
+            combinado com o <i class="mark-el">objecto do escopo</i> .
+        </p>
+    </div>
+
+    <h4> <a id="conn_c_use"> e-use </a> </h4>
+    <p>
+        Este comando é usado para criar uma variable contendo resultado da requisição. Quando usado com <i
+            class="mark-el">e-tmp</i> ou <i class="mark-el">e-req:'many'</i> cria para cada item do resultado, e quando
+        usado com <i class="mark-el">e-fill</i> ou <i class="mark-el">e-req:'one'</i> cria para o resultado.
+    </p>
+
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <ul>
+        <li e-tmp="usuarios" e-use="usuario">
+            <label> {{ usuario.nome }} </label>
+            <label> {{ usuario.pais }} </label>
+        </li>
+    </ul></textarea>
+    </div>
+
+    <h3> <a id="conn_available"> Disponíveis (Availables) </a> </h3>
+    <p>
+        Todos os conectores podem ser encontrados na pasta connectors (github), e podem ser baixados usando o <a
+            on:click="showModal" class="note mark-el">download modal</a>.
+    </p>
+
+    <h4> <a id="conn_ajax"> Ajax </a> </h4>
+    <p>
+        O ficheiro easy.ajax.js, ]e um conector que permite o <i class="note mark-el">Easy.js</i> fazer requisições
+        ajax.
+        É muito simples de ser configurado e começar a fazer requisições para um servidor.
+    </p>
+
+    <p>
+        O constructor deste conector espera dois parâmetros, a <i class="note mark-el">baseUrl</i> e a <i
+            class="note mark-el">fetchOptions</i>.
+    </p>
+
+    <ul>
+        <li> <i class="mark-el">baseUrl</i> &ndash; representa a url base do servidor, normalmente é parte constante da
+            url. exemplo.: <i class="note mark-el">http://localhost:3000/api/</i> </li>
+        <li> <i class="mark-el">fetchOptions</i> &ndash; é o object tendo todas as opções que uma requisição precisa,
+            como <i class="note mark-el">type</i>, <i class="note mark-el">headers</i>, etc. </li>
+    </ul>
+
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    // Exemplo de configuração
+    new EasyConnector('http://localhost:3000/api/', {
+        type: 'json',
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        }
+    });</textarea>
+    </div>
+
+    <p>
+        No retorno da resposta principal, só o os reais dados devem ser retornados, se a resposta vem dentro de um
+        objecto, como por exemplo este <span class="note"> { data: <i class="mark-el">{...}</i>, errors: <i
+                class="mark-el">[...]</i>, success: <i class="mark-el">boolean</i> } </span>, precisamos acessar a
+        propriedade `data` e retorná-la:
+    </p>
+
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    ...
+    new Promise(function (resolve, reject) {
+        ...
+        var response = { data: [1,2,3], errors: [], success: true }; 
+    
+        return resolve($easy.return(true, 'Ok', response.data));
+    });</textarea>
+    </div>
+
+    <div class="block-note info">
+        <p>
+            O método <i class="mark-el">return</i> pode ser encontrado em Easy.prototype.<i class="mark-el">return</i>,
+            é usado para gerar o tipo de objecto de retorno entendido pela instância do easy.
+        </p>
+    </div>
+
+    <div class="block-note info">
+        <p>
+            Dentro do ficheiro de conector foi explicado como configurá-lo de acordo com a resposta do seu servidor.
+        </p>
+    </div>
+
+    <div class="block-note info">
+        <p>
+            Todos dados retornados se tornan reactivos depois de ser executados pela função `resolve`, significando que
+            se resultado for um array pode ser usado os métodos push, pop, etc, e ele fará as alterações na UI.
+        </p>
+    </div>
+
+    <h3> <a id="conn_free"> Free </a> </h3>
+    <p>
+        O ficheiro easy.free.js é um conector com a estrutura que pode ser usado para criar outros conectores,
+        significando que qualquer um pode criar um conector baseando-se neste ficheiro.
+    </p>
+</section>
+<script>
+    this.mounted = function (el) {
+        appExector(el);
+        scrollByAnchor(el);
+    }
+</script>

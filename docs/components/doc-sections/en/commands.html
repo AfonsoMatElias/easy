@@ -13,22 +13,21 @@
     <h3> <a id="cmd_data"> data </a> </h3>
     <p>
         It allows defining a data scope for a certain element, the syntax is
-        <span class="note mark-el">data="{...}"</span>, if it is defined to be
+        <span class="note mark-el">data="{...}"</span>, if it's defined without
         content the element will have the data of the main scope, instance.data.
     </p>
 
     <p>
-        Whenever a scope is created, a variable <i class="mark-el">$scope</i> is added to the new scope making the
+        Whenever a scope is created, a property <i class="mark-el">$scope</i> is added to the new scope making the
         the parent scope accessable inside of the new scope. We hope it does not confuse you 😅!
     </p>
 
     <p>
         If we define an <a href="https://www.dyn-web.com/tutorials/object-literal/" class="mark-el">Object Literal</a>,
         kwow that these properties are temporary and by default <span class="note warn-border">they are not
-            reactive</span>, unless an object that is already reactive is passedby itself or if we passe the object in
-        the
-        <span class="note">this.reactive( ... )</span> method, it expects a method and returns the already reactive
-        object.
+            reactives</span>, unless an object that is already reactive is passed by itself or if we passe the object in
+        the <span class="note">this.reactive(...)</span> method, it expects a function returning the object and returns
+        the already reactive object.
     </p>
 
     <div e-if="typeof noApp === 'undefined'">
@@ -74,7 +73,7 @@
         </div>
     </div>
 
-    <p>
+    <p e-if="typeof noApp === 'undefined'">
         Now let's see how to create a scope with reactive properties, using the reactive
         function.
     </p>
@@ -119,10 +118,10 @@
 
     <h3> <a id="cmd_wait_data"> wait-data </a> </h3>
     <p>
-        Allows the element where it is defined to be skipped in the compilation, waiting for its
+        Allows the element where it is defined to be skipped in the compilation, waiting for it's
         data to be provided. It is defined as follows:
         <span class="note mark-el">wait-data="dataID"</span>. In order to make the element
-        data available, we use the <span class="note mark-el">expose</span> method.
+        data available, we use the <span class="note mark-el">instance.expose('dataId', {...})</span> method.
     </p>
 
     <div e-if="typeof noApp === 'undefined'">
@@ -147,7 +146,7 @@
 
             /* Methods */
             load: function(){
-                this.expose('waitForMe', { message: 'how are you? 😀' });
+                this.expose('waitForMe', { message: 'How are you? 😀' });
             }
         }
     });</textarea>
@@ -192,8 +191,9 @@
         <button on:click="load" > Load Remain </button>
         
         <div>
-            <h4> {{ message }}! </h4>
-            <h4 wait-data="waitForMe" e-content="{{ message }}"> ... </h4>
+            <h4> 
+                {{ message }}! <span wait-data="waitForMe" e-content="{{ message }}">...</span> 
+            </h4>
         </div>
     </div></textarea>
             </div>
@@ -207,7 +207,7 @@
 
             /* Methods */
             load: function(){
-                this.expose('waitForMe', { message: 'how are you? 😀' });
+                this.expose('waitForMe', { message: 'How are you? 😀' });
             }
         }
     });</textarea>
@@ -237,8 +237,8 @@
         </p>
     </div>
 
-    <p>
-        Now, let's redo the example above.
+    <p e-if="typeof noApp === 'undefined'">
+        Let's redo the example above, again.
     </p>
 
     <div e-if="typeof noApp === 'undefined'">
@@ -250,8 +250,9 @@
         <button on:click="load" > Load Remain </button>
         
         <div>
-            <h4> {{ message }}! </h4>
-            <h4 wait-data="waitForMe" e-skeleton e-content="{{ message }}" > Waiting </h4>
+            <h4> 
+                {{ message }}! <span wait-data="waitForMe" e-skeleton>{{ message }}</span> 
+            </h4>
         </div>
     </div></textarea>
             </div>
@@ -265,7 +266,7 @@
 
             /* Methods */
             load: function(){
-                this.expose('waitForMe', { message: 'how are you? 😀' });
+                this.expose('waitForMe', { message: 'How are you? 😀' });
             }
         }
     });</textarea>
@@ -278,19 +279,16 @@
 
     <p>
         When e-skeleton is defined for an element, it takes the form of the element to be able
-        to present itself,
-        this means that the element must have some width and height. And by default the
-        background color is gray
-        and the wave is light gray.
+        to present itself, this means that the element must have some width and height. And by default the
+        background color is light gray and the wave is lightest.
     </p>
 
     <p>
         There are two ways to use it, <span class="note mark-el">e-skeleton</span> and <span
-            class="note mark-el">e-skeleton="someId"</span>,
-        Without an identifier, the skeleton is removed after the element has been compiled. With
-        an identifier, the
-        skeleton(s) must be removed manually using <span class="note">element.clearSkeleton(id)</span> extension method
-        or simply remove the e-skeleton attribute from the elements.
+            class="note mark-el">e-skeleton="someId"</span>. Without an identifier, the skeleton is removed after the
+        element has been compiled. With an identifier, the skeleton(s) must be removed manually using <span
+            class="note">element.clearSkeleton(id)</span> extension method or simply remove the `e-skeleton` attribute
+        from the elements.
     </p>
 
     <div e-if="typeof noApp === 'undefined'">
@@ -328,7 +326,7 @@
     <h3> <a id="cmd_e_def"> e-def </a> </h3>
     <p>
         It is a short name of <span class="note">e-definer</span>, it allows to dynamically
-        define properties (Reactives) in the current scope. Its syntax is
+        define properties (Reactives) in the current scope. It's syntax is
         <span class="note mark-el">e-def="{...}"</span>, it expects
         <a href="https://www.dyn-web.com/tutorials/object-literal/" class="mark-el">Object
             Literal</a>.
@@ -369,9 +367,9 @@
     <p>
         The <span class="note">e-if</span> command is very similar to the <span class="mark-el">Vue.js</span> <span
             class="note">v-if</span> directive...
-        it is used to conditionally render a block (element). The block will only be shown if
-        the command expression returns a truthy value. It is accompanied with the e-else-if and
-        e-else commands.
+        It is used to conditionally render a block (element). The block will only be shown if
+        the command expression returns a truthy value. It is accompanied with the `e-else-if` and
+        `e-else` commands.
     </p>
 
     <div e-if="typeof noApp === 'undefined'">
@@ -427,7 +425,7 @@
         <button on:click="show = !show"> toggle {{ show ? '🙉' : '🙈' }} </button>
 
         <div e-show="show"> 
-            <p> Want to hide me? Click on toggle</p>
+            <p> Want to hide me? Click on `toggle`.</p>
         </div>
     </div></textarea>
             </div>
@@ -463,8 +461,8 @@
 
     <p>
         There is a big difference in these two ways of using it... Using the <b>short way</b> a scope created
-        in the for block, meaning that to access the various scope above you will have to use the
-        <i class="mark-el">$scope</i> variable, already using the <b>complete way</b> no scope is created.
+        in the `e-for` block, meaning that to access the various scope above you will have to use the
+        <i class="mark-el">$scope</i> property, already using the <b>complete way</b> no scope is created.
     </p>
 
     <div e-if="typeof noApp === 'undefined'">
@@ -502,14 +500,14 @@
 
     <p>
         Into <i class="mark-el">e-for</i> expression, two variables can be defined, the <i class="mark-el">item</i>
-        and the <i class="mark-el">index</i> of the item, using `rerenderOnArrayChange: <iclass="mark-el">false</i>`
-            whenever the array changes, like for eg: `array.shift()` the index variable won't auto update because there
-            is not
-            a physical binding between this <i class="mark-el">index</i> with the <i class="mark-el">index of this item
-                in the
-                array</i>. In the other hand, using `rerenderOnArrayChange: <i class="mark-el">true</i>`, whenever the
-            array
-            changes, all the items of the array will be re-rendered in the UI, meaning the index variable updates too.
+        and the <i class="mark-el">index</i> of the item, using `rerenderOnArrayChange: <i class="mark-el">false</i>`
+        whenever the array changes, like for eg: `array.shift()` the index variable won't auto update because there
+        is not
+        a physical binding between this <i class="mark-el">index</i> with the <i class="mark-el">index of this item
+            in the
+            array</i>. In the other hand, using `rerenderOnArrayChange: <i class="mark-el">true</i>`, whenever the
+        array
+        changes, all the items of the array will be re-rendered in the UI, meaning the index variable updates too.
     </p>
 
     <h4> <a id="cmd_e_for_filter"> Using Array filter </a> </h4>
@@ -522,11 +520,11 @@
         which are:
     </p>
 
-    <h4> <a id="cmd_e_for_filter_g_filter"> 1. Global Fitler
+    <h4> <a id="cmd_e_for_filter_g_filter"> 1. Global Filter
         </a> </h4>
     <p>
         Performs the filter on every property of the items containing the value of the data
-        property set.
+        property setted.
     </p>
 
     <div e-if="typeof noApp === 'undefined'">
@@ -562,13 +560,11 @@
         </div>
     </div>
 
-    <h4> <a id="cmd_e_for_filter_tg_filter"> 2. Targeted
-            filter </a> </h4>
+    <h4> <a id="cmd_e_for_filter_tg_filter"> 2. Targeted filter </a> </h4>
     <p>
         Performs the filter on specific properties of the items containing the value of the data
-        property set.
-        The filter need to be defined as following: <span class="note mark-el">|
-            dataProperty:property1,property2...</span>
+        property setted. The filter need to be defined as following: <span class="note mark-el">|
+            dataProperty:prop1,prop2...</span>
     </p>
 
     <div e-if="typeof noApp === 'undefined'">
@@ -604,10 +600,9 @@
         </div>
     </div>
 
-    <h4> <a id="cmd_e_for_filter_d_filter"> 3. Direct filter
-        </a> </h4>
+    <h4> <a id="cmd_e_for_filter_d_filter"> 3. Direct filter </a> </h4>
     <p>
-        Performs the filter on specific property of the items to a value set.
+        Performs the filter on specific property of the items to a value setted.
         The filter need to be defined as following: <br>
         <span class="note mark-el">| :property1 === someValue</span>
     </p>
@@ -693,153 +688,149 @@
         </div>
     </div>
 
-    <h3> <a id="" Array Change Detection </a> </h3> <p>
-            Easy links with the main methods of an array, making them become reactive, the methods
-            are:
-            </p>
+    <h3> Array Change Detection</h3>
+    <p>
+        Easy links with the main methods of an array, making them become reactive, the methods
+        are:
+    </p>
 
-            <ul>
-                <li> <span class="note mark-el"> push() </span> </li>
-                <li> <span class="note mark-el"> pop() </span> </li>
-                <li> <span class="note mark-el"> unshift() </span> </li>
-                <li> <span class="note mark-el"> shift() </span> </li>
-                <li> <span class="note mark-el"> splice() </span> </li>
-            </ul>
+    <ul>
+        <li> <span class="note mark-el"> push() </span> </li>
+        <li> <span class="note mark-el"> pop() </span> </li>
+        <li> <span class="note mark-el"> unshift() </span> </li>
+        <li> <span class="note mark-el"> shift() </span> </li>
+        <li> <span class="note mark-el"> splice() </span> </li>
+    </ul>
 
-            <div class="block-note info">
-                <p>
-                    If we use some method that changes the array even if it is not in the list above
-                    the user interface will be updated too.
-                </p>
-            </div>
+    <div class="block-note info">
+        <p>
+            If we use some method that changes the array even if it is not in the list above
+            the user interface will be updated too.
+        </p>
+    </div>
 
-            <div class="block-note dont">
-                <p>
-                    Easy cannot detect changes when we modify the length of the array. e.g.: <span
-                        class="note att-border">
-                        array.length = newLength </span>. If will not have effects in to the user interface.
-                </p>
-            </div>
+    <div class="block-note dont">
+        <p>
+            Easy cannot detect changes when we modify the length of the array. e.g.: <span class="note att-border">
+                array.length = newLength </span>. It will not have effects in to the user interface.
+        </p>
+    </div>
 
-            <h3> <a id="cmd_e_order"> e-order </a> </h3>
-            <p>
-                Sorts a list according to the condition passed in the command's expression. Its syntax
-                is
-                <span class="note mark-el">e-order="<i>OrderType</i>:<i>PropertyToBeOrdered</i>"</span>.
-                The order types are: <span class="note mark-el">asc</span>, for ascending and
-                <span class="note mark-el">des</span>, for descending.
-            </p>
+    <h3> <a id="cmd_e_order"> e-order </a> </h3>
+    <p>
+        Sorts a list according to the condition passed in the command's expression. Its syntax
+        is
+        <span class="note mark-el">e-order="<i>OrderType</i>:<i>PropertyToBeOrdered</i>"</span>.
+        The order types are: <span class="note mark-el">asc</span>, for ascending and
+        <span class="note mark-el">des</span>, for descending.
+    </p>
 
-            <div e-ignore class="code-container" code-ext=".html">
-                <textarea cm-lang="text/html">
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
     <ul> 
         <li e-for="food of foods" e-order="asc:name"> 
             {{ food.name }}, {{ food.price }} 💰 
         </li>
     </ul></textarea>
-            </div>
+    </div>
 
-            <div class="block-note info">
-                <p e-ignore>
-                    The command accepts delimiters, this means that it can be defined like this,
-                    e.g.: <span class="note mark-el">e-order="{{orderType}}:{{orderBy}}"</span>
-                </p>
-            </div>
+    <div class="block-note info">
+        <p e-ignore>
+            The command accepts delimiters, this means that it can be defined like this,
+            e.g.: <span class="note mark-el">e-order="{{orderType}}:{{orderBy}}"</span>
+        </p>
+    </div>
 
-            <h3> <a id="cmd_e_anm"> e-anm </a> </h3>
-            <p>
-                It is a simple way to animate the insertion of an element in the DOM. Its syntax is
-                <span class="note mark-el">e-anm="<i>direction</i>"</span>.
-            </p>
+    <h3> <a id="cmd_e_anm"> e-anm </a> </h3>
+    <p>
+        It is a simple way to animate the insertion of an element in the DOM. Its syntax is
+        <span class="note mark-el">e-anm="<i>direction</i>"</span>.
+    </p>
 
-            <ul>
-                <li> <span class="note mark-el">up</span> &ndash; performs the animation starting from
-                    the bottom to the top, ascending and gradually increasing the opacity. </li>
-                <li> <span class="note mark-el">down</span> &ndash; performs the animation starting
-                    from the top to the bottom, descending and gradually increasing the opacity.</li>
-                <li> <span class="note mark-el">left</span> &ndash; performs the animation starting
-                    from the right to the left, scrolling and gradually increasing the opacity. </li>
-                <li> <span class="note mark-el">right</span> &ndash; performs the animation starting
-                    from the left to the right, scrolling and gradually increasing the opacity. </li>
-            </ul>
+    <ul>
+        <li> <span class="note mark-el">up</span> &ndash; performs the animation starting from
+            the bottom to the top, ascending and gradually increasing the opacity. </li>
+        <li> <span class="note mark-el">down</span> &ndash; performs the animation starting
+            from the top to the bottom, descending and gradually increasing the opacity.</li>
+        <li> <span class="note mark-el">left</span> &ndash; performs the animation starting
+            from the right to the left, scrolling and gradually increasing the opacity. </li>
+        <li> <span class="note mark-el">right</span> &ndash; performs the animation starting
+            from the left to the right, scrolling and gradually increasing the opacity. </li>
+    </ul>
 
-            <div e-ignore class="code-container" code-ext=".html">
-                <textarea cm-lang="text/html">
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
     <ul> 
         <li e-for="food of foods" e-anm="up"> 
             {{ food.name }}, {{ food.price }} 💰 
         </li>
     </ul></textarea>
-            </div>
+    </div>
 
-            <h3> <a id="cmd_e_toggle"> e-toggle </a> </h3>
-            <p>
-                Allows you to toggle a property on an element, setting the value to <span
-                    class="note mark-el">true</span> when
-                set.
-                Its syntax is <span class="note mark-el">e-toggle:<i>property</i>="dataProperty"</span>.
-            </p>
+    <h3> <a id="cmd_e_toggle"> e-toggle </a> </h3>
+    <p>
+        Allows you to toggle a attribute on an element, setting the value <span class="note mark-el">true</span> when
+        set. It's syntax is <span class="note mark-el">e-toggle:<i>property</i>="dataProperty"</span>.
+    </p>
 
-            <div e-if="typeof noApp === 'undefined'">
-                <div e-ignore>
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
 
-                    <div execute class="code-container" code-ext=".html">
-                        <textarea cm-lang="text/html">
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
     <div id="app19">
         <input type="text" e-toggle:disabled="locked" placeholder="Type your name" />
         <button on:click="locked = !locked"> 
             {{ locked ? 'Locked 🔒' : 'Unlocked 🔓' }} 
         </button>
     </div></textarea>
-                    </div>
+            </div>
 
-                    <div class="code-container" code-ext=".js">
-                        <textarea cm-lang="javascript">
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
     var app19 = new Easy('#app19', {
         data: {
             locked: false
         }
     });</textarea>
-                    </div>
-                    <!-- End -->
-
-                    <div class="result"></div>
-                </div>
             </div>
+            <!-- End -->
 
+            <div class="result"></div>
+        </div>
+    </div>
 
-            <h3> <a id="cmd_e"> e-[something] </a> </h3>
-            <p>
-                As we said above, it is the most versatile command according to the defined expression,
-                because on the one hand it creates a property after being compiled and on the other it
-                creates the property and toggles a value on it.
-            </p>
+    <h3> <a id="cmd_e"> e-[attribute] </a> </h3>
+    <p>
+        As we said above, it is the most versatile command according to the defined expression,
+        because on the one hand it creates aan attribute after being compiled and on the other it
+        creates the attribute and toggles a value on it.
+    </p>
 
-            <p>
-                The sintax for simply property creation is <span
-                    class="note mark-el">e-<i>property</i>="expression"</span>.
-                In this case the expression must contain delimiter, otherwise it will not be compiled.
-            </p>
+    <p>
+        The sintax for simply attribute creation is <span class="note mark-el">e-<i>attribute</i>="expression"</span>.
+        In this case the expression must contain delimiter, otherwise it will not be compiled.
+    </p>
 
-            <div e-ignore class="code-container" code-ext=".html">
-                <textarea cm-lang="text/html">
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
     <div id="app">
         <img e-src="{{ imgUrl }}" src="default.png" srcset="fail-onload.png" />
     </div></textarea>
-            </div>
+    </div>
 
-            <p>
-                The sintax for property creation (if it does not exists) and toggleable value is
-                <span class="note mark-el">e-<i>property</i>="{ valueToToggle : condition }"</span>.
-                <br>
-                <span class="note att-border">Do not use delimiters in the expression</span>.
-            </p>
+    <p>
+        The sintax for attribute creation (if it does not exists) with toggleable value is
+        <span class="note mark-el">e-<i>attribute</i>="{ 'valueToToggle' : condition }"</span>.
+        <br>
+        <span class="note att-border">Do not use delimiters in the expression</span>.
+    </p>
 
-            <div e-if="typeof noApp === 'undefined'">
-                <div e-ignore>
+    <div e-if="typeof noApp === 'undefined'">
+        <div e-ignore>
 
-                    <div execute class="code-container" code-ext=".html">
-                        <textarea cm-lang="text/html">
+            <div execute class="code-container" code-ext=".html">
+                <textarea cm-lang="text/html">
     <div id="app20">        
         <style> 
         .yellow-class {
@@ -852,21 +843,21 @@
             Click Me
         </button>
     </div></textarea>
-                    </div>
+            </div>
 
-                    <div class="code-container" code-ext=".js">
-                        <textarea cm-lang="javascript">
+            <div class="code-container" code-ext=".js">
+                <textarea cm-lang="javascript">
     var app20 = new Easy('#app20', {
         data: {
             isYellow: false
         }
     });</textarea>
-                    </div>
-                    <!-- End -->
-
-                    <div class="result"></div>
-                </div>
             </div>
+            <!-- End -->
+
+            <div class="result"></div>
+        </div>
+    </div>
 
 
 </section>
