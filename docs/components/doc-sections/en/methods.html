@@ -9,7 +9,7 @@
 
     <h3><a id="method_setData">setData</a></h3>
     <p>
-        It is used to define properties in the data scope. Its sintax is
+        It is used to define properties in the data scope. It sintax is
         <span class="note mark-el">instance.setData(object, targetObject)</span>.
     </p>
     <ul>
@@ -97,7 +97,7 @@
 
     <h3><a id="method_emit">emit</a></h3>
     <p>
-        Allows you to issue a specific item, whether customized (events added in elements) or
+        Allows you to raise a specific event, whether customized (events added in elements) or
         added in the instance.
         The method expects three parameters: <span class="note mark-el">instance.emit(eventName,
             data, once)</span>.
@@ -157,9 +157,9 @@
     <ul>
         <li> <span class="note mark-el">{ String } name</span> &ndash; the name of the exposed a
             object. </li>
-        <li> <span class="note mark-el">{ Boolean } force</span> &ndash; Allows to remove the
+        <li> <span class="note mark-el">{ Boolean } remove</span> &ndash; allows to remove the
             exposed data after being retrieved. </li>
-        <li> <span class="note mark-el">{ Object } force</span> &ndash; the exposed object.
+        <li> <span class="note mark-el">{ Object } return</span> &ndash; the exposed object.
         </li>
     </ul>
 
@@ -181,7 +181,7 @@
     </p>
 
     <p>
-        To be able to generate the struture, this method depends of some commands, whitch are:
+        To be able to generate the structure, this method depends of some commands, whitch are:
     </p>
 
     <ul>
@@ -208,9 +208,9 @@
         <li> <span class="note mark-el">{ String|Element } selector</span> &ndash; the selector
             of the element to be generated or the element it self. </li>
         <li> <span class="note mark-el">{ Object } options</span> &ndash; options that indicates
-            properties it needs to look and from this ones which property it needs to get the
-            value. Its sintax is <span class="note mark-el">{ names: '[property1],[property2]',
-                values: '[property1],[property2]' }</span>. The order really matters, it takes
+            attributes it needs to look and from this ones which attributes it needs to get the
+            value. It sintax is <span class="note mark-el">{ names: '[attribute1],[attribute2]',
+                values: '[attribute1],[attribute2]' }</span>. The order really matters, it takes
             what it finds first. The default value is <span class="note">{ names: <i class="mark-el">'[name]'</i>,
                 values: <i class="mark-el">'[value]'</i> }</span>. </li>
         <li> <span class="note mark-el">{ Function} onset</span> &ndash; a function that will be
@@ -231,7 +231,7 @@
             <label> Last Name </label> <br>
             <input type="text" name="lastName" /> <br>
             
-            <!--  Build an phones property as an array -->
+            <!-- Build an phones property as an array -->
             <div e-build="phones" e-array> 
                 <label> Country Code </label> <br>
                 <input type="text" name="code" /> <br>
@@ -240,7 +240,7 @@
                 <input type="text" name="number" />
             </div>
             
-            <!--  Build an identification property as an object -->
+            <!-- Build an identification property as an object -->
             <div e-build="identification">
                 <label> Type </label> <br>
                 <select name="type"> 
@@ -293,7 +293,7 @@
 
     <h3><a id="method_watch">watch</a></h3>
     <p>
-        It is used to watch changes in specific property in the data scope. Its sintax is
+        It is used to watch changes in specific property in the data scope. It sintax is
         <span class="note mark-el">instance.watch(propertyName, callback, targetObject)</span>.
     </p>
     <ul>
@@ -303,10 +303,10 @@
             callback where all the logic will be fired when the property changes. The first
             argument is the new value and the second is the old value of the property. </li>
         <li> <span class="note mark-el">{ Object } targetObject</span> &ndash; represents the
-            target scope having tje property to watch. It is optional, if not defined the
+            target scope having the property to watch. It is optional, if not defined the
             properties will be in the <span class="note mark-el">main scope</span>. </li>
         <li> <span class="note mark-el">{ Object } returns</span> &ndash; the watch object, that
-            can be used to destroy the watch listern. </li>
+            can be used to destroy the watch listener. </li>
     </ul>
 
     <div e-ignore class="code-container" code-ext=".js">
@@ -331,12 +331,12 @@
         (Object Literal) to be setted. The available configurations are:
     </p>
 
-    <li><b>skeleton</b> &ndash; allow to modify the background and/or wave of the skeleton values. Its sintax is
+    <li><b>skeleton</b> &ndash; allow to modify the background and/or wave of the skeleton values. It sintax is
         <i class="note mark-el">instance.set('skeleton', object)</i>.</li>
 
     <ul>
         <li> <span class="note mark-el">{ Object } object</span> &ndash; the object having the
-            value(s) it needs to modify.
+            value it needs to modify.
             <span class="note">{ background: <i class="mark-el">color</i>, wave: <i class="mark-el">color</i> }</span>
         </li>
     </ul>
@@ -356,12 +356,12 @@
     app1.set('skeleton');</textarea>
     </div>
 
-    <li><b>delimiter</b> &ndash; allow to add a delimiter into the Easy compiler. Its sintax is 
+    <li><b>delimiter</b> &ndash; allow to add a delimiter into the Easy compiler. It sintax is 
         instance.set('delimiter', object).</li>
 
     <ul>
         <li> <span class="note mark-el">{ Object } object</span> &ndash; the object having the
-            value(s) it needs to be added. The struture of the object is:
+            value(s) it needs to be added. The structure of the object is:
         </li>
     </ul>
 
@@ -378,7 +378,7 @@
 
     <p>
         All the available delimiters can be seen in the property <span class="note mark-el">instance.delimiters</span>.
-        These values is unalterable by this property.
+        These values are unalterable by this property.
     </p>
 
     <div class="block-note info">

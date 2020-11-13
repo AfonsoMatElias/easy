@@ -2077,9 +2077,9 @@
                     return;
                 }
 
-                // Prepare and insert the compoment to the DOM
+                // Prepare and insert the component to the DOM
                 function Inc(config) {
-                    this.name = (src + ' compoment').toUpperCase();
+                    this.name = (src + ' component').toUpperCase();
                     this.created = this.mounted = fn.empty;
                     this.loaded = this.destroyed = fn.empty
                     this.scope = $easy.retrieve(src, true) || $inc.$$data;

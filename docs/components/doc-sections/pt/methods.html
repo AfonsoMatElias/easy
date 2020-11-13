@@ -1,24 +1,25 @@
 <section class="section">
-    <a href="https://github.com/AfonsoMatElias/easy/blob/6a729b7284758c6064eaadb4dc6b23fde4081aaf/docs/components/doc-sections/en/methods.html" 
-    title="Help us improve this documentation on github!" class="edit-content"><span class="fa fa-pencil"></span></a>
+    <a href="https://github.com/AfonsoMatElias/easy/blob/6a729b7284758c6064eaadb4dc6b23fde4081aaf/docs/components/doc-sections/pt/methods.html"
+        title="Help us improve this documentation on github!" class="edit-content"><span
+            class="fa fa-pencil"></span></a>
 
-    <h1><a id="methods"> Methods </a></h1>
+    <h1><a id="methods"> Métodos (Methods) </a></h1>
     <p>
-        There are some built-in methods that can be used in the application, which are:
+        Há alguns internos que podem ser usados na aplicação, que são:
     </p>
 
     <h3><a id="method_setData">setData</a></h3>
     <p>
-        It is used to define properties in the data scope. Its sintax is
-        <span class="note mark-el">instance.setData(object, targetObject)</span>.
+        É usado para definir propriedades no escopo. Sua sintâxe é <span class="note mark-el">instance.setData(object,
+            targetObject)</span>.
     </p>
     <ul>
-        <li> <span class="note mark-el">{ Object } object</span> &ndash; represents object a
-            containing the properties that must be added to the scope. </li>
-        <li> <span class="note mark-el">{ Object } targetObject</span> &ndash; represents the
-            target scope to be added to the properties. It is optional, if not defined the
-            properties will be in the <span class="note mark-el">main scope</span>. </li>
-        <li> <span class="note mark-el">{ Object } returns</span> &ndash; the scope object.
+        <li> <span class="note mark-el">{ Object } object</span> &ndash; representa o object contendo as propriedades
+            que devem ser adicionadas no escopo. </li>
+        <li> <span class="note mark-el">{ Object } targetObject</span> &ndash; representa o escopo alvo onde as
+            propriedades serão adicionadas. É opcional, se não for definida será posto no escopo principal. <span
+                class="note mark-el">escopo principal</span>. </li>
+        <li> <span class="note mark-el">{ Object } returns</span> &ndash; o escopo.
         </li>
     </ul>
 
@@ -26,32 +27,51 @@
         <textarea cm-lang="javascript">
     var app = new Easy('#my-app', {
         data: {
-            firstName: 'Maria',
+            primerioNome: 'Maria',
         }
     });
 
     app.setData({
-        lastName: 'Matumona',
-        country: 'Angola'
+        ultimoNome: 'Matumona',
+        pais: 'Angola'
     });</textarea>
     </div>
 
     <h3><a id="method_on">on</a></h3>
     <p>
-        It allows adding an event to the instance so that it can be used anywhere in the
-        application.
-        The method expects two parameters: <span class="note mark-el">instance.on(eventName,
-            callback)</span>.
+        Permite adicionar eventos na instância para que possam ser usadas em qualquer lugar da aplicação.
+        O método espera dois parâmetros: <span class="note mark-el">instance.on(nomeEvento, callback)</span>.
     </p>
 
     <ul>
-        <li> <span class="note mark-el">{ String } eventName</span> &ndash; the name of the
-            event
-            to be added. </li>
-        <li> <span class="note mark-el">{ Function } callback</span> &ndash; the callback having
-            your code. </li>
-        <li> <span class="note mark-el">{ Object } returns</span> &ndash; an object having the
-            event name and the callback we can use to remove the event.
+        <li> <span class="note mark-el">{ String } nomeEvento</span> &ndash; nome do evento a ser adicionado. </li>
+        <li> <span class="note mark-el">{ Function } callback</span> &ndash; o callback tendo seu código. </li>
+        <li> <span class="note mark-el">{ Object } returns</span> &ndash; um objecto tendo o callback que poder ser
+            usado para remover o evento.
+            <span class="note">{ event: <i class="mark-el">String</i>, callback: <i class="mark-el">Function</i> }
+            </span>. </li>
+    </ul>
+
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    var app = new Easy('#my-app');
+
+    app.on('nomeEvento', function(data) {
+        // Todo: escreva seu codigo...
+    });</textarea>
+    </div>
+
+    <h3><a id="method_off">off</a></h3>
+    <p>
+        Permite remover um evento adicionado a instância. O método espera dois parâmetros: <span
+            class="note mark-el">instance.off(nomeEvento, callback)</span>.
+    </p>
+
+    <ul>
+        <li> <span class="note mark-el">{ String } nomeEvento</span> &ndash; nome do evento a ser removido. </li>
+        <li> <span class="note mark-el">{ Function } callback</span> &ndash; o callback retornado do método <span
+                class="note mark-el">on</span>. </li>
+        <li> <span class="note mark-el">{ Object } returns</span> &ndash; um objecto tendo nome do evento e o callback.
             <span class="note">{ event: <i class="mark-el">String</i>, callback: <i class="mark-el">Function</i>
                 }</span>. </li>
     </ul>
@@ -60,106 +80,69 @@
         <textarea cm-lang="javascript">
     var app = new Easy('#my-app');
 
-    app.on('eventName', function(data) {
-        // Todo: your code here...
-    });</textarea>
-    </div>
-
-    <h3><a id="method_off">off</a></h3>
-    <p>
-        Allows you to remove an event added to the instance.
-        The method expects two parameters: <span class="note mark-el">instance.off(eventName,
-            callback)</span>.
-    </p>
-
-    <ul>
-        <li> <span class="note mark-el">{ String } eventName</span> &ndash; The name of the
-            event
-            to be removed. </li>
-        <li> <span class="note mark-el">{ Function } callback</span> &ndash; The callback
-            returned from <span class="note mark-el">on</span> method. </li>
-        <li> <span class="note mark-el">{ Object } returns</span> &ndash; an object having the
-            event name and the callback. <span class="note">{ event: <i class="mark-el">String</i>, callback: <i
-                    class="mark-el">Function</i>
-                }</span>. </li>
-    </ul>
-
-    <div e-ignore class="code-container" code-ext=".js">
-        <textarea cm-lang="javascript">
-    var app = new Easy('#my-app');
-
-    var event = app.on('eventName', function(data) {
-        // Todo: your code here...
+    var event = app.on('nomeEvento', function(data) {
+        // Todo: escreva seu código...
     });
 
-    app.off('eventName', event.callback);</textarea>
+    app.off('nomeEvento', event.callback);</textarea>
     </div>
 
     <h3><a id="method_emit">emit</a></h3>
     <p>
-        Allows you to issue a specific item, whether customized (events added in elements) or
-        added in the instance.
-        The method expects three parameters: <span class="note mark-el">instance.emit(eventName,
-            data, once)</span>.
+        Permite você acionar um evento especifico, seja ele customizado ou adicionado a instância.
+        O método espera três parâmetros: <span class="note mark-el">instance.emit(nomeEvento, dados, umaVez)</span>.
     </p>
 
     <ul>
-        <li> <span class="note mark-el">{ String } eventName</span> &ndash; the name of the
-            event
-            to be emitted. </li>
-        <li> <span class="note mark-el">{ Object } data</span> &ndash; a data to be added to the
-            event callback. </li>
-        <li> <span class="note mark-el">{ Boolean } once</span> &ndash; allows you to remove the
-            event after being called the first time. </li>
+        <li> <span class="note mark-el">{ String } nomeEvento</span> &ndash; nome do evento a ser emitido. </li>
+        <li> <span class="note mark-el">{ Object } dados</span> &ndash; dados que seram adicionados no callback. </li>
+        <li> <span class="note mark-el">{ Boolean } umaVez</span> &ndash; permite remover o evento depois de ser emitido
+            a primeira vez. </li>
     </ul>
 
     <div e-ignore class="code-container" code-ext=".js">
         <textarea cm-lang="javascript">
     var app = new Easy('#my-app');
 
-    var event = app.on('eventName', function(data) {
-        // Todo: your code here...
+    var event = app.on('nomeEvento', function(data) {
+        // Todo: escreva seu codigo...
     });
     
-    app.emit('eventName', { name: 'transfered data' });</textarea>
+    app.emit('nomeEvento', { nome: 'dados transferidos' });</textarea>
     </div>
 
     <h3><a id="method_expose">expose</a></h3>
     <p>
-        It allows exposing an object, allowing it to be retrieved anywhere in the application.
-        By default, Easy uses to transfer data to a component.
-        The method expects three parameters: <span class="note mark-el">instance.expose(name,
-            data, force)</span>.
+        Permite expôr um objecto, permitingo obter o mesmo em qualquer parte da aplicação.
+        Por padrão, Easy usa-o para passar dados para um componente. Espera três parâmetros: <span
+            class="note mark-el">instance.expose(nome, dados, forcar)</span>.
     </p>
 
     <ul>
-        <li> <span class="note mark-el">{ String } name</span> &ndash; the unique name (Or,
-            component name). </li>
-        <li> <span class="note mark-el">{ Object } data</span> &ndash; the object to be exposed.
-        </li>
-        <li> <span class="note mark-el">{ Boolean } force</span> &ndash; allows you to force the
-            exposition if there is already some exposed data with the same name. </li>
+        <li> <span class="note mark-el">{ String } nome</span> &ndash; um nome único(Ou, nome do componente). </li>
+        <li> <span class="note mark-el">{ Object } data</span> &ndash; o objecto a ser exposto. </li>
+        <li> <span class="note mark-el">{ Boolean } force</span> &ndash; permite forçar a exposição se por acaso existe
+            um objecto já exposto com o mesmo nome. </li>
     </ul>
 
     <div e-ignore class="code-container" code-ext=".js">
         <textarea cm-lang="javascript">
     var app = new Easy('#my-app');
 
-    app.expose('userInfo', { name: 'Maria', roles: ['admin', 'manager'] });</textarea>
+    app.expose('info-usuario', { nome: 'Maria', papeis: ['admin', 'gestor'] });</textarea>
     </div>
 
     <h3><a id="method_retrieve">retrieve</a></h3>
     <p>
-        It allows to retrieve the exposed data. The method expects two parameters: <span
-            class="note mark-el">instance.remove(name, remove)</span>.
+        Permite-nos obter os dados expostos. O método espera dois parâmetros: <span
+            class="note mark-el">instance.remove(nome, remover)</span>.
     </p>
 
     <ul>
-        <li> <span class="note mark-el">{ String } name</span> &ndash; the name of the exposed a
-            object. </li>
-        <li> <span class="note mark-el">{ Boolean } force</span> &ndash; Allows to remove the
-            exposed data after being retrieved. </li>
-        <li> <span class="note mark-el">{ Object } force</span> &ndash; the exposed object.
+        <li> <span class="note mark-el">{ String } nome</span> &ndash; nome do objecto exposto. </li>
+        <li> <span class="note mark-el">{ Boolean } remover</span> &ndash; permite-nos remover os dados expostos depois
+            de obtê-los. </li>
+        <li> <span class="note mark-el">{ Object } return</span> &ndash; o objecto exposto.
         </li>
     </ul>
 
@@ -167,54 +150,50 @@
         <textarea cm-lang="javascript">
     var app = new Easy('#my-app');
 
-    // Exposing data
-    app.expose('userInfo', { name: 'Maria', roles: ['admin', 'manager'] });
+    // Expondo os dados
+    app.expose('info-usuario', { nome: 'Maria', papeis: ['admin', 'gestor'] });
     
-    // Retrieving the exposed data
-    var data = app.retrive('userInfo');</textarea>
+    // Obtendo os dados expostos
+    var data = app.retrive('info-usuario');</textarea>
     </div>
 
     <h3><a id="method_tojsobj">toJsObj</a></h3>
     <p>
-        It allows creating a structured javascript object based on the structure of the HTML
-        element. Object that can be sent to a server.
+        Permite-nos criar um javascript objecto estruturado baseando-se na estrutura do elemento HTML. Objecto esse que
+        pode ser mandado no servidor.
     </p>
 
     <p>
-        To be able to generate the struture, this method depends of some commands, whitch are:
+        Para ser capaz de gerar a estruturam este método depende de alguns comandos, que são:
     </p>
 
     <ul>
-        <li> <a id="method_tojsobj_build" class="note mark-el">
-                e-build </a> &ndash; allows you to build one object within another. The syntax
-            is <span class="note mark-el">e-build="<i>path</i>"</span>. The path always need to
-            be complete, from the base object untill the property it needs to create. When you
-            need to create an object inside of an array you don't need to put the property and
-            the index (property[0]) of the array, just property name, by the default it maps all
-            the array.</li>
-        <li> <a id="method_tojsobj_array" class="note mark-el">
-                e-array </a> &ndash; allows to build a array of the element where it is defined.
-            Even if it is not defined by default it creates an array if the elements repeats.
-
+        <li> <a id="method_tojsobj_build" class="note mark-el">e-build </a> &ndash; permite construir um objecto dentro
+            do outro. A sintâxe é <span class="note mark-el">e-build="<i>caminho</i>"</span>. O caminho precisa ser
+            sempre completo, do base até a propriedade que precisa ser criada. Quando precisar criar um objecto dentro
+            de um array não precisa se preocupar com índice, defina apenas o nome, por padrão ele irá mapear todo array.
+        </li>
+        <li> <a id="method_tojsobj_array" class="note mark-el"> e-array </a> &ndash; permite criar um array do elemento
+            onde foi definido. Mesmo que o atributo não foi definido, quando o elemento se repete ele cria um array dos
+            elementos.
         </li>
     </ul>
 
     <p>
-        The method expects three parameters: <span class="note mark-el">instance.toJsObj(selector, options,
-            onset)</span>.
+        O método espera três parâmetros: <span class="note mark-el">instance.toJsObj(selector, options, onset)</span>.
     </p>
 
     <ul>
-        <li> <span class="note mark-el">{ String|Element } selector</span> &ndash; the selector
-            of the element to be generated or the element it self. </li>
-        <li> <span class="note mark-el">{ Object } options</span> &ndash; options that indicates
-            properties it needs to look and from this ones which property it needs to get the
-            value. Its sintax is <span class="note mark-el">{ names: '[property1],[property2]',
-                values: '[property1],[property2]' }</span>. The order really matters, it takes
-            what it finds first. The default value is <span class="note">{ names: <i class="mark-el">'[name]'</i>,
-                values: <i class="mark-el">'[value]'</i> }</span>. </li>
-        <li> <span class="note mark-el">{ Function} onset</span> &ndash; a function that will be
-            called whenever a property is setted. </li>
+        <li> <span class="note mark-el">{ String|Element } selector</span> &ndash; o selector do elemento a ser gerado
+            ou o elemento em si. </li>
+        <li> <span class="note mark-el">{ Object } options</span> &ndash; options que indicam em que atributos precisam
+            ser visto e deste que attributos o valor precisa ser pegue. A sintâxe é <span class="note mark-el">
+                { names: '[atributo1],[atributo2]', values: '[atributo1],[atributo2]' }</span>. A ordem de definição é
+            muito importante, ele pegua o que encontrar primeiro. O valor padrão é <span class="note">
+                { names: <i class="mark-el">'[name]'</i>, values: <i class="mark-el">'[value]'</i> }</span>.
+        </li>
+        <li> <span class="note mark-el">{ Function} onset</span> &ndash; a função que será chamada quando uma
+            propriedade é configurada. </li>
     </ul>
 
     <div e-if="typeof noApp === 'undefined'">
@@ -225,41 +204,40 @@
     <div id="app25">        
         <form on:submit.preventDefault="generate">
             
-            <label> First Name </label> <br>
-            <input type="text" name="firstName" /> <br>
+            <label> Primeiro Nome </label> <br>
+            <input type="text" name="primeiroNome" /> <br>
             
-            <label> Last Name </label> <br>
-            <input type="text" name="lastName" /> <br>
+            <label> Último Nome </label> <br>
+            <input type="text" name="ultimoNome" /> <br>
             
-            <!--  Build an phones property as an array -->
-            <div e-build="phones" e-array> 
-                <label> Country Code </label> <br>
-                <input type="text" name="code" /> <br>
+            <!-- Constrói um array da propridade `telefones` -->
+            <div e-build="telefones" e-array> 
+                <label> Código do Pais </label> <br>
+                <input type="text" name="codigo" /> <br>
                 
-                <label> Number </label> <br>
-                <input type="text" name="number" />
+                <label> Número </label> <br>
+                <input type="text" name="numero" />
             </div>
             
-            <!--  Build an identification property as an object -->
-            <div e-build="identification">
-                <label> Type </label> <br>
-                <select name="type"> 
-                    <option> Id Card </option>
-                    <option> Passport </option>
+            <!--  Constrói um objecto da propriedade `identificacao` -->
+            <div e-build="identificacao">
+                <label> Tipo </label> <br>
+                <select name="tipo"> 
+                    <option> Bilhete de Identidade </option>
+                    <option> Passa Porte </option>
                 </select> <br>
 
-                <label> Code </label> <br>
-                <input type="text" name="code" />
+                <label> Código </label> <br>
+                <input type="text" name="codigo" />
             </div>
         
-            <button type="submit"> Submit </button>    
-
+            <button type="submit"> Submit </button>
         </form>
         <br> <br>
         
         <label> Result </label> <br>
         <div> 
-            {{ resultObj }}
+            {{ objResultante }}
         </div>
     </div></textarea>
             </div>
@@ -268,12 +246,12 @@
                 <textarea cm-lang="javascript">
     var app25 = new Easy('#app25', {
         data: {
-            /* Variables */
-            resultObj: {},
+            /* Variáveis */
+            objResultante: {},
 
-            /* Methods */
+            /* Métodos */
             generate: function(evt){
-                this.data.resultObj = this.toJsObj(evt.base);
+                this.data.objResultante = this.toJsObj(evt.base);
             }
         }
     });</textarea>
@@ -286,67 +264,66 @@
 
     <div class="block-note info">
         <p>
-            We can build complex objects with using this method, simply create the structure you
-            need.
+            Podemos construir objectos complexos usando este método, só precisas criar a tua estrutura.
         </p>
     </div>
 
     <h3><a id="method_watch">watch</a></h3>
     <p>
-        It is used to watch changes in specific property in the data scope. Its sintax is
+        É usado para assistir (escutar) uma propriedade específica do escopo. A sintâxe é:
         <span class="note mark-el">instance.watch(propertyName, callback, targetObject)</span>.
     </p>
     <ul>
-        <li> <span class="note mark-el">{ String } propertyName</span> &ndash; represents the
-            name of the property in the data scope. </li>
-        <li> <span class="note mark-el">{ Object } callback</span> &ndash; represents the
-            callback where all the logic will be fired when the property changes. The first
-            argument is the new value and the second is the old value of the property. </li>
-        <li> <span class="note mark-el">{ Object } targetObject</span> &ndash; represents the
-            target scope having tje property to watch. It is optional, if not defined the
-            properties will be in the <span class="note mark-el">main scope</span>. </li>
-        <li> <span class="note mark-el">{ Object } returns</span> &ndash; the watch object, that
-            can be used to destroy the watch listern. </li>
+        <li> <span class="note mark-el">{ String } propertyName</span> &ndash; o nome da propriedade do escopo. </li>
+        <li> <span class="note mark-el">{ Object } callback</span> &ndash; representa o callback where terá toda lógica
+            que será executada quando a propriedade mudar. O primeiro argumento é a novo valor e o segundo argumento é o
+            antigo valor da propridade. </li>
+        <li> <span class="note mark-el">{ Object } targetObject</span> &ndash; representa o escopo que tem a propriedade
+            que será assistida (escutada). É opcional, se não for definido vai assumir o <span
+                class="note mark-el">escopo principal</span>. </li>
+        <li> <span class="note mark-el">{ Object } returns</span> &ndash; a instância do watch, que pode ser usado para
+            destruí-lo. </li>
     </ul>
 
     <div e-ignore class="code-container" code-ext=".js">
         <textarea cm-lang="javascript">
     var app = new Easy('#my-app', {
         data: {
-            firstName: 'Neves',
-            lastName: 'Manuel'
+            primeiroNome: 'Neves',
+            ultimoNome: 'Manuel'
         }
     });
 
-    var watch = app.watch('firstName', function(newValue, oldValue){
-        // Todo: your code here...
+    var watch = app.watch('primeiroNome', function(newValue, oldValue){
+        // Todo: escreva seu código...
         watch.destroy();
     });</textarea>
     </div>
 
     <h3><a id="method_set">set</a></h3>
     <p>
-        It is used to set some <span class="mark-el">Easy</span> configuration. The method
-        expects two parameters, the first is the property to set and the second is the value
-        (Object Literal) to be setted. The available configurations are:
+        Usado para mudar algumas configurações na instância <span class="mark-el">Easy</span>.
+        O método espera dois parâmetros: O primeiro é a propriedade a ser modificada, e o segundo o valor (Object
+        Literal) a ser configurado. As configurações disponíveis são:
     </p>
 
-    <li><b>skeleton</b> &ndash; allow to modify the background and/or wave of the skeleton values. Its sintax is
+    <li><b>skeleton</b> &ndash; permite modificar o valor de `background` e ou de `wave` do skeleton. A sintâxe é
         <i class="note mark-el">instance.set('skeleton', object)</i>.</li>
 
     <ul>
-        <li> <span class="note mark-el">{ Object } object</span> &ndash; the object having the
-            value(s) it needs to modify.
-            <span class="note">{ background: <i class="mark-el">color</i>, wave: <i class="mark-el">color</i> }</span>
+        <li>
+            <span class="note mark-el">{ Object } object</span> &ndash; o objecto tendo o(s) valor(es) a ser modificado.
+            <span class="note">{ background: <i class="mark-el">'cor'</i>, wave: <i class="mark-el">'cor'</i> }</span>
         </li>
     </ul>
 
     <div e-ignore class="code-container" code-ext=".js">
         <textarea cm-lang="javascript">
-    /* As all the apps share the same Easy.js Style you can use any app to
-    make this change.
+    /* Como todas aplicações partilham o mesmo Easy.js Style então você pode usar qualquer uma das 
+     apps para fazer a mudança.
 
-    Open the browser console and run first code */
+        Abra o conseole do navegador e corra este primero código. */
+
     app1.set('skeleton', {
         background: '#444546',
         wave: '#747576'
@@ -356,19 +333,19 @@
     app1.set('skeleton');</textarea>
     </div>
 
-    <li><b>delimiter</b> &ndash; allow to add a delimiter into the Easy compiler. Its sintax is 
+    <li><b>delimiter</b> &ndash; permite adicionar um delimitador no compilador do Easy. A sintâxe é
         instance.set('delimiter', object).</li>
 
     <ul>
-        <li> <span class="note mark-el">{ Object } object</span> &ndash; the object having the
-            value(s) it needs to be added. The struture of the object is:
+        <li> <span class="note mark-el">{ Object } object</span> &ndash; o objecto tendo os delimitador a ser
+            adicionado. A estrutura do objecto é:
         </li>
     </ul>
 
     <div e-ignore class="code-container" code-ext=".js">
         <textarea cm-lang="javascript">
     app1.set('delimiter', {
-        name: 'myDelimiter',
+        name: 'meuDelimitador',
         delimiter: {
             open: '<%',
             close: '%>'
@@ -377,14 +354,13 @@
     </div>
 
     <p>
-        All the available delimiters can be seen in the property <span class="note mark-el">instance.delimiters</span>.
-        These values is unalterable by this property.
+        Todos os delimitadores disponíveis podem ser vistos na propriedade <span class="note mark-el">instance.delimiters</span>.
+        These values are inalteráveis usando esta propridade. 
     </p>
 
     <div class="block-note info">
         <p>
-            Remind to the escape the open and close if its need, because it passes in Regular
-            Expression check.
+            Lembre de escapar valores de `open` e `close` se preciso, porque eles passam por um Expressão Regular.
         </p>
     </div>
 </section>

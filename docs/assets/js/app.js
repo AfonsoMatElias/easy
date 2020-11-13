@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Modal Body
                 'download-connectors': '/components/doc-sections/'+ lang +'/download-connectors',
 
-                // Documentation compoments
+                // Documentation components
                 'side-menu': '/components/doc-sections/'+ lang +'/side-menu',
                 'introduction': '/components/doc-sections/'+ lang +'/introduction',
                 'installation': '/components/doc-sections/'+ lang +'/installation',
@@ -194,6 +194,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 'routing': '/components/doc-sections/'+ lang +'/routing',
                 'extra': '/components/doc-sections/'+ lang +'/extra',
                 'connectors': '/components/doc-sections/'+ lang +'/connectors',
+                'goodbye': '/components/doc-sections/'+ lang +'/goodbye',
                 
                 // Sections wrapper
                 'section-1': '/components/doc-sections/section.1',

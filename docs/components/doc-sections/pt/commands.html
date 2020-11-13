@@ -11,7 +11,7 @@
 
     <h3> <a id="cmd_data"> data </a> </h3>
     <p>
-        Permite criar um escopo para um determinado elemento, a sintaxe é <span
+        Permite criar um escopo para um determinado elemento, a sintâxe é <span
             class="note mark-el">data="{...}"</span>, se for definido sem conteudo o elemento terá o escopo principal,
         instance.data.
     </p>
@@ -317,7 +317,7 @@
     <h3> <a id="cmd_e_def"> e-def </a> </h3>
     <p>
         É forma curta do nome <span class="note">e-definer</span>, permite definir propridades (Reactivas) dinamicamente
-        no escopo presente. A sintaxe é <span class="note mark-el">e-def="{...}"</span>, ele espera um <a
+        no escopo presente. A sintâxe é <span class="note mark-el">e-def="{...}"</span>, ele espera um <a
             href="https://www.dyn-web.com/tutorials/object-literal/" class="mark-el">Object
             Literal</a>.
     </p>
@@ -408,7 +408,7 @@
             <div execute class="code-container" code-ext=".html">
                 <textarea cm-lang="text/html">
     <div id="app13">
-        <button on:click="mostrar = !mostrar"> Alternar {{ show ? '🙉' : '🙈' }} </button>
+        <button on:click="mostrar = !mostrar"> Alternar {{ mostrar ? '🙉' : '🙈' }} </button>
 
         <div e-show="mostrar"> 
             <p> Quer me esconder? Clique em `Alternar`.</p>
@@ -438,7 +438,7 @@
     </p>
 
     <p>
-        Há duas sintaxes para isso, a <b>forma curta</b> <span class="note mark-el">e-for="meuArray"</span>
+        Há duas sintâxes para isso, a <b>forma curta</b> <span class="note mark-el">e-for="meuArray"</span>
         normalmente usado quando é um array de `object literal`, e a <b>forma completa</b>
         <span class="note mark-el">e-for="item of/in meuArray"</span> é obrigatório quando é um array de `primitivas` e
         opcional quando são `object literal`.
@@ -695,7 +695,7 @@
 
     <h3> <a id="cmd_e_order"> e-order </a> </h3>
     <p>
-        Ordena uma lista de acordo com a condição passada na expressão do comando. Sua sintaxe é
+        Ordena uma lista de acordo com a condição passada na expressão do comando. Sua sintâxe é
         <span class="note mark-el">e-order="<i>TipoOrdem</i>:<i>PropParaOrdenar</i>"</span>.
         Os tipos de ordem são: <span class="note mark-el">asc</span>, para ascendente e <span
             class="note mark-el">des</span>, para descendente.
@@ -720,7 +720,7 @@
 
     <h3> <a id="cmd_e_anm"> e-anm </a> </h3>
     <p>
-        É uma forma simples de animar a inserção de um elemento no DOM. Sua sintaxe é
+        É uma forma simples de animar a inserção de um elemento no DOM. Sua sintâxe é
         <span class="note mark-el">e-anm="<i>direção</i>"</span>.
     </p>
 
@@ -748,7 +748,7 @@
     <p>
         Permite que você alterne um atributo em um elemento, definindo o valor <span class="note mark-el">true</span>
         quando definido.
-        Sua sintaxe é <span class="note mark-el">e-toggle:<i>atributo</i>="propriedadeDoEscopo"</span>.
+        Sua sintâxe é <span class="note mark-el">e-toggle:<i>atributo</i>="propriedadeDoEscopo"</span>.
     </p>
 
     <div e-if="typeof noApp === 'undefined'">
@@ -786,7 +786,7 @@
     </p>
 
     <p>
-        A sintaxe para criação de atributo é <span class="note mark-el">e-<i>atributo</i>="expressao"</span>.
+        A sintâxe para criação de atributo é <span class="note mark-el">e-<i>atributo</i>="expressao"</span>.
         Neste caso a expressão deve conter delimitador, caso contrário não será compilada.
     </p>
 
@@ -798,7 +798,7 @@
     </div>
 
     <p>
-        A sintaxe para criação de atributo (se não existe) com valor alternável é <span
+        A sintâxe para criação de atributo (se não existe) com valor alternável é <span
             class="note mark-el">e-<i>atributo</i>="{ 'valor-a-alternar' : condição }"</span>.
         <br> <span class="note att-border">Não use delimitadores na expressao</span>.
     </p>
