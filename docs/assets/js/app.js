@@ -1,48 +1,6 @@
 if (!localStorage._lang) localStorage._lang = 'en'; 
 document.addEventListener('DOMContentLoaded', function () {
     var lang = localStorage._lang;
-    var content = {
-        en: {
-            cards: {
-                component: {
-                    header: 'Write in HTML file',
-                    text: 'Create your component with the styles (scoped or not) and scripts, embedded in a single pure HTML file.'
-                },
-                dom: {
-                    header: 'No Virtual DOM',
-                    text: 'Easy listens to each property (made available by the instance) in the application, when the property changes, it updates the element.'
-                },
-                reuse: {
-                    header: 'Reuse elements',
-                    text: 'Easy gives you the opportunity to reuse elements already defined in the application, as if it were a copy and paste.'
-                }
-            },
-            main: "What's <span class=\"note\">Easy.js</span>? Is a javascript library for building user interfaces, and"
-                +"helps in the web applications development, providing a synchronous interaction between user interfaces" 
-                +"and Javascript data. In some ways and commands, it is very similar to"
-                +"<span class=\"note\">Vue.js</span> and <span class=\"note\">Angular.js</span>, but it handles things"
-                +"differently!",
-            examples: {
-                hello: {
-                    header: 'Hello World Example',
-                    text: 'To begin showing some data in the UI is simple as you can see now... Some directives can be similar to Vue but, belive us, there are diferentes by the inside.'
-                },
-                sum: {
-                    header: 'Simple Sum Example',
-                    text: "Let's Two Way Data Bind now... <br>"
-                    +"We are using dynamic data property definition <i class=\"mark-el\">e-def</i>."
-                    +"In this type of binding when some value changes, it updates"
-                    +"the specific field in the element, it means that"
-                    +"your element will be always the same."
-                },
-                todo: {
-                    header: 'Todo List Example',
-                    text: "Let's make a TODO List App <br> You can manage your list as you expect."
-                },
-            },
-            learn: 'Want to Learn more?'
-        }
-    }
     var app = new Easy('#app-page', {
         config: {
             useDOMLoadEvent: false,

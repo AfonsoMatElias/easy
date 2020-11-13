@@ -404,6 +404,7 @@ a.active-doc-menu, a.active-doc-menu * {
     font-size: 18pt;
 }
 
+
 /* Card setup */
 .card-container {
     width: 100%;
@@ -455,6 +456,12 @@ a.active-doc-menu, a.active-doc-menu * {
 
 .middle-content .center-content {
     flex-flow: column;
+}
+
+.middle-content .center-content .main-text {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
 }
 
 .editor-divider {

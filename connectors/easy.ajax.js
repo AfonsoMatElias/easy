@@ -1,6 +1,6 @@
 ﻿/**
  * @author Afonso Matumona Elias
- * @version v2.0.0
+ * @version v2.0.2
  * Released under the MIT License.
  * This is easy.js ajax connector, makes web requests easier. 
  */
@@ -43,7 +43,7 @@ function EasyConnector(baseUrl, fetchOptions) {
             }, $easy.conn.fetchOptions);
 
             // Sending and Retrieving the response
-            var $fetch = new $easy.Fetch($url, options);
+            var $fetch = new $easy.http($url, options);
 
             // The promise that needs to be returned
             return new Promise(function (resolve, reject) {

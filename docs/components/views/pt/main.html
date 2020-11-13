@@ -72,7 +72,7 @@
         <div class="main-page-editor-container">
             <div class="description">
                 <div>
-                    <h2>Exemplo Hello World</h2>
+                    <h2>Exemplo Olá Mundo</h2>
                     <p>Começar a mostrar alguns dados na IU é simples, como você pode ver agora... Algumas diretivas
                         podem ser semelhantes ao Vue, mas, acredite, existem diferenças por dentro.</p>
                 </div>
@@ -110,7 +110,7 @@
     <div class="main-divider middle-content">
         <div class="center-content">
             <div class="main-text">
-                <h3> Want to Learn more? </h3>
+                <h3> Quer aprender mais? </h3>
                 <a href="docs.html" class="high-btn"> Começar </a>
             </div>
         </div>
@@ -121,7 +121,7 @@
             <div class="text-center">
                 <p> Lançado sob a <a href="https://opensource.org/licenses/MIT"> <b>MIT License</b>
                     </a> </p>
-                <p>Copyright © 2019-Present, Afonso Matumona</p>
+                <p>Copyright © 2019-Presente, Afonso Matumona</p>
             </div>
         </div>
     </div>
@@ -133,12 +133,12 @@
         this.Easy.expose('hello-word', {
             name: 'Hello Word',
             content: '<div id="app">\n' +
-                '   <h3> {{ message }} <\/h3>\n' +
+                '   <h3> {{ mensagem }} <\/h3>\n' +
                 '<\/div>\n\n' +
                 '<script>\n' +
                 '   var app = new Easy("#app", {\n' +
                 '       data: {\n' +
-                '           message: "Hello World!"\n' +
+                '           mensagem: "Olá Mundo!"\n' +
                 '       }\n' +
                 '   });\n' +
                 '<\/script>'
@@ -147,10 +147,10 @@
         // Load calc example
         this.Easy.expose('sum-eg', {
             name: 'Simple Sum',
-            content: '<div id="app" e-def="{ first: 1, second: 2 }">\n' +
-                '   <input type="number" e-bind="first">\n' +
-                '   <input type="number" e-bind="second">\n\n' +
-                '   <h3> {{ first }} + {{ second }} = {{ first + second }} <\/h3>\n' +
+            content: '<div id="app" e-def="{ primeiro: 1, segundo: 2 }">\n' +
+                '   <input type="number" e-bind="primeiro">\n' +
+                '   <input type="number" e-bind="segundo">\n\n' +
+                '   <h3> {{ primeiro }} + {{ segundo }} = {{ primeiro + segundo }} <\/h3>\n' +
                 '<\/div>\n\n' +
                 '<script>\n' +
                 '   var app = new Easy("#app");\n' +
@@ -162,21 +162,21 @@
             name: 'Todo List',
             content: '<div id="app">\n' +
                 '   <input type="text" e-bind="task"><br>\n' +
-                '   <button on:click="addTodo()">Add</button>\n' +
+                '   <button on:click="addTodo()">Adicionar</button>\n' +
                 '   <label> {{ task }} <\/label><br><br>\n' +
                 '   <ol>\n' +
                 '       <li e-for="todo in todos"> {{ todo }} </li>\n' +
                 '   </ol>\n' +
-                '   <button on:click="todos = []">Clear</button>\n' +
+                '   <button on:click="todos = []">Limpar</button>\n' +
                 '<\/div>\n\n' +
                 '<script>\n' +
                 '   var app = new Easy("#app", {\n' +
                 '       data: {\n' +
                 '           task: "",\n' +
-                '           todos: [ "Get Up", "Eat", "Code" ],\n' +
+                '           todos: [ "Levantar", "Comer", "Programar" ],\n' +
                 '           addTodo: function(){\n' +
-                '           this.data.todos.push(task);\n' +
-                '           this.data.task = "";\n' +
+                '               this.data.todos.push(task);\n' +
+                '               this.data.task = "";\n' +
                 '          }\n' +
                 '       }\n' +
                 '   });\n' +
