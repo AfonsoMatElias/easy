@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (localStorage._lang == v) return;
 
                 localStorage._lang = v;
-                location.href = location.href; 
+                location.reload(); 
             });
         },
         components: {
