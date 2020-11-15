@@ -1,22 +1,53 @@
 <div id="app">
     <ul>
         <li e-tmp="users">
-            <div>
-                <span e-skeleton> <b>Id:</b> {{ id }} </span>
+            <div class="avatar">
+                <span e-skeleton e-style="background-image: url(https://i.pravatar.cc/200?img={{ id }});"></span>
             </div>
-            <div>
-                <span e-skeleton> <b>Name:</b> {{ name }} </span>
+            <div class="info">
+                <div class="row"> <span e-skeleton> <b>Id:</b> {{ id }} </span> </div>
+                <div class="row"> <span e-skeleton> <b>Name:</b> {{ name }} </span> </div>
+                <div class="row"> <span e-skeleton> <b>Username: </b>{{ username }} </span> </div>
             </div>
-            <div>
-                <span e-skeleton> <b>Username: </b>{{ username }} </span>
-            </div> <br>
         </li>
     </ul>
 
-    <!-- Importing easy.ajax.js; using https://jsonplaceholder.typicode.com/ -->
+    <!-- Importing easy.ajax.js; data-source: https://jsonplaceholder.typicode.com/ -->
     <script src="https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.1.0/connectors/easy.ajax.js"></script>
 </div>
 
 <script>
     new Easy('#app');
 </script>
+
+<style>
+    ul { list-style: none; }
+    ul li {
+        display: flex;
+        margin: 6px 0;
+    }
+    ul li .avatar {
+        /* Center de Content */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        /* End Center de Content */
+        width: 80px;
+    }
+    ul li .avatar span {
+        width: 60px;
+        height: 60px;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        border-radius: 50%;
+        background-color: #dfdfdf;
+    }
+    ul li .info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    ul li .info .row { flex: 1; }
+    ul li .info .row span { margin: auto 0; }
+</style>
