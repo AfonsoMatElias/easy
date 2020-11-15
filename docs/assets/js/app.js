@@ -42,13 +42,13 @@ document.addEventListener('DOMContentLoaded', function () {
             translations: languages,
             app: {
                 name: 'Easy',
-                version: 'v2.0.2',
-                cdn: 'https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.0.2/easy.js',
-                url: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.0.2/easy.js',
+                version: 'v2.1.0',
+                cdn: 'https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.1.0/easy.js',
+                url: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.1.0/easy.js',
                 connectors: {
-                    ajax: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.0.2/easy.ajax.js',
-                    ajaxCdn: 'https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.0.2/connectors/easy.ajax.js',
-                    free: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.0.2/easy.free.js'
+                    ajax: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.1.0/easy.ajax.js',
+                    ajaxCdn: 'https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.1.0/connectors/easy.ajax.js',
+                    free: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.1.0/easy.free.js'
                 }
             }
         },
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
             config: {
                 // '/docs/' -> Use this when local
                 // '/easy/' -> Use to push on github
-                base: '/docs/'
+                base: '/easy/'
             },
             elements: {
                 'top': "/components/top",
