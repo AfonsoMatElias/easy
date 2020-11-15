@@ -1,5 +1,5 @@
 /**
- * Easy.js @version v2.0.2 Release
+ * Easy.js @version v2.1.0 Release
  * Released under the MIT License.
  * (c) 2019 @author Afonso Matumona
  */
@@ -8,16 +8,14 @@
     typeof define === 'function' && define.amd ? define(factory) : (global.Easy = factory());
 }(window, (function(){ 'use strict';
     // Shared variables
-    var standardEvents = {}, 
+    var standardEvents = {},
         eventModifiers = { 
             'stoppropagation': 'stopPropagation', 
             'preventdefault': 'preventDefault' 
         };
     // methods to observe
     var methods = [ 'push', 'pop', 'unshift', 'shift', 'splice' ];
-    var getter, // Store getter function
-        compilingFile = 'main file'; // Store the compiling filePath
-    var $global = window, doc = $global.document;
+    var getter, $global = window, doc = $global.document;
 
     // Helper variables to resolve url issues, based on Angular.js version 1.7.9
     var urlParsingNode = doc.createElement('a');
@@ -313,9 +311,9 @@
                 var destination = self[key];
                 if (deep && isObj(destination)) {
                     if (!isArray(destination))
-                        self[key].mapObj(value);
-                } else{
-                    var source = (value ? value : self[key]);
+                        self[key].mapObj(value, deep);
+                } else {
+                    var source = (!isNull(value) ? value : self[key]);
                     if (source != destination)
                         self[key] = source;
                 }
@@ -806,7 +804,8 @@
         }
 
         this.name = 'Easy';
-        this.version = '2.0.0';
+        this.version = '2.1.0';
+
         this.data = {};
         var $easy = this, exposed = { /* Store the exposed datas */ },
             webDataRequests = { /* Store web requests data */ }, 
@@ -817,6 +816,7 @@
 
         var prototype = Object.create(Easy.prototype);
         this.__proto__ = prototype;
+        this.__proto__.NOREACTIVE = true;
 
         var $$delimiters = [
             { name: 'easy', delimiter: { open: '-e-', close: '-' } }, 
@@ -1416,22 +1416,27 @@
                     var attr = fn.attr(base, ['inc-src', 'src']), current = base;
                     var hw = { el: current };
 
+                    var $getterArg;
+                    getter = function () { $getterArg = arguments; }
+
                     source = fn.eval(dlm.exp, $scope);
                     attr.value = source;
 
-                    hw.watch = $easy.watch(dlm.exp, function(val) {
-                        var element = doc.createElement(name);
-                        element.valueIn('no-replace', '');
-                        if(name === 'INC')
-                            element.valueIn('src', val);
-                        else 
-                            element.valueIn('inc-src', val);
+                    if ($getterArg) {
+                        hw.watch = $easy.watch($getterArg[1].property, function(val) {
+                            var element = doc.createElement(name);
+                            element.valueIn('no-replace', '');
+                            if(name === 'INC')
+                                element.valueIn('src', val);
+                            else 
+                                element.valueIn('inc-src', val);
+    
+                            container.replaceChild(element, current);
+                            hw.el = current = element; // New element
+                        },  $getterArg[0]);
+                        ui.$handleWatches.push(hw);
+                    }
 
-                        container.replaceChild(element, current);
-                        hw.el = current = element; // New element
-                    },  $scope);
-
-                    ui.$handleWatches.push(hw);
                 } else if( delimiters.length >= 1 ) {
                     Easy.log('Only one delimiter is allowed in element[inc-src] or inc[src].\n  Check the value: \''+ source +'\'.')
                     return base;
@@ -1450,7 +1455,7 @@
                         el.attributes.setNamedItem(attr);
                     });
                 }
-
+                
                 switch ($name) {
                     // Compilation to be skipped
                     case '#comment': return;
@@ -1503,21 +1508,23 @@
                             el.$e.$base = base;
                             Compiler.addOldAttr({ el: base, value: el });
 
-                            // Toggle `display: none` in the element acording the value result
+                            // Toggle `display: none` in the element according the value result
                             var verifyShowValue = function () {
                                 var check = fn.eval(el.nodeValue, $scope);
                                 if (check) base.style.display = '';
                                 else base.style.display = 'none';
                             }
+                            
+                            var $getterArg = []; // [0] -> obj; [1] -> prop
+                            getter = function () { $getterArg.push(arguments); }
+                            verifyShowValue(); unget();
 
-                            getter = function (_, prop) {
-                                var watch = $easy.watch(prop.property, function () {
+                            forEach($getterArg, function (arg) {
+                                var watch = $easy.watch(arg[1].property, function () {
                                     verifyShowValue();
                                     if (!base.isConnected) watch.destroy();
-                                });
-                            }
-
-                            verifyShowValue(); unget();
+                                }, arg[0]);
+                            })
                         } else {
                             var curr = base, container = base.parentNode, chainCondition = [];
                             var hideChainCondition = function () {
@@ -1572,19 +1579,21 @@
                                 if ( $attr.name === 'e-else' ) break; // Break on else
                             } while(1);
 
-                            getter = function (_, prop) {
-                                var watch = $easy.watch(prop.property, function () {
+                            var $getterArg = []; // [0] -> obj; [1] -> prop
+                            getter = function () { $getterArg.push(arguments); }
+                            verifyChainCondition(); unget();
+
+                            forEach($getterArg, function (arg) {
+                                var watch = $easy.watch(arg[1].property, function () {
                                     verifyChainCondition();
                                     var  isDestroy = true;
                                     forEach(chainCondition, function (item) {
                                         if (isDestroy == true && (item.comment.isConnected || item.element.isConnected)) 
                                             isDestroy = false;
                                     });
-
                                     if (isDestroy) watch.destroy();
-                                });
-                            }
-                            verifyChainCondition(); unget();
+                                }, arg[0]);
+                            })
                         }
                         return;
                     }
@@ -1595,13 +1604,12 @@
                     case cmds.data: {
                         var base = el.$e.$base;
                         if (inc.isInc(base)) return; // Ignore scope criation in Includer Element
-
-                        var scope = fn.attr(base, [cmds.data], true), $dt;
+                        var attr = fn.attr(base, [cmds.data], true), $dt;
                         // Getting the data or the default
-                        if ( trim(scope.value) === '' )
+                        if ( trim(attr.value) === '' )
                             $dt = extend.obj($easy.data); // clone the main data
                         else
-                            $dt = fn.eval(scope.value, $scope);
+                            $dt = fn.eval(attr.value, $scope);
 
                         $dt.$scope = $scope;
                         walker.call($easy, base, extend.addToObj($dt, $$methods));
@@ -1611,7 +1619,7 @@
                             type: vars.events.data,
                             scope: $scope
                         });
-                        return;
+                        return base.ignoreBaseCompilation = true;
                     }
                     case cmds.tmp: case cmds.fill: case cmds.req: {
                         var base = el.$e.$base;
@@ -1632,13 +1640,12 @@
                         var helper = ui.cmd.for.read(base), comment;
                         if (!helper.ok) return;
                         
-                        var propConfig, desc;
-                        // Getting the propConfig value
-                        getter = function (_, prop) {
-                            propConfig = prop; desc = prop.descriptor;
-                        }
-                        var v = fn.eval(helper.array, $scope);
-                        unget();
+                        var $getterArg; // [0] -> obj; [1] -> prop
+                        getter = function () { $getterArg = arguments; }
+                        var v = fn.eval(helper.array, $scope); unget();
+
+                        var desc = $getterArg ? $getterArg[1].descriptor : null;
+                        
                         var array = desc ? $propDefiner({}, 'value', desc) : { value: v };
 
                         comment = new Filter({
@@ -1673,7 +1680,7 @@
                                     });
                         }
 
-                        if (desc) propConfig.binds.push({ el: comment, isObj: true, obj: extend.obj($scope, $$methods) });
+                        if (desc) $getterArg[1].binds.push({ el: comment, isObj: true, obj: extend.obj($scope, $$methods) });
                         return base.ignoreBaseCompilation = true;
                     }
                     case cmds.content: {
@@ -1752,13 +1759,17 @@
                                     base.removeAttribute(exp[1]);
                             }
         
-                            getter = function (obj, prop) {
-                                var w = $easy.watch(prop.property, function(){
+                            var $getterArg; // [0] -> obj; [1] -> prop
+                            getter = function () { $getterArg = arguments; }
+                            exec(res); unget();
+                            
+                            if ($getterArg) {
+                                var w = $easy.watch($getterArg[1].property, function(){
                                     exec();
-                                }, obj);
+                                }, $getterArg[0]);
                                 ui.$handleWatches.push({ el: base, watch: w });
                             }
-                            exec(res); unget();
+
                             return base.removeAttribute($name);
                         } else if($name.startsWith('e-') && !vars.cmds.hasValue($name)) {
                             // alternable attr values
@@ -1787,16 +1798,20 @@
                                     });
                                 }
         
-                                getter = function (obj, prop) {
-                                    var w = $easy.watch(prop.property, function(){
-                                        exec(fn.eval(el.$e.$oldValue, obj));
-                                    }, obj);
-                                    ui.$handleWatches.push({ el: base, watch: w });
-                                }
-        
-                                var res = fn.eval($value, $scope);
+                                var $getterArg; // [0] -> obj; [1] -> prop
+                                getter = function () { $getterArg = arguments; }
+
+                                var res = fn.eval($value, $scope);        
                                 if(!isObj(res)) return; 
                                 exec(res); unget();
+
+                                if ($getterArg) {
+                                    var w = $easy.watch($getterArg[1].property, function() {
+                                        exec(fn.eval(el.$e.$oldValue, $scope));
+                                    }, $getterArg[0]);
+    
+                                    ui.$handleWatches.push({ el: base, watch: w });
+                                }
                             }
                         }
                         break;
@@ -1806,9 +1821,9 @@
                 var singleAttrCompilation, $attributes = [];
                 // Attributes Priorities
                 if (el.attributes) 
-                    singleAttrCompilation = el.attributes[cmds.fill] || el.attributes[cmds.for] || 
-                    el.attributes[cmds.req] || el.attributes[cmds.tmp] || el.attributes[cmds.fill] || 
-                    el.attributes['wait-data'];
+                    singleAttrCompilation = el.attributes[cmds.data] || el.attributes[cmds.fill] || 
+                    el.attributes[cmds.for] || el.attributes[cmds.req] || el.attributes[cmds.tmp] || 
+                    el.attributes[cmds.fill] || el.attributes['wait-data'];
 
                 $attributes = singleAttrCompilation ? [ singleAttrCompilation ] : toArray((el.attributes || []));
                 forEach($attributes, function (child) {
@@ -2084,12 +2099,11 @@
                     this.loaded = this.destroyed = fn.empty
                     this.scope = $easy.retrieve(src, true) || $inc.$$data;
                     this.Easy = $easy;
+                    this.__proto__.NOREACTIVE = true;
                     
                     // In this case the element was removed from the DOM before de compilation
                     // Removing the exposed data of this component
                     if (!$inc.parentNode) return;
-                    if (!$path.template)
-                        compilingFile = $path.url.endsWith('.html') ? $path.url : $path.url + '.html';
 
                     if (!isNull($path.data)) {
                         this.data = new ReactiveObject($path.data);    
@@ -2311,10 +2325,7 @@
                                 // Compiling the added element according the scope data                        
                                 Compiler.compile({
                                     el: el,
-                                    data: this.data,
-                                    done: function() {
-                                        compilingFile = 'main file';
-                                    }
+                                    data: this.data
                                 });
                                 
                                 // Element was loaded
@@ -2351,6 +2362,7 @@
                                 });
                             }
                         } catch (error) {
+                            error.file = $path.url || src;
                             Easy.log(error);
                             clearInterval(tId);
                         }
@@ -2457,7 +2469,7 @@
                     var value = fn.eval(exp, $data);
                     if (isNull(value)) return '';
                     if (json) {
-                        if (isObj(value))
+                        if (isObj(value)) 
                             value = JSON.stringify(value);
                     }
                     return value;
@@ -2467,8 +2479,7 @@
             }
             // Get an attribute of an element in a list and remove it or not
             this.attr = function (elem, attrs, remove) {
-                if (!elem) return;
-                if (!attrs) return;
+                if (!elem || !attrs) return;
                 if (isNull(remove)) remove = false;
                 if (isNull(elem.attributes)) return;
 
@@ -2608,24 +2619,14 @@
             }
             // Objtec for ui commands like: if, for, show...
             this.cmd = {
-                show: function (elem, $data) {
-                    if (isNull($data)) $data = {};
-                    var exp = elem.$e.typeValue;
-                    var res = fn.eval(exp, $data) ? true : false;
-                    if (new String(res).toLowerCase() === 'false') 
-                        elem.style.display = 'none';
-                    else if (new String(res).toLowerCase() === 'true')
-                        elem.style.display = '';
-                    return res;
-                },
                 for: function (obj) {
-                    var el = obj.el,
+                    var el = obj.el, 
                         array = obj.array,
                         comment = obj.comment,
                         $scope = obj.data;
                     try {
                         var name = vars.cmds.for, 
-                        attr = fn.attr(el, [name]);
+                            attr = fn.attr(el, [name]);
                         
                         if (instance.getDelimiters(attr.value).length > 0) {
                             Easy.log(error.delimiter);
@@ -2690,7 +2691,7 @@
                         }
 
                         // Order if needed
-                        var orderBy = new OrderBy({
+                        var orderBy = OrderBy({
                             elem: el,
                             data: $scope,
                             reference: comment,
@@ -2997,7 +2998,7 @@
                         return $easy.read($request.$url, $request.$id)
                         .then(function(data) {
                             if(!data.status)
-                                return Easy.log(data.msg);
+                                return Easy.log(data.message);
                             prepareMany(data.result);
                         })
                         .catch(function(error) {
@@ -3012,7 +3013,7 @@
                         return $easy.getOne($request.$url, $request.$id)
                         .then(function(data) {
                             if(!data.status)
-                                return Easy.log(data.msg); 
+                                return Easy.log(data.message); 
                             prepareOne(data.result);
                         })
                         .catch(function(error) {
@@ -3032,12 +3033,12 @@
         function ReactiveProperty(config) {
             var object = config.object;
             var property = config.property;
-
-            if ($propDescriptor(object, property).writable === false)
-                return this;
-                
-            // If function
             var $prop = object[property];
+
+            if ($propDescriptor(object, property).writable === false) return this;
+            if ( ($prop instanceof Element) || (isObj($prop) && $prop.__proto__.NOREACTIVE)) return this;
+            
+            // If it's a function
             if (typeof $prop === 'function') {
                 object[property] = $prop.bind($easy);
                 return this;
@@ -3081,13 +3082,14 @@
             // Setting the default getter and setter
             $propDefiner(object, property, {
                 get: function reactive () {
-                    if (getter)
-                        getter(object, propConfig);
+                    if (getter) getter(object, propConfig);
                     return propConfig.value;
                 },
                 set: function reactive () {
                     var newValue = arguments[0];
                     var oldValue = propConfig.value;
+                    // The values are the same do nothing
+                    if (newValue === oldValue) return;
                     if (isObj(newValue)) {
                         if (isArray(newValue)) {
                             var value = forEach(newValue, function (item) {
@@ -3099,12 +3101,17 @@
                             propConfig.value.splice(0, propConfig.value.length);
                             propConfig.value.push.apply(propConfig.value, value);
                         } else{
-                            if (!isNull(object[property]))
-                                object[property].mapObj(newValue);
+                            if (!isNull(object[property]) && !(newValue instanceof Element)){
+                                object[property].mapObj(newValue, true);
+                                new ReactiveObject(object[property]);
+                            } else {
+                                object[property] = newValue;
+                            }
                         }
-                    }
-                    else
+                    } else {
+                        // The values are the same do nothing
                         propConfig.value = newValue;
+                    }
                     
                     // calling binds
                     toArray(propConfig.binds, function (bind) {
@@ -3136,9 +3143,11 @@
         /** Helper Class that Makes some array methods reactive on the calls */
         function ReactiveArray(config) {
             this.refs = {};
-            var self = this, property = config.property, propConfig;
-            getter = function (_, prop) { propConfig = prop; }
+            var self = this, property = config.property, $getterArg;
+            getter = function () { $getterArg = arguments; }
+            
             var $array = config.object[property]; unget();
+            var propConfig = $getterArg[1];
 
             // Execute when some value changes
             function emitChanges(config) {
@@ -3235,10 +3244,12 @@
             if (!object) object = {};
             if (!(isObj(object))) return object;
             for(var key in object) {
+                var prop = object[key];
+
+                if ( (prop instanceof Element) || (isObj(prop) && prop.__proto__.NOREACTIVE)) continue;
                 // If the property is already a reactive one, skip.
                 if(!$propDescriptor(object, key).hasOwnProperty('value')) continue;
                 
-                var prop = object[key];
                 new ReactiveProperty({
                     object: object,
                     property: key
@@ -3418,19 +3429,20 @@
                     }
                     return config.actions.run(lastValue);
                 }
-                var $$data = $data, $prop = exp[0], $value;
-                getter = function (layerData, property) {
-                    $$data = layerData;
-                    $prop = property.property;
-                };
-                $value = fn.eval(exp[0], $$data); unget();
+
+                var $getterArgs = []; // [0] -> obj; [1] -> prop
+                getter = function () { $getterArgs.push(arguments); }
+                var $value = fn.eval(exp[0], $data); unget();
+
                 this.reference = execute($value);
                 // Watching the change of property in the filter
-                watch = Watch.exec($prop, function (value) {
-                    if (self.reference.isConnected === false)
-                        return self.destroy(); // auto destroy if it does not exits;
-                    execute(value);
-                }, $$data);
+                forEach($getterArgs, function (arg) {
+                    watch = Watch.exec(arg[1].property, function (value) {
+                        if (self.reference.isConnected === false)
+                            return self.destroy(); // auto destroy if it does not exits;
+                        execute(value);
+                    }, arg[0]);
+                })
             }
 
             this.destroy = function () {
@@ -3439,26 +3451,26 @@
         }
         /** Helper class that handle list order actions of an element */
         function OrderBy(config) {
-            var self = this;
+            var self = {};
             // The element that will be linked this filter
-            this.reference = config.reference;
-            this.elem = config.elem;
-            this.data = config.data;
-            this.array = config.array.value;
-            this.attr = config.attr = fn.attr(config.elem, [vars.cmds.order]) ||
+            self.reference = config.reference;
+            self.elem = config.elem;
+            self.data = config.data;
+            self.array = config.array.value;
+            self.attr = config.attr = fn.attr(config.elem, [vars.cmds.order]) ||
                         // Checking the attribute in the old attributes property
                         (config.elem.$e.$oldAttrs || []).findOne(function (at) {
                             return at.name === vars.cmds.order;
                         });
 
-            if (!this.attr) return this;
+            if (!self.attr) return self;
             // Defining com property to avoid the element to be removed
             // by the bind maintenance
-            this.attr.com = this.reference;
+            self.attr.com = self.reference;
             // Getting the delimiter if exists
-            var fields = ui.getDelimiters(this.attr.value), exp, watches = [], self = this;
+            var fields = ui.getDelimiters(self.attr.value), exp, watches = [];
             
-            this.order = function(array) {
+            self.order = function(array) {
                 exp = config.attr.value.split(':');
                 return OrderBy.exec(array, exp[0], exp[1]);
             }
@@ -3478,17 +3490,20 @@
                     }, config.data));
                 });
             } else{
-                Compiler.addOldAttr({ el: this.attr, value: this.attr }); 
+                Compiler.addOldAttr({ el: self.attr, value: self.attr }); 
             }
 
-            this.array = this.order(extend.array(config.array.value));
-            config.array.value.__proto__.done = function (method, args) {
-                self.array[ method ].apply(self.array, args);
-            }
+            self.array = self.order(extend.array(config.array.value));
+            
+            if (!config.array.value.__proto__.done)
+                config.array.value.__proto__.done = function (method, args) {
+                    self.array[ method ].apply(self.array, args);
+                }
 
-            this.destroy = function () {
+            self.destroy = function () {
                 forEach(watches, function (w) { w.destroy(); });
             }
+            return self;
         }
         /**
          * Helper Class that creates an event object
@@ -3644,20 +3659,23 @@
         Bind.exec = function (elem, object, callback, options) {
             try {
                 // Defining the getter to object in the dt
-                getter = function (obj, prop) {
+                var $getterArg; // [0] -> obj; [1] -> prop
+                getter = function () { $getterArg = arguments; }
+                callback();
+
+                if ($getterArg) {
                     if (!options) options = {};
                     var config = {
                         el: elem,
                         layer: object,
-                        lastLayer: obj,
-                        property: prop
+                        lastLayer: $getterArg[0],
+                        property: $getterArg[1]
                     };
                     // Adding the options to the config
                     options.keys(function (key, value) { config[key] = value; });
                     // Binding the element
                     new Bind(config);
                 }
-                callback();
             } catch(error) {
                 throw (error);
             } finally {
@@ -3668,17 +3686,14 @@
         prototype.watch = Watch.exec = function (prop, callback, object) {
             if (!object) object = $easy.data;
             if ( !object.hasOwnProperty(prop) ) return;
-            var watch;
-            // Defining the getter
-            getter = function (_, prop) {
-                watch = new Watch({
-                    property: prop,
-                    callback: callback
-                });
-            }; 
-            var _ = object[prop];
-            unget();
-            return watch;
+            var $getterArg; // [0] -> obj; [1] -> prop
+            getter = function () { $getterArg = arguments; };
+            var _ = object[prop]; unget();
+
+            return new Watch({
+                property: $getterArg[1],
+                callback: callback
+            });;
         }
         // Get listed array html elements from a comment
         ReactiveArray.retrieveElems = function (comment, remove) {
@@ -3762,13 +3777,13 @@
             }
         }
         Compiler.setValue = function(obj) {
-            // Binding and setting the value in the element
-            // Only the primitives and objects are bindable
-            var data = extend.addToObj(obj.scope, obj.methods), $return;
-            Bind.exec(obj.current, obj.scope, function () {
-                $return = ui.setNodeValue(obj.current, data);
+            // Setting the value in the element
+            var data = extend.addToObj(obj.scope, obj.methods);
+            ui.setNodeValue(obj.current, data);
+            // Binding all the fields
+            return forEach(obj.current.$e.$fields, function (field) {
+                Bind.exec(obj.current, obj.scope, function () { fn.eval(field.exp, data); });
             });
-            return $return;
         }
         Compiler.getUpData = function(el) {
             do {
@@ -3844,7 +3859,7 @@
                 $propTransfer($instance, log, key);
             Object.defineProperties($instance, {
                 message: { enumerable: true, value: log.message }, 
-                file: { enumerable: true, value: log.file || compilingFile }
+                file: { enumerable: true, value: log.file || './index.html' }
             });
         }
         
@@ -3859,7 +3874,7 @@
     Easy.prototype.http = http;
     Easy.prototype.extend = extend;
     Easy.prototype.return = function (status, message, result, extra) {
-        return extend.addToObj({ status: status, msg: message, result: result }, extra);
+        return extend.addToObj({ status: status, message: message, result: result }, extra);
     }
     return Easy;
 })));

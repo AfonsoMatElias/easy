@@ -20,7 +20,7 @@ new EasyConnector('https://jsonplaceholder.typicode.com/', {
  */
 function EasyConnector(baseUrl, fetchOptions) {
     this.name = "Easy Ajax Connector";
-    this.version = '2.0.0';
+    this.version = '2.0.2';
     // Checking EasyJs definition
     if (typeof Easy === undefined) return;
     var $easy = Easy.prototype;
