@@ -268,12 +268,11 @@
                         // Modifieng the console methods
                         $$refs.keys(function (key, v) {
                             contentWindow.console[key] = function (info, value) {
-                                console.log(arguments);
                                 var $value = '';
                                 if (!value) {
                                     $value = info;
                                 } else {
-                                    $value = value.toString() || value.msg || value.message || 'One or more errors occurred';
+                                    $value = value.toString() || value.msg || value.message || 'One or more errors occurred, try to reload the page.';
                                 }
 
                                 instance.console.add({
