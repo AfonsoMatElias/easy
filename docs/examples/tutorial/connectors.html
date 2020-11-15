@@ -1,11 +1,19 @@
 <div id="app">
-    <!-- Example not working yet because the connector is not updated yet-->
     <ul>
         <li e-tmp="users">
-            <p> <b>Name: </b> <span e-content="{e{ name }}">Name</span></p>
+            <div>
+                <span e-skeleton> <b>Id:</b> {{ id }} </span>
+            </div>
+            <div>
+                <span e-skeleton> <b>Name:</b> {{ name }} </span>
+            </div>
+            <div>
+                <span e-skeleton> <b>Username: </b>{{ username }} </span>
+            </div> <br>
         </li>
     </ul>
-    
+
+    <!-- Importing easy.ajax.js; using https://jsonplaceholder.typicode.com/ -->
     <script src="https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.1.0/connectors/easy.ajax.js"></script>
 </div>
 
