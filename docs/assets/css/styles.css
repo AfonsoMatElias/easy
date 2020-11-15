@@ -1300,7 +1300,9 @@ pre code.bat.hljs::after {
     color: #87c2e2;
 }
 
-.CodeMirror.cm-s-default .cm-string {
+
+.CodeMirror.cm-s-default .cm-string,
+.dark-theme .CodeMirror.cm-s-default .cm-atom {
     color: #c97859;
 }
 
@@ -1313,8 +1315,16 @@ pre code.bat.hljs::after {
     color: #8fc4df;
 }
 
+.dark-theme .CodeMirror.cm-s-default .cm-qualifier {
+    color: #69a5c5;
+}
+
 .dark-theme .CodeMirror.cm-s-default .cm-keyword {
     color: #c586c0;
+}
+
+.dark-theme .CodeMirror.cm-s-default .cm-number {
+    color: #b5cea8;
 }
 
 .light-theme .CodeMirror.cm-s-default span[role="presentation"] {
