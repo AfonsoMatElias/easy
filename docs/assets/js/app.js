@@ -1,6 +1,33 @@
-if (!localStorage._lang) localStorage._lang = 'en'; 
 document.addEventListener('DOMContentLoaded', function () {
-    var lang = localStorage._lang;
+    // The language that needs to loaded
+    var lang, 
+        // Website avaliable languages
+        languages = [{
+            id: 'en',
+            name: 'English'
+        },
+        {
+            id: 'pt',
+            name: 'Português'
+        }
+    ];
+
+    // If some language isn't selected
+    if (!localStorage._lang) {
+        // Get the navigator language
+        var id = ((window.navigator || {}).language || 'en').split('-')[0];
+
+        // Loop and check if it's in avaliable languages
+        for (let i = 0; i < languages.length; i++)
+            if (languages[i] == id) lang = id;
+
+        // If it was found set it
+        lang = localStorage._lang = lang || 'en';
+    } else {
+        // Otherwise get the defined language
+        lang = localStorage._lang;
+    }
+
     var app = new Easy('#app-page', {
         config: {
             useDOMLoadEvent: false,
@@ -12,19 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
             pageLoading: false,
             showLanguageDropDown: false,
             selectedLang: lang,
-            translations: [
-                {
-                    id: 'en',
-                    name: 'English'
-                },
-                {
-                    id: 'pt',
-                    name: 'Português'
-                }
-            ],
-
-            mainPage: content[lang],
-
+            translations: languages,
             app: {
                 name: 'Easy',
                 version: 'v2.0.2',
@@ -48,22 +63,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
             var presentation = document.node('.doc-presentation');
             if (presentation && !location.pathname.includes('docs.connectors.html')) {
-                var section, 
+                var section,
                     // Getting the parameters of the url
                     /* UrlParams, it is a Easy Js built-in class for getting url query string values */
-                    params = new UrlParams(); 
+                    params = new UrlParams();
 
                 // If there is not a valid value load the first section
-                if (params.load == null){
+                if (params.load == null) {
                     section = availableSections['sctn1'];
                     history.replaceState(null, null, location.href + "?load=sctn1");
-                }
-                else // Otherwise load the asked section
+                } else // Otherwise load the asked section
                     section = availableSections[params.load];
 
                 // If the section is valid, then load it
                 if (section)
-                    presentation.innerHTML = '<inc src="'+ section +'"></inc>';
+                    presentation.innerHTML = '<inc src="' + section + '"></inc>';
                 else // Otherwise load the 404 component
                     presentation.innerHTML = '<inc src="404"></inc>';
             }
@@ -115,13 +129,13 @@ document.addEventListener('DOMContentLoaded', function () {
             config: {
                 // '/docs/' -> Use this when local
                 // '/easy/' -> Use to push on github
-                base: '/easy/' 
+                base: '/docs/'
             },
             elements: {
                 'top': "/components/top",
                 'editor': "/components/editor",
                 'main': {
-                    url: '/components/views/'+ lang +'/main',
+                    url: '/components/views/' + lang + '/main',
                     title: 'Easy',
                     route: '/',
                     isDefault: true
@@ -136,24 +150,24 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Modal
                 'modal': "/components/modal/modal",
                 // Modal Body
-                'download-connectors': '/components/doc-sections/'+ lang +'/download-connectors',
+                'download-connectors': '/components/doc-sections/' + lang + '/download-connectors',
 
                 // Documentation components
-                'side-menu': '/components/doc-sections/'+ lang +'/side-menu',
-                'introduction': '/components/doc-sections/'+ lang +'/introduction',
-                'installation': '/components/doc-sections/'+ lang +'/installation',
-                'instance': '/components/doc-sections/'+ lang +'/instance',
-                'delimiters': '/components/doc-sections/'+ lang +'/delimiters',
-                'bindings': '/components/doc-sections/'+ lang +'/bindings',
-                'commands': '/components/doc-sections/'+ lang +'/commands',
-                'events': '/components/doc-sections/'+ lang +'/events',
-                'methods': '/components/doc-sections/'+ lang +'/methods',
-                'components': '/components/doc-sections/'+ lang +'/components',
-                'routing': '/components/doc-sections/'+ lang +'/routing',
-                'extra': '/components/doc-sections/'+ lang +'/extra',
-                'connectors': '/components/doc-sections/'+ lang +'/connectors',
-                'goodbye': '/components/doc-sections/'+ lang +'/goodbye',
-                
+                'side-menu': '/components/doc-sections/' + lang + '/side-menu',
+                'introduction': '/components/doc-sections/' + lang + '/introduction',
+                'installation': '/components/doc-sections/' + lang + '/installation',
+                'instance': '/components/doc-sections/' + lang + '/instance',
+                'delimiters': '/components/doc-sections/' + lang + '/delimiters',
+                'bindings': '/components/doc-sections/' + lang + '/bindings',
+                'commands': '/components/doc-sections/' + lang + '/commands',
+                'events': '/components/doc-sections/' + lang + '/events',
+                'methods': '/components/doc-sections/' + lang + '/methods',
+                'components': '/components/doc-sections/' + lang + '/components',
+                'routing': '/components/doc-sections/' + lang + '/routing',
+                'extra': '/components/doc-sections/' + lang + '/extra',
+                'connectors': '/components/doc-sections/' + lang + '/connectors',
+                'goodbye': '/components/doc-sections/' + lang + '/goodbye',
+
                 // Sections wrapper
                 'section-1': '/components/doc-sections/section.1',
                 'section-2': '/components/doc-sections/section.2',

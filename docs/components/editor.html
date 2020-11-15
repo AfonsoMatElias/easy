@@ -272,7 +272,7 @@
                                 if (!value) {
                                     $value = info;
                                 } else {
-                                    $value = value.toString();
+                                    $value = value.toString() || value.msg;
                                 }
 
                                 instance.console.add({

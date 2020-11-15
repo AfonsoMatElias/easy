@@ -42,7 +42,7 @@
                         </li>
                     </ul>
                 </li>
-                <li sec> <a i:href="/tutorial/delimiters"> 
+                <li sec> <a i:href="/tutorial/delimiters">
                         <h3> Delimiters </h3>
                     </a>
                     <ul>
@@ -149,6 +149,30 @@
                         <li> <a mark="#routing_pretty_url"> HTML5 Mode / Pretty URL </a> </li>
                     </ul>
                 </li>
+                <li sec> <a i:href="/tutorial/connectors">
+                        <h3> Connectors </h3>
+                    </a>
+                    <ul>
+                        <li> <a mark="#conn_methods"> Methods </a> </li>
+                        <li> <a mark="#conn_commands"> <b>Commands</b> </a>
+                            <ul>
+                                <li> <a mark="#conn_c_tmp"> e-tmp </a> </li>
+                                <li> <a mark="#conn_c_tmp_w_filter"> e-tmp with e-filter </a> </li>
+                                <li> <a mark="#conn_c_tmp_w_order"> e-tmp with e-order </a> </li>
+                                <li> <a mark="#conn_c_fill"> e-fill with e-id </a> </li>
+                                <li> <a mark="#conn_c_req"> e-req </a> </li>
+                                <li> <a mark="#conn_c_use"> e-use </a> </li>
+                            </ul>
+                        </li>
+
+                        <li> <a mark="#conn_available"> <b>Available</b> </a>
+                            <ul>
+                                <li> <a mark="#conn_ajax"> Ajax </a> </li>
+                                <li> <a mark="#conn_free"> Free </a> </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
             </ul>
 
             </ul>
@@ -188,7 +212,8 @@
         'events': 'Events',
         'methods': 'Methods',
         'comps_incs': 'Components / Includers',
-        'routing': 'Routing'
+        'routing': 'Routing',
+        'connectors': 'Connectors',
     };
 
     this.mounted = function (el) {
@@ -219,10 +244,11 @@
         }
 
         // Adding the includaer element in the container
-        container.innerHTML = '<inc src="' + (isComponent ? 'components' : topicName)  + '" data="{ noApp: true }"></inc>'
+        container.innerHTML = '<inc src="' + (isComponent ? 'components' : topicName) +
+            '" data="{ noApp: true }"></inc>'
 
         // Setting the title
-        document.title =  'Tutorial • ' + topicFound; 
+        document.title = 'Tutorial • ' + topicFound;
 
         // Loading the example
         loadFile.call($easy, '/examples/tutorial/' + topicName + '.html', function (content) {
@@ -230,7 +256,7 @@
             var splitted = content.split('<!-- comp -->');
             var main = splitted[0];
             var tabs;
-            if (splitted.length > 1){
+            if (splitted.length > 1) {
                 splitted.shift();
 
                 tabs = splitted.map(function (inc, index) {
@@ -247,7 +273,7 @@
                     return {
                         id: 'comp-' + index,
                         content: div.innerHTML,
-                        name: name || 'tab' + index, 
+                        name: name || 'tab' + index,
                     };
                 });
             }

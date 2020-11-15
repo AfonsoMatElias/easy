@@ -37,11 +37,11 @@
     // Para remover um evento, use o Array retornado e o `removeEventListener`
     document.removeEventListener(listenReturn[0].event, listenReturn[0].callback);
 
-    // Note: If you use the callback passed in the listen method won't work!
+    // Nota: Se usares o callback passado no método `listen` não vai funcionar!
 
     // HTMLElement.valueIn(...) -> permite obter e definir o valor em um atributo.
 
-    var value = element.valueIn('id'); // Retorna o valor de id `property`
+    var value = element.valueIn('id'); // Retorna o valor do attributo `id`
     value = element.valueIn('id', 'id-001'); // Define o id do atributo e retorna o valor
     value = element.valueIn(); // Se usado desta forma, obtém o valor textContent
 
