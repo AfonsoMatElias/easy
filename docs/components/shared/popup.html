@@ -1,0 +1,62 @@
+<div class="popup" e-anm="down">
+    <span class="center-icon icon fa {{ icon[type] }}"></span>
+    <div class="message">
+        <p e-content="{{ unescape(message) }}" on:click="url ? location.href = url; : null">Loading...</p>
+    </div>
+    <div class="close">
+        <span title="Clique para fechar!" class="fa fa-times-circle" on:click="destroyMe"></span>
+    </div>
+</div>
+<script>
+    var self = this;
+    this.loaded = function (el) {
+        // Time destroyer
+        var tId = null;
+        if ( this.data.noClose ) return;
+
+        function subscribe() {
+            tId = setTimeout(function() {
+                self.destroy();
+                clearTimeout(tId);
+            }, 5000);
+        }
+
+        subscribe();
+        el.listen('mouseover', function () {
+            clearTimeout(tId);
+        });
+
+        el.listen('mouseleave', function () {
+            subscribe();
+        });
+    }
+
+    this.destroyed = function (el) {
+        // if (el.addToNotification) {
+        //     // Generating the time
+        //     var time = (new Date()).toTimeString().split(' ')[0].split(':');
+        //     time.pop();
+        //     time.join(':');
+
+        //     var $notification = this.Easy.extend.obj(this.data, {
+        //         date: time.join(':'),
+        //         idx: this.Easy.code(5)
+        //     });
+            
+        //     delete $notification.$scope;
+        //     easy.data.notifications.unshift($notification);
+        // }
+    }
+
+    this.export({
+        icon: {
+            warn: 'fa-warning',
+            info: 'fa-info-circle',
+            error: 'fa-times-circle',
+            success: 'fa-check-circle'
+        },
+        destroyMe: function() {
+            self.destroy();
+        }
+    });
+</script>
