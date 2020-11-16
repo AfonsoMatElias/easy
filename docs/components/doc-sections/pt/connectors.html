@@ -5,7 +5,7 @@
 
     <h1> <a id="connectors"> Conectores (Connectors) </a> </h1>
     <p>
-        Um conector é um objeto de classe que está associado a <i class="note mark-el">Easy</i> tornando-o capaz de
+        Um conector é um objeto de classe que é associado ao <i class="note mark-el">Easy</i> tornando-o capaz de
         fazer requisições externas usando métodos integrados e comandos simples. Quando é importado, também cria uma
         instância de si mesmo configurando essa instância no Easy Object. <br>
         <a class="mark-el" on:click="showModal">Ver Todos Conectores Disponíveis</a>
@@ -31,6 +31,7 @@
                     class="mark-el">id</i>)</span> </li>
         <li> <span class="note mark-el">delete(<i class="mark-el">path</i>, <i class="mark-el">id</i>)</span> </li>
         <li> <span class="note mark-el">getOne(<i class="mark-el">path</i>, <i class="mark-el">id</i>) </span> </li>
+        <br>
         <li> <span class="note mark-el">request(<i class="mark-el">code</i>, <i class="mark-el">callback</i>) </span>
         </li>
     </ul>
@@ -47,7 +48,7 @@
     <ul>
         <li> <i class="mark-el">path</i> &ndash; o caminho (path) onde o objeto precisa ser inserido. </li>
         <li> <i class="mark-el">object</i> &ndash; o objecto (object) é um <i class="note mark-el">Object Literal</i> ou
-            um <i class="note mark-el">Element Form</i>, representa o objeto que será inserido. Quando passado um Form
+            um <i class="note mark-el">Form Element</i>, representa o objeto que será inserido. Quando passado um Form
             Element, um objeto será gerado a partir do elemento. </li>
         <li> <i class="mark-el">retorno (return)</i> &ndash; uma promessa (promise) de acordo com os dados configurados
             na instância do conector.
@@ -73,7 +74,7 @@
     </p>
     <ul>
         <li> <i class="mark-el">path</i> &ndash; o caminho (path) onde os objetos precisam ser lidos. </li>
-        <li> <i class="mark-el">extra (Optional)</i> &ndash; uma palavra extra que precisa ser concatenada com o caminho
+        <li> <i class="mark-el">extra (Optional)</i> &ndash; uma string extra que precisa ser concatenada com o caminho
             (path) usando um <i class="note mark-el">/</i>. </li>
         <li> <i class="mark-el">retorno (return)</i> &ndash; uma promessa (promise) de acordo com os dados configurados
             na
@@ -101,9 +102,8 @@
 
     <ul>
         <li> <i class="mark-el">path</i> &ndash; o caminho (path) onde o objeto precisa ser actualizado. </li>
-        <li> <i class="mark-el">object</i> &ndash; the object is a <i class="note mark-el">Object Literal</i> or a
-            <i class="note mark-el">Form Element</i>, o objecto (object) é um <i class="note mark-el">Object Literal</i>
-            ou um <i class="note mark-el">Element Form</i>, representa o objeto que será inserido. Quando passado um
+        <li> <i class="mark-el">object</i> &ndash; o objecto (object) é um <i class="note mark-el">Object Literal</i>
+            ou um <i class="note mark-el">Form Element</i>, representa o objeto que será actualizado. Quando passado um
             Form Element, um objeto será gerado a partir do elemento. </li>
         <li> <i class="mark-el">id</i> &ndash; o único identificador (id) do objecto. </li>
         <li> <i class="mark-el">retorno (return)</i> &ndash; uma promessa (promise) de acordo com os dados configurados
@@ -226,8 +226,8 @@
 
     <h4> <a id="conn_c_tmp"> e-tmp </a> </h4>
     <p>
-        É a forma curta de e-template, executa a requisição `read` de acordo com o caminho fornecido, e renderiza todos
-        os resultados depois da requisição for terminada.
+        É a forma curta de <span class="note mark-el">e-template</span>, executa a requisição `read` de acordo com o
+        caminho fornecido, e renderiza todos os resultados depois da requisição for terminada.
     </p>
 
     <div e-ignore class="code-container" code-ext=".html">
@@ -300,7 +300,7 @@
     <h4> <a id="conn_c_fill"> e-fill with e-id </a> </h4>
     <p>
         Executa a requisição getOne de acordo com o caminho fornecido e renderiza o resultado depois da requisição
-        terminar. A sintâxe é <i class="note mark-el">e-fill="caminho"</i>. Mas, ela precisa ser combinada com <i
+        terminar. A sintâxe é <i class="note mark-el">e-fill="caminho"</i>. Mas, ele precisa ser combinado com <i
             class="note mark-el">e-id</i> que terá o valor do parâmetro `id`. <br>
         <span class="note warn-border">O atributo <i class="mark-el">e-id</i> é obrigatório.</span>.
     </p>
@@ -315,14 +315,14 @@
 
     <h4> <a id="conn_c_req"> e-req </a> </h4>
     <p>
-        It's short of e-request, this is the versatile command, whicch can perform
-        <i class="note mark-el">e-tmp (read)</i> or <i class="note mark-el">e-fill (getOne)</i>
-        request according to the expression provided. The syntax is: <br>
+        É a forma curta de <span class="note mark-el">e-request</span>, este é o comando versátil, que pode executar as
+        requisições <i class="note mark-el">e-tmp (read)</i> ou <i class="note mark-el">e-fill (getOne)</i> de acordo
+        com a expressão fornecida. A sintâxe é: <br>
     </p>
 
     <div e-ignore class="code-container" code-ext=".html">
         <textarea cm-lang="text/html">
-    <!-- Request Type -->
+    <!-- Tipo de Requisição -->
     <element 
         e-req="{
             $code: String (Opcional),
@@ -335,7 +335,7 @@
     <ul>
         <li> <i class="mark-el">$code</i> &ndash; o código único desta requisição, usado para pegar um objecto
             especifíco de requisição.</li>
-        <li> <i class="mark-el">$url</i> &ndash; a url ou caminho do request.</li>
+        <li> <i class="mark-el">$url</i> &ndash; a url ou caminho da requisição.</li>
         <li> <i class="mark-el">$type</i> &ndash; o tipo de requisição, que pode ser <i class="note mark-el">many</i> ou
             <i class="note mark-el">one</i>. Se nada for definido, `many` será o valor padrão. </li>
 
@@ -403,15 +403,14 @@
 
     <h3> <a id="conn_available"> Disponíveis (Availables) </a> </h3>
     <p>
-        Todos os conectores podem ser encontrados na pasta connectors (github), e podem ser baixados usando o <a
-            on:click="showModal" class="note mark-el">download modal</a>.
+        Todos os conectores podem ser encontrados na pasta `connectors` (github), e podem ser baixados usando o <a
+            on:click="showModal" class="note mark-el">modal de baixar</a>.
     </p>
 
     <h4> <a id="conn_ajax"> Ajax </a> </h4>
     <p>
-        O ficheiro easy.ajax.js, ]e um conector que permite o <i class="note mark-el">Easy.js</i> fazer requisições
-        ajax.
-        É muito simples de ser configurado e começar a fazer requisições para um servidor.
+        O ficheiro easy.ajax.js, é um conector que permite o <i class="note mark-el">Easy.js</i> fazer requisições
+        ajax. É muito simples de ser configurado e começar a fazer requisições para um servidor.
     </p>
 
     <p>
@@ -439,7 +438,7 @@
     </div>
 
     <p>
-        No retorno da resposta principal, só o os reais dados devem ser retornados, se a resposta vem dentro de um
+        No retorno da resposta principal (dados), só o os reais dados devem ser retornados, se os dados vem dentro de um
         objecto, como por exemplo este <span class="note"> { data: <i class="mark-el">{...}</i>, errors: <i
                 class="mark-el">[...]</i>, success: <i class="mark-el">boolean</i> } </span>, precisamos acessar a
         propriedade `data` e retorná-la:
@@ -459,7 +458,7 @@
     <div class="block-note info">
         <p>
             O método <i class="mark-el">return</i> pode ser encontrado em Easy.prototype.<i class="mark-el">return</i>,
-            é usado para gerar o tipo de objecto de retorno entendido pela instância do easy.
+            é usado para gerar o tipo de objecto de retorno entendido pela instância do Easy.
         </p>
     </div>
 
@@ -471,7 +470,7 @@
 
     <div class="block-note info">
         <p>
-            Todos dados retornados se tornan reactivos depois de ser executados pela função `resolve`, significando que
+            Todos dados retornados se tornam reactivos depois de ser executados pela função `resolve`, significando que
             se resultado for um array pode ser usado os métodos push, pop, etc, e ele fará as alterações na UI.
         </p>
     </div>
@@ -479,7 +478,7 @@
     <h3> <a id="conn_free"> Free </a> </h3>
     <p>
         O ficheiro easy.free.js é um conector com a estrutura que pode ser usado para criar outros conectores,
-        significando que qualquer um pode criar um conector baseando-se neste ficheiro.
+        significando que qualquer desenvolvedor pode criar um conector baseando-se neste ficheiro.
     </p>
 </section>
 <script>

@@ -6,32 +6,32 @@
     <h1> <a id="routing"> Roteamento (Routing) </a> </h1>
     <p>
         O roteamento é uma funcionalidade que habilita o modo <b>SPA (Single Page Application)</b>, e para criar um SPA
-        com o <i class="note">Easy</i> é muito simples, porque ele uso os elementos do <a
+        com o <i class="note">Easy</i> é muito simples, porque ele usa os elementos do <a
             class="note mark-el">includer</a>.
     </p>
 
     <h3> <a id="routing_setting"> Configurando (Setting) </a> </h3>
     <p>
-        No roteamento, o elemento onde os components começam a ser renderizados deve ser especificado, para isso, a
-        directiva/atributo <i class="note mark-el">route-view</i> é usado, e na definição dos components algumas
+        No roteamento, o elemento onde os componentes serão renderizados deve ser especificado, para isso, a
+        directiva/atributo <i class="note mark-el">route-view</i> é usado, e na definição dos componentes algumas
         propriedades específicas para o roteamento devem definidas, que são:
     </p>
 
     <div e-ignore class="code-container" code-ext=".js">
         <textarea cm-lang="javascript">
     {
-        components : {
+        components: {
             config: {
-                base : String,
-                usehash : Boolean,
+                base: String,
+                usehash: Boolean,
             },
             elements: {
-                String : {
-                    title : String,
-                    route : String, 
-                    isDefault : Boolean,
-                    isNotFound : Boolean,
-                    children : Object,
+                String: {
+                    title: String,
+                    route: String, 
+                    isDefault: Boolean,
+                    isNotFound: Boolean,
+                    children: Object,
                     keepAlive: Boolean
                 }
             }
@@ -52,7 +52,7 @@
             Até este ponto vamos assumir que você já tem conhecimento do que o quê é 'nameId'.
         </li>
         <li> <span class="note mark-el">nameId.title</span> &ndash; representa o título que será configurado quando o
-            component for a adicionado renderizado (É opcional).</li>
+            componente for adicionado ou renderizado (É opcional).</li>
 
         <li> <span class="note mark-el">nameId.route</span> &ndash; representa a rota de navegação (É obrigatório no
             tópico de roteamento). </li>
@@ -65,7 +65,7 @@
 
         <li> <span class="note mark-el">nameId.children</span> &ndash; representa os filhos deste componente.</li>
 
-        <li> <span class="note mark-el">nameId.keepAlive</span> &ndash; perminet manter vivo o estado antigo do
+        <li> <span class="note mark-el">nameId.keepAlive</span> &ndash; permite manter vivo o estado antigo do
             componente.
         </li>
     </ul>
@@ -88,16 +88,16 @@
     var routeApp = new Easy('#routeApp', {
         components: {
             elements: {
-                'home' : {
+                'home': {
                     url: '/pages/home.html',
-                    title : 'Home',
-                    route : '/home', 
+                    title: 'Home',
+                    route: '/home', 
                     isDefault: true
                 },
-                'about' : {
+                'about': {
                     url: '/pages/about.html',
-                    title : 'About',
-                    route : '/about'
+                    title: 'About',
+                    route: '/about'
                 }
             }
         }
@@ -105,8 +105,8 @@
     </div>
 
     <p>
-        Sempre que se estiver a usar o roteamento, é obrigatório definir a rota padrão para que seja carregado
-        imediatamente. Para isso, configura a propriedade <i class="note mark-el">isDefault:true</i> no componente
+        Sempre que se estiver a usar o roteamento, é obrigatório definir a `rota padrão` para que seja carregado
+        imediatamente. Para isso, configure a propriedade <i class="note mark-el">isDefault:true</i> no componente
         registrado.
     </p>
 
@@ -134,9 +134,9 @@
     </p>
 
     <p>
-        Ambos <i class="note mark-el">:href</i> e <i class="note mark-el">i:href</i> qunado definidos criam o atributo
+        Ambos <i class="note mark-el">:href</i> e <i class="note mark-el">i:href</i> quando definidos criam o atributo
         `href` combinando com <i class="note mark-el">config.base</i>, e sempre que é clicado, a ação padrão da âncora é
-        previnido.
+        previnida.
     </p>
 
     <p>
@@ -159,8 +159,8 @@
     <h3> <a id="routing_nesting"> Aninhando Rotas (Nesting Routes) </a> </h3>
     <p>
         Filhos podem ser adicionados para cada componente, isto em uma propriedade `children`, e também podemos aninhar
-        rotas...
-        A propridade espera um objecto de component (components.elements) tendo o `nameId` do filho e o objecto.
+        rotas... A propridade espera um elemento de componente (components.elements) tendo o `nameId` do filho e o
+        `optionsObject`.
     </p>
 
     <div e-ignore class="code-container" code-ext=".js">
@@ -168,20 +168,20 @@
     var routeApp = new Easy('#routeApp', {
         components: {
             elements: {
-                'user' : {
+                'user': {
                     url: '/pages/user',
-                    title : 'Perfil do Usuário',
-                    route : '/user/:id',
+                    title: 'Perfil do Usuário',
+                    route: '/user/:id',
                     children: {
                         'user-posts': {
                             url: '/pages/user-posts',
-                            title : 'Suas Postagens',
-                            route : '/posts'
+                            title: 'Suas Postagens',
+                            route: '/posts'
                         },
                         'user-about': {
                             url: '/pages/user-about',
-                            title : 'Acerca de ti',
-                            route : '/about'
+                            title: 'Acerca de ti',
+                            route: '/about'
                         }
                     }
                 }
@@ -202,7 +202,7 @@
     <p>
         Para definir parâmetro na rota, usamos `:nomeParametro` e para extrair dados do parametro da rota, usamos <i
             class="note mark-el">this.getParams()</i> na instânica do componente, retornando um objecto com todos os
-        parametros da rota.
+        parâmetros da rota.
     </p>
 
     <div e-ignore class="code-container" code-ext=".html">
@@ -219,12 +219,12 @@
 
     <h3> <a id="routing_pretty_url"> Modo HTML5 / URL Bonitas </a> </h3>
     <p>
-        O modo padrão de navegação é o modo hash (#), que usa o hash na URL para navegar entre as páginas em recarregar
+        O modo padrão de navegação é o modo hash (#), que usa o hash na URL para navegar entre as páginas sem recarregar
         a mesma.
     </p>
 
     <p>
-        Para sem usar a hash na URL, há alguns passos que devem ser seguido, que são:
+        Para navegar sem usar o hash na URL, há alguns passos que devem ser seguido, que são:
     </p>
 
     <ol>
@@ -233,13 +233,13 @@
 
         <li> Adicione a tag <i class="note mark-el">base</i> no head da sua página &ndash; a base precisa ser adicionada
             com o mesmo valor que <i class="note">config.base</i> da configuração de componentes. Que vai especificar a
-            URL base para usar em todos as URL relativa no documento (DOM).
+            URL base para usar em todas as URLs relativas no documento (DOM).
             <a class="mark-el" href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base" target="_blank"
                 rel="noopener noreferrer">Clique em mim para saber mais sobre a tag base</a>. </li>
 
         <li> Configure o retorno no servidor para ser <i class="note mark-el">index.html</i> se a URL não coincide com
             algum ficheiro estático &ndash; já que a aplicação corre em uma só página o `index`, precisamos dizer ao
-            servidor retornar este ficheiro, permitindo que o <i class="note mark-el">easy.js</i> lide com a navegação
+            servidor para retornar este ficheiro, permitindo que o <i class="note mark-el">easy.js</i> lide com a navegação
             no front-end.
         </li>
     </ol>

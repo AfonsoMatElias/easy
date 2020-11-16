@@ -13,21 +13,21 @@
     <h3> <a id="cmd_data"> data </a> </h3>
     <p>
         It allows defining a data scope for a certain element, the syntax is
-        <span class="note mark-el">data="{...}"</span>, if it's defined without
+        <span class="note mark-el">data="{...}"</span>. If it's defined without
         content the element will have the data of the main scope, instance.data.
     </p>
 
     <p>
         Whenever a scope is created, a property <i class="mark-el">$scope</i> is added to the new scope making the
-        the parent scope accessable inside of the new scope. We hope it does not confuse you 😅!
+        parent scope accessable inside of the new scope. We hope it does not confuse you 😅!
     </p>
 
     <p>
         If we define an <a href="https://www.dyn-web.com/tutorials/object-literal/" class="mark-el">Object Literal</a>,
         kwow that these properties are temporary and by default <span class="note warn-border">they are not
-            reactives</span>, unless an object that is already reactive is passed by itself or if we passe the object in
+            reactives</span>, unless an object that is already reactive is passed or if we passe the object in
         the <span class="note">this.reactive(...)</span> method, it expects a function returning the object and returns
-        the already reactive object.
+        the reactive object already.
     </p>
 
     <div e-if="typeof noApp === 'undefined'">
@@ -120,7 +120,7 @@
     <p>
         Allows the element where it is defined to be skipped in the compilation, waiting for it's
         data to be provided. It is defined as follows:
-        <span class="note mark-el">wait-data="dataID"</span>. In order to make the element
+        <span class="note mark-el">wait-data="dataId"</span>. In order to make the element
         data available, we use the <span class="note mark-el">instance.expose('dataId', {...})</span> method.
     </p>
 
@@ -278,9 +278,9 @@
     </div>
 
     <p>
-        When e-skeleton is defined for an element, it takes the form of the element to be able
-        to present itself, this means that the element must have some width and height. And by default the
-        background color is light gray and the wave is lightest.
+        When <span class="mark-el">e-skeleton</span> is defined for an element, it takes the form of the element to be
+        able to present itself, this means that the element must have some width and height (anything that give shapes
+        on it). And by default the background color is light gray and the wave is lightest.
     </p>
 
     <p>
@@ -359,7 +359,7 @@
     <div class="block-note warn">
         <p>
             The order of definition matters a lot, e-def must always be above the elements where
-            it will be used
+            it will be used.
         </p>
     </div>
 
@@ -411,7 +411,7 @@
         The <span class="note">e-show</span> command is very similar to the
         <span class="mark-el">Vue.js</span> <span class="note">v-show</span> directive... It is
         used to conditionally
-        show an block (element), it toggles CSS <span class="note mark-el">display</span>
+        show an block (element), it toggles CSS <span class="note mark-el">display:none</span>
         property.
         The block will be visible if the command expression returns a truthy value.
     </p>
@@ -523,7 +523,7 @@
     <h4> <a id="cmd_e_for_filter_g_filter"> 1. Global Filter
         </a> </h4>
     <p>
-        Performs the filter on every property of the items containing the value of the data
+        Performs the filter on every properties of the items containing the value of the data
         property setted.
     </p>
 
@@ -602,7 +602,7 @@
 
     <h4> <a id="cmd_e_for_filter_d_filter"> 3. Direct filter </a> </h4>
     <p>
-        Performs the filter on specific property of the items to a value setted.
+        Performs the filter on specific property of the items to the value setted.
         The filter need to be defined as following: <br>
         <span class="note mark-el">| :property1 === someValue</span>
     </p>
@@ -769,8 +769,8 @@
 
     <h3> <a id="cmd_e_toggle"> e-toggle </a> </h3>
     <p>
-        Allows you to toggle a attribute on an element, setting the value <span class="note mark-el">true</span> when
-        set. It's syntax is <span class="note mark-el">e-toggle:<i>property</i>="dataProperty"</span>.
+        Allows you to toggle an attribute on an element, setting the value <span class="note mark-el">true</span> when
+        set. It's syntax is <span class="note mark-el">e-toggle:<i>attribute</i>="dataProperty"</span>.
     </p>
 
     <div e-if="typeof noApp === 'undefined'">
@@ -803,7 +803,7 @@
     <h3> <a id="cmd_e"> e-[attribute] </a> </h3>
     <p>
         As we said above, it is the most versatile command according to the defined expression,
-        because on the one hand it creates aan attribute after being compiled and on the other it
+        because on the one hand it creates an attribute after being compiled and on the other hand, it
         creates the attribute and toggles a value on it.
     </p>
 
@@ -821,7 +821,7 @@
 
     <p>
         The sintax for attribute creation (if it does not exists) with toggleable value is
-        <span class="note mark-el">e-<i>attribute</i>="{ 'valueToToggle' : condition }"</span>.
+        <span class="note mark-el">e-<i>attribute</i>="{ 'value-to-toggle' : condition }"</span>.
         <br>
         <span class="note att-border">Do not use delimiters in the expression</span>.
     </p>
@@ -834,7 +834,7 @@
     <div id="app20">        
         <style> 
         .yellow-class {
-            border-color: yellow;
+            background-color: yellow;
         } 
     </style>
 

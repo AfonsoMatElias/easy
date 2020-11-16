@@ -20,7 +20,7 @@
 
     <p>
         There are two types of components, <span class="note mark-el">Cloned</span> and <span
-            class="note-mark-el">Registered</span>, and these two forms can be imported/included
+            class="note mark-el">Registered</span>, and these two forms can be imported/included
         in the same way, using the tag <span class="note mark-el">inc</span> or using a <span
             class="note mark-el">Official DOM element</span> (a container element).
     </p>
@@ -87,8 +87,8 @@
         There are two ways to register a component, which are: <span class="note mark-el">Short
             Way</span>, where we define the <i class="note mark-el">nameId</i> with the <i
             class="note mark-el">componentPath</i> and <span class="note mark-el">Complete
-            Way</span>,
-        where we define the <i class="note mark-el">nameId</i> with the <i class="note mark-el">optionsObject</i>.
+            Way</span>, where we define the <i class="note mark-el">nameId</i> with the <i
+            class="note mark-el">optionsObject</i>.
     </p>
 
     <div e-ignore class="code-container" code-ext=".js">
@@ -124,31 +124,31 @@
     <div e-ignore class="code-container" code-ext=".js">
         <textarea cm-lang="javascript">
     {
-        components : {
+        components: {
             config: {
-                keepData : Boolean
+                keepData: Boolean
                 /* This is for Routing Section */
-                base : String,
-                usehash : Boolean,
+                base: String,
+                usehash: Boolean,
             },
             elements: {
                 /* For Short Way */
-                String : String,
+                String: String,
 
                 /* For Complete Way */
-                String : {
-                    url : String,
-                    template : String,
-                    restrictions : [ Function ],
-                    store : Boolean,
-                    data : Object,
+                String: {
+                    url: String,
+                    template: String,
+                    restrictions: [ Function ],
+                    store: Boolean,
+                    data: Object,
                     
                     /* This is for Routing Section */
-                    title : String,
-                    route : String, 
-                    children : Object,
-                    isDefault : Boolean,
-                    isNotFound : Boolean,
+                    title: String,
+                    route: String, 
+                    children: Object,
+                    isDefault: Boolean,
+                    isNotFound: Boolean,
                 }
             }
         }
@@ -196,27 +196,24 @@
                 class="note mark-el">add({...})</span>. </li>
 
         <li> <span class="note mark-el">get</span> &ndash; it is a method that allow to get a
-            component options value. It expects the <span class="note mark-el">nameId</span> of
+            component options object. It expects the <span class="note mark-el">nameId</span> of
             the component: <span class="note mark-el">get(nameId)</span>. </li>
 
         <li> <span class="note mark-el">restrictions</span> &ndash; it is an object that allow to
             manage restrictions of a component. </li>
 
         <li> <span class="note mark-el">restrictions.add</span> &ndash; it is a method that allow
-            to add a restrictions to a component. It expects two parameter:
-            <span class="note mark-el">restrictions.add(componentName,
-                restrictionsArray)</span>.
+            to add restrictions to a component. It expects two parameters:
+            <span class="note mark-el">restrictions.add(nameId,restrictionsArray)</span>.
         </li>
 
         <li> <span class="note mark-el">restrictions.get</span> &ndash; it is a method that
-            allow
-            to get a restrictions of a component. It expects the <span class="note mark-el">nameId</span> of the
+            allow to get a restrictions of a component. It expects the <span class="note mark-el">nameId</span> of the
             component: <span class="note mark-el">restrictions.get(nameId)</span>. </li>
 
         <li> <span class="note mark-el">restrictions.remove</span> &ndash; it is a method that allow
-            to remove a restriction from a component. It expects two parameter:
-            <span class="note mark-el">restrictions.add(componentName,
-                restrictionFunction)</span>. </li>
+            to remove a restriction from a component. It expects two parameters:
+            <span class="note mark-el">restrictions.add(nameId,restrictionArray)</span>. </li>
     </ul>
 
     <h3> <a id="comp_format"> Component Format </a> </h3>
@@ -254,7 +251,7 @@
         A block element like a div that will be added to de DOM. If it was not defined an error
         will be showing say:
         <b>The component 'nameId' seems to be empty or it has not a root element, e.g.:
-            <i class="note code">&lt;div&gt;&lt;/div&gt;</i>, to included.</b>
+            <i class="note code">&lt;div&gt;&lt;/div&gt;</i>, to be included.</b>
     </p>
 
     <h3> <a id="comp_script"> Scripts </a> </h3>
@@ -324,7 +321,7 @@
 
     <h3> <a id="comp_exporting"> Exporting </a> </h3>
     <p>
-        The function that is used to export data from the script to the template is <span class="mark-el">export</span>.
+        The method that is used to export data from the script to the template is <span class="mark-el">export</span>.
         To be able to export the data, it needs to be defined as following: <i
             class="note mark-el">this.export({...})</i>.
     </p>
@@ -404,8 +401,8 @@
 
     <h3> <a id="comp_on"> Inc with `on` Method </a> </h3>
     <p>
-        There are built-in events for includers that allow us to listen to a differents states of an includer,
-        which are:
+        There are built-in events for includers that allow us to listen to a differents states of an includer in the
+        Easy instance, which are:
     </p>
 
     <ul>
@@ -437,7 +434,7 @@
 
     <h3> <a id="comp_nesting_content"> Nesting Content </a> </h3>
     <p>
-        Content can be easily nested, just define a <i class="note mark-el">content</i>
+        A component content can be easily nested, just define a <i class="note mark-el">content</i>
         tag into the inc body and define a <i class="note mark-el">content</i> into the
         component template (where the content needs to placed).
     </p>
@@ -468,7 +465,8 @@
 
     <b> What about multiple contents</b>
     <p>
-        In this case, we add <i class="note mark-el">ident</i> attribute in the <i class="note mark-el">content</i> tag, it
+        In this case, we add <i class="note mark-el">ident</i> attribute in the <i class="note mark-el">content</i> tag,
+        it
         makes Easy identify where each content will be placed.
     </p>
 
@@ -518,7 +516,7 @@
     </h3>
     <p>
         Includers can be easily nested, following the same line of thought with <a class="mark-el">Nesting Content</a>,
-        just put <i class="note mark-el">inc</i> tag inside the <i class="note mark-el">content</i> tag.
+        just put an <i class="note mark-el">inc</i> tag inside the <i class="note mark-el">content</i> tag.
     </p>
 
     <label>DOM</label>

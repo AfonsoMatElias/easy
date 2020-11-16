@@ -5,19 +5,19 @@
 
     <h1><a id="methods"> Métodos (Methods) </a></h1>
     <p>
-        Há alguns internos que podem ser usados na aplicação, que são:
+        Há alguns métodos internos que podem ser usados na aplicação, que são:
     </p>
 
     <h3><a id="method_setData">setData</a></h3>
     <p>
-        É usado para definir propriedades no escopo. Sua sintâxe é <span class="note mark-el">instance.setData(object,
+        É usado para definir propriedades num escopo. Sua sintâxe é <span class="note mark-el">instance.setData(object,
             targetObject)</span>.
     </p>
     <ul>
-        <li> <span class="note mark-el">{ Object } object</span> &ndash; representa o object contendo as propriedades
+        <li> <span class="note mark-el">{ Object } object</span> &ndash; representa o objecto contendo as propriedades
             que devem ser adicionadas no escopo. </li>
         <li> <span class="note mark-el">{ Object } targetObject</span> &ndash; representa o escopo alvo onde as
-            propriedades serão adicionadas. É opcional, se não for definida será posto no escopo principal. <span
+            propriedades serão adicionadas. É opcional, se não for definida será posto no <span
                 class="note mark-el">escopo principal</span>. </li>
         <li> <span class="note mark-el">{ Object } returns</span> &ndash; o escopo.
         </li>
@@ -40,11 +40,11 @@
     <h3><a id="method_on">on</a></h3>
     <p>
         Permite adicionar eventos na instância para que possam ser usadas em qualquer lugar da aplicação.
-        O método espera dois parâmetros: <span class="note mark-el">instance.on(nomeEvento, callback)</span>.
+        O método espera dois parâmetros: <span class="note mark-el">instance.on(eventName, callback)</span>.
     </p>
 
     <ul>
-        <li> <span class="note mark-el">{ String } nomeEvento</span> &ndash; nome do evento a ser adicionado. </li>
+        <li> <span class="note mark-el">{ String } eventName</span> &ndash; nome do evento a ser adicionado. </li>
         <li> <span class="note mark-el">{ Function } callback</span> &ndash; o callback tendo seu código. </li>
         <li> <span class="note mark-el">{ Object } returns</span> &ndash; um objecto tendo o callback que poder ser
             usado para remover o evento.
@@ -64,11 +64,11 @@
     <h3><a id="method_off">off</a></h3>
     <p>
         Permite remover um evento adicionado a instância. O método espera dois parâmetros: <span
-            class="note mark-el">instance.off(nomeEvento, callback)</span>.
+            class="note mark-el">instance.off(eventName, callback)</span>.
     </p>
 
     <ul>
-        <li> <span class="note mark-el">{ String } nomeEvento</span> &ndash; nome do evento a ser removido. </li>
+        <li> <span class="note mark-el">{ String } eventName</span> &ndash; nome do evento a ser removido. </li>
         <li> <span class="note mark-el">{ Function } callback</span> &ndash; o callback retornado do método <span
                 class="note mark-el">on</span>. </li>
         <li> <span class="note mark-el">{ Object } returns</span> &ndash; um objecto tendo nome do evento e o callback.
@@ -90,13 +90,13 @@
     <h3><a id="method_emit">emit</a></h3>
     <p>
         Permite você acionar um evento especifico, seja ele customizado ou adicionado a instância.
-        O método espera três parâmetros: <span class="note mark-el">instance.emit(nomeEvento, dados, umaVez)</span>.
+        O método espera três parâmetros: <span class="note mark-el">instance.emit(eventName, data, once)</span>.
     </p>
 
     <ul>
-        <li> <span class="note mark-el">{ String } nomeEvento</span> &ndash; nome do evento a ser emitido. </li>
-        <li> <span class="note mark-el">{ Object } dados</span> &ndash; dados que seram adicionados no callback. </li>
-        <li> <span class="note mark-el">{ Boolean } umaVez</span> &ndash; permite remover o evento depois de ser emitido
+        <li> <span class="note mark-el">{ String } eventName</span> &ndash; nome do evento a ser emitido. </li>
+        <li> <span class="note mark-el">{ Object } data</span> &ndash; dados que seram adicionados no callback. </li>
+        <li> <span class="note mark-el">{ Boolean } once</span> &ndash; permite remover o evento depois de ser emitido
             a primeira vez. </li>
     </ul>
 
@@ -113,13 +113,13 @@
 
     <h3><a id="method_expose">expose</a></h3>
     <p>
-        Permite expôr um objecto, permitingo obter o mesmo em qualquer parte da aplicação.
-        Por padrão, Easy usa-o para passar dados para um componente. Espera três parâmetros: <span
-            class="note mark-el">instance.expose(nome, dados, forcar)</span>.
+        Permite expôr um objecto, permitindo obter o mesmo em qualquer parte da aplicação.
+        Por padrão, o Easy usá-o para passar dados para um componente. Espera três parâmetros: <span
+            class="note mark-el">instance.expose(name, data, force)</span>.
     </p>
 
     <ul>
-        <li> <span class="note mark-el">{ String } nome</span> &ndash; um nome único(Ou, nome do componente). </li>
+        <li> <span class="note mark-el">{ String } name</span> &ndash; um nome único(Ou, nome do componente). </li>
         <li> <span class="note mark-el">{ Object } data</span> &ndash; o objecto a ser exposto. </li>
         <li> <span class="note mark-el">{ Boolean } force</span> &ndash; permite forçar a exposição se por acaso existe
             um objecto já exposto com o mesmo nome. </li>
@@ -135,12 +135,12 @@
     <h3><a id="method_retrieve">retrieve</a></h3>
     <p>
         Permite-nos obter os dados expostos. O método espera dois parâmetros: <span
-            class="note mark-el">instance.remove(nome, remover)</span>.
+            class="note mark-el">instance.remove(name, remove)</span>.
     </p>
 
     <ul>
-        <li> <span class="note mark-el">{ String } nome</span> &ndash; nome do objecto exposto. </li>
-        <li> <span class="note mark-el">{ Boolean } remover</span> &ndash; permite-nos remover os dados expostos depois
+        <li> <span class="note mark-el">{ String } name</span> &ndash; nome do objecto exposto. </li>
+        <li> <span class="note mark-el">{ Boolean } remove</span> &ndash; permite-nos remover os dados expostos depois
             de obtê-los. </li>
         <li> <span class="note mark-el">{ Object } return</span> &ndash; o objecto exposto.
         </li>
@@ -159,12 +159,12 @@
 
     <h3><a id="method_tojsobj">toJsObj</a></h3>
     <p>
-        Permite-nos criar um javascript objecto estruturado baseando-se na estrutura do elemento HTML. Objecto esse que
-        pode ser mandado no servidor.
+        Permite-nos criar um objecto javascript estruturado, baseando-se na estrutura do elemento HTML. Objecto esse que
+        pode ser enviado para um servidor.
     </p>
 
     <p>
-        Para ser capaz de gerar a estruturam este método depende de alguns comandos, que são:
+        Para ser capaz de gerar a estrutura este método depende de alguns comandos, que são:
     </p>
 
     <ul>
@@ -184,12 +184,12 @@
     </p>
 
     <ul>
-        <li> <span class="note mark-el">{ String|Element } selector</span> &ndash; o selector do elemento a ser gerado
+        <li> <span class="note mark-el">{ String | Element } selector</span> &ndash; o selector do elemento a ser gerado
             ou o elemento em si. </li>
-        <li> <span class="note mark-el">{ Object } options</span> &ndash; options que indicam em que atributos precisam
-            ser visto e deste que attributos o valor precisa ser pegue. A sintâxe é <span class="note mark-el">
+        <li> <span class="note mark-el">{ Object } options</span> &ndash; opções que indicam em que atributos precisam
+            ser procurados e deste que attributos o valor precisa ser pegue. A sintâxe é <span class="note mark-el">
                 { names: '[atributo1],[atributo2]', values: '[atributo1],[atributo2]' }</span>. A ordem de definição é
-            muito importante, ele pegua o que encontrar primeiro. O valor padrão é <span class="note">
+            muito importante, ele pega o que encontrar primeiro. O valor padrão é <span class="note">
                 { names: <i class="mark-el">'[name]'</i>, values: <i class="mark-el">'[value]'</i> }</span>.
         </li>
         <li> <span class="note mark-el">{ Function} onset</span> &ndash; a função que será chamada quando uma
@@ -264,7 +264,7 @@
 
     <div class="block-note info">
         <p>
-            Podemos construir objectos complexos usando este método, só precisas criar a tua estrutura.
+            Podemos construir objectos complexos usando este método, só precisamos criar a nossa estrutura.
         </p>
     </div>
 
@@ -275,7 +275,7 @@
     </p>
     <ul>
         <li> <span class="note mark-el">{ String } propertyName</span> &ndash; o nome da propriedade do escopo. </li>
-        <li> <span class="note mark-el">{ Object } callback</span> &ndash; representa o callback where terá toda lógica
+        <li> <span class="note mark-el">{ Object } callback</span> &ndash; representa o callback onde terá toda lógica
             que será executada quando a propriedade mudar. O primeiro argumento é a novo valor e o segundo argumento é o
             antigo valor da propridade. </li>
         <li> <span class="note mark-el">{ Object } targetObject</span> &ndash; representa o escopo que tem a propriedade
@@ -355,7 +355,7 @@
 
     <p>
         Todos os delimitadores disponíveis podem ser vistos na propriedade <span class="note mark-el">instance.delimiters</span>.
-        These values are inalteráveis usando esta propridade. 
+        Estes valores são inalteráveis usando esta propridade. 
     </p>
 
     <div class="block-note info">

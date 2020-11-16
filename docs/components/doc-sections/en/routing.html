@@ -12,7 +12,7 @@
 
     <h3> <a id="routing_setting"> Setting </a> </h3>
     <p>
-        In the routing, the element where the components started to be rendered must be specified, for this,
+        In the routing, the element where the components will be rendered must be specified, for this,
         the <i class="note mark-el">route-view</i> directive is used, and in the definition of the components,
         some additional specific properties for the routing are defined, which are:
     </p>
@@ -20,18 +20,18 @@
     <div e-ignore class="code-container" code-ext=".js">
         <textarea cm-lang="javascript">
     {
-        components : {
+        components: {
             config: {
-                base : String,
-                usehash : Boolean,
+                base: String,
+                usehash: Boolean,
             },
             elements: {
-                String : {
-                    title : String,
-                    route : String, 
-                    isDefault : Boolean,
-                    isNotFound : Boolean,
-                    children : Object,
+                String: {
+                    title: String,
+                    route: String, 
+                    isDefault: Boolean,
+                    isNotFound: Boolean,
+                    children: Object,
                     keepAlive: Boolean
                 }
             }
@@ -60,7 +60,7 @@
         <li> <span class="note mark-el">nameId.isDefault</span> &ndash; set the component as the default
             route of the app.</li>
 
-        <li> <span class="note mark-el">nameId.isNotFound</span> &ndash; set the component as the not found
+        <li> <span class="note mark-el">nameId.isNotFound</span> &ndash; set the component as the `not found (404)`
             route of the app.</li>
 
         <li> <span class="note mark-el">nameId.children</span> &ndash; represents the children of this component.</li>
@@ -87,16 +87,16 @@
     var routeApp = new Easy('#routeApp', {
         components: {
             elements: {
-                'home' : {
+                'home': {
                     url: '/pages/home.html',
-                    title : 'Home',
-                    route : '/home', 
+                    title: 'Home',
+                    route: '/home', 
                     isDefault: true
                 },
-                'about' : {
+                'about': {
                     url: '/pages/about.html',
-                    title : 'About',
-                    route : '/about'
+                    title: 'About',
+                    route: '/about'
                 }
             }
         }
@@ -156,7 +156,7 @@
     <h3> <a id="routing_nesting"> Nesting Routes </a> </h3>
     <p>
         Children can be added to each component, this in the children property, and so we can nest routes...
-        The property expects a component element object having the child's nameId and it's object.
+        The property expects a component element object having the child's nameId and it's optionsObject.
     </p>
 
     <div e-ignore class="code-container" code-ext=".js">
@@ -164,20 +164,20 @@
     var routeApp = new Easy('#routeApp', {
         components: {
             elements: {
-                'user' : {
+                'user': {
                     url: '/pages/user',
-                    title : 'User Profile',
-                    route : '/user/:id',
+                    title: 'User Profile',
+                    route: '/user/:id',
                     children: {
                         'user-posts': {
                             url: '/pages/user-posts',
-                            title : 'Your Posts',
-                            route : '/posts'
+                            title: 'Your Posts',
+                            route: '/posts'
                         },
                         'user-about': {
                             url: '/pages/user-about',
-                            title : 'About You',
-                            route : '/about'
+                            title: 'About You',
+                            route: '/about'
                         }
                     }
                 }

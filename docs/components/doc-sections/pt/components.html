@@ -19,7 +19,7 @@
 
     <p>
         Há dois tipo de componentes, <span class="note mark-el">Clonado (Cloned)</span> e <span
-            class="note-mark-el">Registrado (Registered)</span>, e os dois podem ser importado/incluidos do mesmo jeito,
+            class="note mark-el">Registrado (Registered)</span>, e os dois podem ser importado/incluidos do mesmo jeito,
         usando a tag <span class="note mark-el">inc</span> ou usando um <span class="note mark-el">Elemento Oficial do
             DOM </span> (um elemento container).
     </p>
@@ -83,9 +83,9 @@
     <h3> <a id="comp_registering"> Registering (Registrando) </a> </h3>
     <p>
         Há duas formas de registrar um componente, que são: <span class="note mark-el">Forma Curta</span>, onde
-        definimos o <i class="note mark-el">nameId</i> com o <i class="note mark-el">caminhoDoComponente</i> e a <span
+        definimos o <i class="note mark-el">nameId</i> com o <i class="note mark-el">componentPath</i> e a <span
             class="note mark-el">Forma Completa</span>, onde definimos o <i class="note mark-el">nameId</i> com o <i
-            class="note mark-el">objectoDeOpcoes</i>.
+            class="note mark-el">optionsObject</i>.
     </p>
 
     <div e-ignore class="code-container" code-ext=".js">
@@ -121,31 +121,31 @@
     <div e-ignore class="code-container" code-ext=".js">
         <textarea cm-lang="javascript">
     {
-        components : {
+        components: {
             config: {
-                keepData : Boolean
+                keepData: Boolean
                 /* Isto é para a secção de Roteamento (Routing) */
-                base : String,
-                usehash : Boolean,
+                base: String,
+                usehash: Boolean,
             },
             elements: {
                 /* Para Forma Curta */
-                String : String,
+                String: String,
 
                 /* Para Forma Completa */
-                String : {
-                    url : String,
-                    template : String,
-                    restrictions : [ Function ],
-                    store : Boolean,
-                    data : Object,
+                String: {
+                    url: String,
+                    template: String,
+                    restrictions: [ Function ],
+                    store: Boolean,
+                    data: Object,
                     
                     /* Isto é para a secção de Roteamento (Routing) */
-                    title : String,
-                    route : String, 
-                    children : Object,
-                    isDefault : Boolean,
-                    isNotFound : Boolean,
+                    title: String,
+                    route: String, 
+                    children: Object,
+                    isDefault: Boolean,
+                    isNotFound: Boolean,
                 }
             }
         }
@@ -154,12 +154,11 @@
 
     <ul>
         <li> <span class="note mark-el">config.keepData</span> &ndash; usado para permitir manter todas as alterações
-            feitas nos dados do componente. O valor padrão é <span class="note mark-el">false</span>.</li>
+            feitas no componente. O valor padrão é <span class="note mark-el">false</span>.</li>
 
-        <li> <span class="note mark-el">elements</span> &ndash; usado para definir todos os elementos de componentes. On
-            na esquerda vai o <i class="note mark-el">nameId</i>,
-            e na direita vai <span class="mark-el">String caminhoDoComponente</span>
-            (do servidor) ou o <span class="mark-el">Objecto de Opções</span>.</li>
+        <li> <span class="note mark-el">elements</span> &ndash; usado para definir todos os elementos de componentes. Em
+            que na esquerda vai o <i class="note mark-el">nameId</i>, e na direita vai <span class="mark-el">String
+                componentPath</span> ou o <span class="mark-el">optionsObject</span>.</li>
 
         <li> <span class="note mark-el">nameId.url</span> &ndash; representa do caminho do component.
             Isto usa o <span class="note mark-el">config.base</span> para requisitar o ficheiro do servidor. <span
@@ -169,47 +168,48 @@
             <span class="note att-border"> Não use junto com <i class="mark-el">nameId.url</i>. </span>
         </li>
 
-        <li> <span class="note mark-el">nameId.restrictions</span> &ndash; permite addicionar verificações antes do
-            component ser requisitado. Isto espera uma array de functions que retornam um <span
+        <li> <span class="note mark-el">nameId.restrictions</span> &ndash; permite adicionar verificações antes do
+            component ser requisitado. Isto espera uma array de `funções` que retornam um <span
                 class="note mark-el">Boolean</span>, <span class="mark-el">true</span> para permitido, e <span
                 class="mark-el">false</span> para não permitido. </li>
 
         <li> <span class="note mark-el">nameId.store</span> &ndash; permite armazenar o component quando o mesmo for
             requisitando a primeira vez. Por padrão o valor é <span class="note mark-el">true</span>. </li>
 
-        <li> <span class="note mark-el">nameId.data</span> &ndash; representa os dados que será injectado no processo de
+        <li> <span class="note mark-el">nameId.data</span> &ndash; representa os dados que serão injectado no processo
+            de
             compilação do componente.</li>
     </ul>
 
     <h3> <a id="comp_handing"></a> Lidando com Components (Handling Components) </h3>
     <p>
-        O objeto <span class="note mark-el">instance.components</span> permite-nos gerir components.
+        O objeto <span class="note mark-el">instance.components</span> permite-nos gerir componentes.
         Ele está estruturado da segunte forma:
     </p>
 
     <ul>
-        <li> <span class="note mark-el">add</span> &ndash; é um método que permite adicionar components na instância.
-            Ele espera um objecto tendo tenho o elemento do component: <span class="note mark-el">add({...})</span>.
+        <li> <span class="note mark-el">add</span> &ndash; é um método que permite adicionar componentes na instância.
+            Ele espera um objecto tendo o elemento do componente: <span class="note mark-el">add({...})</span>.
         </li>
 
         <li> <span class="note mark-el">get</span> &ndash; é um método que permite obter o objecto de opções do
-            component. Espera o <span class="note mark-el">nameId</span> do componente: <span
+            componente. Espera o <span class="note mark-el">nameId</span> do componente: <span
                 class="note mark-el">get(nameId)</span>. </li>
 
         <li> <span class="note mark-el">restrictions</span> &ndash; é um objecto que permite gerir as restrições do
             componente. </li>
 
-        <li> <span class="note mark-el">restrictions.add</span> &ndash; permite adiciona uma restrição a um componente.
-            Espera dois parâmetros: <span class="note mark-el">restrictions.add(nomeComponente, arrayRestricoes)</span>.
+        <li> <span class="note mark-el">restrictions.add</span> &ndash; permite adicionar restrições a um componente.
+            Espera dois parâmetros: <span class="note mark-el">restrictions.add(nameId, restrictionArray)</span>.
         </li>
 
-        <li> <span class="note mark-el">restrictions.get</span> &ndash; permite pegar as restrições de um component.
+        <li> <span class="note mark-el">restrictions.get</span> &ndash; permite obter as restrições de um component.
             Espera o <span class="note mark-el">nameId</span> do componente: <span
                 class="note mark-el">restrictions.get(nameId)</span>. </li>
 
         <li> <span class="note mark-el">restrictions.remove</span> &ndash; permite remover uma restrição de um
-            componente.
-            Espera dois parâmetros: <span class="note mark-el">restrictions.add(nomeComponente, funcaoRestricao)</span>.
+            componente. Espera dois parâmetros: <span
+                class="note mark-el">restrictions.add(nameId,restrictionFunction)</span>.
         </li>
     </ul>
 
@@ -222,12 +222,8 @@
     <h3> <a id="comp_style"> Estilos (Styles) </a> </h3>
     <p>
         A tag de estilo (style) aqui funciona como esperado, por padrão os estilos são globais para definir que tem um
-        escopo,
-        basta adicionar o atributo <i class="note mark-el">scoped</i>.
-
-        The style tag here works as expected, by default the styles is global to define it has a
-        scope one just add the <i class="note mark-el">scoped</i> attribute.
-        Isso adiciona uma classe como <i class="note">easy-sAb_c123</i> às regras do estilo.
+        escopo, basta adicionar o atributo <i class="note mark-el">scoped</i>. Isso adiciona uma classe como <i
+            class="note">easy-sAb_c123</i> às regras do estilo.
     </p>
 
     <div e-ignore class="code-container" code-ext=".html">
@@ -249,9 +245,9 @@
 
     <h3> <a id="comp_root"> Elemento Raiz (Root Element) </a> </h3>
     <p>
-        Um elemento de bloco como um div que será adicionado ao DOM. Se não foi definido um erro será mostrado dizer:
+        Um elemento de bloco como um div que será adicionado ao DOM. Se não foi definido um erro será mostrado dizendo:
         <b>The component 'nameId' seems to be empty or it has not a root element, e.g.: <i
-                class="note code">&lt;div&gt;&lt;/div&gt;</i>, to included.</b>
+                class="note code">&lt;div&gt;&lt;/div&gt;</i>, to be included.</b>
     </p>
 
     <p>
@@ -266,7 +262,7 @@
     </p>
 
     <p>
-        O palavra reservada <i class="mark-el">this</i> permite-nos ter acesso aos dados do component acessando <i
+        O palavra reservada <i class="mark-el">this</i> permite-nos ter acesso aos dados do componente acessando <i
             class="mark-el">this.data</i>. Para ter acesso aos dados do componente acima (<i class="mark-el">outside
             scope</i>), usamos <i class="mark-el">this.scope</i>.
     </p>
@@ -280,7 +276,7 @@
 
     <h3> <a id="comp_life_cycles"> Hooks do Ciclo de Vida (Lifecycles Hooks) </a> </h3>
     <p>
-        São funções que são chamadas em alguns estagios de vida do componente, em que na qual podemos citar:
+        São funções que são chamadas em alguns estágios de vida do componente, em que na qual podemos citar:
     </p>
 
     <h4> <a id="comp_life_cycles_created"> Criado (Created) </a> </h4>
@@ -307,7 +303,7 @@
     <h4> <a id="comp_life_cycles_destroyed"> Destruido (Destroyed) </a>
     </h4>
     <p>
-        Este é o hook que é chamado quando o componente foi destruido ou removido do DOM. Pode ser definido da seguinte
+        Este é o hook que é chamado quando o componente foi destruído ou removido do DOM. Pode ser definido da seguinte
         forma: <i class="note mark-el">this.destroyed = function(element){...}</i>. O elemento raiz é passado como o
         primeiro parâmetro.
     </p>
@@ -315,15 +311,15 @@
     <div class="block-note warn">
         <p>
             É recomendado pôr toda requisição de dados (<i class="note">fetch</i>) dentro dos hooks
-            <i class="note mark-el">created</i> or <i class="note mark-el">mounted</i>, de acordo a velocidade da
-            resposta, o component poderá ser mostrado já com os dados.
+            <i class="note mark-el">created</i> ou <i class="note mark-el">mounted</i>, de acordo a velocidade da
+            resposta, o componente poderá ser mostrado já com os dados.
         </p>
     </div>
 
     <h3> <a id="comp_exporting"> Exportando Dados (Exporting) </a> </h3>
     <p>
-        A função que é usada para exportar dados do script para o modelo (template) é <span
-            class="mark-el">export</span>. Para ser capaz de exportar os dados, ele precisa ser definido como a seguir:
+        O método que é usada para exportar dados do script para o modelo (template) é <span
+            class="mark-el">export</span>. Para ser capaz de exportar os dados, ele precisa ser definido como se segue:
         <i class="note mark-el">this.export({...})</i>.
     </p>
 
@@ -334,7 +330,8 @@
     </div>
 
     <p>
-        Os hooks não são obrigatórios, pois podem aparecer no exemplo. No final, um componente tem o seguinte formato:
+        Os hooks não são obrigatórios, como supostamente podem aparecer no exemplo. No final, um componente tem o
+        seguinte formato:
     </p>
 
     <div e-ignore class="code-container" code-ext=".html">
@@ -370,14 +367,14 @@
     <h3> <a id="comp_data"> Inc com data (Inc with data) </a> </h3>
     <p>
         Um includer poder ser combinado com o comando <i class="note mark-el">data</i> para passar dados dentro do
-        componente. Este This data can be accessed in the property
-        <i class="note mark-el">this.data</i> dentro do script do componente.
+        componente. Estes dados podem ser acessados na propriedade <i class="note mark-el">this.data</i> dentro do
+        script do componente.
     </p>
 
     <div class="block-note info">
         <p>
             Os attributos definidos no elemento do includer (<i class="note mark-el">inc</i>) são transfiridos para
-            elemento do template ou elemento raiz (exemplo.: <i class="note mark-el">div</i>) do component.
+            elemento do template ou elemento raiz (exemplo.: <i class="note mark-el">div</i>) do componente.
         </p>
     </div>
 
@@ -388,9 +385,8 @@
 
     <h3> <a id="comp_delimiter"> Inc com Delimitador (Inc with Delimiter) </a> </h3>
     <p>
-        Um includer pode ser combinado com um delimitador, oferecendo mudanças dinâmicas quando os valores da
-        propriedade mudam.
-        <i class="note warn-border">Só um delimitador pode ser passado</i>.
+        Um includer pode ser combinado com um delimitador, oferecendo mudanças dinâmicas quando os valor da
+        propriedade muda. <i class="note warn-border">Só um delimitador pode ser passado</i>.
     </p>
 
     <div e-ignore class="code-container" code-ext=".html">
@@ -400,7 +396,8 @@
 
     <h3> <a id="comp_on"> Inc com `on` Método (Inc with `on` Method) </a> </h3>
     <p>
-        Existem eventos integrados para includers que nos permitem escutar estados diferentes de um includer, que são:
+        Existem eventos integrados para includers que nos permitem escutar estados diferentes de um includer na
+        instância do Easy, que são:
     </p>
 
     <ul>
@@ -421,7 +418,7 @@
     <h3> <a id="comp_keep_alive"> Keep Alive </a> </h3>
     <p>
         Por padrão, os componentes são recriados quando são solicitados a serem incluídos, para manter o elemento com as
-        informações basta definir o keep-alive.
+        informações, basta definir o `keep-alive`.
         <i class="note warn-border">Os dados no script será recarregado</i>.
     </p>
 
@@ -432,9 +429,9 @@
 
     <h3> <a id="comp_nesting_content"> Aninhando Conteúdo (Nesting Content) </a> </h3>
     <p>
-        O conteúdo pode ser facilmente aninhado, basta definir uma tag <i class="note mark-el">content</i>
+        Conteúdo de um component pode ser facilmente aninhado, basta definir uma tag <i class="note mark-el">content</i>
         no corpo do inc, e define uma tag <i class="note mark-el">content</i> dentro modelo (template) do
-        component (onde o conteúdo será inserido).
+        componente (onde o conteúdo será inserido).
     </p>
 
     <label>DOM</label>
@@ -511,8 +508,8 @@
     <h3> <a id="comp_nesting_includers"> Aninhando Includers (Nesting Includers) </a>
     </h3>
     <p>
-        Os Includers podem ser facilmente aninhados, seguindo a mesma linha de pensamento com<a class="mark-el">Nesting Content</a>,
-        just put <i class="note mark-el">inc</i> tag inside the <i class="note mark-el">content</i> tag.
+        Os Includers podem ser facilmente aninhados, seguindo a mesma linha de pensamento com <a class="mark-el">Nesting
+            Content</a>, é só colocar a tag <i class="note mark-el">inc</i> dentro da tag <i class="note mark-el">content</i>.
     </p>
 
     <label>DOM</label>
@@ -546,7 +543,8 @@
 
     <div class="block-note info">
         <p>
-            Todos os includer são compilados automaticamente, o que significa que após serem adicionados ao DOM serão compilados.
+            Todos os includer são compilados automaticamente, o que significa que após serem adicionados ao DOM serão
+            compilados.
         </p>
     </div>
 

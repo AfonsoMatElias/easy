@@ -30,6 +30,7 @@
                     class="mark-el">id</i>)</span> </li>
         <li> <span class="note mark-el">delete(<i class="mark-el">path</i>, <i class="mark-el">id</i>)</span> </li>
         <li> <span class="note mark-el">getOne(<i class="mark-el">path</i>, <i class="mark-el">id</i>) </span> </li>
+        <br>
         <li> <span class="note mark-el">request(<i class="mark-el">code</i>, <i class="mark-el">callback</i>) </span>
         </li>
     </ul>
@@ -39,7 +40,7 @@
     </p>
 
     <p>
-        <span class="note mark-el">create</span> &ndash; performs the <i class="mark-el">create</i> method in the
+        <span class="note mark-el">create</span> &ndash; performs the <i class="mark-el">add</i> method in the
         connector instance returning a promise. It expects two parameters:
     </p>
 
@@ -66,7 +67,7 @@
     </div>
 
     <p>
-        <span class="note mark-el">read</span> &ndash; performs the <i class="mark-el">read</i> method in the connector
+        <span class="note mark-el">read</span> &ndash; performs the <i class="mark-el">list</i> method in the connector
         instance returning a promise. It expects two parameters:
     </p>
     <ul>
@@ -119,7 +120,7 @@
     </div>
 
     <p>
-        <span class="note mark-el">delete</span> &ndash; performs the <i class="mark-el">delete</i> method in the
+        <span class="note mark-el">delete</span> &ndash; performs the <i class="mark-el">remove</i> method in the
         connector instance returning a promise. It expects two parameters:
     </p>
     <ul>
@@ -220,8 +221,8 @@
 
     <h4> <a id="conn_c_tmp"> e-tmp </a> </h4>
     <p>
-        It's short of e-template, performs read request according to the path provided and render all the results after
-        the request is completed.
+        It's short of <span class="note mark-el">e-template</span>, performs read request according to the path provided
+        and render all the results after the request is completed.
     </p>
 
     <div e-ignore class="code-container" code-ext=".html">
@@ -310,7 +311,7 @@
 
     <h4> <a id="conn_c_req"> e-req </a> </h4>
     <p>
-        It's short of e-request, this is the versatile command, whicch can perform
+        It's short of e-request, this is the versatile command, which can perform
         <i class="note mark-el">e-tmp (read)</i> or <i class="note mark-el">e-fill (getOne)</i>
         request according to the expression provided. The syntax is: <br>
     </p>
@@ -381,7 +382,8 @@
     <h4> <a id="conn_c_use"> e-use </a> </h4>
     <p>
         This command is used to create a variable containing the request result. When used with <i
-            class="mark-el">e-tmp</i> or <i class="mark-el">e-req:'many'</i> creates for each item of the result, and when used with
+            class="mark-el">e-tmp</i> or <i class="mark-el">e-req:'many'</i> creates for each item of the result, and
+        when used with
         <i class="mark-el">e-fill</i> or <i class="mark-el">e-req:'one'</i> creates for the result.
     </p>
 
@@ -397,8 +399,8 @@
 
     <h3> <a id="conn_available"> Available </a> </h3>
     <p>
-        All the available connectors can be found in the connectors folder (github), and they can be downloaded using the <a
-        on:click="showModal" class="note mark-el">download modal</a>.
+        All the available connectors can be found in the `connectors` folder (github), and they can be downloaded using
+        the <a on:click="showModal" class="note mark-el">download modal</a>.
     </p>
 
     <h4> <a id="conn_ajax"> Ajax </a> </h4>
@@ -416,7 +418,8 @@
     <ul>
         <li> <i class="mark-el">baseUrl</i> &ndash; represents the base url of the server, it is normally the constante
             part of it. eg.: <i class="note mark-el">http://localhost:3000/api/</i> </li>
-        <li> <i class="mark-el">fetchOptions</i> &ndash; the object having the all the options that a request needs, like
+        <li> <i class="mark-el">fetchOptions</i> &ndash; the object having the all the options that a request needs,
+            like
             <i class="note mark-el">type</i>, <i class="note mark-el">headers</i>, etc. </li>
     </ul>
 
@@ -454,7 +457,7 @@
     <div class="block-note info">
         <p>
             The <i class="mark-el">return</i> method can be found in Easy.prototype.<i class="mark-el">return</i>, used
-            to generated the return type object to be understanded in the easy instance.
+            to generated the return type object to be understanded in the Easy instance.
         </p>
     </div>
 
@@ -466,8 +469,8 @@
 
     <div class="block-note info">
         <p>
-            All the returned data become reactive after the resolve function, it means that if the data is an array we may 
-            easily use the push, pop, etc, and the UI will change too.
+            All the returned data become reactive after the resolve function, it means that if the data is an array we
+            may easily use the push, pop, etc, and the UI will change too.
         </p>
     </div>
 

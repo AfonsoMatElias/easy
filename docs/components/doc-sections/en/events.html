@@ -11,7 +11,7 @@
 
     <p>
         Easy events can be categorized into 3 types, which are:
-        <span class="note">Standard</span> DOM, <span class="note">Easy</span> and
+        <span class="note">DOM Standard</span>, <span class="note">Easy</span> and
         <span class="note">Custom</span> events. For all of them, they can be heard
         with the following syntax:
         <span class="note mark-el">on:<i>eventname</i>="function/expression"</span>.
@@ -28,7 +28,7 @@
 
     <h3> <a id="events_standard"> Standard</a> </h3>
     <p>
-        These are standard DOM events, such as onclick, ondblclick, onkeyup, etc.
+        These are DOM Standard Events, such as onclick, ondblclick, onkeyup, etc.
     </p>
 
     <div e-if="typeof noApp === 'undefined'">
@@ -86,10 +86,10 @@
         </li>
         <li> <span class="note mark-el">response</span> &ndash; this event is emitted when we
             get some response to a request made using a
-            <a href="docs.connectors.html" class="note mark-el">connector</a>.
+            <a href="docs.connectors.html" class="note mark-el">connectors</a>.
         </li>
         <li> <span class="note mark-el">fail</span> &ndash; this event is emitted when a request
-            made using a <a href="docs.connectors.html" class="note mark-el">connector</a> fails. </li>
+            made using a <a href="docs.connectors.html" class="note mark-el">connectors</a> fails. </li>
     </ul>
 
     <div e-if="typeof noApp === 'undefined'">
@@ -192,7 +192,7 @@
         value of the input where it calls the method <span class="note">this.emit(...)</span>
         passing the <span class="note">value</span> in the emission, this calls the function
         <span class="note">changeTextCallback</span> which changes the target text to the
-        issued value.
+        emitted value.
     </p>
 
     <div class="block-note warn">

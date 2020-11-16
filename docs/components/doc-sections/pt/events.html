@@ -5,29 +5,29 @@
 
     <h1> <a id="events"> Eventos (Events) </a> </h1>
     <p>
-        Podemos usar <span class="note mark-el">on:</span> para ouvir eventos DOM e executar algum código javascript
+        Podemos usar <span class="note mark-el">on:</span> para ouvir eventos do DOM e executar algum código javascript
         quando ele for emitido. Em alguns exemplos acima, usamos o evento click, então imaginamos que você deve estar um
         pouco familiarizado com ele.
     </p>
 
     <p>
-        Easy events podem ser classificados em 3 tipos, que são: <span class="note">Padrão</span> DOM, <span
-            class="note">Easy</span> e Eventos <span class="note">Customizado</span>. Para todos eles, eles são
+        Os events no Easy podem ser classificados em 3 tipos, que são: <span class="note">Padrão do DOM</span>, <span
+            class="note">Easy</span> e Evento <span class="note">Customizado</span>. Para todos eles, eles são
         definidos como se segue: <span class="note mark-el">on:<i>nomeevento</i>="função/expressão"</span>.
     </p>
 
     <p>
-        Quando os eventos Standard e Easy são emitidos, o objeto de evento pode ser acessado na variável
+        Quando os eventos Padrão e Easy são emitidos, o objeto de evento pode ser acessado na variável
         <span class="note">event</span>. Isto contem a propriedade <span class="note mark-el">base</span>,
-        que é passado o elemento associado ao evento, e a propriedade <span class="note">$data</span>, tendo o objecto o
-        objecto do escopo actual, ela está dividido em: <span class="note">
+        que é passado o elemento associado ao evento, e a propriedade <span class="note">$data</span>, tendo o objecto
+        do escopo actual, ela está dividida em: <span class="note">
             { model:{ <i class="mark-el">No caso de e-for</i> },
             scope: { <i class="mark-el"> O escopo do elemento acima (parent)</i> } }</span>
     </p>
 
     <h3> <a id="events_standard"> Standard</a> </h3>
     <p>
-        Estes são os objecto padrão do DOM, como onclick, ondblclick, onkeyup, etc.
+        Estes são os Eventos Padrão do DOM, como onclick, ondblclick, onkeyup, etc.
     </p>
 
     <div e-if="typeof noApp === 'undefined'">
@@ -78,18 +78,18 @@
         <li> <span class="note mark-el">data</span> &ndash; este evento é despachado quando um elemento contendo o
             comando de dados é compilado. </li>
         <li> <span class="note mark-el">add</span> &ndash; este evento é emitido quando um elemento do comando e-for é
-            inserido no DOM. Funciona com <a href="docs.connectors.html" class="note mark-el">connectors</a> e com
+            inserido no DOM. Funciona com <a href="docs.connectors.html" class="note mark-el">conectores</a> e com
             `e-for`.
         </li>
         <li> <span class="note mark-el">empty</span> &ndash; este evento é emitido quando o array passado no comando
-            e-for está vazio. Funciona com <a href="docs.connectors.html" class="note mark-el">connectors</a> e com
+            e-for está vazio. Funciona com <a href="docs.connectors.html" class="note mark-el">conectores</a> e com
             `e-for`. </li>
         </li>
         <li> <span class="note mark-el">response</span> &ndash; este evento é emitido quando obtemos alguma resposta a
-            uma requisição feita usando um <a href="docs.connectors.html" class="note mark-el">connector</a>.
+            uma requisição feita usando um <a href="docs.connectors.html" class="note mark-el">conectores</a>.
         </li>
         <li> <span class="note mark-el">fail</span> &ndash; este evento é emitido quando uma solicitação feita usando
-            um<a href="docs.connectors.html" class="note mark-el">connector</a> fails. </li>
+            um<a href="docs.connectors.html" class="note mark-el">conectores</a> fails. </li>
     </ul>
 
     <div e-if="typeof noApp === 'undefined'">
@@ -115,7 +115,7 @@
             
             /* Methods */
             addEmoji: function(evt){
-                switch(evt.$data.model.comida.name) {
+                switch(evt.$data.model.comida.nome) {
                     case 'Arroz':
                         evt.target.innerHTML += ' 🍚';
                         break;
@@ -184,10 +184,11 @@
     </div>
 
     <p>
-        Vamos explicar o que está acontecendo neste exemplo: <br> Sempre que uma tecla é pressionada dentro da entrada,
-        isso irá chamar a função <span class="note">emitirEvento</span> passando o valor do input onde chama o
-        método<span class="note">this.emit(...)</span> passando o <span class="note">valor</span> na emissão, isso chama
-        a função <span class="note">mudarTextCallback</span> que altera o texto de destino para o valor emitido.
+        Vamos explicar o que está acontecendo neste exemplo: <br> Sempre que uma tecla é pressionada no input,
+        isso irá chamar a função <span class="note">emitirEvento</span> que passa o valor do input no método
+        <span class="note">this.emit(...)</span> emitindo o evento `mudartexto` com o <span class="note">valor</span>,
+        associado a este evento tem a função <span class="note">mudarTextCallback</span> que é chamada na emissão e o
+        mesmo altera o texto `p` para o valor emitido.
     </p>
 
     <div class="block-note warn">
@@ -196,7 +197,7 @@
         </p>
     </div>
 
-    <h3> <a id="events_modifiers"> Modifiers </a> </h3>
+    <h3> <a id="events_modifiers"> Modifiers (Modificadores)</a> </h3>
     <p>
         Para adicionar modificadores aos eventos, use <span class="note mark-el">.</span> (ponto) depois do nomeEvento.
         A sintâxe é <span class="note mark-el">on:nomeEvento.modificador1.modificador2="expressão"</span>
@@ -211,7 +212,8 @@
                 class="note">event.preventDefault()</span> antes de corer o evento. </li>
         <li> <span class="note mark-el">stoPropagation</span> &ndash; chama <span
                 class="note">event.stopPropagation()</span>, evitando que o evento chegue ao próximo elemento. </li>
-        <li> <span class="note mark-el">once</span> &ndash; remove o evento após a primeira vez que ele é executado. </li>
+        <li> <span class="note mark-el">once</span> &ndash; remove o evento após a primeira vez que ele é executado.
+        </li>
     </ul>
 
     <p>

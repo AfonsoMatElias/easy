@@ -12,7 +12,7 @@
     <h3> <a id="cmd_data"> data </a> </h3>
     <p>
         Permite criar um escopo para um determinado elemento, a sintâxe é <span
-            class="note mark-el">data="{...}"</span>, se for definido sem conteudo o elemento terá o escopo principal,
+            class="note mark-el">data="{...}"</span>. Se for definido sem conteúdo o elemento terá o escopo principal,
         instance.data.
     </p>
 
@@ -74,7 +74,7 @@
     </div>
 
     <p e-if="typeof noApp === 'undefined'">
-        Agora vamos ver como criar um escopo com propriedades reativas, usando a função reativa.
+        Agora vamos ver como criar um escopo com propriedades reactivas, usando a função reactiva.
     </p>
 
     <div e-if="typeof noApp === 'undefined'">
@@ -117,8 +117,8 @@
 
     <h3> <a id="cmd_wait_data"> wait-data </a> </h3>
     <p>
-        Permite que o elemento seja ignorado na compilação, esperando que os seus dados sejam forneceidos. É definido
-        como se segue: <span class="note mark-el">wait-data="dataID"</span>. Para fornecer os dados, usamos a
+        Permite que o elemento seja ignorado na compilação, esperando que os seus dados sejam fornecidos. É definido
+        como se segue: <span class="note mark-el">wait-data="dataId"</span>. Para fornecer os dados, usamos a
         método:<span class="note mark-el">instance.expose('dataId', {...})</span>.
     </p>
 
@@ -163,7 +163,7 @@
     </div>
 
     <p>
-        Não sabemos você, mas para nós o resultado do exemplo acima um pouco feio com os delimitadores a vista,
+        Não sabemos você, mas para nós o resultado do exemplo acima um pouco feio com os delimitadores à vista,
         felizmente temos o <span class="note">e-content</span>.
     </p>
 
@@ -270,7 +270,7 @@
 
     <p>
         Quando o <span class="mark-el">e-skeleton</span> é definido em um elemento, ele assume a forma do mesmo
-        elemento, significando que o elemento deve ter um width e height definido (ou qualquer coisa que lhe dê uma
+        elemento, significando que o elemento deve ter um width e height definido (qualquer coisa que lhe dê uma
         forma). E por padrão a cor do fundo é cinza claro e a onda é mais clara.
     </p>
 
@@ -348,7 +348,7 @@
 
     <div class="block-note warn">
         <p>
-            A ordem de definição é muito importante, o `e-def` deve ser definido sempre acima dos elementos que usaram
+            A ordem de definição é muito importante, o `e-def` deve ser definido sempre acima dos elementos que usarão
             as propriedades definidas.
         </p>
     </div>
@@ -398,8 +398,8 @@
     <p>
         O <span class="note">e-show</span>, é um comando muito similar a directiva <span class="note">v-show</span> do
         <span class="mark-el">Vue.js</span>... É usado para mostrar um bloco condicionalemente, ele alterna a
-        propriedade <span class="note mark-el">display</span>. O bloco se torna visível se a expressão no comando é um
-        valor verdadeiro.
+        propriedade <span class="note mark-el">display:none</span> do CSS. O bloco se torna visível se a expressão no
+        comando é um valor verdadeiro.
     </p>
 
     <div e-if="typeof noApp === 'undefined'">
@@ -446,7 +446,7 @@
 
     <p>
         Há uma grande diferença nas formas de usá-lo... Usando a <b>forma curta</b> um escopo é criado no bloco de cada
-        item do `e-for`, significando que para ter acesso ao escope acima deve ser usado a propridade <i
+        item do `e-for`, significando que para ter acesso ao escopo acima deve ser usado a propridade <i
             class="mark-el">$scope</i>, usando a <b>forma completa</b> nenhum escopo é criado.
     </p>
 
@@ -494,7 +494,7 @@
 
     <h4> <a id="cmd_e_for_filter"> Usando filtro no Array (Filter) </a> </h4>
     <p>
-        O filtro do array do Easy é uma forma de filtrar dados enquanto está sendo renderizado. Para adicionar o filtro,
+        O filtro de array do Easy é uma forma de filtrar dados enquanto está sendo renderizado. Para adicionar o filtro,
         usamos <span class="note mark-el">|</span> depois da expressão do <a class="note mark-el">e-for</a>. <span
             class="note mark-el">item of itens | expressaoDeFiltro</span>. Há quatro (4) formas de usar o filtro, que
         são:
@@ -541,7 +541,7 @@
 
     <h4> <a id="cmd_e_for_filter_tg_filter"> 2. Filtro Específico(Targeted filter) </a> </h4>
     <p>
-        Executa o filtro em propriedades específicas itens que que contêm o valor da propriedade configurada.
+        Executa o filtro em propriedades específicas dos itens que contêm o valor da propriedade configurada.
         O filtro deve ser definido como se segue: <span class="note mark-el">|
             dataProperty:prop1,prop2...</span>
     </p>
@@ -582,7 +582,7 @@
     <h4> <a id="cmd_e_for_filter_d_filter"> 3. Fitro Direcionado (Direct filter)
         </a> </h4>
     <p>
-        Executa o filtro em uma propridade específica itens que com o valor configurado. O filtro deve ser definido como
+        Executa o filtro em uma propridade específica do itens que com o valor configurado. O filtro deve ser definido como
         se segue: <br>
         <span class="note mark-el">| :prop1 === algumValor</span>
     </p>
@@ -619,7 +619,7 @@
         </div>
     </div>
 
-    <h4> <a id="cmd_e_for_filter_f_filter"> 4. Fitro Baseado a Função (Function filter) </a> </h4>
+    <h4> <a id="cmd_e_for_filter_f_filter"> 4. Fitro Baseado em Função (Function filter) </a> </h4>
     <p>
         Executa o filtro dos itens baseado em uma função. O contexto (<span class="mark-el">this</span>)
         da função é a instância do Easy. O array é o primeiro argumento da função. Ela espera um array como retorno.
@@ -667,7 +667,7 @@
         </div>
     </div>
 
-    <h3> Detecção de mudança do Array </h3>
+    <h3> Detecção de mudança no Array </h3>
     <p>
         Easy liga com os principais métodos de um array, tornando-os reativos, os métodos são:
     </p>
@@ -682,13 +682,13 @@
 
     <div class="block-note info">
         <p>
-            Se usarmos algum método que altere o array mesmo que não esteja na lista acima, o UI também será atualizada.
+            Se usarmos algum método que altera o array, mesmo que não esteja na lista acima, o UI também será atualizada.
         </p>
     </div>
 
     <div class="block-note dont">
         <p>
-            O Easy não consegue detectar mudanças quando modificamos o comprimento do array. exemplo: <span
+            O Easy não consegue detectar mudanças quando modificamos o `length` do array. exemplo: <span
                 class="note att-border"> array.length = novoLength </span>. Não terá efeitos na UI.
         </p>
     </div>
@@ -811,7 +811,7 @@
     <div id="app20">        
         <style> 
         .yellow-class {
-            border-color: yellow;
+            background-color: yellow;
         } 
     </style>
 
