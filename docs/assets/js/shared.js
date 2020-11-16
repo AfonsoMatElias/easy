@@ -196,3 +196,24 @@ function loadFile(path, callback) {
         Easy.log(error);
     });
 }
+
+function notify(obj) {
+    if (!obj || !obj.message) return;
+
+    var container = document.node('.popup-container');
+    if (!container) return;
+    var inc = document.createElement('inc');
+
+    if (!obj.type) obj.type = 'info';
+
+    // Preparing the inc
+    inc.valueIn('src', 'popup');
+    obj.message = escape(obj.message);
+    if (obj.url) obj.url = escape(obj.url);
+    else obj.url = null;
+
+    inc.valueIn('data', JSON.stringify(obj));
+
+    // Inserting the node
+    container.insertBefore(inc, container.children[0]);
+}

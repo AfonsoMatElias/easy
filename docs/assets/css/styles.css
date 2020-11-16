@@ -1013,15 +1013,6 @@ ul.top-menu-opened {
     margin: 0 8px;
 }
 
-pre code * {
-    font-family: Consolas, 'Courier New', monospace;
-}
-
-code .hljs-built_in {
-    color: #23aa51;
-}
-
-pre code::after,
 .result::after,
 .block-note::after {
     content: "Code";
@@ -1036,18 +1027,6 @@ pre code::after,
     line-height: 15px;
     height: 15px;
     font-weight: 600;
-}
-
-pre code.html.hljs::after {
-    content: '.html';
-}
-
-pre code.javascript.hljs::after {
-    content: '.js';
-}
-
-pre code.bat.hljs::after {
-    content: '.bat';
 }
 
 .result::after,
@@ -1254,6 +1233,82 @@ pre code.bat.hljs::after {
     font-weight: 600;
 }
 
+.popup-container {
+    position: fixed;
+    max-height: 430px;
+    overflow-y: auto;
+    padding: 0 5px;
+    width: 380px;
+    z-index: 102;
+    bottom: 10px;
+    right: 10px;
+}
+
+.popup-container .popup {
+    background-color: var(--color-bg-lighter);
+    box-shadow: var(--set-shadow);
+    display: flex;
+    min-height: 60px;
+    max-height: 80px;
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 10px 0;
+    user-select: none;
+}
+
+.popup-container .popup .fa-warning {
+    color: var(--color-yellow);
+}
+
+.popup-container .popup .fa-info-circle {
+    color: var(--color-blue);
+}
+
+.popup-container .popup .fa-times-circle {
+    color: var(--color-red);
+}
+
+.popup-container .popup .fa-check-circle {
+    color: var(--color-green);
+}
+
+.popup-container .popup .icon {
+    width: 65px;
+    font-size: 22pt;
+}
+
+.popup-container .popup .message {
+    color: var(--color-text);
+    display: flex;
+    padding: 5px;
+    flex: 1;
+}
+
+.popup-container .popup .message p {
+    overflow-y: auto;
+    max-height: 70px;
+    vertical-align: middle;
+    margin: auto 0;
+}
+
+.popup-container .popup .close {
+    color: var(--color-text);
+    cursor: pointer;
+    font-size: 16pt;
+    display: flex;
+    width: 35px;
+}
+
+.popup-container .popup .close span {
+    margin: 0 auto;
+    margin-top: 7.5px;
+    display: inline-block;
+}
+
+.popup-container .popup .close span:hover {
+    color: var(--color-red);
+}
+
 /* CodeMirror */
 .CodeMirror {
     background-color: transparent!important;
@@ -1299,7 +1354,6 @@ pre code.bat.hljs::after {
 .CodeMirror.cm-s-default .cm-attribute {
     color: #87c2e2;
 }
-
 
 .CodeMirror.cm-s-default .cm-string,
 .dark-theme .CodeMirror.cm-s-default .cm-atom {
@@ -1525,7 +1579,7 @@ pre code.bat.hljs::after {
 
 /* Styling the scroll-bar */
 /* For Mozilla */
-pre code,
+.popup-container,
 .nice-scroll {
     scrollbar-color: var(--color-scroll-thumb) var(--color-scroll-track);
     scrollbar-width: thin;

@@ -122,7 +122,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (localStorage._lang == v) return;
 
                 localStorage._lang = v;
-                location.reload(); 
+                location.reload();
+
+                var _lang = {
+                    en: "Please, reload the page if the language did not change!",
+                    pt: "Por favor, recarregue a página caso a linguagem não foi modificada!",
+                }
+
+                setTimeout(function () {
+                    notify({
+                        message: _lang[v]
+                    });
+                }, 6000);
             });
         },
         components: {
@@ -146,6 +157,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     url: '/components/views/404',
                     title: '404'
                 },
+
+                // Popup
+                'popup': "/components/shared/popup",
 
                 // Modal
                 'modal': "/components/modal/modal",
