@@ -2193,6 +2193,8 @@
                         }
         
                         var styleIds = [];
+                        var rootElementClassRules = {};
+                        forEach(el.classList, function (rule) { rootElementClassRules[rule] = true; });
                         forEach(styles, function (style) {
                             doc.head.appendChild(style);
                             // For scoped styles
@@ -2205,8 +2207,10 @@
                                     // Changing each selector to avoid conflits
                                     var isStyle = ($style.nodeName === 'STYLE'), rules = [];  
                                     forEach($style.sheet.cssRules, function (rule) {
-                                        rule.selectorText = '.' + value + ' ' + rule.selectorText; 
-                                        rule.cssText = '.' + value + ' ' + rule.cssText;
+                                        var space = ' ';
+                                        if (rootElementClassRules[rule.selectorText.substr(1)]) space = '';
+                                        rule.selectorText = '.' + value + space + rule.selectorText; 
+                                        rule.cssText = '.' + value + space + rule.cssText;
                                         if (isStyle) rules.push(rule.cssText);
                                     });
                                     if (isStyle) $style.innerText = rules.join('\n');
