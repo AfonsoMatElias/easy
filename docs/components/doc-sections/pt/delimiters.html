@@ -6,12 +6,12 @@
     <h1> <a id="delimiters"> Delimitadores (Delimiters) </a> </h1>
 
     <p>
-        Por padrão, o Easy traz dois tipos de delimitadores, que são: <span class="note">easy</span> delimiter e o
+        Por padrão, o Easy traz alguns delimitadores, que são: <span class="note">easy</span> delimiter e o
         <span class="note">common</span> delimiter que também é usado pelo Vue.js, Angular.js, e outros.
     </p>
 
     <p>
-        Os delimitadores abrem uma espaço no HTMl para execução de um trecho de código javascript, isto significa que
+        Os delimitadores abrem uma espaço no HTML para execução de um trecho de código javascript, isto significa que
         podemos executar qualquer código javascript puro como variáveis, funções, operadores ternários, etc. Só precisa
         retornar um valor.
     </p>
@@ -34,6 +34,14 @@
     <p e-ignore>
         Para usar este delimitador basta fazer o seguinte: <span class="note"> <span
                 class="mark-el">{{</span> [Content] <span class="mark-el">}}</span> </span>
+    </p>
+
+    <h3> <a id="dlm_html"> HTML Delimiter (<small class="mark-el">Desde v2.2.0+</small>)</a> </h3>
+
+    <p e-ignore>
+        Para usar este delimitador basta fazer o seguinte: <span class="note"> <span
+                class="mark-el">{html{</span> [Property] <span class="mark-el">}}</span> </span>
+        <br> Que é usado para processar trechos html passado por uma propriedade.
     </p>
 
     <p>
