@@ -1,6 +1,7 @@
 <section class="section">
-    <a href="https://github.com/AfonsoMatElias/easy/blob/6a729b7284758c6064eaadb4dc6b23fde4081aaf/docs/components/doc-sections/en/methods.html" 
-    title="Help us improve this documentation on github!" class="edit-content"><span class="fa fa-pencil"></span></a>
+    <a href="https://github.com/AfonsoMatElias/easy/blob/6a729b7284758c6064eaadb4dc6b23fde4081aaf/docs/components/doc-sections/en/methods.html"
+        title="Help us improve this documentation on github!" class="edit-content"><span
+            class="fa fa-pencil"></span></a>
 
     <h1><a id="methods"> Methods </a></h1>
     <p>
@@ -53,7 +54,8 @@
         <li> <span class="note mark-el">{ Object } returns</span> &ndash; an object having the
             event name and the callback we can use to remove the event.
             <span class="note">{ event: <i class="mark-el">String</i>, callback: <i class="mark-el">Function</i>
-                }</span>. </li>
+                }</span>.
+        </li>
     </ul>
 
     <div e-ignore class="code-container" code-ext=".js">
@@ -331,12 +333,14 @@
     </p>
 
     <li><b>skeleton</b> &ndash; allow to modify the background and/or wave of the skeleton values. It sintax is
-        <i class="note mark-el">instance.set('skeleton', object)</i>.</li>
+        <i class="note mark-el">instance.set('skeleton', object)</i>.
+    </li>
 
     <ul>
         <li> <span class="note mark-el">{ Object } object</span> &ndash; the object having the
             value it needs to modify.
-            <span class="note">{ background: <i class="mark-el">'color'</i>, wave: <i class="mark-el">'color'</i> }</span>
+            <span class="note">{ background: <i class="mark-el">'color'</i>, wave: <i class="mark-el">'color'</i>
+                }</span>
         </li>
     </ul>
 
@@ -355,7 +359,7 @@
     app1.set('skeleton');</textarea>
     </div>
 
-    <li><b>delimiter</b> &ndash; allow to add a delimiter into the Easy compiler. It sintax is 
+    <li><b>delimiter</b> &ndash; allow to add a delimiter into the Easy compiler. It sintax is
         instance.set('delimiter', object).</li>
 
     <ul>
@@ -389,13 +393,60 @@
 
     <h3><a id="method_compile">compile</a></h3>
     <p>
-        Usado para compilar um elemento
+        It's used to compile a html element executing all the easy's commands
+    </p>
+    <p>
+        It expects one parameter: <span class="note mark-el">instance.compile(config)</span>.
     </p>
 
-    <h3><a id="method_compile">toElement (<small class="mark-el">Since v2.2.0+</small>)</a></h3>
+    <ul>
+        <li> <span class="note mark-el">{ Element } config.el</span> &ndash; the element to be compiled. </li>
+        <li> <span class="note mark-el">{ Object } config.data (Optional)</span> &ndash; the data that will be injected
+            in the element compilation.</li>
+        <li> <span class="note mark-el">{ Boolean } config.skipAutoCompile (Optional)</span> &ndash; if defined <span
+                class="mark-el">true</span> value, the auto compilation will be avoided on element DOM insertion.
+        </li>
+        <li> <span class="note mark-el">{ Function } config.done (Opcional)</span> &ndash; the function that is called
+            when the element compilation is completed, passing it as the first parameter.</li>
+    </ul>
+
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    var app = new Easy('#my-app');
+
+    app.compile({ el: element });</textarea>
+    </div>
+
+    <h3><a id="method_toElement">toElement (<small class="mark-el">Since v2.2.0+</small>)</a></h3>
     <p>
-        Usado para transformar um texto de html em elemento
+        It's used to transform from html <span class="mark-el">string text</span> to a <span class="mark-el">html
+            element</span>, returning the transformed element.
+        <span class="note warn-border">The string must have only one root element.</span>
     </p>
+    <p>
+        It expects one parameter: <span class="note mark-el">instance.toElement(string)</span>.
+    </p>
+    <ul>
+        <li> <span class="note mark-el">{ String } string</span> &ndash; the string having the html structure. </li>
+    </ul>
+
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    var app = new Easy('#my-app');
+    
+    var element = app.toElement(`<b>{{ name }}</b>`);
+    
+    app.compile({
+        el: element,
+        data: { name: 'Afonso Matumona' },
+        skipAutoCompile: true,
+        done: function () {
+            console.log('Element Compiled');
+        }
+    });
+
+    document.body.appendChild(element);</textarea>
+    </div>
 
 </section>
 <script>

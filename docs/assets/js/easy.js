@@ -1910,13 +1910,14 @@
             // Setting the data function
             var $closure = $$scope;
             $$el.$e.data = function () { return $closure; }
-
+            $$el.$prevent = config.skipAutoCompile || undefined;
+            
             new Promise(function(resolve, reject) {
                 try {
                     $$el.$e.$base = $$el.ownerElement || $$el.parentNode;
                     // Compiling the the element
                     walker.call($easy, $$el, $$scope);
-                    if ( !isNull(config.done) ) config.done.call($easy);
+                    if ( !isNull(config.done) ) config.done.call($easy, $$el);
                     resolve($easy);
                 } catch (error) {
                     reject(Easy.log(error));
@@ -2072,9 +2073,6 @@
                         return Easy.log("[NotFound]: No element[inc-tmp] with this identifier '@" + nameNormalized + "' defined.", 'warn');
                     
                     var el = toElement(component.content);
-                    // Generating new element
-                    el.$prevent = true;
-
                     if (!$inc.hasAttribute('no-replace')) {
                         // Defining the name
                         el.inc = nameNormalized;
@@ -2088,6 +2086,7 @@
                     // Reading the added element
                     Compiler.compile({
                         el: el,
+                        skipAutoCompile: true,
                         data: $easy.retrieve(src, true) || $inc.$$data || Compiler.getUpData(el)
                     });
 
@@ -2338,7 +2337,6 @@
                 }
 
                 el.$e = config.inc.$e;
-                el.$prevent = true;
                 // Defining attributes from the inc element 
                 includerManager.transferAttributes(config.inc, el);
 
@@ -2401,7 +2399,8 @@
                     // Compiling the added element according the scope data                        
                     Compiler.compile({
                         el: el,
-                        data: this.data
+                        data: this.data,
+                        skipAutoCompile: true
                     });
                     
                     // Element was loaded
@@ -2713,7 +2712,8 @@
                                 // Compiling the element and stoping the mutation
                                 Compiler.compile({
                                     el: copy,
-                                    data: itemData
+                                    data: itemData,
+                                    skipAutoCompile: true
                                 });
                                 // Checking and calling the event if exists
                                 EasyEvent.emit({
@@ -2722,8 +2722,6 @@
                                     model: data,
                                     scope: itemData
                                 });
-
-                                copy.$prevent = true;
                                 // interting the DOM
                                 comment.parentNode.insertBefore(copy, obj.neighbor || comment);
                             });
@@ -2944,7 +2942,7 @@
                             var above = el.$e.com.parentNode;
                             if(el && el.$e.com){
                                 el.$prevent = true;
-                                forEach(el.$e.$oldAttrs, function (at) { 
+                                forEach(el.$e.$oldAttrs, function (at) {
                                     el.valueIn(at.name, at.value); 
                                 });
                                 // For many

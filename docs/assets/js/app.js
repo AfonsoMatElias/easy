@@ -42,13 +42,13 @@ document.addEventListener('DOMContentLoaded', function () {
             translations: languages,
             app: {
                 name: 'Easy',
-                version: 'v2.1.1',
-                cdn: 'https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.1.1/easy.js',
-                url: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.1.1/easy.js',
+                version: 'v2.2.0',
+                cdn: 'https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.2.0/easy.js',
+                url: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.2.0/easy.js',
                 connectors: {
-                    ajax: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.1.1/easy.ajax.js',
-                    ajaxCdn: 'https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.1.1/connectors/easy.ajax.js',
-                    free: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.1.1/easy.free.js'
+                    ajax: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.2.0/easy.ajax.js',
+                    ajaxCdn: 'https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.2.0/connectors/easy.ajax.js',
+                    free: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.2.0/easy.free.js'
                 }
             }
         },
@@ -91,6 +91,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if ($easy.data.pageLoading == true && pagesLoading === 0)
                     $easy.data.pageLoading = false;
             }
+            
             this.on('incRequested', function () {
                 pagesLoading++;
                 if (this.data.pageLoading === false)

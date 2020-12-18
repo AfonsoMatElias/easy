@@ -49,7 +49,8 @@
         <li> <span class="note mark-el">{ Object } returns</span> &ndash; um objecto tendo o callback que poder ser
             usado para remover o evento.
             <span class="note">{ event: <i class="mark-el">String</i>, callback: <i class="mark-el">Function</i> }
-            </span>. </li>
+            </span>.
+        </li>
     </ul>
 
     <div e-ignore class="code-container" code-ext=".js">
@@ -73,7 +74,8 @@
                 class="note mark-el">on</span>. </li>
         <li> <span class="note mark-el">{ Object } returns</span> &ndash; um objecto tendo nome do evento e o callback.
             <span class="note">{ event: <i class="mark-el">String</i>, callback: <i class="mark-el">Function</i>
-                }</span>. </li>
+                }</span>.
+        </li>
     </ul>
 
     <div e-ignore class="code-container" code-ext=".js">
@@ -308,7 +310,8 @@
     </p>
 
     <li><b>skeleton</b> &ndash; permite modificar o valor de `background` e ou de `wave` do skeleton. A sintâxe é
-        <i class="note mark-el">instance.set('skeleton', object)</i>.</li>
+        <i class="note mark-el">instance.set('skeleton', object)</i>.
+    </li>
 
     <ul>
         <li>
@@ -354,8 +357,9 @@
     </div>
 
     <p>
-        Todos os delimitadores disponíveis podem ser vistos na propriedade <span class="note mark-el">instance.delimiters</span>.
-        Estes valores são inalteráveis usando esta propridade. 
+        Todos os delimitadores disponíveis podem ser vistos na propriedade <span
+            class="note mark-el">instance.delimiters</span>.
+        Estes valores são inalteráveis usando esta propridade.
     </p>
 
     <div class="block-note info">
@@ -366,14 +370,61 @@
 
     <h3><a id="method_compile">compile</a></h3>
     <p>
-        Usado para compilar um elemento
+        É usado para compilar um elemento html executando todos os comandos do easy.
     </p>
-
-    <h3><a id="method_compile">toElement (<small class="mark-el">Desde v2.2.0+</small>)</a></h3>
     <p>
-        Usado para transformar um texto de html em elemento
+        O método espera um parâmetro: <span class="note mark-el">instance.compile(config)</span>.
     </p>
 
+    <ul>
+        <li> <span class="note mark-el">{ Element } config.el</span> &ndash; o elemento a ser compilado. </li>
+        <li> <span class="note mark-el">{ Object } config.data (Opcional)</span> &ndash; os dados que serão injectados
+            na compilação do elemento.</li>
+        <li> <span class="note mark-el">{ Boolean } config.skipAutoCompile (Opcional)</span> &ndash; se definido o valor
+            <span class="mark-el">true</span>, a auto compilação do elemento será evitada quando elemento for inserido
+            no DOM.
+        </li>
+        <li> <span class="note mark-el">{ Function } config.done (Opcional)</span> &ndash; a função que é chamada quando
+            a compilação do elemento for completo, passando o mesmo como primero argumento.</li>
+    </ul>
+
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    var app = new Easy('#my-app');
+
+    app.compile({ el: element });</textarea>
+    </div>
+
+    <h3><a id="method_toElement">toElement (<small class="mark-el">Desde v2.2.0+</small>)</a></h3>
+    <p>
+        É usado para transformar de uma <span class="mark-el">string</span> com estrutura de html para um elemento
+        <span class="mark-el">html</span>, retornando o elemento transformado.
+        <span class="note warn-border">A string deve conter apenas um elemento raíz.</span>
+    </p>
+    <p>
+        O método espera um parâmetro: <span class="note mark-el">instance.toElement(string)</span>.
+    </p>
+    <ul>
+        <li> <span class="note mark-el">{ String } string</span> &ndash; a string tendo a estrutura html. </li>
+    </ul>
+
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    var app = new Easy('#my-app');
+    
+    var element = app.toElement(`<b>{{ nome }}</b>`);
+    
+    app.compile({
+        el: element,
+        data: { nome: 'Afonso Matumona' },
+        skipAutoCompile: true,
+        done: function () {
+            console.log('Elemento Compilado');
+        }
+    });
+
+    document.body.appendChild(element);</textarea>
+    </div>
 </section>
 <script>
     this.mounted = function (el) {
