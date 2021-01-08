@@ -1,6 +1,6 @@
 ﻿/**
  * @author Afonso Matumona Elias
- * @version v2.0.2
+ * @version v2.0.3
  * Released under the MIT License.
  * This is easy.js ajax connector, makes web requests easier. 
  */
@@ -20,7 +20,7 @@ new EasyConnector('https://jsonplaceholder.typicode.com/', {
  */
 function EasyConnector(baseUrl, fetchOptions) {
     this.name = "Easy Ajax Connector";
-    this.version = '2.0.2';
+    this.version = '2.0.3';
     // Checking EasyJs definition
     if (typeof Easy === undefined) return;
     var $easy = Easy.prototype;
@@ -83,7 +83,7 @@ function EasyConnector(baseUrl, fetchOptions) {
         },
         remove: function (path, id) {
             // you may set as you wish
-            return $easy.ajax(path + normalizeId(id), null, 'devare');
+            return $easy.ajax(path + normalizeId(id), null, 'delete');
         },
         update: function (path, obj, id) {
             // you may set as you wish
