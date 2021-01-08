@@ -53,13 +53,19 @@
             </div>
             <span class="resizable"></span>
             <div class="editor-aside editor-result" e-ignore>
+
+                <!-- Top Editor Bar -->
                 <div class="top result-container">
                     <label> Result </label>
                 </div>
+
+                <!-- Editor Result Screen -->
                 <div class="screen">
                     <iframe frameBorder="0"
                         style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; width: 100%;height: 100%;"></iframe>
                 </div>
+                
+                <!-- Editor Console Screen -->
                 <div class="extra-area nice-scroll">
                     <span class="info console">
                         <span>
@@ -71,6 +77,8 @@
                 </div>
             </div>
         </div>
+
+        <!-- Editor Extra -->
         <div class="extra">
             <div class="alternator">
                 <button on:click="$scope.$scope.sMenuClosed = false">Tutorial</button>
@@ -108,7 +116,7 @@
             } else {
                 if (has) $classes.remove('mobile');
             }
-        }, 250);
+        }, 200);
 
         evtResize = window.listen('resize', function (evt) {
             exec(element.clientWidth);
@@ -169,8 +177,9 @@
             // Confifuring the instance functions
             instance.console = {
                 add: function (obj) {
-                    messageContainer.innerHTML += '<p class="line fa ' + obj.type + '">' + obj.message +
-                        '</p>';
+                    messageContainer.innerHTML += '<p class="line fa ' + obj.type + '">' + 
+                                                    obj.message +
+                                                  '</p>';
                     setConsoleIcon(icons[obj.type]);
                 },
                 clear: function () {
@@ -302,15 +311,12 @@
             }
 
             function createTemplate(content) {
-                content = content || '';
-                var str = '<html lang="en"><head><meta charset="UTF-8"><title>Live Editor page<\/title>' +
-                    '<script src="' + $easy.options.components.config.base + 'assets/js/easy.js"><\/script>' +
-                    '<style> * { margin: 0; font-family: Arial, Helvetica, sans-serif; } body { padding: 20px 4px; }' +
-                    'input, button { border: 1px solid lightgray; border-radius: 3px; } button { padding: 3px 10px; } </style>' +
-                    '<\/head><body>' + content + '<\/body>' +
-                    '<\/html>';
-
-                return str;
+                return '<html lang="en"><head><meta charset="UTF-8"><title>Live Editor page<\/title>' +
+                           '<script src="' + $easy.options.components.config.base + 'assets/js/easy.js"><\/script>' +
+                           '<style> * { margin: 0; font-family: Arial, Helvetica, sans-serif; } body { padding: 20px 4px; }' +
+                           'input, button { border: 1px solid lightgray; border-radius: 3px; } button { padding: 3px 10px; } </style>' +
+                           '<\/head><body>' + (content || '') + '<\/body>' +
+                        '<\/html>';
             }
 
             instance.runCode = runCode;

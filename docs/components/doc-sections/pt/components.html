@@ -123,7 +123,8 @@
     {
         components: {
             config: {
-                keepData: Boolean
+                keepData: Boolean,
+                preload: Boolean,
                 /* Isto é para a secção de Roteamento (Routing) */
                 base: String,
                 usehash: Boolean,
@@ -155,6 +156,10 @@
     <ul>
         <li> <span class="note mark-el">config.keepData</span> &ndash; usado para permitir manter todas as alterações
             feitas no componente. O valor padrão é <span class="note mark-el">false</span>.</li>
+
+        <li> <span class="note mark-el">config.preload (<b>Desde v2.2.0+</b>)</span> &ndash;
+            usado para permitir pré-carregar o conteúdo de todos componentes na instancia quando a aplicação for
+            iniciada. O valor padrão é <span class="note mark-el">false</span>.</li>
 
         <li> <span class="note mark-el">elements</span> &ndash; usado para definir todos os elementos de componentes. Em
             que na esquerda vai o <i class="note mark-el">nameId</i>, e na direita vai <span class="mark-el">String
@@ -343,17 +348,17 @@
     <script>
         var easy = this.Easy;
 
-        this.created = function(el){}
-        this.mounted = function(el){}
-        this.loaded = function(el){}
-        this.destroyed = function(el){}
-        
+        this.created = function (el) { }
+        this.mounted = function (el) { }
+        this.loaded = function (el) { }
+        this.destroyed = function (el) { }
+
         this.export({
             /* Variáveis */
             message: 'Hello from Easy!',
 
             /* Métodos */
-            doSomeThing: function(){}
+            doSomeThing: function () { }
         });
     </script>
 
@@ -509,7 +514,8 @@
     </h3>
     <p>
         Os Includers podem ser facilmente aninhados, seguindo a mesma linha de pensamento com <a class="mark-el">Nesting
-            Content</a>, é só colocar a tag <i class="note mark-el">inc</i> dentro da tag <i class="note mark-el">content</i>.
+            Content</a>, é só colocar a tag <i class="note mark-el">inc</i> dentro da tag <i
+            class="note mark-el">content</i>.
     </p>
 
     <label>DOM</label>

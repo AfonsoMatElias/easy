@@ -23,8 +23,8 @@ function createNotCompilableElement(content) {
 
 function appExector(element, noApp) {
     new Promise(function (res) {
-            res()
-        })
+        res()
+    })
         .then(function () {
 
             var codes = element.nodes('textarea[cm-lang]');
@@ -36,37 +36,35 @@ function appExector(element, noApp) {
                     scrollbarStyle: 'simple'
                 });
             }
-
+            if (noApp) return;
             // Executing apps
-            if (!noApp) {
-                var $ad = 'config: { useDOMLoadEvent: false }, data:';
-                var $codes = element.querySelectorAll('div[execute]');
-                for (var i = 0; i < $codes.length; i++) {
+            var $ad = 'config: { useDOMLoadEvent: false }, data:';
+            var $codes = element.querySelectorAll('div[execute]');
+            for (var i = 0; i < $codes.length; i++) {
 
-                    // The Main HTML Element
-                    var $html = $codes[i];
+                // The Main HTML Element
+                var $html = $codes[i];
 
-                    // The Script Element
-                    var $script = $html.nextElementSibling;
-                    
-                    // The script content 
-                    var $scriptContent = $script.editor.getValue();
-                    
-                    // The Display element
-                    var $display = $script.nextElementSibling;
+                // The Script Element
+                var $script = $html.nextElementSibling;
 
-                    // Creating the element
-                    var $resultExecutableElement = createNotCompilableElement($html.editor.getValue());
+                // The script content 
+                var $scriptContent = $script.editor.getValue();
 
-                    // Adding to the DOM
-                    $display.appendChild($resultExecutableElement);
+                // The Display element
+                var $display = $script.nextElementSibling;
 
-                    // Adding a peace of code that disable `DOMLoadEvent` usage
-                    eval($scriptContent.replace('data:', $ad));
+                // Creating the element
+                var $resultExecutableElement = createNotCompilableElement($html.editor.getValue());
 
-                    // Adding the easy app to the window object
-                    window[$resultExecutableElement.id] = eval($resultExecutableElement.id);
-                }
+                // Adding to the DOM
+                $display.appendChild($resultExecutableElement);
+
+                // Adding a peace of code that disable `DOMLoadEvent` usage
+                eval($scriptContent.replace('data:', $ad));
+
+                // Adding the easy app to the window object
+                window[$resultExecutableElement.id] = eval($resultExecutableElement.id);
             }
         });
 }
@@ -179,19 +177,21 @@ function showModal() {
 }
 
 function loadFile(path, callback) {
+    if (!this instanceof Easy)
+        return console.error('The function context is not Easy');
+
     this.http(location.origin + this.options.components.config.base + path, {
         method: 'get',
         headers: {
             'Content-Type': 'text/html'
         }
     }).then(function (data) {
-        if (data.ok) {
-            callback(data.response);
-        } else {
+        if (!data.ok)
             throw ({
                 message: 'Unable to load the file: ' + path + '\nDescription: ' + data.statusText
             });
-        }
+
+        callback(data.response);
     }).catch(function (error) {
         Easy.log(error);
     });

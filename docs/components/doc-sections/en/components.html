@@ -126,7 +126,8 @@
     {
         components: {
             config: {
-                keepData: Boolean
+                keepData: Boolean,
+                preload: Boolean,
                 /* This is for Routing Section */
                 base: String,
                 usehash: Boolean,
@@ -158,6 +159,10 @@
     <ul>
         <li> <span class="note mark-el">config.keepData</span> &ndash; used to allow to kept all
             the changes made in the component data. The default value is <span class="note mark-el">false</span>.</li>
+
+        <li> <span class="note mark-el">config.preload (<b>Since v2.2.0+</b>)</span> &ndash;
+            used to allow preloading the contents of all components on the instance when the application is started. 
+            The default value is <span class="note mark-el">false</span>.</li>
 
         <li> <span class="note mark-el">elements</span> &ndash; used to define all the
             components elements. On the left side goes the <i class="note mark-el">nameId</i>,
@@ -213,7 +218,8 @@
 
         <li> <span class="note mark-el">restrictions.remove</span> &ndash; it is a method that allow
             to remove a restriction from a component. It expects two parameters:
-            <span class="note mark-el">restrictions.add(nameId,restrictionArray)</span>. </li>
+            <span class="note mark-el">restrictions.add(nameId,restrictionArray)</span>.
+        </li>
     </ul>
 
     <h3> <a id="comp_format"> Component Format </a> </h3>
@@ -346,17 +352,17 @@
     <script>
         var easy = this.Easy;
 
-        this.created = function(el){}
-        this.mounted = function(el){}
-        this.loaded = function(el){}
-        this.destroyed = function(el){}
-        
+        this.created = function (el) { }
+        this.mounted = function (el) { }
+        this.loaded = function (el) { }
+        this.destroyed = function (el) { }
+
         this.export({
             /* Variables */
             message: 'Hello from Easy!',
 
             /* Methods */
-            doSomeThing: function(){}
+            doSomeThing: function () { }
         });
     </script>
 
