@@ -501,7 +501,7 @@
         // Adds the nice out animation into an element
         def('niceOut', function (key, inElem, callback, delay) {
             var self = this;
-            if (isNull(delay)) delay = 80;
+            if (isNull(delay)) delay = 100;
             // Executing the main function
             var keyOut = niceShared(self, 'from', key);
             if (inElem) inElem.niceIn(keyOut);
@@ -570,8 +570,8 @@
             if (!isArray(oldValue))
                 self = replace(self, oldValue, newValue);
             else
-                forEach(oldValue, function (el) {
-                    self = replace(self, el, newValue);
+                forEach(oldValue, function (seq) {
+                    self = replace(self, seq, newValue);
                 });
 
             return self;
@@ -589,8 +589,8 @@
             // Helper to check if a string includes a sequence
             def('includes', function (value) {
                 for(var i = 0; i < this.length; i++)
-                if(this.substr(i, value.length) === value)
-                    return true;
+                    if(this.substr(i, value.length) === value)
+                        return true;
                 return false;
             }, String);
 
@@ -831,10 +831,10 @@
         ];// Default delimiters
 
         // Setting the default values in options
-        options = $objDesigner(options, { config:{}, data:{}, global:{}, components:{}, mounted: functionManager.empty, loaded: functionManager.empty });
+        options = $objDesigner(options, { config:{}, data:{}, components:{}, mounted: functionManager.empty, loaded: functionManager.empty });
         options.data = $objDesigner(options.data, {});
         options.components = $objDesigner(options.components, { elements:{}, config:{} });
-        options.components.config = $objDesigner(options.components.config, { usehash: true, base: '/', keepData: false });
+        options.components.config = $objDesigner(options.components.config, { usehash: true, base: '/', keepData: false, preload: false });
         options.config = $objDesigner(options.config, { deepIgnore: false, rerenderOnArrayChange: false, log: true,
                                         useDOMLoadEvent: true, skeleton: { background: '#E2E2E2' , wave: '#ffffff5d' } });
         this.options = options;
@@ -932,7 +932,7 @@
             }
         }
         /**
-         * Generates a Javascript Object from an HTML Element
+         * Generates a Javascript Object from a HTML Element
          * Eg.: easy.toJsObj(element, { names: '[prop-name],[name]', values: '[prop-value],[value]' })
          * @param {HTMLElement} input The html element or selector
          * @param {String} options Builder options.
@@ -1637,7 +1637,7 @@
                             base.valueIn('e-req', '{ $url: "'+ attr.value +'", $type: "'+ type +'", $id: "'+ id +'" }');
                         }
                         // Templates
-                        uiHandler.init(base, extend.obj($scope, this.methods));
+                        uiHandler.initConnectorRequest(base, extend.obj($scope, this.methods));
                         return base.ignoreBaseCompilation = true;
                     }
                     case cmds.for: {
@@ -1649,7 +1649,6 @@
                         var $getterArg; // [0] -> obj; [1] -> prop
                         getter = function () { $getterArg = arguments; }
                         var v = functionManager.eval(helper.array, $scope); unget();
-
                         var desc = $getterArg ? $getterArg[1].descriptor : null;
                         
                         var array = desc ? $propDefiner({}, 'value', desc) : { value: v };
@@ -1935,7 +1934,7 @@
             return path;
         }
 
-        //#region Classes
+        /// Classes
         function Compiler() {}
         /** Component Includer Manager */
         function Includer(paths, $config) {
@@ -1995,6 +1994,15 @@
 
                     if ( !isNull(onset) && typeof onset === 'function' )
                         onset.call(this, comps[key], key);
+
+                    if (options.components.config.preload)
+                        this.get({
+                            componentKey: key,
+                            path: comps[key].url += !comps[key].url.endsWith('.html') ? '.html' : '',
+                            callback: function (content, options) {
+                                includerManager.components[options.componentKey] = { content: content };
+                            }
+                        })
                     
                     if ( isObj(value) && isObj(value.children) ) {
                         this.setComponent(value.children, function ($comp, $key) {
@@ -2005,23 +2013,20 @@
                 }).bind(this));
                 return comps;
             }
-            // Includer paths
-            this.setComponent(paths);
-
             /* Get a HTML file from the server, according to a path */
-            this.get = function (path, callback, fail) {
+            this.get = function (options) {
                 // fetch function to get the file
-                http(location.origin + $config.base + path, {
+                http(location.origin + $config.base + options.path, {
                     method: 'get',
                     headers: { 'Content-Type': 'text/plain' }
                 }).then(function (data) {
                     if (data.ok) {
-                        callback(data.response, path);
+                        if (options.callback) options.callback(data.response, options);
                     } else {
-                        throw ({ message: 'Unable to load the file: ' + path + '\nDescription: ' + data.statusText + '.' });
+                        throw ({ message: 'Unable to load the file: ' + options.path + '\nDescription: ' + data.statusText + '.' });
                     }
                 }).catch(function (error) {
-                    if (fail) fail(error);
+                    if (options.fail) options.fail(error, options);
                     Easy.log(error);
                 });
             }
@@ -2039,13 +2044,11 @@
                             toArray(src.classList, function (c) {
                                 dest.classList.add(c);
                             });
-                            src.removeAttribute(attr.name);
-                            return;
+                            return src.removeAttribute(attr.name);
                             
                         default:
                             dest.valueIn(attr.name, attr.value);
-                            src.removeAttribute(attr.name);
-                            return;
+                            return src.removeAttribute(attr.name);
                     }
                 });
             }
@@ -2146,26 +2149,30 @@
 
                     if (hasRequestWaiting == false){
                         // Getting the data 
-                        includerManager.get(requestUrlKey, function (content, ruk) {
-                            forEach(includerManager.componentRequests[ruk], function (componentRequest) {
-                                new Inc({
-                                    component: { content: content },
-                                    src: componentRequest.src,
-                                    inc: componentRequest.$inc, 
-                                    path: componentRequest.$path,
-                                    store: componentRequest.$path.store,
-                                    componentConfig: $config
+                        includerManager.get({
+                            path: requestUrlKey,
+                            callback: function (content, options) {
+                                forEach(includerManager.componentRequests[options.path], function (componentRequest) {
+                                    new Inc({
+                                        component: { content: content },
+                                        src: componentRequest.src,
+                                        inc: componentRequest.$inc, 
+                                        path: componentRequest.$path,
+                                        store: componentRequest.$path.store,
+                                        componentConfig: $config
+                                    });
                                 });
-                            });
-
-                            delete includerManager.componentRequests[ruk];
-                        }, function(error) {
-                            forEach(includerManager.fail, function (evt) { 
-                                evt.call($easy, { 
-                                    message: error.message,
-                                    inc: $inc 
-                                }); 
-                            });
+    
+                                delete includerManager.componentRequests[options.path];
+                            },
+                            fail:  function(error) {
+                                forEach(includerManager.fail, function (evt) { 
+                                    evt.call($easy, { 
+                                        message: error.message,
+                                        inc: $inc 
+                                    }); 
+                                });
+                            }
                         });
                     }
 
@@ -2183,6 +2190,9 @@
             this.isInc = function (el) {
                 return el.nodeName === 'INC' || (el.hasAttribute && el.hasAttribute('inc-src'))
             }
+            
+            // Includer paths
+            this.setComponent(paths);
         }
         /* Component Instance Object */
         function Inc(config) {
@@ -2454,21 +2464,22 @@
                     var scriptRequestUrl = url.substr(location.origin.length + 1);
                     webRequestChecker[scriptRequestUrl] = true;
                     // Getting script content from a web request
-                    includerManager.get(scriptRequestUrl, 
-                    function(jsContent, _url_) {
-                        delete webRequestChecker[_url_];
-
-                        // Adding in the beginning of the script list
-                        localScriptsContent.unshift(jsContent);
-
-                        // if there are not web requests run the Includer Compiler
-                        if (webRequestChecker.keys().length == 0)
-                            return execIncluder.call(incInstance, localScriptsContent.join('\n\n'));
-                    }, function (error) {
-                        forEach(includerManager.fail, function (evt) { 
-                            evt.call($easy, { message: error.message, inc: config.inc }); 
-                        });
-                        throw (error);
+                    includerManager.get({
+                        path: scriptRequestUrl,
+                        callback: function(jsContent, options) {
+                            delete webRequestChecker[options.path];
+                            // Adding in the beginning of the script list
+                            localScriptsContent.unshift(jsContent);
+                            // if there are not web requests run the Includer Compiler
+                            if (webRequestChecker.keys().length == 0)
+                                return execIncluder.call(incInstance, localScriptsContent.join('\n\n'));
+                        },
+                        fail: function (error) {
+                            forEach(includerManager.fail, function (evt) { 
+                                evt.call($easy, { message: error.message, inc: config.inc }); 
+                            });
+                            throw (error);
+                        }
                     });
                 });
             }
@@ -2903,7 +2914,7 @@
                 return value;
             }
             /** UI template web request initializer */ 
-            this.init = function (elem, $$data) {
+            this.initConnectorRequest = function (elem, $$data) {
                 var cmds = vars.cmds,
                     $scope = $$data || $easy.data,
                     attr = functionManager.attr(elem, [cmds.req], true);
@@ -2961,7 +2972,7 @@
                                     $type: $request.$type 
                                 }));
                                 // Initializing the element
-                                uiHandler.init(el, $request.$scope);
+                                uiHandler.initConnectorRequest(el, $request.$scope);
                             }
                             $w.destroy();
                         }, $request); 
@@ -3517,8 +3528,7 @@
                         });
 
             if (!self.attr) return self;
-            // Defining com property to avoid the element to be removed
-            // by the bind maintenance
+            // Defining com property to avoid the element to be removed by the bind maintenance
             self.attr.com = self.reference;
             // Getting the delimiter if exists
             var fields = uiHandler.getDelimiters(self.attr.value), exp, watches = [];
@@ -3712,9 +3722,8 @@
             var $val = componentConfig.usehash === false ? $value : ('/#/' + $value);
             return (componentConfig.base + $val).replaceAll('//', '/');
         }
-        //#endregion
 
-        //#region Static functions
+        // Static functions
         /** Bind all the properties that was read */
         Bind.exec = function (elem, object, callback, options) {
             try {
@@ -3777,9 +3786,9 @@
             if (!type) type = 'asc';
             return array.sort(function (a, b) {
                 function comp(asc, des) {
-                    if (isNull(asc) || isNull(des)) {
+                    if (isNull(asc) || isNull(des))
                         return 0;
-                    }
+                        
                     switch(type.toLowerCase()) {
                         case 'asc': return asc ? 1 : -1;
                         case 'des': return des ? -1 : 1;
@@ -3852,12 +3861,9 @@
                     return curr();
             } while(el = el.parentNode)
         }
-        //#endregion
         try {
             // Setting the begin data
-            this.global = {};
             this.setData(options.data);
-            this.setData(options.global, this.global);
             this.data = options.data;
             // Initializing easy animation css
             this.css();
@@ -3868,7 +3874,7 @@
                 // Checking if the app element is set
                 if (!this.el)
                     return Easy.log('[NotFound]: Element with selector \''+ $elSelector +'\' not found, please check it.');
-
+                
                 options.mounted.call(this, this.el);
                 Compiler.compile({
                     el: $easy.el,
@@ -3905,26 +3911,26 @@
         }
     }
     function EasyLog(log, type) {
-        var $easyInstance = {};
-        $easyInstance.__proto__ = Object.create(EasyLog.prototype, {
+        var $logInstance = {};
+        $logInstance.__proto__ = Object.create(EasyLog.prototype, {
             constructor: { value: EasyLog, writable: true, configurable: true }
         });
-        $easyInstance.type = type;
-        $easyInstance.thrownAt = new Date().toLocaleString();
+        $logInstance.type = type;
+        $logInstance.thrownAt = new Date().toLocaleString();
         if (isString(log))
-            $easyInstance.message = log;
+            $logInstance.message = log;
         else if (isObj(log)) {
             for (var key in log)
-                $propTransfer($easyInstance, log, key);
-            Object.defineProperties($easyInstance, {
+                $propTransfer($logInstance, log, key);
+            Object.defineProperties($logInstance, {
                 message: { enumerable: true, value: log.message }, 
                 file: { enumerable: true, value: log.file || './index.html' }
             });
         }
         
-        $easyInstance.name = log.name || 'Error';
-        $easyInstance.__proto__.toString = function(){ return $easyInstance.message; };
-        return $easyInstance;
+        $logInstance.name = log.name || 'Error';
+        $logInstance.__proto__.toString = function(){ return $logInstance.message; };
+        return $logInstance;
     }
     EasyLog.prototype = Object.create(Error.prototype, {
         constructor: { value: EasyLog, writable: true, configurable: true }
