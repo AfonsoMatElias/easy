@@ -1,11 +1,11 @@
 /**
- * Easy.js @version v2.2.0 Release
+ * Easy.js @version v2.3.0 Release
  * Released under the MIT License.
  * (c) 2019 @author Afonso Matumona
  */
 (function(global, factory){
-    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-    typeof define === 'function' && define.amd ? define(factory) : (global.Easy = factory());
+    (typeof exports === 'object' && typeof module !== 'undefined') ? module.exports = factory() :
+    (typeof define === 'function' && define.amd) ? define(factory) : (global.Easy = factory());
 }(window, (function(){ 'use strict';
     // Shared variables
     var standardEvents = {}, 
@@ -24,7 +24,7 @@
     
     // Get all default events registed in the DOM Elements
     for ( var key in doc.createElement('input') ) {
-        if( key[0] === 'o' && key[1] === 'n' )
+        if( key[0] + key[1] === 'on' )
             standardEvents[key.substr(2)] = true;
     }
 
@@ -87,8 +87,8 @@
     }
     // Error messages
     var error = {
-        delimiter: 'The command cannot contain a delimiter in ' +
-             'expression value... The variables are compiled without a delimiter.',
+        delimiter: function (v) {return "The command '"+ v +"' cannot contain a delimiter in " +
+             "expression value... The value is compiled without a delimiter." },
         conn: function () {
             return "It seems that there is not any easy connector available. " +
                 "Please make sure easy.[ajax|free|something].js is imported.";
@@ -96,20 +96,13 @@
         invalid: function (v) { return "Invalid value" + (v ? ' ' + v : '') + "." },
         elem: function (v) { return "The selector or object passed for '" + v + "' is invalid, please check it." }
     }
-    // Comparison functions
-    var compare = {
-        'match': function (s1, s2) { return s1.match(s2) },
-        'equal': function (s1, s2) { return s1 === s2 }
-    }
     // Join objects. Can be used as object/array copier 
     var extend = {
         /** join objects into one */
         obj: function () {
             var out = {};
             arguments.keys(function (_, value) {
-                if (isNull(value)) 
-                    return;
-
+                if (isNull(value)) return;
                 value.keys(function (prop) {
                     $propTransfer(out, value, prop);
                 });
@@ -132,12 +125,10 @@
             var out = [];
             arguments.keys(function (_, v) {
                 if (isNull(v)) return;
-                if (isArray(v)) {
-                    var len = v.length, i = 0;
-                    for(i; i < len; i++) out.push(v[i]);
-                } else{
+                if (isArray(v)) 
+                    [].push.apply(out, v);
+                else
                     out.push(v);
-                }
             });
             return out;
         }
@@ -145,7 +136,6 @@
 
     function unget() { getter = undefined; }
     function $objDesigner(obj, options) {
-        // Set default properties in a object if it doesn't exists
         if (!obj) obj = {};
         if (!options) options = {};
         options.keys(function (key, value) {
@@ -159,15 +149,16 @@
     function $propDefiner(obj, prop, desc) {
         Object.defineProperty(obj, prop, desc); return obj;
     }
-    function $propDescriptor(obj, prop) {
-        return Object.getOwnPropertyDescriptor(obj, prop); 
-    }
-    function isIgnore(value) {
-        switch (value) {
-            case "#comment": case "SCRIPT": case "#text": case "STYLE":
-                return true;
-            default: return false;
-        }
+    function $propDescriptor(obj, prop, withConfig) {
+        if (!withConfig)
+            return Object.getOwnPropertyDescriptor(obj, prop); 
+
+        var args; getter = function () { args = arguments; }
+        var _ = obj[prop]; unget();
+        return {
+            descriptor: Object.getOwnPropertyDescriptor(obj, prop),
+            config: args ? args[1] : null 
+        };
     }
     function isObj(value) {
         return value instanceof Object; 
@@ -191,27 +182,6 @@
         if (callback) forEach(array, callback, context);
         return array;
     }
-    function toPath() {
-        // Builds arguments to reference string path. Eg.: 'p.n.a' -> ['p']['n']['a']
-        var path = '';
-        for(var key in arguments) {
-            var el = arguments[key];
-            if (!isNull(el) && el !== '') {
-                if (isArray(el))
-                    path += el.map(function (part) {
-                        return "['" + part + "']";
-                    }).join('');
-                else if (isString(el)) {
-                    path += forEach( el.split('.'), function (f) {
-                        return f;
-                    }).map(function (part) {
-                        return !part.includes('[') ? "['" + part + "']" : part;
-                    }).join('');
-                }
-            }
-        }
-        return path;
-    }
     function toStr(value) { 
         return value ? value + '' : ''; 
     }
@@ -221,19 +191,15 @@
 
         var len = obj.length, index, result = [];
         for(index = 0; index < len; index++) {
-            if (callback.call(context, obj[index], index)) {
+            if (callback.call(context, obj[index], index))
                 result.push(obj[index]);
-            } 
         }
         return result;
-    }
-    function nameof(value) { 
-        return value.keys()[0]; 
     }
     function trim(value) {
         return value ? value.trim() : value; 
     }
-    function setEasy(el) {
+    function easyProperty(el) {
         // Sets $easy property in a element where will be stored configurations used by easy
         if ( !el.$e ) el.$e = {};
         return el;
@@ -271,9 +237,17 @@
             hostname: hostname,
             port: urlParsingNode.port,
             pathname: (urlParsingNode.pathname.charAt(0) === '/') ?
-                urlParsingNode.pathname : '/' + urlParsingNode.pathname
+                urlParsingNode.pathname : '/' + urlParsingNode.pathname,
+            anchor: urlParsingNode
         };
-        $return.origin = $return.protocol + '://' + $return.host; 
+
+        $return.origin = $return.protocol + '://' + $return.host;
+        $return.hrefb = (function(url){
+            if (!url) return urlParsingNode.baseURI;            
+            return urlParsingNode.baseURI + 
+                   urlParsingNode.href.substr(urlParsingNode.origin.length + 1);
+          })($return.href)
+          
         return $return;
     }
     function toElement(str) {
@@ -285,9 +259,8 @@
 
     // Adding the extensions
     (function () {
-        // Extensions
         if ( !isNull(Node.prototype.node) ) return;
-        // Extension setter
+        // Extension definer
         function def(key, callback, type) {
             $propDefiner((type || Object).prototype, key, { value: callback });
         }
@@ -342,20 +315,16 @@
                 if ( $node === doc || isNull($node) ) return null;
 
                 var tester = doc.createElement('body');
-                // Defining the element in some kind of Virtual Element
                 tester.innerHTML = $node.outerHTML;
                 
                 if ( $node.nodeName === tester.nodeName )
-                    // Clearing his children
                     tester.innerHTML = '';
                 else 
-                    // Clearing his children
                     tester.children[0].innerHTML = '';
 
-                // And checking the selector
                 if ( !isNull(tester.querySelector(selector)) )
                     return $node;
-                else if ( $node.nodeName === tester.nodeName ) // The element is 
+                else if ( $node.nodeName === tester.nodeName )
                     return null;
                 else
                     return parent($node);
@@ -380,7 +349,10 @@
                         s2 = s2.toLowerCase();
                     }
                 }
-                return compare[options.comp](s1, s2);
+                switch (options.comp) {
+                    case 'match': return s1.match(s2)
+                    case 'equal': return s1 === s2;
+                }
             }
             // Finding any property that matches the input value
             if (isObj(self))
@@ -445,12 +417,11 @@
                 // Handling the default pop function if the value is not defined
                 if (!value && value !== 0) {
                     this.pop();
-                } else{
+                } else {
                     // Otherwise, Handling the costumized remove function
                     // Removing all objects with this value
                     if (allWith === true) {
                         extend.array(this).indexes(value, function (i) {
-                            // removing the element
                             this.splice(i, 1);
                         });
                     } else{
@@ -459,20 +430,17 @@
                             if (Number.isInteger(value * 1))
                                 index = value * 1;
                         }
-                        // removing the element
                         this.splice(index, 1);
                     }
                 }
-            }catch(error) {
+            }catch(error){
                 Easy.log({ message: '[InternalError]: Remove function error. ' + error.message, error: error });
             }
             return this;
         }, Array);
-        // Animation extension
         // The main animation function for the extension
-        function niceShared(elem, direction, key) {
+        function niceAnimatiomFunctionShared(elem, direction, key) {
             var anm = vars.anm, keyNormalized = key.toLowerCase().split(':');
-            // the animations keys, defined by the user
             var keyIn = keyNormalized[0];
 
             anm['to'].keys(function (k, v) {
@@ -481,9 +449,8 @@
             anm['from'].keys(function (k, v) {
                 elem.classList.remove(v);
             });
-            // Adding the class in the main element
-            elem.classList.add(anm[direction][keyIn]);
 
+            elem.classList.add(anm[direction][keyIn]);
             return keyNormalized[1] || anm.reverse(keyIn);
         }
         // Execute the nice in animation into an element
@@ -491,7 +458,7 @@
             var self = this;
             if (isNull(delay)) delay = 100;
             // Executing the main function
-            var keyOut = niceShared(self, 'to', key);
+            var keyOut = niceAnimatiomFunctionShared(self, 'to', key);
             if (outElem) outElem.niceOut(keyOut);
             // Executing the callback
             setTimeout(function () {
@@ -503,14 +470,13 @@
             var self = this;
             if (isNull(delay)) delay = 100;
             // Executing the main function
-            var keyOut = niceShared(self, 'from', key);
+            var keyOut = niceAnimatiomFunctionShared(self, 'from', key);
             if (inElem) inElem.niceIn(keyOut);
             // Executing the callback
             setTimeout(function () {
                 if (callback) callback(self, inElem);
             }, delay);
         }, HTMLElement);
-        // End Animation Extension
         // Generate element description. eg.: form#some-id.class1.class2
         def('desc', function () {
             var self = this;
@@ -532,7 +498,7 @@
                     event: name,
                     fnCallback: cb,
                     callback: function () {
-                        // base property where will be passed the main object, **not the target**.
+                        // base property where will be passed the main event element.
                         arguments[0]['base'] = elem;
                         evt.fnCallback.apply(evt.fnCallback, arguments);
                     },
@@ -595,7 +561,7 @@
             }, String);
 
         }
-        // Helper to clear skeleton with identifier
+        // Helper to clear the skeleton(s) with identifier
         def('clearSkeleton', function (id) {
             var self = this, attr = '[e-skeleton="'+ id +'"]';
             self.removeAttribute('e-skeleton');
@@ -670,7 +636,7 @@
         if (!url) url = location.href;
         var compare = arguments[1];
         if ( compare && isString(compare) ) {
-            // Building from url comparison
+            // Building from url
             var $url = url.split('/').reverse();
             if ($url[0] === '') $url.shift();
             var $compare = compare.split('/').reverse();
@@ -708,13 +674,12 @@
         var self = {}, abortedByTimeout = false;
         (options || {}).keys(function (key, value) { self[key] = value; });
 
-        // The default method is get
+        // Setting the default method as get
         self.method ? self.method : 'get';
-        var xhr = createXhr(self.method), timeoutId;
+        var xhr = createXhr(self.method);
 
-        // Unchangeable URL, even if it was passed in options
         self.url = url;
-        // If timeout is not defined use the default 1 minute
+        // If timeout is not defined use the default 2 minute
         self.timeout = self.timeout || 120000;
 
         return new Promise(function (resolve, reject) {
@@ -722,9 +687,7 @@
             xhr.timeout = self.timeout; 
 
             (options.headers || {}).keys(function (key, value) {
-                if (value) {
-                    xhr.setRequestHeader(key, value);
-                }
+                if (value) xhr.setRequestHeader(key, value);
             });
 
             xhr.onload = function requestLoaded() {
@@ -748,61 +711,45 @@
                 self.responseHeaders = headersString;
                 self.statusText = statusText;
                 self.statusMessage = xhrStatus;
-
-                if (status === -1) {
-                    reject(self);
-                } else {
-                    resolve(self);
-                }
+                
+                resolve(self);
             }
 
-            var requestError = function () {
+            xhr.onerror = function () {
                 completeRequest(-1, null, null, '', 'error');
             }
 
-            var requestAborted = function () {
+            xhr.onabort = function () {
                 completeRequest(-1, null, null, '', abortedByTimeout ? 'timeout' : 'abort');
             }
 
-            var requestTimeout = function () {
+            xhr.ontimeout = function () {
                 completeRequest(-1, null, null, '', 'timeout');
             }
 
-            xhr.onerror = requestError;
-            xhr.ontimeout = requestTimeout;
-            xhr.onabort = requestAborted;
-
-            (self.eventHandlers || {}).keys(function (key, value) {
-                if (value) {
-                    xhr.addEventListener(key, value);
-                }
-            });
+            // (self.eventHandlers || {}).keys(function (key, value) {
+            //     if (value) xhr.addEventListener(key, value);
+            // });
             
-            (self.uploadEventHandlers || {}).keys(function (key, value) {
-                if (value) {
-                    xhr.addEventListener(key, value);
-                }
-            });
+            // (self.uploadEventHandlers || {}).keys(function (key, value) {
+            //     if (value) xhr.addEventListener(key, value);
+            // });
 
-            if (self.withCredentials) {
+            if (self.withCredentials)
                 xhr.withCredentials = true;
-            }
 
             self.type = self.type || '';
 
             try {
                 xhr.responseType = self.type;
             } catch (err) {
-                if (self.type !== 'json') {
-                    throw err;
-                }
+                if (self.type !== 'json') throw err;
             }
             
             xhr.send(options.body || null);
             return self;
         });
     }
-
     function Easy($elSelector, options) {
         if ( !(this instanceof Easy) ){
             Easy.log('[BadDefinition]: Easy is a constructor and should be called with the \'new\' keyword.');
@@ -810,9 +757,9 @@
         }
 
         this.name = 'Easy';
-        this.version = '2.2.0';
-
+        this.version = '2.3.0';
         this.data = {};
+        this.dependencies = {};
         var $easy = this, exposed = { /* Store the exposed datas */ },
             webDataRequests = { /* Store web requests data */ }, 
             customEvents = { /* Store 'app.on' events */ }, 
@@ -822,6 +769,7 @@
 
         var prototype = Object.create(Easy.prototype);
         this.__proto__ = prototype;
+        // NOREACTIVE: Allow to skip this object when caught in reactive transformation process 
         this.__proto__.NOREACTIVE = true;
 
         var $$delimiters = [
@@ -831,17 +779,25 @@
         ];// Default delimiters
 
         // Setting the default values in options
-        options = $objDesigner(options, { config:{}, data:{}, components:{}, mounted: functionManager.empty, loaded: functionManager.empty });
+        options = $objDesigner(options, { 
+            config:{}, data:{}, components:{}, mounted: functionManager.empty, loaded: functionManager.empty, dependencies: [] 
+        });
         options.data = $objDesigner(options.data, {});
-        options.components = $objDesigner(options.components, { elements:{}, config:{} });
-        options.components.config = $objDesigner(options.components.config, { usehash: true, base: '/', keepData: false, preload: false });
-        options.config = $objDesigner(options.config, { deepIgnore: false, rerenderOnArrayChange: false, log: true,
-                                        useDOMLoadEvent: true, skeleton: { background: '#E2E2E2' , wave: '#ffffff5d' } });
-        this.options = options;
-        
+        options.components = $objDesigner(options.components, { 
+            elements:{}, config:{} 
+        });
+        options.components.config = $objDesigner(options.components.config, { 
+            usehash: true, keepData: false, preload: false 
+        });
+        options.config = $objDesigner(options.config, { 
+            deepIgnore: false, rerenderOnArrayChange: false, log: true, useDOMLoadEvent: true, 
+            skeleton: { background: '#E2E2E2' , wave: '#ffffff5d' } 
+        });
+                                        
         skeletonConfig = extend.obj(options.config.skeleton);
         componentConfig = options.components.config;
         this.delimiters = Object.freeze($$delimiters);
+        this.options = options;
 
         /** Easy Logger */
         Easy.log = function (log, type) {
@@ -850,6 +806,10 @@
             if ( !isNull($easy.emit) ) $easy.emit('log', { type: type, message: log });
             return log;
         }
+        
+        if (!isNull(options.components.config.base))
+            Easy.log('The property component.config.`base` is deprecated, use only the <base href="..."/> element at the top of the <head> children.', 'warn');
+
         var uiHandler = new UIHandler({
             $$delimiters: $$delimiters.slice(),
             $handleWatches: []
@@ -863,24 +823,12 @@
          */
         prototype.create = function (path, form) {
             try {
-                if (isNull($easy.conn)) throw ({ message: error.conn() });
+                var connector = this.dependencies['Connector'];
+                if (isNull(connector)) throw ({ message: error.conn() });
                 
                 var obj = $easy.toJsObj(form);
                 if (!obj) throw ({ message: error.elem('create') });
-                return $easy.conn.add(path, obj);
-            } catch(error) {
-                return Promise.reject($easy.return(false, Easy.log(error), null));
-            }
-        }
-        /**
-         * Get all from a path
-         * @param {String} path The URL endpoint
-         * @param {String} extra (optional) Some extra string that will be added to the path
-         */
-        prototype.read = function (path, extra) {
-            try {
-                if (isNull($easy.conn)) throw ({ message: error.conn() });
-                return $easy.conn.list(path, extra);
+                return connector.conn.add(path, obj);
             } catch(error) {
                 return Promise.reject($easy.return(false, Easy.log(error), null));
             }
@@ -893,12 +841,12 @@
          */
         prototype.update = function (path, form, id) {
             try {
-                if (isNull($easy.conn)) throw ({ message: error.conn() });
-                
+                var connector = this.dependencies['Connector'];
+                if (isNull(connector)) throw ({ message: error.conn() });
+
                 var obj = $easy.toJsObj(form);
-                // Checking if the object is valid
                 if (!obj) throw ({ message: error.elem('updated') });
-                return $easy.conn.update(path, obj, id);
+                return connector.conn.update(path, obj, id);
             } catch(error) {
                 return Promise.reject($easy.return(false, Easy.log(error), null));
             }
@@ -910,10 +858,26 @@
          */
         prototype.delete = function (path, id) {
             try {
-                if (isNull($easy.conn)) throw ({ message: error.conn() });
-                // Checking the id parameter is null
+                var connector = this.dependencies['Connector'];
+                if (isNull(connector)) throw ({ message: error.conn() });
                 if (!id) throw ({ message: error.invalid('id') });
-                return $easy.conn.remove(path, id); 
+
+                return connector.conn.remove(path, id); 
+            } catch(error) {
+                return Promise.reject($easy.return(false, Easy.log(error), null));
+            }
+        }
+        /**
+         * Get all from a path
+         * @param {String} path The URL endpoint
+         * @param {String} extra (optional) Some extra string that will be added to the path
+         */
+        prototype.get = function (path, extra) {
+            try {
+                var connector = this.dependencies['Connector'];
+                if (isNull(connector)) throw ({ message: error.conn() });
+                
+                return connector.conn.list(path, extra);
             } catch(error) {
                 return Promise.reject($easy.return(false, Easy.log(error), null));
             }
@@ -925,12 +889,19 @@
          */
         prototype.getOne = function (path, id) {
             try {
-                if (isNull($easy.conn)) throw ({ message: error.conn() });
-                return $easy.conn.getOne(path, id);
+                var connector = this.dependencies['Connector'];
+                if (isNull(connector)) throw ({ message: error.conn() });
+
+                return connector.conn.getOne(path, id);
             } catch(error) {
                 return Promise.reject($easy.return(false, Easy.log(error), null));
             }
         }
+        /**
+         * Perform the read function
+         */
+        prototype.read = prototype.get;
+
         /**
          * Generates a Javascript Object from a HTML Element
          * Eg.: easy.toJsObj(element, { names: '[prop-name],[name]', values: '[prop-value],[value]' })
@@ -980,7 +951,7 @@
             var mNames = clear(options.names);
             var mValues = clear(options.values);
 
-            function buildObj(element) {
+            function objBuilder(element) {
                 var obj = {};
                 // Elements that skipped on serialization process
                 var escapes = { BUTTON: true };
@@ -1015,7 +986,7 @@
                             if (propOldValue)
                                 obj[name] = extend.array(propOldValue, value);
                             else
-                                obj[name] = extend.array(value);
+                                obj[name] = [ value ];
                         }
                         // Calling on set function
                         onset(obj, name, value, el);
@@ -1027,76 +998,63 @@
                 return obj;
             }
 
-            // Building the base form
-            var obj = buildObj(elem);
-            // Getting the builds 
+            // Building the base object
+            var obj = objBuilder(elem);
+            // Getting the builds
             var builds = elem.nodes('['+cmd+']');
-            // Building builders
+
             forEach(builds, function ($build) {
                 // Getting the e-build attr value
-                var name = $build.valueIn(cmd);
-                // Checking if has an attr defined
+                var fullPath = $build.valueIn(cmd);
                 var isarray = $build.hasAttribute(vars.cmds.array);
-                // Building the object
-                var value = buildObj($build);
-                if (isEmptyObj(value)) return;
-                // Build a path to set the value in the main object
-                function pathBuilder(fullPath, callback) {
-                    var path = '', sections = fullPath.split('.');
-                    forEach(sections, function (part) {
-                        path += '.' + part;
-                        var propValue = eval(nameof({ obj: '' }) + path);
-                        // Checking the path has a null value
-                        if (isNull(propValue)) {
-                            eval(nameof({ obj: '' }) + path + '={}');
-                            // Checking if it's last section of the path
-                            if (sections[sections.length - 1] === part)
-                                callback(path);
-                        }
-                        // Otherwise, check if the value is an array
-                        else if (isArray(propValue)) {
-                            var remainPath = toPath(fullPath.substr(path.length));
-                            if (remainPath === '')
-                                callback(path, propValue);
-                            else
-                                forEach(propValue, function (_, index) {
-                                    // Building new path according the index of the array
-                                    pathBuilder(path.substr(1) + '['+index+']' + remainPath, callback);
-                                });
-                            // Breaking the main loop, because every work is done
-                            return;
-                        } else{
-                            // Checking if it's last section of the path
-                            if (sections[sections.length - 1] === part)
-                                callback(path, propValue);
-                        }
-                    });
-                }
+                var value = objBuilder($build);
 
-                pathBuilder(name, function (path, propOldValue) {
-                    if (isarray) {
-                        // Checking if it already has properties defined
-                        if (!isNull(propOldValue)) {
-                            // Checking if the old value is also an array
-                            if (isArray(propOldValue)) {
-                                eval(nameof({ obj: '' }) + path + "=extend.array(propOldValue, value)");
-                            } else{
-                                eval(nameof({ obj: '' }) + path + "=[ extend.obj(value, propOldValue) ]");
+                if (isEmptyObj(value)) return;
+
+                (function objStructurer(remainPath, lastLayer) {
+                    var splittedPath = remainPath.split('.');
+                    var part = splittedPath[0];
+                    splittedPath.shift();
+
+                    var propertyValue = lastLayer[part];
+
+                    if (isNull(propertyValue))
+                        lastLayer[part] = {};
+
+                    // If it's the last part
+                    if (splittedPath.length === 0) {
+                        if (!isarray) {
+                            // Handle Object
+                            if (isNull(propertyValue))
+                                lastLayer[part] = value;
+                            else
+                                // Build array if the object already exists
+                                lastLayer[part] = extend.array( (isEmptyObj(propertyValue) ? null : propertyValue), value);
+                        } else {
+                            // Handle Array
+                            if ( isObj(propertyValue) && !isEmptyObj(propertyValue)) {
+                                lastLayer[part] = [ extend.obj(propertyValue, value) ];
+                            } else if ( isArray(propertyValue) ) {
+                                propertyValue.push(value);
+                            } else {
+                                lastLayer[part] = [ value ];
                             }
-                        } else
-                            eval(nameof({ obj: '' }) + path + "=[ value ]");
-                    } else{
-                        // Checking if it already has properties
-                        if (propOldValue && !isEmptyObj(propOldValue))
-                            eval(nameof({ obj: '' }) + path + "=extend.obj(propOldValue, value)");
-                        else
-                            eval(nameof({ obj: '' }) + path + "=value");
+                        }
+                        return onset(lastLayer, part, value, $build);
                     }
-                });
+
+                    if (isArray(propertyValue)) {
+                        return forEach(propertyValue, function (item) {
+                            objStructurer(splittedPath.join('.'), item);
+                        });
+                    }
+
+                    objStructurer(splittedPath.join('.'), lastLayer[part]);
+                })(fullPath, obj);
             });
 
             return obj;
-        } 
+        }
         // Helper to add easy css in the DOM
         prototype.css = function (isReplace) {
             var current = doc.node('[e-style="true"]'); 
@@ -1105,34 +1063,30 @@
             var style = doc.createElement("style");
             style.valueIn('e-style', 'true');
 
-            var vals = {
-                dist: 12,
-                opacity: 6,
-                dur: 0.35
-            }
+            var vals = { distance: 12, opacity: 6, duration: 0.35 }
             // Creates to- animation body
             var toAnim = function (n, dir) {
                 return "transform: translate" + dir + "; -webkit-transform: translate" + dir + "; animation:" +
-                    n + " " + vals.dur + "s ease-out forwards; -webkit-animation:" + n + " " + vals.dur + "s ease-out forwards;";
+                    n + " " + vals.duration + "s ease-out forwards; -webkit-animation:" + n + " " + vals.duration + "s ease-out forwards;";
             }
             // Creates from- animation body
             var fromAnim = function (n) {
-                return "animation:" + n + " " + vals.dur + "s ease-out forwards; -webkit-animation: " + n + " " + vals.dur + "s ease-out forwards;";
+                return "animation:" + n + " " + vals.duration + "s ease-out forwards; -webkit-animation: " + n + " " + vals.duration + "s ease-out forwards;";
             }
             // Creates keyframes animation body
             var keyframes = function (n, dir) {
                 return "keyframes " + n + " { to { opacity: 1; transform: translate" + dir + "; } }"
             }
-
+            
             style.textContent = ".hide-it { display: none !important; }" +
                 "inc:not([no-replace]),[inc-src]:not([no-replace]) { display:none!important; }" + 
                 ".to-top, .to-bottom, .to-right, .to-left { opacity: 0; }" +
                 ".from-top, .from-bottom, .from-right, .from-left" +
                 "{ opacity: ."+ vals.opacity +"; transform: translateY(0%); -webkit-transform: translateY(0%); }" +
-                ".to-top {" + toAnim('to-top', 'Y(' + vals.dist + '%)') + " }" +
-                ".to-bottom { " + toAnim('to-bottom', 'Y(-' + vals.dist + '%)') + " }" +
-                ".to-right { " + toAnim('to-right', 'X(-' + vals.dist + '%)') + " }" +
-                ".to-left { " + toAnim('to-right', 'X(' + vals.dist + '%)') + " }" +
+                ".to-top {" + toAnim('to-top', 'Y(' + vals.distance + '%)') + " }" +
+                ".to-bottom { " + toAnim('to-bottom', 'Y(-' + vals.distance + '%)') + " }" +
+                ".to-right { " + toAnim('to-right', 'X(-' + vals.distance + '%)') + " }" +
+                ".to-left { " + toAnim('to-right', 'X(' + vals.distance + '%)') + " }" +
                 ".from-top { " + fromAnim('from-top') + " }" +
                 ".from-bottom { " + fromAnim('from-bottom') + " }" +
                 ".from-right { " + fromAnim('from-right') + " }" +
@@ -1145,14 +1099,14 @@
                 "@-webkit-" + keyframes('to-bottom', 'Y(0%)') +
                 "@-webkit-" + keyframes('to-right', 'Y(0%)') +
                 "@-webkit-" + keyframes('to-left', 'Y(0%)') +
-                "@" + keyframes('from-top', 'Y(' + vals.dist + '%)') +
-                "@" + keyframes('from-bottom', 'Y(-' + vals.dist + '%)') +
-                "@" + keyframes('from-right', 'X(-' + vals.dist + '%)') +
-                "@" + keyframes('from-left', 'X(' + vals.dist + '%)') +
-                "@-webkit-" + keyframes('from-top', 'Y(' + vals.dist + '%)') +
-                "@-webkit-" + keyframes('from-bottom', 'Y(-' + vals.dist + '%)') +
-                "@-webkit-" + keyframes('from-right', 'X(-' + vals.dist + '%)') +
-                "@-webkit-" + keyframes('from-left', 'X(' + vals.dist + '%)') + 
+                "@" + keyframes('from-top', 'Y(' + vals.distance + '%)') +
+                "@" + keyframes('from-bottom', 'Y(-' + vals.distance + '%)') +
+                "@" + keyframes('from-right', 'X(-' + vals.distance + '%)') +
+                "@" + keyframes('from-left', 'X(' + vals.distance + '%)') +
+                "@-webkit-" + keyframes('from-top', 'Y(' + vals.distance + '%)') +
+                "@-webkit-" + keyframes('from-bottom', 'Y(-' + vals.distance + '%)') +
+                "@-webkit-" + keyframes('from-right', 'X(-' + vals.distance + '%)') +
+                "@-webkit-" + keyframes('from-left', 'X(' + vals.distance + '%)') + 
                 "[e-skeleton]{ background-color: "+ skeletonConfig.background +"!important;" +
                 " position: relative!important; overflow: hidden; }" +
                 "[e-skeleton], [e-skeleton] * {  color: transparent!important; }" +
@@ -1186,10 +1140,30 @@
         prototype.setData = function (input, target) {
             if (isNull(input)) return;
             if (isNull(target)) target = $easy.data;
-            var data = new ReactiveObject(input);
-            data.keys(function (key) {
-                $propTransfer(target, data, key);
-            });       
+            var inputReactive = new ReactiveObject(input);
+            input.keys(function (key) {
+                var srcDescriptor = $propDescriptor(inputReactive, key, true);
+                var destDescriptor = $propDescriptor(target, key, true);
+                
+                if ( srcDescriptor.config && destDescriptor.config )
+                {
+                    var dstConfig = destDescriptor.config;
+                    var srcConfig = srcDescriptor.config;
+                    [].push.apply(dstConfig.binds, srcConfig.binds);
+                    [].push.apply(dstConfig.watches, srcConfig.watches);
+
+                    function distinct(value, index, array) {
+                        return array.indexOf(value) === index;
+                    }
+                    
+                    dstConfig.binds = dstConfig.binds.filter(distinct);
+                    dstConfig.watches = dstConfig.watches.filter(distinct);
+                } else {
+                    $propTransfer(target, inputReactive, key);
+                }
+
+                target[key] = inputReactive[key]; // Updates the UI already
+            }); 
             return target;
         }
         /** Exposes data to be retrived anywhere */
@@ -1210,14 +1184,11 @@
                 });
             }
             
-            if (exposed[name] && (isNull(force) || force === false)) {
-                return;
-            }
+            if (exposed[name] && (isNull(force) || force === false))return;
+
             exposed[name] = function() {
                 var $data = data;
-                return function() {
-                    return $data;
-                }
+                return function() { return $data; }
             }
         }
         /** Retrieve the exposed data */
@@ -1225,9 +1196,8 @@
             var fun = exposed[name], $data;
             if (fun) {
                 $data = fun.call(null).call(null);
-                if (!isNull(remove) && remove === true) {
+                if (!isNull(remove) && remove === true)
                     delete exposed[name];
-                }
             }
             return $data;
         }
@@ -1246,36 +1216,23 @@
             });
         }
         prototype.on = function (evt, callback) {
-            switch (evt) {
-                case 'incRequested': includerManager.requested.push(callback); break;
-                case 'incMounted': includerManager.mounted.push(callback); break;
-                case 'incLoaded': includerManager.loaded.push(callback); break;
-                case 'incDestroyed': includerManager.destroyed.push(callback); break;
-                case 'incBlocked': includerManager.blocked.push(callback); break;
-                case 'incFail': includerManager.fail.push(callback); break;
-                default:
-                    var obj = customEvents[evt]; 
-                    if (obj){
-                        obj.push(callback);
-                    } else {
-                        customEvents[evt] = [ callback ];
-                    }
-                    break;
+            if (evt.startsWith('inc')) {
+                var incEventContainer = evt.substr('inc'.length).toLowerCase();
+                includerManager[incEventContainer].push(callback);
+            } else {
+                var obj = customEvents[evt];
+                if (!obj) customEvents[evt] = [ callback ];
+                else obj.push(callback);
             }
             return { event: evt, callback: callback };
         }
         prototype.off = function (evt, callback) {
-            switch (evt) {
-                case 'incRequested': includerManager.requested.push(callback); break;
-                case 'incMounted': includerManager.mounted.remove(callback); break;
-                case 'incLoaded': includerManager.loaded.remove(callback); break;
-                case 'incDestroyed': includerManager.destroyed.remove(callback); break;
-                case 'incBlocked': includerManager.blocked.push(callback); break;
-                case 'incFail': includerManager.fail.remove(callback); break;
-                default:
-                    var obj = customEvents[evt]; 
-                    if (obj) obj.remove(callback);
-                    break;
+            if (evt.startsWith('inc')) {
+                var incEventContainer = evt.substr('inc'.length).toLowerCase();
+                includerManager[incEventContainer].remove(callback);
+            } else {
+                var obj = customEvents[evt]; 
+                if (obj) obj.remove(callback);
             }
             return { event: evt, callback: callback };
         }
@@ -1303,11 +1260,10 @@
                     return $easy.css(true);                
                 } case 'delimiter': {
 
-                    if( isNull(value) || 
-                        !trim(value.name) || 
-                        ( isNull(value.delimiter) || 
-                            !trim(value.delimiter.open) || 
-                            !trim(value.delimiter.close) ) ) {
+                    if( isNull(value) || !trim(value.name) || 
+                      ( isNull(value.delimiter) || 
+                        !trim(value.delimiter.open) || 
+                        !trim(value.delimiter.close) ) ) {
                         return Easy.log('[BadDefinition]: Invalid object, check if the object has this structure and has valid values: ' + 
                                         '\n{ name: \'...\', delimiter: { open: \'...\', close: \'...\' } }');
                     }
@@ -1365,12 +1321,11 @@
             };
         }
         prototype.reactive = function(fun) {
-            // Creates an object with all properties reactive
             if (typeof fun !== 'function') {
                 Easy.log('[BadDefinition]: this.reactive function expects a function as parameter.');
                 return;
             }
-            var obj = {};
+            var obj = {}; // Creates an object with all properties reactive
             getter = function(_, prop) {
                 Object.defineProperty(obj, prop.property, prop.descriptor);
             }
@@ -1402,7 +1357,7 @@
             var cmds = vars.cmds;
 
             if (!$$el) return Easy.log('[BadDefinition]: Invalid element passed in the compiler');
-            setEasy($$el);
+            easyProperty($$el);
 
             function includerHandler($config) {
                 var el = $config.el;
@@ -1454,7 +1409,7 @@
 
             function walker(el, $scope) {
                 var $name = el.nodeName, $value = el.nodeValue;
-                setEasy( el ); // setting easy property in the element
+                easyProperty( el ); // setting easy property in the element
                 // Add the old attributes if the compilation is forced
                 if (config.force === true && el.$e.$oldAttrs) {
                     forEach(el.$e.$oldAttrs, function (attr) {
@@ -1508,7 +1463,7 @@
                         
                         // Checking if it has delimiters
                         if (uiHandler.getDelimiters(el.value).length > 0) 
-                            return Easy.log(error.delimiter);
+                            return Easy.log(error.delimiter($name));
                         
                         if (el.name === cmds.show) {
                             el.$e.$base = base;
@@ -1550,7 +1505,7 @@
                                     type: attr.nodeName
                                 });
 
-                                setEasy(attr).$e.$base = base;
+                                easyProperty(attr).$e.$base = base;
                                 Compiler.addOldAttr({ el: element, value: attr });
                             }
                             var verifyChainCondition = function () {
@@ -1758,10 +1713,8 @@
         
                             function exec() {
                                 var res = functionManager.eval($value, $scope);
-                                if(res)
-                                    base.valueIn(exp[1], 'true');
-                                else
-                                    base.removeAttribute(exp[1]);
+                                if(res) base.valueIn(exp[1], 'true');
+                                else base.removeAttribute(exp[1]);
                             }
         
                             var $getterArg; // [0] -> obj; [1] -> prop
@@ -1832,7 +1785,7 @@
 
                 $attributes = singleAttrCompilation ? [ singleAttrCompilation ] : toArray((el.attributes || []));
                 forEach($attributes, function (child) {
-                    setEasy(child).$e.$base = el;
+                    easyProperty(child).$e.$base = el;
 
                     if (isNull($propDescriptor(child, 'isConnected')))
                         // Connecting the isConnected property to the main element property
@@ -1873,29 +1826,29 @@
                 if(($name === cmds.skeleton) && (trim($value) === ''))
                     el.$e.$base.removeAttribute($name);
 
-                // Url hash normalizer
+                // Url "hash" normalizer
                 if( $name === ':href' || $name === 'i:href' ) {
                     var base = el.$e.$base;
-                    base.valueIn('href', RouteHandler.normalizePath(el.value));
+                    var path = RouteHandler.findPath(el.value || '/');
+                    
+                    base.valueIn('href', RouteHandler.normalizeRoute(el.value || '/'));
+                    if (path && $name === ':href') path.links.push(base);
+
                     base.removeAttribute($name);
                     base.addEventListener('click', function (evt) {
-                        if ( isNull(RouteHandler.handleLink) ) return;
                         evt.preventDefault();
                         if (RouteHandler.navegate)
                             RouteHandler.navegate(base.href);
                         else
                             $global.location.href = base.href;
                     });
-
-                    if ( $name === ':href' )
-                        base.$markable = true;
                 }
 
                 // Getting in the children
                 if (!isNull(el.childNodes)) {
                     toArray(el.childNodes, function (child) {
                         $$scope = $scope;
-                        setEasy(child).$e.$base = el;
+                        easyProperty(child).$e.$base = el;
                         walker.call($easy, child, $scope);
                     });
                 }
@@ -1924,6 +1877,26 @@
             });
         }
         prototype.toElement = toElement;
+        prototype.use = function use(dependencies) {
+            if (!isArray(dependencies))
+                return Easy.log('The method \'app.use\' expects an array having all the dependencies');
+
+            forEach(dependencies, function (dep) {
+                if (isNull(dep)) return;
+                dep.attachedEasyInstance = this;
+                this.dependencies[dep.dependencyId || dep.constructor.name] = dep;
+            }, this);
+        }
+        prototype.call = function call(calls, ignoreIfNull) {
+            if (!isArray(calls))
+                return Easy.log('Invalid value, try an array. Eg.: app.call([ ... ])');
+            return forEach(calls, function (func, index) {
+                if (typeof func !== 'function' && ignoreIfNull !== true)
+                    return Easy.log('The item-'+ index +' at app.call([ ... ]), is not a `function`, ' +
+                                    'try: [ function(easy){ ... } ] or app.call([ ... ], true) to ignore the null items', 'warn');
+                if (func) func.call(this);
+            }, this)
+        }
 
         function checkIncPath(name) {
             var path = includerManager.paths[name];
@@ -1940,7 +1913,7 @@
         function Includer(paths, $config) {
             var includerManager = this;
             if (!paths) paths = {};
-            // Includer events store
+            // Includer events storages
             this.requested = []; 
             this.mounted = []; 
             this.loaded = [];
@@ -1979,13 +1952,19 @@
                         route: undefined, // the route that will be shown [beta] (optional)
                         template: undefined, // the component template [hard code component] (optional)
                         data: undefined, // the default data of the include (optional)
-                        store: true, // allow to store de component transfered data, by default is true
+                        store: true, // allow to store de component transfered data, by default is true (optional)
                     } : value;
                     comps[key].name = key;
                     comps[key].store = isNull(comps[key].store) ? true : comps[key].store;
                     // Transforming data to a reactive one
-                    comps[key].data = comps[key].data ? new ReactiveObject(comps[key].data) : undefined; 
-                                    
+                    comps[key].data = comps[key].data ? new ReactiveObject(comps[key].data) : undefined;
+                    comps[key].links = [];
+
+                    var urlWBase = urlResolve( comps[key].url ).hrefb;
+                    urlWBase += urlWBase.endsWith('.html') ? '' : '.html';
+
+                    comps[key].url = urlWBase;
+
                     if( isNull(comps[key].restrictions) )
                         comps[key].restrictions = [];
 
@@ -1998,7 +1977,7 @@
                     if (options.components.config.preload)
                         this.get({
                             componentKey: key,
-                            path: comps[key].url += !comps[key].url.endsWith('.html') ? '.html' : '',
+                            path: comps[key].url,
                             callback: function (content, options) {
                                 includerManager.components[options.componentKey] = { content: content };
                             }
@@ -2015,8 +1994,7 @@
             }
             /* Get a HTML file from the server, according to a path */
             this.get = function (options) {
-                // fetch function to get the file
-                http(location.origin + $config.base + options.path, {
+                http(options.path, {
                     method: 'get',
                     headers: { 'Content-Type': 'text/plain' }
                 }).then(function (data) {
@@ -2066,9 +2044,9 @@
                     return Easy.log("[BadDefinition]: Invalid element of '" + src + "'. Or, it's undefined.");
                                 
                 forEach(includerManager.requested, function (evt) { evt.call($easy, $inc); });
-                // Get element from Page
+                // Inline inclusion
                 if (src[0] === '@') {
-                    // Normalizing the name, removing @
+                    // Removing @
                     var nameNormalized = src.substr(1),
                         component = includerManager.components[nameNormalized];
 
@@ -2086,7 +2064,7 @@
                     }
 
                     includerManager.transferAttributes($inc, el);
-                    // Reading the added element
+                    // Compiling the added element
                     Compiler.compile({
                         el: el,
                         skipAutoCompile: true,
@@ -2120,7 +2098,7 @@
                     else
                         $url = $path.url;
                 } else {
-                    var message = 'No \''+ src +'\' component was found, please check if it is defined.';
+                    var message = 'No \''+ src +'\' component was found, please check if it\'s defined.';
                     forEach(includerManager.fail, function (evt) { 
                         evt.call($easy, {
                             message: message,
@@ -2129,7 +2107,6 @@
                     });
                     return Easy.log(message);
                 }
-                // Get element from Server
                 var component = includerManager.components[src];
                 // Checking if the component is stored
                 if (component) new Inc({ 
@@ -2140,17 +2117,15 @@
                     store: $path.store,
                     componentConfig: $config
                 });
-                // Otherwise, check if we don't have a web request made to this path
-                // because we don't wan't request again 
+                // Otherwise, check if there is not a web request made to this path 
                 else {
-                    var requestUrlKey = $url += !$url.endsWith('.html') ? '.html' : '';
-                    var hasRequestWaiting = !isNull(includerManager.componentRequests[requestUrlKey]);
-                    includerManager.componentRequests[requestUrlKey] = hasRequestWaiting ? includerManager.componentRequests[requestUrlKey] : []; 
+                    var hasRequestWaiting = !isNull(includerManager.componentRequests[$url]);
+                    includerManager.componentRequests[$url] = hasRequestWaiting ? includerManager.componentRequests[$url] : []; 
 
                     if (hasRequestWaiting == false){
                         // Getting the data 
                         includerManager.get({
-                            path: requestUrlKey,
+                            path: $url,
                             callback: function (content, options) {
                                 forEach(includerManager.componentRequests[options.path], function (componentRequest) {
                                     new Inc({
@@ -2176,7 +2151,7 @@
                         });
                     }
 
-                    includerManager.componentRequests[requestUrlKey].push({
+                    includerManager.componentRequests[$url].push({
                         src: src,
                         $inc: $inc,
                         $path: $path
@@ -2187,10 +2162,10 @@
             this.src = function (el) {
                 return el.valueIn('src') || el.valueIn('inc-src');
             }
+            /** Check if an element is a includer type */
             this.isInc = function (el) {
                 return el.nodeName === 'INC' || (el.hasAttribute && el.hasAttribute('inc-src'))
             }
-            
             // Includer paths
             this.setComponent(paths);
         }
@@ -2205,7 +2180,6 @@
             this.__proto__.NOREACTIVE = true;
             
             // In this case the element was removed from the DOM before de compilation
-            // Removing the exposed data of this component
             if (!config.inc.parentNode) return;
 
             if (!isNull(config.path.data)) {
@@ -2217,14 +2191,14 @@
             }
 
             this.export = function (data) {
-                if (!isObj(data)) 
+                if (!isObj(data))
                     return Easy.log('[BadDefinition]: Invalid object for export, please make sure the object has valid value.');
-                // Transforming to a reactive object
+                // Transforming into a reactive object
                 new ReactiveObject(data);
-                
-                data.keys((function (k) {
-                    $propTransfer(this.data, data, k);
-                    this.data[k] = data[k]; // Updates the UI already
+
+                data.keys((function (key) {
+                    $propTransfer(this.data, data, key);
+                    this.data[key] = data[key]; // Updates the UI already
                 }).bind(this));
             }
 
@@ -2325,10 +2299,7 @@
                     }
                 });
 
-                forEach(styleIds, function (id) {
-                    // Redefining the top object class
-                    el.classList.add(id);
-                });
+                forEach(styleIds, function (id) { el.classList.add(id); });
 
                 // Storing the content
                 if (store && config.path.store === true) {
@@ -2377,18 +2348,15 @@
                         this.data.$scope = this.scope;
                     }
 
-                    // joining and evaluating the script
                     Function(scriptsContent).call(this, $easy);
 
-                    // Before add element
+                    // Before adding the element
                     this.created(el);
                     
                     var destroyable = el;
                     // Adding the element in the DOM
                     if (!config.inc.hasAttribute('no-replace')) {
-                        // Defining the name
                         el.inc = config.src;
-                        // Adding the attributes to the that will be inserted
                         config.inc.parentNode.replaceChild(el, config.inc);
                     } else {
                         config.inc.inc = config.src;
@@ -2446,7 +2414,6 @@
                 return execIncluder.call(this);
             } else {
                 var localScriptsContent = [], webRequestChecker = {}, onlineScriptsUrls = [];
-
                 // Grouping the online scripts and collecting the online url
                 forEach(scripts, function (script) { 
                     if (script.src == '' || script.innerHTML)
@@ -2475,7 +2442,7 @@
                                 return execIncluder.call(incInstance, localScriptsContent.join('\n\n'));
                         },
                         fail: function (error) {
-                            forEach(includerManager.fail, function (evt) { 
+                            forEach(includerManager.fail, function (evt) {
                                 evt.call($easy, { message: error.message, inc: config.inc }); 
                             });
                             throw (error);
@@ -2484,7 +2451,6 @@
                 });
             }
         }
-
         /** Functions and extensions used by easy */
         function Func() {
             this.empty = function () {}
@@ -2517,9 +2483,8 @@
                     if (isNull(json)) json = false;
                     var value = functionManager.eval(exp, $data);
                     if (isNull(value)) return '';
-                    if (json) {
-                        if (isObj(value)) 
-                            value = JSON.stringify(value);
+                    if (json && isObj(value)) {
+                        value = JSON.stringify(value);
                     }
                     return value;
                 }catch(error) {
@@ -2541,19 +2506,18 @@
             }
             /**
              * Define temporary properties in window (globalObject), 
-             *  call the main callback and then restore the old properties.
+             * call the main callback and then restore the old properties.
              */
             this.spreadData = function (callback, $dt) {
                 var keys = [], oldVars = {}, nonConfigurable = {};
                 if (isObj($dt)) keys = $dt.keys();
                 try {
-                    // Defining 
                     forEach(keys, function (key) {
                         if ($global.hasOwnProperty(key)) {
                             if ( $propDescriptor($global, key).configurable === true )
                                 $propTransfer(oldVars, $global, key);
                             else
-                                nonConfigurable[key] = $global[key]; // In case of noo-configurable props
+                                nonConfigurable[key] = $global[key]; // In case of non-configurable props
                         }
 
                         if (nonConfigurable.hasOwnProperty(key))
@@ -2566,12 +2530,12 @@
                     throw (error);
                 } finally {
                     nonConfigurable.keys(function (key, value) {
-                        // Changing the value if they are diferents
+                        // Changing the value if they are differents
                         if ($dt[key] !== $global[key]) $dt[key] = $global[key];
                         // Restoring the non configs props
                         $global[key] = value;
                     });
-                    // Cleaning
+                    
                     forEach(keys, function (key) {
                         if (!nonConfigurable.hasOwnProperty(key)) delete $global[key]; 
                     });
@@ -2623,8 +2587,7 @@
 
                                 // Checking if the element needs to be skipped
                                 if ( node.$prevent ) return;
-                                // Skip if it's a comment
-                                if ( isIgnore(node.nodeName) ) return;
+                                switch (node.nodeName) { case "#comment": case "SCRIPT": case "#text": case "STYLE": return; }
                                 
                                 if (includerManager.isInc(node) || (node.hasAttribute && node.hasAttribute('e-compile')))
                                     callback(node);
@@ -2641,7 +2604,7 @@
                 // Creates a comment with some identifier
                 create: function (id, options) {
                     if (!options) options = {};
-                    var comment = setEasy(doc.createComment('e'));
+                    var comment = easyProperty(doc.createComment('e'));
                     comment.easy = true;
                     comment.$id = id || $easy.code(8);
                     options.keys(function (key, value) { comment[key] = value; });
@@ -2666,7 +2629,6 @@
                     return nodes;
                 }
             }
-            // Objtec for ui commands like: if, for, show...
             this.cmd = {
                 for: function (obj) {
                     var el = obj.el, 
@@ -2678,7 +2640,7 @@
                             attr = functionManager.attr(el, [name]);
                         
                         if (uiHandler.getDelimiters(attr.value).length > 0) {
-                            Easy.log(error.delimiter);
+                            Easy.log(error.delimiter(vars.cmds.for));
                             return undefined;
                         }
 
@@ -2702,7 +2664,7 @@
                         }
 
                         var methods = extractor($scope, 'function');
-                        // Executes the main actions
+                        // Executes the main action
                         function exec($array) {
                             forEach($array, function (item, index) {
                                 var copy = el.cloneNode(true), data = {};
@@ -2726,14 +2688,12 @@
                                     data: itemData,
                                     skipAutoCompile: true
                                 });
-                                // Checking and calling the event if exists
                                 EasyEvent.emit({
                                     elem: copy,
                                     type: vars.events.add,
                                     model: data,
                                     scope: itemData
                                 });
-                                // interting the DOM
                                 comment.parentNode.insertBefore(copy, obj.neighbor || comment);
                             });
                         }
@@ -2763,7 +2723,7 @@
                         Easy.log(error.message);
                         return undefined;
                     }
-                    // This comment will be added to the bind list of the property when it's the fist time
+                    // This comment will be added to the bind list of the property when it's the first time
                     return comment;
                 }
             }
@@ -2874,7 +2834,6 @@
                 if ((name in origin)) {
                     try {
                         if ( !isNull(origin[name]) ) {
-                            // Building the type of the object to set
                             var ctorName = origin[name].__proto__.constructor.name;
                             // In case of Boolean, the constructor does not parse string to boolean
                             // The verification will be manually
@@ -2909,7 +2868,7 @@
 
                 // If is a :href or i:href
                 if (name == ':href' || name == 'i:href')
-                    origin.valueIn('href', RouteHandler.normalizePath(value));
+                    origin.valueIn('href', RouteHandler.normalizeRoute(value));
                 
                 return value;
             }
@@ -2920,7 +2879,7 @@
                     attr = functionManager.attr(elem, [cmds.req], true);
 
                 if (!attr) return;
-                setEasy(elem);
+                easyProperty(elem);
 
                 var $value = trim(attr.value), $request = {};
                 if(!$value) return Easy.log({ message: error.invalid('e-req'), el: elem });
@@ -2939,7 +2898,7 @@
                 }
                 
                 if(isNull($request.$url))
-                    return Easy.log({ message: 'No $url defined in e-req object', el: elem });
+                    return Easy.log({ message: 'The property `$url` is mandatory in e-req attribute.', el: elem });
                 
                 $request.$scope = $scope;
                 // Setting the default type if it is not defined
@@ -2996,7 +2955,7 @@
                     // Storing the data in the request data
                     webDataRequests[$request.$code || 'r' + $easy.code(8)] = $request;
 
-                    // Builing e-for var declaration
+                    // Building e-for var declaration
                     var $use = functionManager.attr(elem, [vars.cmds.use], true) || '';
                     if($use) {
                         Compiler.addOldAttr({ el: elem, value: $use });
@@ -3019,7 +2978,7 @@
                 }
 
                 function prepareOne(data) {
-                    // Builing e-for var declaration
+                    // Building e-for var declaration
                     var $use = functionManager.attr(elem, [vars.cmds.use], true) || '';
                     if($use) {
                         Compiler.addOldAttr({ el: elem, value: $use });
@@ -3088,7 +3047,7 @@
                             });
                         });
                     default:
-                        return Easy.log({ message: 'No url defined in e-req object', el: elem });
+                        return Easy.log({ message: 'Unknown `$type` in e-req', el: elem });
                 }
             }
         }
@@ -3114,7 +3073,7 @@
                 property: property,
                 value: $prop,
                 binds: [],
-                watches: [],
+                watches: []
             }
             // Execute when some primitive changes
             function emitPrimitiveChanges(el, $dt) {
@@ -3157,11 +3116,9 @@
                     if (isObj(newValue)) {
                         if (isArray(newValue)) {
                             var value = forEach(newValue, function (item) {
-                                if (isObj(item))
-                                    return new ReactiveObject(item);
+                                if (isObj(item)) return new ReactiveObject(item);
                                 return item; 
                             });
-
                             propConfig.value.splice(0, propConfig.value.length);
                             propConfig.value.push.apply(propConfig.value, value);
                         } else{
@@ -3201,7 +3158,6 @@
                 }
             });
             propConfig.descriptor = $propDescriptor(object, property);
-            // Setting the default value
             object[property] = propConfig.value;
         }
         /** Helper Class that Makes some array methods reactive on the calls */
@@ -3374,7 +3330,7 @@
                     $propDefiner(this.el.$e.b, 'val',
                         $propDescriptor(this.lastLayer, this.property.property))
                     nodeName = this.el.nodeName;
-                    // Node name resolver
+                    // Node name resolver: if 'key' treat as 'value'
                     var resolver = { 'TEXTAREA': 'INPUT', 'DIV' : 'INPUT' };
                     nodeName = resolver[nodeName] || nodeName; 
                     
@@ -3386,7 +3342,6 @@
                         var bindConfig = config.el.$e.b;
                         var value = config.el[bindConfig.data];
                         if (!isNull(value) && value !== bindConfig.val) {
-                            // Setting the bind config value
                             bindConfig.val = value;
                         }
                     }
@@ -3577,7 +3532,7 @@
             var self = this;
             this.name = 'Easy event';
             this.type = type;
-            this.base =  element;
+            this.base = element;
             this.target = element;
             if (options) options.keys(function (key, value) { self[key] = value; });
         }
@@ -3585,6 +3540,7 @@
         function RouteHandler(config) {
             this.routeView = config.el;
             this.routeView.removeAttribute('route-view');
+            this.manuallyMarkedAsActive = null;
             var inc = config.includer;
             var msg = function(codeName, firstPage, secPage) {
                 return ({ message: 'It is not allowed to define more than one '+ codeName +' page.' + 
@@ -3612,40 +3568,27 @@
                 this.routeView.innerHTML = '';
             }
             var getPath = function(url, rewriteUrl) {
-                var $url = urlResolve(url);
-                var $href = $url.href;
-                var $path = $href.substr($url.origin.length + componentConfig.base.length);
+                var urlResolver = urlResolve(url);
+                var navegateTo = urlResolver.href.replaceAll(urlResolver.anchor.baseURI);
                 var usehash = inc.config.usehash;
                 
-                rewriteUrl.url = (componentConfig.base + $path).replaceAll('//', '/');
+                rewriteUrl.url = urlResolver.href;
                 // Removing the hash if necessary
                 var ruleHome = /(^#$)|(^\/#$)|(^#\/$)|(^\/#\/$)/g;
                 var ruleOtherPage = /(^#)|(^\/#)|(^#\/)|(^\/#\/)/g;
-                if (usehash === true && $path.match(ruleHome))
-                    $path = '/';
-                else if (usehash === true && $path.match(ruleOtherPage) )
-                    $path = $path.replace(ruleOtherPage, '').trim();
-                else
-                    $path = ('/' + $path.trim()).replaceAll('//', '/');
 
-                $path = $path.split('?')[0]; // Clearing the queryStrings
+                if (usehash && urlResolver.hash.match(ruleHome))
+                    navegateTo = '/';
+                else if (usehash && navegateTo.match(ruleOtherPage) )
+                    navegateTo = urlResolver.hash;
+                    
+                navegateTo = (navegateTo[0] === '/' ? navegateTo : '/' + navegateTo).trim();
+                navegateTo = navegateTo.split('?')[0];
                 // If it is an empty path load the default page
-                if ( $path === '' || $path === '/' || $path === '/index.html' )
+                if ( navegateTo === '' || navegateTo === '/' || navegateTo === '/index.html' )
                     return this.defaultPage;
 
-                // Searching for the path
-                for (var key in inc.paths) {
-                    var path = inc.paths[key];
-                    if (!path.route) continue;
-
-                    var $$path = path.route.split('/').map(function(sec) {
-                        return sec[0] === ':' ? '[\\S\\s]{1,}' : sec; 
-                    }).join('/');
-
-                    if( isArray(new RegExp('^'+ $$path +'$', 'gi').exec($path)) )
-                        return path;
-                }
-                return this.notFoundPage;
+                return RouteHandler.findPath(navegateTo) || this.notFoundPage;
             }
             this.navegate = function (url, isPopState) {
                 var rewriteUrl = {}; // Store the url the needs to be wrote
@@ -3667,7 +3610,21 @@
                 if ( path.keepAlive === true )
                     el.valueIn('keep-alive', '');
                 this.routeView.appendChild(el);
-                this.markActive(path.route);
+
+                if (this.manuallyMarkedAsActive){
+                    this.manuallyMarkedAsActive.classList.remove('active-link');
+                    this.manuallyMarkedAsActive = null;
+                }
+
+                forEach((RouteHandler.lastActivePath || {}).links, function (a) {
+                    a.classList.remove('active-link');
+                });
+
+                forEach(path.links, function (a) {
+                    a.classList.add('active-link');
+                });
+
+                RouteHandler.lastActivePath = path;
             }
             this.pushState = function (url, title) {
                 $global.history.pushState({ url: url }, title, url);
@@ -3676,25 +3633,25 @@
                 if ( isNull(number) ) number = -1;
                 $global.history.go(number);
             }
-            // mark 
-            this.markActive = function (routeOrAnchor) {
-                // Marking the active-link
-                RouteHandler.handleLink(); // unmark the current
-                if ( isString(routeOrAnchor) || isNull(routeOrAnchor) ) {
-                    routeOrAnchor = routeOrAnchor || location.href.substr(location.origin.length);
-                    var currentUrl = RouteHandler.normalizePath(routeOrAnchor);
-                    var $anchor = $easy.el.node('a[href="'+currentUrl+'"]');
-                    if($anchor && $anchor.$markable) RouteHandler.handleLink($anchor);
-                } else if (routeOrAnchor instanceof HTMLAnchorElement) {
-                    RouteHandler.handleLink(routeOrAnchor);
-                }
-            }
+            this.markActive = function (anchor) {
+                if (!(anchor instanceof HTMLAnchorElement)) return;
 
+                if (this.manuallyMarkedAsActive)
+                    this.manuallyMarkedAsActive.classList.remove('active-link');
+                
+                forEach((RouteHandler.lastActivePath || {}).links, function (a) {
+                    a.classList.remove('active-link');
+                });
+
+                anchor.classList.add('active-link');
+                this.manuallyMarkedAsActive = anchor;
+            }
             this.go = (function go(route) {
                 if (isNull(route)) return;
                 if (route < 0) return this.popState(route);
                 var incConfig = config.includer.config;
-                return location.href = (incConfig.base + (incConfig.usehash ? '/#/' : '/') + route).replaceAll('//', '/');
+                var urlResolver = urlResolve(route);
+                return location.href = ((incConfig.usehash ? '/#/' : '/') + urlResolver.pathname).replaceAll('//', '/');
             }).bind(this);
 
             $global.addEventListener('popstate', (function (evt) {
@@ -3705,24 +3662,7 @@
             this.navegate(location.href);
             RouteHandler.navegate = this.navegate.bind(this);
         }
-        RouteHandler.handleLink = function (anchor) {
-            var cls = 'active-link', $instance = RouteHandler.instance;
-            if (!$instance) return;
-            if ($instance.activeLink){
-                $instance.activeLink.classList.remove(cls);
-            }
-            if(anchor) {
-                anchor.classList.add(cls);
-                $instance.activeLink = anchor;
-            }
-        }
-        RouteHandler.normalizePath = function($value) {
-            // Add and remove multiples // in the  $value
-            if ( $value.includes('#') ) return $value;
-            var $val = componentConfig.usehash === false ? $value : ('/#/' + $value);
-            return (componentConfig.base + $val).replaceAll('//', '/');
-        }
-
+        
         // Static functions
         /** Bind all the properties that was read */
         Bind.exec = function (elem, object, callback, options) {
@@ -3751,6 +3691,35 @@
                 unget(); // Destroying the stored function
             }
         }
+        /** Finds a path from include elements */
+        RouteHandler.findPath = function (input) {
+            // Searching for the path
+            for (var key in includerManager.paths) {
+                var path = includerManager.paths[key];
+                if (!path.route) continue;
+
+                // rebuilding the route
+                var route = path.route.split('/').map(function(sec) {
+                    return sec[0] === ':' ? '[\\S\\s]{1,}' : sec; 
+                }).join('/');
+
+                if( isArray(new RegExp('^'+ route +'$', 'gi').exec(input)) )
+                    return path;
+            }
+        }
+        /** Normalizes a route according to the baseURI and/or hash */
+        RouteHandler.normalizeRoute = function(input) {
+            var resolver = urlResolve(input);
+            var builtUrl = resolver.anchor.baseURI;
+
+            if (componentConfig.usehash)
+                builtUrl += '#';
+            else
+                resolver.pathname = resolver.pathname.substr(1);
+            
+            builtUrl += resolver.pathname;
+            return builtUrl;
+        }
         /** watch a property from data */
         prototype.watch = Watch.exec = function (prop, callback, object) {
             if (!object) object = $easy.data;
@@ -3764,7 +3733,7 @@
                 callback: callback
             });;
         }
-        // Get listed array html elements from a comment
+        /** Get listed array html elements from a comment */
         ReactiveArray.retrieveElems = function (comment, remove) {
             if (!comment) return [];
             if (isNull(remove)) remove = false;
@@ -3825,17 +3794,14 @@
         }
         Compiler.setDefault = function(config) {
             var attr = config.attr;
-            if (!attr._name) {
+            if (!attr._name)
                 attr._name = attr.nodeName;
-            }
-            if (!attr.$e.$oldValue) {
+            if (!attr.$e.$oldValue)
                 attr.$e.$oldValue = attr.nodeValue;
-            }
         }
         Compiler.addOldAttr = function(config) {
-            setEasy(config.el);
-            var el = config.el,
-                value = config.value;
+            easyProperty(config.el);
+            var el = config.el, value = config.value;
             if (!el.$e.$oldAttrs) {
                 el.$e.$oldAttrs = [ value ];
             } else {
@@ -3845,7 +3811,6 @@
             }
         }
         Compiler.setValue = function(obj) {
-            // Setting the value in the element
             var data = extend.addToObj(obj.scope, obj.methods);
             uiHandler.setNodeValue(obj.current, data);
             // Binding all the fields
@@ -3862,16 +3827,18 @@
             } while(el = el.parentNode)
         }
         try {
-            // Setting the begin data
+            // Setting the initial data
             this.setData(options.data);
             this.data = options.data;
-            // Initializing easy animation css
+            // Initializing easy animations css
             this.css();
 
+            // Registing the  dependencies
+            this.use(options.dependencies);
+
             function $$init(){
-                // Defining the root elem
                 this.el = doc.node($elSelector || '');
-                // Checking if the app element is set
+
                 if (!this.el)
                     return Easy.log('[NotFound]: Element with selector \''+ $elSelector +'\' not found, please check it.');
                 
@@ -3893,7 +3860,7 @@
                         });
                     }
                 });
-                // Initialize routes if needed
+
                 var routeView = this.el.node('[route-view]');
                 if(routeView){
                     $easy.routing = RouteHandler.instance = new RouteHandler({
