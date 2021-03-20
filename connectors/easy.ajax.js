@@ -82,12 +82,9 @@ function EasyConnector(baseUrl, fetchOptions) {
                     if (!result.ok)
                         throw ($easy.return(false, result.statusText, null));
                         
-                        var response = result.response;
+                    var response = result.response;
                         
-                    if ( !response.success )
-                        throw ($easy.return(false, response.errors, null));
-
-                    return resolve($easy.return(true, response.message || 'Success', response.data));
+                    return resolve($easy.return(true, 'Ok', response));
                 }).catch(function (error) {
                     return reject(error);
                 });
