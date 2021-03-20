@@ -83,7 +83,10 @@ function EasyConnector(baseUrl, fetchOptions) {
                         throw ($easy.return(false, result.statusText, null));
                         
                     var response = result.response;
-                        
+                    // Always return the actually data, if the response come into an object like:
+                    // { data: {...}, errors: [...], success: boolean }
+                    // Access the data and passe in 3th parameter of $easy.return(true, 'Ok', -> response.data <- ) 
+                    
                     return resolve($easy.return(true, 'Ok', response));
                 }).catch(function (error) {
                     return reject(error);
