@@ -29,17 +29,18 @@
                 </div>
             </li>
             <li> <a on:click="showModal">Download</a> </li>
-            <li> <a target="_blank" href="https://github.com/AfonsoMatElias/easy" title="Github Page" class="fa fa-github"></a> </li>
-            <li> <a target="_blank" href="https://www.facebook.com/easyjs" title="Facebook Page" class="fa fa-facebook"></a> </li>
-            <li on:click="darkMode = !darkMode"> <span title="Switch Dark/Light Mode" class="fa {{ themeIco }}"></span> </li>
+            <li> <a target="_blank" href="https://github.com/AfonsoMatElias/easy" title="Github Page"
+                    class="fa fa-github"></a> </li>
+            <li> <a target="_blank" href="https://www.facebook.com/easyjs" title="Facebook Page"
+                    class="fa fa-facebook"></a> </li>
+            <li on:click="darkMode = !darkMode"> <span title="Switch Dark/Light Mode" class="fa {{ themeIco }}"></span>
+            </li>
         </ul>
     </div>
 </nav>
 <script>
     this.loaded = function (el) {
-        if (this.Easy.routing && location.hash != '') {
-            this.Easy.routing.markActive();
-        } else {
+        if (location.hash === '') {
             var anchors = el.nodes('a');
             for (var i = 0; i < anchors.length; i++) {
                 var e = anchors[i];

@@ -56,6 +56,9 @@
         // The function that will be call when the Easy compile the code
         loaded: function (el) { ... },
 
+        // The dependencies of this instance (Since v2.3.0+)
+        dependencies: [ ... ],
+
         // The components that the instance will inject in your app
         components: { ... }
     });</textarea>
@@ -197,6 +200,13 @@
             an argument.
         </p>
     </div>
+
+    <h3> <a id="prop_dependencies">Dependencies (<small class="mark-el">Since v2.3.0+</small>) </a> </h3>
+    <p>
+        This property allow to add dependencies in the current instance... All the dependencies can be accessed at
+        <span class="note">app.dependencies</span> object, which are defined according to object constructor name or the
+        dependencyId property.
+    </p>
 
     <div class="block-note info">
         <p>

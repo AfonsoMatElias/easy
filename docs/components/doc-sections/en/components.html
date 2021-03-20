@@ -129,7 +129,7 @@
                 keepData: Boolean,
                 preload: Boolean,
                 /* This is for Routing Section */
-                base: String,
+                base: String, `Deprecated since v2.3.0`
                 usehash: Boolean,
             },
             elements: {
@@ -170,8 +170,7 @@
             (From the server) or the <span class="mark-el">Options Object</span>.</li>
 
         <li> <span class="note mark-el">nameId.url</span> &ndash; represents the component path.
-            It uses the <span class="note mark-el">config.base</span> to request the file from
-            the server. <span class="note">The extension .html is optional</span>. </li>
+            <span class="note">The extension .html is optional</span>. </li>
 
         <li> <span class="note mark-el">nameId.template</span> &ndash; represents raw html code for
             template. <span class="note att-border"> Do not use together with <i class="mark-el">nameId.url</i>. </span>

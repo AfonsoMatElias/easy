@@ -448,6 +448,106 @@
     document.body.appendChild(element);</textarea>
     </div>
 
+    <h3><a id="method_use">use (<small class="mark-el">Since v2.3.0+</small>)</a></h3>
+    <p>
+        It's used to add dependencies to the instance.
+    </p>
+    <p>
+        It expects one parameter: <span class="note mark-el">instance.use(dependencies)</span>.
+    </p>
+    <ul>
+        <li> <span class="note mark-el">{ Array } dependencies</span> &ndash; an array of dependencies object. </li>
+    </ul>
+
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    new Easy('#my-app', {
+        mounted: function(){
+            this.use([
+                new EasyConnector('https://localhost:5000/api/')
+            ]);
+        }
+    });</textarea>
+    </div>
+
+    <h3><a id="method_call">call (<small class="mark-el">Since v2.3.0+</small>)</a></h3>
+    <p>
+        Imagine we have multiple <span class="note">.js</span> files and we want to run all of them with the main
+        application instance... Normally, to archieve that, we should expose the instance variable, like this:
+    </p>
+
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <div id="app">
+        ...
+    </div>
+
+    <script src="assets/js/easy.js"></script>
+
+    <!-- Main Instance Script -->
+    <script>
+        var app = new Easy('#app', {
+            data: {
+                appName: 'Easy App'
+            }
+        });
+    </script>
+
+    <!-- Auxiliary Script -->
+    <script>
+        app.data.appName = 'Cool Easy App';
+    </script></textarea>
+    </div>
+
+    <p>
+        Fortunately we have <span class="note mark-el">instance.call</span>, this method runs a function attaching the
+        current instance as it context.
+    </p>
+
+    <p>
+        It expects two parameters: <span class="note mark-el">instance.call(calls, ignoreIfNull)</span>.
+    </p>
+    <ul>
+        <li> <span class="note mark-el">{ Array } calls</span> &ndash; an array of functions that will be called. </li>
+        <li> <span class="note mark-el">{ Bollean } ignoreIfNull</span> &ndash; allows to ignore an item if it's null,
+            otherwise, it throws a warning message. By default the value is <span class="mark-el">false</span>. </li>
+    </ul>
+
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <div id="app">
+        ...
+    </div>
+
+    <script src="assets/js/easy.js"></script>
+
+    <!-- Main Instance Script -->
+    <script>
+        new Easy('#app', {
+            data: {
+                appName: 'Easy App'
+            },
+            loaded: function () {
+                // Note: Use `window`.myFun to be able to get `undefiened`
+                // Or, verify the type of it: typeof myFun === 'undefiened' ? null : myFun
+                // Otherwise, the js compiler will be thrown an error when the function is `undefiened`
+
+                this.call([
+                    doAppEditing
+                ], true);
+            }
+        });
+    </script>
+
+    <!-- Auxiliary Script -->
+    <script>
+        function doAppEditing() {
+            var app = this;
+
+            app.data.appName = 'Cool Easy App';
+        }
+    </script></textarea>
+    </div>
 </section>
 <script>
     this.mounted = function (el) {

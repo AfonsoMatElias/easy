@@ -13,19 +13,33 @@
     </ul>
 
     <!-- Importing easy.ajax.js; data-source: https://jsonplaceholder.typicode.com/ -->
-    <script src="https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.2.0/connectors/easy.ajax.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.3.0/connectors/easy.ajax.js"></script>
 </div>
 
 <script>
-    new Easy('#app');
+    new Easy('#app', {
+        dependencies: [
+            new EasyConnector('https://jsonplaceholder.typicode.com/', {
+                type: 'json',
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                }
+            })
+        ]
+    });
 </script>
 
 <style>
-    ul { list-style: none; }
+    ul {
+        list-style: none;
+    }
+
     ul li {
         display: flex;
         margin: 6px 0;
     }
+
     ul li .avatar {
         /* Center de Content */
         display: flex;
@@ -34,6 +48,7 @@
         /* End Center de Content */
         width: 80px;
     }
+
     ul li .avatar span {
         width: 60px;
         height: 60px;
@@ -43,11 +58,18 @@
         border-radius: 50%;
         background-color: #dfdfdf;
     }
+
     ul li .info {
         flex: 1;
         display: flex;
         flex-direction: column;
     }
-    ul li .info .row { flex: 1; }
-    ul li .info .row span { margin: auto 0; }
+
+    ul li .info .row {
+        flex: 1;
+    }
+
+    ul li .info .row span {
+        margin: auto 0;
+    }
 </style>

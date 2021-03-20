@@ -25,7 +25,12 @@
 
     <ul>
         <li> <span class="note mark-el">create(<i class="mark-el">path</i>, <i class="mark-el">object</i>)</span> </li>
-        <li> <span class="note mark-el">read(<i class="mark-el">path</i>, <i class="mark-el">extra</i>)</span> </li>
+        <li>
+            <span class="note mark-el">read(<i class="mark-el">path</i>, <i class="mark-el">extra</i>)</span> Or,
+            <span class="note mark-el">get(<i class="mark-el">path</i>, <i class="mark-el">extra</i>)</span>
+            &dash; [<small class="mark-el">Since v2.3.0+</small>]
+        </li>
+
         <li> <span class="note mark-el">update(<i class="mark-el">path</i>, <i class="mark-el">object</i>, <i
                     class="mark-el">id</i>)</span> </li>
         <li> <span class="note mark-el">delete(<i class="mark-el">path</i>, <i class="mark-el">id</i>)</span> </li>
@@ -48,7 +53,8 @@
         <li> <i class="mark-el">path</i> &ndash; the path the where the object need to be inserted. </li>
         <li> <i class="mark-el">object</i> &ndash; the object is a <i class="note mark-el">Object Literal</i> or a
             <i class="note mark-el">Form Element</i>, represents the object that will be inserted. When passed a
-            Form Element it an object will the generated from the element. </li>
+            Form Element it an object will the generated from the element.
+        </li>
         <li> <i class="mark-el">return</i> &ndash; a promise according to data configured in the connector instance.
         </li>
     </ul>
@@ -67,8 +73,9 @@
     </div>
 
     <p>
-        <span class="note mark-el">read</span> &ndash; performs the <i class="mark-el">list</i> method in the connector
-        instance returning a promise. It expects two parameters:
+        <span class="note mark-el">read</span> Or, <span class="note mark-el">get</span> [<small class="mark-el">Since
+            v2.3.0+</small>] &ndash; performs the <i class="mark-el">list</i> method in the connector instance returning
+        a promise. It expects two parameters:
     </p>
     <ul>
         <li> <i class="mark-el">path</i> &ndash; the path the where the objects need to be read. </li>
@@ -101,7 +108,8 @@
         <li> <i class="mark-el">path</i> &ndash; the path the where the object need to be updated. </li>
         <li> <i class="mark-el">object</i> &ndash; the object is a <i class="note mark-el">Object Literal</i> or a
             <i class="note mark-el">Form Element</i>, represents the object that will be updated to. When passed a
-            Form Element it an object will the generated from the element. </li>
+            Form Element it an object will the generated from the element.
+        </li>
         <li> <i class="mark-el">return</i> &ndash; a promise according to data configured in the connector instance.
         </li>
     </ul>
@@ -334,10 +342,12 @@
         <li> <i class="mark-el">$url</i> &ndash; the url or path of the request.</li>
         <li> <i class="mark-el">$type</i> &ndash; the type of the request that can be
             <i class="note mark-el">many</i> or <i class="note mark-el">one</i>. If not defined `many` will be setted to
-            to this property. </li>
+            to this property.
+        </li>
         <li> <i class="mark-el">$id</i> &ndash; the <i class="mark-el">id</i> value in case of
             <i class="note mark-el">getOne</i> or <i class="mark-el">extra</i> in case
-            of <i class="note mark-el">read</i>.</li>
+            of <i class="note mark-el">read</i>.
+        </li>
     </ul>
 
     <div e-ignore class="code-container" code-ext=".html">
@@ -365,7 +375,7 @@
     
     <script> 
         var app = new Easy('#app');
-        app.request('all-users', function(req){
+        app.request('all-users', function (req) {
             console.log(req);
         });
     </script></textarea>
@@ -420,7 +430,8 @@
             part of it. eg.: <i class="note mark-el">http://localhost:3000/api/</i> </li>
         <li> <i class="mark-el">fetchOptions</i> &ndash; the object having the all the options that a request needs,
             like
-            <i class="note mark-el">type</i>, <i class="note mark-el">headers</i>, etc. </li>
+            <i class="note mark-el">type</i>, <i class="note mark-el">headers</i>, etc.
+        </li>
     </ul>
 
     <div e-ignore class="code-container" code-ext=".js">

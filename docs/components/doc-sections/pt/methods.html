@@ -425,6 +425,110 @@
 
     document.body.appendChild(element);</textarea>
     </div>
+
+    <h3><a id="method_use">use (<small class="mark-el">Since v2.3.0+</small>)</a></h3>
+    <p>
+        É usado para adicionar dependencias na instância.
+    </p>
+    <p>
+        O método espera um parâmetro: <span class="note mark-el">instance.use(dependencies)</span>.
+    </p>
+    <ul>
+        <li> <span class="note mark-el">{ Array } dependencies</span> &ndash; um array de objectos das dependências.
+        </li>
+    </ul>
+
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    new Easy('#my-app', {
+        mounted: function(){
+            this.use([
+                new EasyConnector('https://localhost:5000/api/')
+            ]);
+        }
+    });</textarea>
+    </div>
+
+    <h3><a id="method_call">call (<small class="mark-el">Since v2.3.0+</small>)</a></h3>
+    <p>
+        Imagine que temos múltiplos ficheiros <span class="note">.js</span> e queremos executar todos eles com a
+        instância da aplicação... Normalmente, para alcançar isso teriamos que expôr a variavel da instância, deste
+        jeito:
+    </p>
+
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <div id="app">
+        ...
+    </div>
+
+    <script src="assets/js/easy.js"></script>
+
+    <!-- Script da Instância Principal -->
+    <script>
+        var app = new Easy('#app', {
+            data: {
+                appName: 'Aplicação do Easy'
+            }
+        });
+    </script>
+
+    <!-- Script Auxiliar -->
+    <script>
+        app.data.appName = 'Aplicação Fixe do Easy';
+    </script></textarea>
+    </div>
+
+    <p>
+        Felizmente temos o <span class="note mark-el">instance.call</span>, este metodo executa uma função atrelando a
+        instância actual como contexto.
+    </p>
+
+    <p>
+        O método espera dois parâmetros: <span class="note mark-el">instance.call(calls, ignoreIfNull)</span>.
+    </p>
+    <ul>
+        <li> <span class="note mark-el">{ Array } calls</span> &ndash; uma array das funções the serão executadas. </li>
+        <li> <span class="note mark-el">{ Bollean } ignoreIfNull</span> &ndash; permite ignorar um item se estiver nulo,
+            senão, uma mensagem de aviso é lançada. Por padrão é tem como o valor <span class="mark-el">false</span>.
+        </li>
+    </ul>
+
+    <div e-ignore class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <div id="app">
+        ...
+    </div>
+
+    <script src="assets/js/easy.js"></script>
+
+    <!-- Main Instance Script -->
+    <script>
+        new Easy('#app', {
+            data: {
+                appName: 'Aplicação do Easy'
+            },
+            loaded: function () {
+                // Nota: Usa `window`.myFun para ser capaz de ter `undefiened`
+                // Or, verifique o seu tipo: typeof myFun === 'undefiened' ? null : myFun
+                // Senão, o compilador js irá lançar um erro quando a função for `undefiened`
+
+                this.call([
+                    modificarAplicacao
+                ], true);
+            }
+        });
+    </script>
+
+    <!-- Auxiliary Script -->
+    <script>
+        function modificarAplicacao() {
+            var app = this;
+
+            app.data.appName = 'Aplicação Fixe do Easy';
+        }
+    </script></textarea>
+    </div>
 </section>
 <script>
     this.mounted = function (el) {

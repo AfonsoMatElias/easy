@@ -22,7 +22,7 @@
     {
         components: {
             config: {
-                base: String,
+                base: String, `Deprecated since v2.3.0`
                 usehash: Boolean,
             },
             elements: {
@@ -40,11 +40,6 @@
     </div>
 
     <ul>
-        <li> <span class="note mark-el">config.base</span> &ndash; used to define the base URI of the project.
-            e.g.: www.domain.com<span class="mark-el">/my-project/</span>index.html. The default value is
-            <span class="note mark-el">/</span>, meaning that the project is at the root folder.
-        </li>
-
         <li> <span class="note mark-el">config.usehash</span> &ndash; used to allow page navegation
             based on hash. The default value is <span class="note mark-el">true</span>.
         </li>
@@ -131,9 +126,9 @@
     </p>
 
     <p>
-        Both <i class="note mark-el">:href</i> and <i class="note mark-el">i:href</i> when defined create the
-        href attribute combining it with <i class="note mark-el">config.base</i>, whenever it is clicked,
-        the default anchor action is prevented.
+        Both <i class="note mark-el">:href</i> and <i class="note mark-el">i:href</i> when defined rewrites the
+        href attribute according to the app base path, and whenever it is clicked, the default anchor action is
+        prevented.
     </p>
 
     <p>
@@ -144,13 +139,15 @@
 
     <div e-ignore class="code-container" code-ext=".html">
         <textarea cm-lang="text/html">
-    <!-- config.base='/my-project/' -->
+    &lt;head&gt;
+        <base href="/my-project/" >
+    &lt;/head&gt;
 
     <!-- Defined (Not Compiled) -->
     <a :href="/home"> Home </a>
     
     <!-- Compiled -->
-    <a href="/my-project/home"> Home </a></textarea>
+    <a href="https://host.com/my-project/home"> Home </a></textarea>
     </div>
 
     <h3> <a id="routing_nesting"> Nesting Routes </a> </h3>
@@ -226,11 +223,11 @@
         <li> Disable the <i class="note mark-el">config.usehash</i> &ndash; setting to <i class="mark-el">false</i> it
             make that no hash will be added the navegation anchors. </li>
 
-        <li> Add the <i class="note mark-el">base</i> tag in the page head &ndash; the base need to be added with the
-            same value as component <i class="note">config.base</i>. That specify the base URL to use for all relative
-            URLs in a document.
+        <li> Add the <i class="note mark-el">base</i> tag in the page head &ndash; that specify the base URL to use for
+            all relative URLs in a document.
             <a class="mark-el" href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base" target="_blank"
-                rel="noopener noreferrer">Click me for more base tag info</a>. </li>
+                rel="noopener noreferrer">Click me for more base tag info</a>.
+        </li>
 
         <li> Configure the server to return <i class="note mark-el">index.html</i> if the URL doesn't match any static
             assets &ndash; as the application only runs in one page `the index` we need only to tell the server to
@@ -250,8 +247,7 @@
     var routeApp = new Easy('#routeApp', {
         components: {
             config: {
-                usehash: false,
-                base: '/'
+                usehash: false
             },
             elements: {
                 ...

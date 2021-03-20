@@ -1,16 +1,17 @@
 document.addEventListener('DOMContentLoaded', function () {
     // The language that needs to loaded
-    var lang, 
+    var lang,
         // Website avaliable languages
-        languages = [{
-            id: 'en',
-            name: 'English'
-        },
-        {
-            id: 'pt',
-            name: 'Português'
-        }
-    ];
+        languages = [
+            {
+                id: 'en',
+                name: 'English'
+            },
+            {
+                id: 'pt',
+                name: 'Português'
+            }
+        ];
 
     // If some language isn't selected
     if (!localStorage._lang) {
@@ -42,13 +43,13 @@ document.addEventListener('DOMContentLoaded', function () {
             translations: languages,
             app: {
                 name: 'Easy',
-                version: 'v2.2.0',
-                cdn: 'https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.2.0/easy.js',
-                url: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.2.0/easy.js',
+                version: 'v2.3.0',
+                cdn: 'https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.3.0/easy.js',
+                url: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.3.0/easy.js',
                 connectors: {
-                    ajax: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.2.0/easy.ajax.js',
-                    ajaxCdn: 'https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.2.0/connectors/easy.ajax.js',
-                    free: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.2.0/easy.free.js'
+                    ajax: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.3.0/easy.ajax.js',
+                    ajaxCdn: 'https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.3.0/connectors/easy.ajax.js',
+                    free: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.3.0/easy.free.js'
                 }
             }
         },
@@ -91,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if ($easy.data.pageLoading == true && pagesLoading === 0)
                     $easy.data.pageLoading = false;
             }
-            
+
             this.on('incRequested', function () {
                 pagesLoading++;
                 if (this.data.pageLoading === false)
@@ -139,9 +140,6 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         components: {
             config: {
-                // '/docs/' -> Use this when local
-                // '/easy/' -> Use to push on github
-                base: '/easy/',
                 preload: true
             },
             elements: {
@@ -169,7 +167,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 'download-connectors': '/components/doc-sections/' + lang + '/download-connectors',
 
                 // Documentation components
-                'side-menu': '/components/doc-sections/' + lang + '/side-menu',
                 'introduction': '/components/doc-sections/' + lang + '/introduction',
                 'installation': '/components/doc-sections/' + lang + '/installation',
                 'instance': '/components/doc-sections/' + lang + '/instance',

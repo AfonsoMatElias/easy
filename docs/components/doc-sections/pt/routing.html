@@ -22,7 +22,7 @@
     {
         components: {
             config: {
-                base: String,
+                base: String, `Descontinuado desde v2.3.0`
                 usehash: Boolean,
             },
             elements: {
@@ -40,11 +40,6 @@
     </div>
 
     <ul>
-        <li> <span class="note mark-el">config.base</span> &ndash; usado para definidar a URI base do projecto.
-            exemplo: www.dominio.com<span class="mark-el">/meu-projecto/</span>index.html. O valor padrão é <span
-                class="note mark-el">/</span>, significando que é a pasta raiz do projecto.
-        </li>
-
         <li> <span class="note mark-el">config.usehash</span> &ndash; usado para permitir a navegação baseado em hash
             (#). O valor padrão é <span class="note mark-el">true</span>.
         </li>
@@ -134,8 +129,8 @@
     </p>
 
     <p>
-        Ambos <i class="note mark-el">:href</i> e <i class="note mark-el">i:href</i> quando definidos criam o atributo
-        `href` combinando com <i class="note mark-el">config.base</i>, e sempre que é clicado, a ação padrão da âncora é
+        Ambos <i class="note mark-el">:href</i> e <i class="note mark-el">i:href</i> quando definidos reescrevem o
+        atributo `href` de acordo com o caminho base da aplicação, e sempre que for clicado, a ação padrão da âncora é
         previnida.
     </p>
 
@@ -147,13 +142,15 @@
 
     <div e-ignore class="code-container" code-ext=".html">
         <textarea cm-lang="text/html">
-    <!-- config.base='/meu-projecto/' -->
+    &lt;head&gt;
+        <base href="/meu-projecto/" >
+    &lt;/head&gt;
 
     <!-- Definido (Não Compilado) -->
     <a :href="/home"> Home </a>
     
     <!-- Compilado -->
-    <a href="/meu-projecto/home"> Home </a></textarea>
+    <a href="https://host.com/meu-projecto/home"> Home </a></textarea>
     </div>
 
     <h3> <a id="routing_nesting"> Aninhando Rotas (Nesting Routes) </a> </h3>
@@ -231,15 +228,16 @@
         <li> Desative o <i class="note mark-el">config.usehash</i> &ndash; configurando para <i
                 class="mark-el">false</i> isto fará com que o hash não seja adicionado nas âncoras de navegação. </li>
 
-        <li> Adicione a tag <i class="note mark-el">base</i> no head da sua página &ndash; a base precisa ser adicionada
-            com o mesmo valor que <i class="note">config.base</i> da configuração de componentes. Que vai especificar a
+        <li> Adicione a tag <i class="note mark-el">base</i> no head da sua página &ndash; que vai especificar a
             URL base para usar em todas as URLs relativas no documento (DOM).
             <a class="mark-el" href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base" target="_blank"
-                rel="noopener noreferrer">Clique em mim para saber mais sobre a tag base</a>. </li>
+                rel="noopener noreferrer">Clique em mim para saber mais sobre a tag base</a>.
+        </li>
 
         <li> Configure o retorno no servidor para ser <i class="note mark-el">index.html</i> se a URL não coincide com
             algum ficheiro estático &ndash; já que a aplicação corre em uma só página o `index`, precisamos dizer ao
-            servidor para retornar este ficheiro, permitindo que o <i class="note mark-el">easy.js</i> lide com a navegação
+            servidor para retornar este ficheiro, permitindo que o <i class="note mark-el">easy.js</i> lide com a
+            navegação
             no front-end.
         </li>
     </ol>
@@ -256,8 +254,7 @@
     var routeApp = new Easy('#routeApp', {
         components: {
             config: {
-                usehash: false,
-                base: '/'
+                usehash: false
             },
             elements: {
                 ...

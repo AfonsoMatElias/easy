@@ -16,7 +16,7 @@
     var app = new Easy(element, options);</textarea>
     </div>
 
-    <h3> <a id="inst_el"> Element </a> </h3>
+    <h3> <a id="inst_el"> Elemento (Element) </a> </h3>
     <p>
         O elemento é o parâmetro obrigatório que representa a seção que a instância controlará na aplicação, deve ser
         passado como String no formato de Seletor CSS. <span class="note">#meuId</span>, <span
@@ -53,6 +53,9 @@
 
         // A função que será chamada quando compilar todo o código
         loaded: function (el) { ... },
+
+        // As dependencias da instância (Desde v2.3.0+)
+        dependencies: [ ... ],
 
         // Os componentes que a instância vai injectar na sua aplicação
         components: { ... }
@@ -194,6 +197,13 @@
             O contexto destes hooks é instância e o elemento principal é passado como um argumento.
         </p>
     </div>
+
+    <h3> <a id="prop_dependencies"> Dependências (<small class="mark-el">Desde v2.3.0+</small>) </a> </h3>
+    <p>
+        Esta propriedade permite adicionar dependências na instância atual ... Todas as dependências podem ser acessadas
+        no objeto <span class="note">app.dependencies</span>, que são definidas de acordo com o nome do construtor do
+        objeto ou a propriedade dependencyId.
+    </p>
 
     <div class="block-note info">
         <p>

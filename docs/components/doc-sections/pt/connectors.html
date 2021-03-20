@@ -26,7 +26,11 @@
 
     <ul>
         <li> <span class="note mark-el">create(<i class="mark-el">path</i>, <i class="mark-el">object</i>)</span> </li>
-        <li> <span class="note mark-el">read(<i class="mark-el">path</i>, <i class="mark-el">extra</i>)</span> </li>
+        <li>
+            <span class="note mark-el">read(<i class="mark-el">path</i>, <i class="mark-el">extra</i>)</span> Ou,
+            <span class="note mark-el">get(<i class="mark-el">path</i>, <i class="mark-el">extra</i>)</span>
+            &dash; [<small class="mark-el">Desde v2.3.0+</small>]
+        </li>
         <li> <span class="note mark-el">update(<i class="mark-el">path</i>, <i class="mark-el">object</i>, <i
                     class="mark-el">id</i>)</span> </li>
         <li> <span class="note mark-el">delete(<i class="mark-el">path</i>, <i class="mark-el">id</i>)</span> </li>
@@ -69,7 +73,8 @@
     </div>
 
     <p>
-        <span class="note mark-el">read</span> &ndash; executa o método <i class="mark-el">list</i> na instância do
+        <span class="note mark-el">read</span> Ou, <span class="note mark-el">get</span> [<small class="mark-el">Desde
+            v2.3.0+</small>] &ndash; executa o método <i class="mark-el">list</i> na instância do
         conector retornando uma promise. Espera dois parâmetros:
     </p>
     <ul>

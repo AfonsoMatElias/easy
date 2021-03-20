@@ -312,7 +312,7 @@
 
             function createTemplate(content) {
                 return '<html lang="en"><head><meta charset="UTF-8"><title>Live Editor page<\/title>' +
-                           '<script src="' + $easy.options.components.config.base + 'assets/js/easy.js"><\/script>' +
+                           '<script src="' + document.baseURI + 'assets/js/easy.js"><\/script>' +
                            '<style> * { margin: 0; font-family: Arial, Helvetica, sans-serif; } body { padding: 20px 4px; }' +
                            'input, button { border: 1px solid lightgray; border-radius: 3px; } button { padding: 3px 10px; } </style>' +
                            '<\/head><body>' + (content || '') + '<\/body>' +

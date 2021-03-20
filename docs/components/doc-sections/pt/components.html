@@ -126,7 +126,7 @@
                 keepData: Boolean,
                 preload: Boolean,
                 /* Isto é para a secção de Roteamento (Routing) */
-                base: String,
+                base: String, `Descontinuado desde v2.3.0`
                 usehash: Boolean,
             },
             elements: {
@@ -165,8 +165,7 @@
             que na esquerda vai o <i class="note mark-el">nameId</i>, e na direita vai <span class="mark-el">String
                 componentPath</span> ou o <span class="mark-el">optionsObject</span>.</li>
 
-        <li> <span class="note mark-el">nameId.url</span> &ndash; representa do caminho do component.
-            Isto usa o <span class="note mark-el">config.base</span> para requisitar o ficheiro do servidor. <span
+        <li> <span class="note mark-el">nameId.url</span> &ndash; representa do caminho do component. <span
                 class="note">A extensão .html é opcional</span>. </li>
 
         <li> <span class="note mark-el">nameId.template</span> &ndash; representa o código html bruto para o modelo.

@@ -1,17 +1,3 @@
-function $tabs(n) {
-    var tab = '\u00a0\u00a0',
-        str = tab;
-    for (let i = 1; i <= n || 0; i++)
-        str += tab;
-    return str;
-}
-
-function codeToStr(c) {
-    var t = (c + '');
-    t = t.substr('function(){'.length);
-    return t.substr(0, t.length - 1);
-}
-
 function createNotCompilableElement(content) {
     var el = document.createElement('div');
     el.innerHTML = content;
@@ -180,7 +166,7 @@ function loadFile(path, callback) {
     if (!this instanceof Easy)
         return console.error('The function context is not Easy');
 
-    this.http(location.origin + this.options.components.config.base + path, {
+    this.http(document.baseURI + path, {
         method: 'get',
         headers: {
             'Content-Type': 'text/html'
