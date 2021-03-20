@@ -3,7 +3,7 @@
  * Released under the MIT License.
  * (c) 2019 @author Afonso Matumona
  */
-(function(global, factory){
+ (function(global, factory){
     (typeof exports === 'object' && typeof module !== 'undefined') ? module.exports = factory() :
     (typeof define === 'function' && define.amd) ? define(factory) : (global.Easy = factory());
 }(window, (function(){ 'use strict';
@@ -90,8 +90,7 @@
         delimiter: function (v) {return "The command '"+ v +"' cannot contain a delimiter in " +
              "expression value... The value is compiled without a delimiter." },
         conn: function () {
-            return "It seems that there is not any easy connector available. " +
-                "Please make sure easy.[ajax|free|something].js is imported.";
+            return "No dependency with Id 'Connector' was found... Add the dependency to be able to use this method";
         },
         invalid: function (v) { return "Invalid value" + (v ? ' ' + v : '') + "." },
         elem: function (v) { return "The selector or object passed for '" + v + "' is invalid, please check it." }

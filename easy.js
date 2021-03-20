@@ -90,8 +90,7 @@
         delimiter: function (v) {return "The command '"+ v +"' cannot contain a delimiter in " +
              "expression value... The value is compiled without a delimiter." },
         conn: function () {
-            return "It seems that there is not any easy connector available. " +
-                "Please make sure easy.[ajax|free|something].js is imported.";
+            return "No dependency with Id 'Connector' was found... Add the dependency to be able to use this method";
         },
         invalid: function (v) { return "Invalid value" + (v ? ' ' + v : '') + "." },
         elem: function (v) { return "The selector or object passed for '" + v + "' is invalid, please check it." }
