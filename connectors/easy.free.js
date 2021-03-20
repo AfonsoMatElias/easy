@@ -1,6 +1,6 @@
 ﻿/**
  * @author Afonso Matumona Elias
- * @version v2.0.0
+ * @version v2.1.0
  * Released under the MIT License.
  * This is easy.js free connector..
  * The developer can create his own connector based on this one.
@@ -10,8 +10,12 @@ new EasyConnector();
 
 /** Easy Connector */
 function EasyConnector() {
-    this.name = "Easy Connector";
-    this.version = '2.0.0';
+    // The unique Id to retrive the dependency object with: app.dependencies['dependencyId']
+    this.dependencyId = "Connector";
+    this.name = "Easy Free Connector";
+    this.version = '2.1.0';
+    this.attachedEasyInstance = null;
+
     // Checking EasyJs definition
     if (typeof Easy === undefined) return;
     var $easy = Easy.prototype;
@@ -27,7 +31,7 @@ function EasyConnector() {
     // Return: { status: (...), msg: (...), result: (...) }
 
     // Easy connector
-    $easy.conn = {
+    this.conn = {
         add: function (path, obj) {
             // TODO: Code here...
 

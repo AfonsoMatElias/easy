@@ -1,49 +1,79 @@
 ﻿/**
  * @author Afonso Matumona Elias
- * @version v2.0.3
+ * @version v2.1.0
  * Released under the MIT License.
  * This is easy.js ajax connector, makes web requests easier. 
  */
 
-new EasyConnector('https://jsonplaceholder.typicode.com/', {
-    type: 'json',
-    headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
-    }
-});
-
 /**
  * Easy Ajax Connector
  * @param {String} baseUrl The base URL
- * @param {Object} fetchOptions fetch API Options
+ * @param {Object} fetchOptions fetch API default options
  */
 function EasyConnector(baseUrl, fetchOptions) {
+    this.dependencyId = "Connector";
     this.name = "Easy Ajax Connector";
-    this.version = '2.0.3';
+    this.version = '2.1.0';
+    this.attachedEasyInstance = null;
     // Checking EasyJs definition
     if (typeof Easy === undefined) return;
     var $easy = Easy.prototype;
 
+    var self = this;
+    // Adds the value of id parameter to the url
+    var normalizeId = function (value) {
+        if (value === null || value === undefined) return '';
+        return (value.endsWith('/') ? value : '/' + value);
+    }
+
+    // Easy connector
+    this.conn = {
+        baseUrl: baseUrl,
+        fetchOptions: fetchOptions,
+        add: function (path, obj) {
+            // you may set as you wish
+            return self.ajax(path, obj, 'post');
+        },
+        remove: function (path, id) {
+            // you may set as you wish
+            return self.ajax(path + normalizeId(id), null, 'delete');
+        },
+        update: function (path, obj, id) {
+            // you may set as you wish
+            return self.ajax(path + normalizeId(id), obj, 'put');
+        },
+        list: function (path, extra) {
+            // you may set as you wish
+            return self.ajax(path + normalizeId(extra), null, 'get');
+        },
+        getOne: function (path, id) {
+            // you may set as you wish
+            return self.ajax(path + normalizeId(id), null, 'get');
+        }
+    };
+
     // Function to make an ajax call 
-    $easy.ajax = function (url, body, method) {
+    this.ajax = function (url, body, method, redefine) {
         try {
-            // redefine if as http:// or https://
-            var redefine = url.includes('http://') || url.includes('https://');
+            var easy = self.attachedEasyInstance;
+
+            if (easy == null)
+                throw ({ message: 'No instance attached to this connector' });
+
             // The final url that will be used in fetch request
-            var $url = redefine ? url : $easy.conn.baseUrl + url;
+            var $url = redefine === true ? url : self.conn.baseUrl + url;
 
             // Resolving the Fetch options object
-            var options = $easy.extend.obj({
+            var options = easy.extend.obj({
                 // adding the body if exits
                 body: body ? JSON.stringify(body) : null,
                 // The method of the request
                 method: method,
                 // And outside options values
-            }, $easy.conn.fetchOptions);
+            }, self.conn.fetchOptions);
 
             // Sending and Retrieving the response
-            var $fetch = new $easy.http($url, options);
+            var $fetch = new easy.http($url, options);
 
             // The promise that needs to be returned
             return new Promise(function (resolve, reject) {
@@ -51,13 +81,13 @@ function EasyConnector(baseUrl, fetchOptions) {
                 $fetch.then(function (result) {
                     if (!result.ok)
                         throw ($easy.return(false, result.statusText, null));
+                        
+                        var response = result.response;
+                        
+                    if ( !response.success )
+                        throw ($easy.return(false, response.errors, null));
 
-                    var response = result.response;
-                    // Always return the actually data, if the response come into an object like:
-                    // { data: {...}, errors: [...], success: boolean }
-                    // Access the data and passe in 3th parameter of $easy.return(true, 'Ok', -> response.data <- ) 
-
-                    return resolve($easy.return(true, 'Ok', response));
+                    return resolve($easy.return(true, response.message || 'Success', response.data));
                 }).catch(function (error) {
                     return reject(error);
                 });
@@ -68,34 +98,4 @@ function EasyConnector(baseUrl, fetchOptions) {
         }
     };
 
-    // Adds the value of id parameter to the url
-    var normalizeId = function (id) {
-        if (id === null || id === undefined) return '';
-        return (id.endsWith('/') ? id : '/' + id);
-    }
-    // Easy connector
-    $easy.conn = {
-        baseUrl: baseUrl,
-        fetchOptions: fetchOptions,
-        add: function (path, obj) {
-            // you may set as you wish
-            return $easy.ajax(path, obj, 'post');
-        },
-        remove: function (path, id) {
-            // you may set as you wish
-            return $easy.ajax(path + normalizeId(id), null, 'delete');
-        },
-        update: function (path, obj, id) {
-            // you may set as you wish
-            return $easy.ajax(path + normalizeId(id), obj, 'put');
-        },
-        list: function (path, extra) {
-            // you may set as you wish
-            return $easy.ajax(path + normalizeId(extra), null, 'get');
-        },
-        getOne: function (path, id) {
-            // you may set as you wish
-            return $easy.ajax(path + normalizeId(id), null, 'get');
-        }
-    };
 }
