@@ -46,6 +46,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 version: 'v2.3.0',
                 cdn: 'https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.3.0/easy.js',
                 url: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.3.0/easy.js',
+
+                cdnMin: 'https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.3.0/easy.min.js',
+                urlMin: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.3.0/easy.min.js',
+                
                 connectors: {
                     ajax: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.3.0/easy.ajax.js',
                     ajaxCdn: 'https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.3.0/connectors/easy.ajax.js',

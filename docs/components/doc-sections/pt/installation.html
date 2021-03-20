@@ -18,6 +18,12 @@
         <a class="button-like" download href="{{ app.url }}"> Baixar </a>
     </p>
 
+    <p>Ou, o minificado</p>
+
+    <p>
+        <a class="button-like" download href="{{ app.urlMin }}"> Baixar Minificado </a>
+    </p>
+
     <div class="code-container" code-ext=".html">
         <textarea cm-lang="text/html">
     <script src="js/easy.js"></script></textarea>
@@ -37,6 +43,12 @@
     <script src="{{ app.cdn }}"></script></textarea>
     </div>
 
+    <p> Ou, podemos usar o minificado... </p>
+    
+    <div class="code-container" code-ext=".html">
+        <textarea cm-lang="text/html">
+    <script src="{{ app.cdnMin }}"></script></textarea>
+    </div>
 </section>
 <script>
     this.mounted = function (el) {
