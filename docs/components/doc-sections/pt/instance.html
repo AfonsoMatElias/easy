@@ -205,6 +205,17 @@
         objeto ou a propriedade dependencyId.
     </p>
 
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    var app = new Easy('#my-app', {
+        dependencies: [
+            new EasyConnector('https://localhost:5000/api/')
+        ]
+    });
+
+    var connector = app.dependencies["Connector"];</textarea>
+    </div>
+
     <div class="block-note info">
         <p>
             Podemos criar uma instância sem a variável, significando que a instância não poderá ser acessada pelo

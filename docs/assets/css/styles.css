@@ -1189,7 +1189,7 @@ ul.top-menu-opened {
     margin: 10px 0;
 }
 
-.unavaliable-section {
+.unavailable-section {
     width: 100%;
     height: 100%;
     display: flex;
@@ -1197,7 +1197,7 @@ ul.top-menu-opened {
     justify-content: center;
 }
 
-.unavaliable-section .page-icon {
+.unavailable-section .page-icon {
     display: flex;
 }
 
@@ -1218,17 +1218,17 @@ ul.top-menu-opened {
     color: #888;
 }
 
-.unavaliable-section .page-icon {
+.unavailable-section .page-icon {
     display: flex;
 }
 
-.unavaliable-section .page-icon .desc {
+.unavailable-section .page-icon .desc {
     display: flex;
     align-items: center;
     margin: 0 20px;
 }
 
-.unavaliable-section .page-icon .desc h1 {
+.unavailable-section .page-icon .desc h1 {
     font-size: 65px;
     font-weight: 600;
 }

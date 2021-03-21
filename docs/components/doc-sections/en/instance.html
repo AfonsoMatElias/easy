@@ -208,6 +208,17 @@
         dependencyId property.
     </p>
 
+    <div e-ignore class="code-container" code-ext=".js">
+        <textarea cm-lang="javascript">
+    var app = new Easy('#my-app', {
+        dependencies: [
+            new EasyConnector('https://localhost:5000/api/')
+        ]
+    });
+
+    var connector = app.dependencies["Connector"];</textarea>
+    </div>
+
     <div class="block-note info">
         <p>
             We can create an instance without a variable, meaning that the instance cannot be accessed by the browser

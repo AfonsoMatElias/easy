@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     // The language that needs to loaded
     var lang,
-        // Website avaliable languages
+        // Website available languages
         languages = [
             {
                 id: 'en',
@@ -18,9 +18,9 @@ document.addEventListener('DOMContentLoaded', function () {
         // Get the navigator language
         var id = ((window.navigator || {}).language || 'en').split('-')[0];
 
-        // Loop and check if it's in avaliable languages
+        // Loop and check if it's in available languages
         for (let i = 0; i < languages.length; i++)
-            if (languages[i] == id) lang = id;
+            if (languages[i].id == id) lang = id;
 
         // If it was found set it
         lang = localStorage._lang = lang || 'en';
@@ -43,17 +43,18 @@ document.addEventListener('DOMContentLoaded', function () {
             translations: languages,
             app: {
                 name: 'Easy',
-                version: 'v2.3.0',
-                cdn: 'https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.3.0/easy.js',
-                url: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.3.0/easy.js',
+                version: 'v2.3.1',
+                
+                cdn: 'https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.3.1/easy.js',
+                url: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.3.1/easy.js',
 
-                cdnMin: 'https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.3.0/easy.min.js',
-                urlMin: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.3.0/easy.min.js',
+                cdnMin: 'https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.3.1/easy.min.js',
+                urlMin: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.3.1/easy.min.js',
                 
                 connectors: {
-                    ajax: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.3.0/easy.ajax.js',
-                    ajaxCdn: 'https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.3.0/connectors/easy.ajax.js',
-                    free: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.3.0/easy.free.js'
+                    ajax: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.3.1/easy.ajax.js',
+                    ajaxCdn: 'https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.3.1/connectors/easy.ajax.js',
+                    free: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.3.1/easy.free.js'
                 }
             }
         },
