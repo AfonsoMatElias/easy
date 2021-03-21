@@ -1,7 +1,7 @@
 /**
- * Easy.js @version v2.3.0 Release
+ * Easy.js @version v2.3.1 Release
  * Released under the MIT License.
- * (c) 2019 @author Afonso Matumona
+ * (c) 2019-Present @author Afonso Matumona
  */
  (function(global, factory){
     (typeof exports === 'object' && typeof module !== 'undefined') ? module.exports = factory() :
@@ -15,7 +15,7 @@
         };
     // methods to observe
     var methods = [ 'push', 'pop', 'unshift', 'shift', 'splice' ];
-    var getter, $global = window, doc = $global.document;
+    var getter, scopeGetter, $global = window, doc = $global.document;
 
     // Helper variables to resolve url issues, based on Angular.js version 1.7.9
     var urlParsingNode = doc.createElement('a');
@@ -198,9 +198,9 @@
     function trim(value) {
         return value ? value.trim() : value; 
     }
-    function easyProperty(el) {
+    function configEasyProperty(el) {
         // Sets $easy property in a element where will be stored configurations used by easy
-        if ( !el.$e ) el.$e = {};
+        if ( !el.__e__ ) el.__e__ = {};
         return el;
     }
     function extractor(obj, name) {
@@ -211,7 +211,7 @@
         });
         return out;
     }
-    function urlResolve(url) {
+    function urlResolver(url) {
         if (!isString(url)) return url;
 
         var href = url;
@@ -695,7 +695,7 @@
                 var status = xhr.status === 1223 ? 204 : xhr.status;
 
                 if (status === 0) {
-                    status = response ? 200 : urlResolve(url).protocol === 'file' ? 404 : 0;
+                    status = response ? 200 : urlResolver(url).protocol === 'file' ? 404 : 0;
                 }
 
                 self.ok = (status >= 200 && status < 400);
@@ -756,7 +756,7 @@
         }
 
         this.name = 'Easy';
-        this.version = '2.3.0';
+        this.version = '2.3.1';
         this.data = {};
         this.dependencies = {};
         var $easy = this, exposed = { /* Store the exposed datas */ },
@@ -1175,7 +1175,7 @@
                 delete waitedData[name];
                 return forEach(elements, function (el) {
                     var $data = new ReactiveObject(data);
-                    $data.$scope = extend.obj(Compiler.getUpData(el));
+                    $data.$scope = extend.obj(Compiler.getScopeData(el));
                     Compiler.compile({
                         el: el,
                         data: extend.addToObj($data, extractor($data.$scope, 'function')) 
@@ -1194,7 +1194,7 @@
         prototype.retrieve = function(name, remove) {
             var fun = exposed[name], $data;
             if (fun) {
-                $data = fun.call(null).call(null);
+                $data = fun().call(null);
                 if (!isNull(remove) && remove === true)
                     delete exposed[name];
             }
@@ -1356,13 +1356,13 @@
             var cmds = vars.cmds;
 
             if (!$$el) return Easy.log('[BadDefinition]: Invalid element passed in the compiler');
-            easyProperty($$el);
+            configEasyProperty($$el);
 
             function includerHandler($config) {
                 var el = $config.el;
                 var $scope = extend.obj($config.$scope);
                 var $name = el.nodeName;
-                var base = $name == 'INC' ? el : el.$e.$base;
+                var base = $name == 'INC' ? el : el.__e__.$base;
                 var source = includerManager.src(base);
 
                 base.$$data = isEmptyObj($scope) ? null : extend.obj($scope);
@@ -1408,10 +1408,10 @@
 
             function walker(el, $scope) {
                 var $name = el.nodeName, $value = el.nodeValue;
-                easyProperty( el ); // setting easy property in the element
+                configEasyProperty( el ); // setting easy property in the element
                 // Add the old attributes if the compilation is forced
-                if (config.force === true && el.$e.$oldAttrs) {
-                    forEach(el.$e.$oldAttrs, function (attr) {
+                if (config.force === true && el.__e__.$oldAttrs) {
+                    forEach(el.__e__.$oldAttrs, function (attr) {
                         el.attributes.setNamedItem(attr);
                     });
                 }
@@ -1421,7 +1421,7 @@
                     case '#comment': return;
                     case 'e-compile': el.removeAttribute('e-compile'); break;
                     case 'wait-data': {
-                        var base = el.$e.$base;
+                        var base = el.__e__.$base;
                         var attr = functionManager.attr(base, [ 'wait-data' ], true);
                         if(!trim(attr.value))
                             return Easy.log({ message: error.invalid('in ' + attr.name), el: base });
@@ -1439,7 +1439,7 @@
                         return base.ignoreBaseCompilation = true;
                     }
                     case 'inc-tmp': {
-                        var base = el.$e.$base;
+                        var base = el.__e__.$base;
                         var attr = functionManager.attr(base, ['inc-tmp'], true);
 
                         if (trim(attr.value))
@@ -1451,11 +1451,11 @@
                     case cmds.def: {
                         var obj = functionManager.eval($value, $scope);
                         if (obj) $easy.setData(obj, $scope);
-                        return el.$e.$base.removeAttribute($name);
+                        return el.__e__.$base.removeAttribute($name);
                     }
                     case cmds.if: case cmds.show: {
-                        var base = el.$e.$base;
-                        var attr = functionManager.attr(el.$e.$base, [cmds.if, cmds.show], true);
+                        var base = el.__e__.$base;
+                        var attr = functionManager.attr(el.__e__.$base, [cmds.if, cmds.show], true);
 
                         if( (trim(el.value) === '') ) 
                             return Easy.log({ message: 'Invalid expression in ' + attr.value, el: el })
@@ -1465,7 +1465,7 @@
                             return Easy.log(error.delimiter($name));
                         
                         if (el.name === cmds.show) {
-                            el.$e.$base = base;
+                            el.__e__.$base = base;
                             Compiler.addOldAttr({ el: base, value: el });
 
                             // Toggle `display: none` in the element according the value result
@@ -1504,7 +1504,7 @@
                                     type: attr.nodeName
                                 });
 
-                                easyProperty(attr).$e.$base = base;
+                                configEasyProperty(attr).__e__.$base = base;
                                 Compiler.addOldAttr({ el: element, value: attr });
                             }
                             var verifyChainCondition = function () {
@@ -1515,13 +1515,13 @@
                                     if (chain.value) check = functionManager.eval(chain.value, $scope);
 
                                     if (check || chain.type == 'e-else') {
-                                        chain.element.$e.$oldAttrs.remove(chain.attr); // Avoid self-looping
+                                        chain.element.__e__.$oldAttrs.remove(chain.attr); // Avoid self-looping
                                         container.replaceChild(chain.element, chain.comment);
                                         Compiler.compile({
                                             el: chain.element,
                                             data: $scope,
                                             force: true,
-                                            done: function () { chain.element.$e.$oldAttrs.push(chain.attr); }
+                                            done: function () { chain.element.__e__.$oldAttrs.push(chain.attr); }
                                         });
                                         break;
                                     }
@@ -1562,7 +1562,7 @@
                         return base.ignoreBaseCompilation = true;
                     }
                     case cmds.data: {
-                        var base = el.$e.$base;
+                        var base = el.__e__.$base;
                         if (includerManager.isInc(base)) return; // Ignore scope criation in Includer Element
                         var attr = functionManager.attr(base, [cmds.data], true), $dt;
                         // Getting the data or the default
@@ -1582,7 +1582,7 @@
                         return base.ignoreBaseCompilation = true;
                     }
                     case cmds.tmp: case cmds.fill: case cmds.req: {
-                        var base = el.$e.$base;
+                        var base = el.__e__.$base;
                         // Preparing the element 
                         var attr = functionManager.attr(base, [cmds.tmp, cmds.fill], true);
                         if (attr) {
@@ -1595,7 +1595,7 @@
                         return base.ignoreBaseCompilation = true;
                     }
                     case cmds.for: {
-                        var base = el.$e.$base;
+                        var base = el.__e__.$base;
                         // Reading the for expression
                         var helper = uiHandler.cmd.for.read(base), comment;
                         if (!helper.ok) return;
@@ -1643,17 +1643,17 @@
                         return base.ignoreBaseCompilation = true;
                     }
                     case cmds.content: {
-                        var base = el.$e.$base;
+                        var base = el.__e__.$base;
                         base.innerHTML = $value;                        
                         return base.removeAttribute($name);
                     }
                     case cmds.anm: {
-                        var base = el.$e.$base;
+                        var base = el.__e__.$base;
                         if (!isNull($value)) base.niceIn($value);
                         return base.removeAttribute($name);
                     }
                     default:
-                        var base = el.$e.$base;
+                        var base = el.__e__.$base;
                         if ($name.startsWith('on:') || $name.startsWith('listen:')) {
                             if (trim($value) === '') return Easy.log('[BadDefinition]: Invalid expression in ' + $name);
                             var evtExpression = $name.split(':')[1].split('.'); // click.preventdefault
@@ -1690,13 +1690,22 @@
                             var val = $name.split(':'),
                                 // By default bind the value property
                                 field = val.length === 1 ? 'value' : val[1];
+                            
+                            if (base.contentEditable === 'true')
+                                $propDefiner(base, 'value', {
+                                    get: function() { return base.textContent;},
+                                    set: function (value) {
+                                        if (base.textContent !== value)
+                                            base.textContent = value;
+                                    }
+                                });
         
-                            base.$e.b = { data: field };
+                            base.__e__.bind = { field: field };
                             // Defining the object for 'setValue' function
-                            base.$e.$oldValue = $value;
-                            base.$e.$fields = [{ exp: $value, field: $value }];
-                            base.$e.$base = base;
-                            base._name = field;
+                            base.__e__.$oldValue = $value;
+                            base.__e__.$fields = [{ exp: $value, field: $value }];
+                            base.__e__.$base = base;
+                            base.__e__.name = field;
         
                             if (isNull($value) || trim($value) === '')
                                 return Easy.log('[BadDefinition]: e-bind attribute cannot have null or empty value.');
@@ -1764,7 +1773,7 @@
 
                                 if ($getterArg) {
                                     var w = $easy.watch($getterArg[1].property, function() {
-                                        exec(functionManager.eval(el.$e.$oldValue, $scope));
+                                        exec(functionManager.eval(el.__e__.$oldValue, $scope));
                                     }, $getterArg[0]);
     
                                     uiHandler.$handleWatches.push({ el: base, watch: w });
@@ -1784,7 +1793,7 @@
 
                 $attributes = singleAttrCompilation ? [ singleAttrCompilation ] : toArray((el.attributes || []));
                 forEach($attributes, function (child) {
-                    easyProperty(child).$e.$base = el;
+                    configEasyProperty(child).__e__.$base = el;
 
                     if (isNull($propDescriptor(child, 'isConnected')))
                         // Connecting the isConnected property to the main element property
@@ -1810,11 +1819,11 @@
 
                 // dynamic toggled value in attr
                 if (el.nodeValue) {
-                    var text = el, base = el.$e.$base, 
+                    var text = el, base = el.__e__.$base, 
                         fields = uiHandler.getDelimiters(text.nodeValue);
 
                     if (fields.length) { 
-                        text.$e.$fields = fields;
+                        text.__e__.$fields = fields;
                         if($name !== '#text') Compiler.addOldAttr({ el: base, value: el });
                         Compiler.setDefault({ attr: text });
                         Compiler.setValue({ current: text, scope: $$scope, methods: $$methods });
@@ -1823,11 +1832,11 @@
 
                 // Handling skeleton attribute
                 if(($name === cmds.skeleton) && (trim($value) === ''))
-                    el.$e.$base.removeAttribute($name);
+                    el.__e__.$base.removeAttribute($name);
 
                 // Url "hash" normalizer
                 if( $name === ':href' || $name === 'i:href' ) {
-                    var base = el.$e.$base;
+                    var base = el.__e__.$base;
                     var path = RouteHandler.findPath(el.value || '/');
                     
                     base.valueIn('href', RouteHandler.normalizeRoute(el.value || '/'));
@@ -1847,7 +1856,7 @@
                 if (!isNull(el.childNodes)) {
                     toArray(el.childNodes, function (child) {
                         $$scope = $scope;
-                        easyProperty(child).$e.$base = el;
+                        configEasyProperty(child).__e__.$base = el;
                         walker.call($easy, child, $scope);
                     });
                 }
@@ -1860,12 +1869,22 @@
             }
             // Setting the data function
             var $closure = $$scope;
-            $$el.$e.data = function () { return $closure; }
+            if ('data' in $$el.__e__) delete $$el.__e__.data; 
+            $propDefiner($$el.__e__, 'data', {
+                configurable: true,
+                get: function () {
+                    if (scopeGetter)
+                        scopeGetter($closure);
+                    return true;
+                },
+                set: function () {}
+            });
+
             $$el.$prevent = config.skipAutoCompile || undefined;
             
             new Promise(function(resolve, reject) {
                 try {
-                    $$el.$e.$base = $$el.ownerElement || $$el.parentNode;
+                    $$el.__e__.$base = $$el.ownerElement || $$el.parentNode;
                     // Compiling the the element
                     walker.call($easy, $$el, $$scope);
                     if ( !isNull(config.done) ) config.done.call($easy, $$el);
@@ -1959,7 +1978,7 @@
                     comps[key].data = comps[key].data ? new ReactiveObject(comps[key].data) : undefined;
                     comps[key].links = [];
 
-                    var urlWBase = urlResolve( comps[key].url ).hrefb;
+                    var urlWBase = urlResolver( comps[key].url ).hrefb;
                     urlWBase += urlWBase.endsWith('.html') ? '' : '.html';
 
                     comps[key].url = urlWBase;
@@ -2067,7 +2086,7 @@
                     Compiler.compile({
                         el: el,
                         skipAutoCompile: true,
-                        data: $easy.retrieve(src, true) || $inc.$$data || Compiler.getUpData(el)
+                        data: $easy.retrieve(src, true) || $inc.$$data || Compiler.getScopeData(el)
                     });
 
                     // calling the events
@@ -2316,7 +2335,7 @@
                     }
                 }
 
-                el.$e = config.inc.$e;
+                el.__e__ = config.inc.__e__;
                 // Defining attributes from the inc element 
                 includerManager.transferAttributes(config.inc, el);
 
@@ -2340,7 +2359,7 @@
                 try {
                     // In case of empty scope get the up component data
                     if ( isEmptyObj(this.scope) ) 
-                        this.scope = extend.obj(Compiler.getUpData(config.inc));
+                        this.scope = extend.obj(Compiler.getScopeData(config.inc));
                     // Add the scope object if it isn't empty
                     if ( !isEmptyObj(this.scope) ) {
                         delete this.data.$scope;
@@ -2559,7 +2578,7 @@
                         toArray(webDataRequests.keys(), function(key) {
                             var obj = webDataRequests[key];
                             if (obj.$type === 'many') {
-                                if (obj.$el.$e.com.isConnected === false)
+                                if (obj.$el.__e__.com.isConnected === false)
                                     delete webDataRequests[key];
                             } else {
                                 if (obj.$el.isConnected === false)
@@ -2603,7 +2622,7 @@
                 // Creates a comment with some identifier
                 create: function (id, options) {
                     if (!options) options = {};
-                    var comment = easyProperty(doc.createComment('e'));
+                    var comment = configEasyProperty(doc.createComment('e'));
                     comment.easy = true;
                     comment.$id = id || $easy.code(8);
                     options.keys(function (key, value) { comment[key] = value; });
@@ -2657,7 +2676,7 @@
                         if (!comment) {
                             var arrayId = el.aId = $easy.code(10);
                             comment = uiHandler.com.create(arrayId, { $tmp: el });
-                            el.$e.com = comment;
+                            el.__e__.com = comment;
                             // Removing the current element
                             el.aboveMe().replaceChild(comment, el);
                         }
@@ -2802,10 +2821,10 @@
             }
             /** set value field as #value or #text. */
             this.setNodeValue = function (field, $data) {
-                var origin = field.$e.$base, name = field._name || field.nodeName;
-                var value = field.$e.$oldValue, htmlData;
+                var origin = field.__e__.$base, name = field.__e__.name || field.nodeName;
+                var value = field.__e__.$oldValue, htmlData;
 
-                forEach(field.$e.$fields, function (f) {
+                forEach(field.__e__.$fields, function (f) {
                     if (!isNull(htmlData)) return;
                     var fieldValue = functionManager.exec(f.exp, $data, true);
                     if (f.field.startsWith('{html{'))
@@ -2878,7 +2897,7 @@
                     attr = functionManager.attr(elem, [cmds.req], true);
 
                 if (!attr) return;
-                easyProperty(elem);
+                configEasyProperty(elem);
 
                 var $value = trim(attr.value), $request = {};
                 if(!$value) return Easy.log({ message: error.invalid('e-req'), el: elem });
@@ -2908,20 +2927,20 @@
                     forEach(props, function(prop) {
                         var $w = $easy.watch(prop, function() {
                             var el = $request.$el;
-                            var above = el.$e.com.parentNode;
-                            if(el && el.$e.com){
+                            var above = el.__e__.com.parentNode;
+                            if(el && el.__e__.com){
                                 el.$prevent = true;
-                                forEach(el.$e.$oldAttrs, function (at) {
+                                forEach(el.__e__.$oldAttrs, function (at) {
                                     el.valueIn(at.name, at.value); 
                                 });
                                 // For many
                                 if( $request.$type === 'many' ) {
                                     // Removing all the elements listed
-                                    ReactiveArray.retrieveElems(el.$e.com, true);
+                                    ReactiveArray.retrieveElems(el.__e__.com, true);
                                     // Removing the e-for attribute defined
                                     el.removeAttribute(vars.cmds.for);
-                                    above.insertBefore(el, el.$e.com);
-                                    above.removeChild(el.$e.com);
+                                    above.insertBefore(el, el.__e__.com);
+                                    above.removeChild(el.__e__.com);
                                 }
                                 // Setting a new e-req attribute value
                                 el.valueIn(vars.cmds.req, JSON.stringify({
@@ -3143,7 +3162,7 @@
                         // In case of e-if or e-order, etc. check if the linked comment with is still connected
                         if ((bind.el.com && bind.el.com.isConnected === true)) return;
                         // If the owner element is connected do nothing
-                        if (bind.el.$e.$base && bind.el.$e.$base.isConnected === true) return;
+                        if (bind.el.__e__.$base && bind.el.__e__.$base.isConnected === true) return;
                         // Maintenance
                         if ((bind.el instanceof Element) && (bind.el.isConnected === false))
                             bind.bind.destroy(); // If it is an Element
@@ -3326,7 +3345,7 @@
                 // Two Way Data Binding
                 if ( this.two === true ) {
                     // Configuring the property
-                    $propDefiner(this.el.$e.b, 'val',
+                    $propDefiner(this.el.__e__.bind, 'val',
                         $propDescriptor(this.lastLayer, this.property.property))
                     nodeName = this.el.nodeName;
                     // Node name resolver: if 'key' treat as 'value'
@@ -3334,15 +3353,14 @@
                     nodeName = resolver[nodeName] || nodeName; 
                     
                     callback = function () {
-                        if (!config.el.$e || !config.el.$e.b)
+                        if (!config.el.__e__ || !config.el.__e__.bind)
                             return Easy.log('[Bad Definition], Data Binding was not configured in the element, please, ' +
                                 'make sure that the element was compiled before binding.');
         
-                        var bindConfig = config.el.$e.b;
-                        var value = config.el[bindConfig.data];
-                        if (!isNull(value) && value !== bindConfig.val) {
+                        var bindConfig = config.el.__e__.bind;
+                        var value = config.el[bindConfig.field];
+                        if (!isNull(value) && value !== bindConfig.val)
                             bindConfig.val = value;
-                        }
                     }
                     
                     this.el.addEventListener(nodeName.toLowerCase(), callback, false);
@@ -3353,7 +3371,7 @@
 
             this.destroy = function () {
                 if (callback) {
-                    delete this.el.$e.b;
+                    delete this.el.__e__.bind;
                     this.el.removeEventListener(nodeName.toLowerCase(), callback, false);
                     this.el.removeEventListener('propertychange', callback, false);
                     this.el.removeEventListener('change', callback, false);
@@ -3477,7 +3495,7 @@
             self.array = config.array.value;
             self.attr = config.attr = functionManager.attr(config.elem, [vars.cmds.order]) ||
                         // Checking the attribute in the old attributes property
-                        (config.elem.$e.$oldAttrs || []).findOne(function (at) {
+                        (config.elem.__e__.$oldAttrs || []).findOne(function (at) {
                             return at.name === vars.cmds.order;
                         });
 
@@ -3562,24 +3580,20 @@
             } catch (error) {
                 return Easy.log(error.message);
             }
-
-            this.clear = function () {
-                this.routeView.innerHTML = '';
-            }
             var getPath = function(url, rewriteUrl) {
-                var urlResolver = urlResolve(url);
-                var navegateTo = urlResolver.href.replaceAll(urlResolver.anchor.baseURI);
+                var resolver = urlResolver(url);
+                var navegateTo = resolver.href.replaceAll(resolver.anchor.baseURI);
                 var usehash = inc.config.usehash;
                 
-                rewriteUrl.url = urlResolver.href;
+                rewriteUrl.url = resolver.href;
                 // Removing the hash if necessary
                 var ruleHome = /(^#$)|(^\/#$)|(^#\/$)|(^\/#\/$)/g;
                 var ruleOtherPage = /(^#)|(^\/#)|(^#\/)|(^\/#\/)/g;
 
-                if (usehash && urlResolver.hash.match(ruleHome))
+                if (usehash && resolver.hash.match(ruleHome))
                     navegateTo = '/';
                 else if (usehash && navegateTo.match(ruleOtherPage) )
-                    navegateTo = urlResolver.hash;
+                    navegateTo = resolver.hash;
                     
                 navegateTo = (navegateTo[0] === '/' ? navegateTo : '/' + navegateTo).trim();
                 navegateTo = navegateTo.split('?')[0];
@@ -3588,6 +3602,9 @@
                     return this.defaultPage;
 
                 return RouteHandler.findPath(navegateTo) || this.notFoundPage;
+            }
+            this.clear = function () {
+                this.routeView.innerHTML = '';
             }
             this.navegate = function (url, isPopState) {
                 var rewriteUrl = {}; // Store the url the needs to be wrote
@@ -3649,8 +3666,8 @@
                 if (isNull(route)) return;
                 if (route < 0) return this.popState(route);
                 var incConfig = config.includer.config;
-                var urlResolver = urlResolve(route);
-                return location.href = ((incConfig.usehash ? '/#/' : '/') + urlResolver.pathname).replaceAll('//', '/');
+                var resolver = urlResolver(route);
+                return location.href = ((incConfig.usehash ? '/#/' : '/') + resolver.pathname).replaceAll('//', '/');
             }).bind(this);
 
             $global.addEventListener('popstate', (function (evt) {
@@ -3708,7 +3725,7 @@
         }
         /** Normalizes a route according to the baseURI and/or hash */
         RouteHandler.normalizeRoute = function(input) {
-            var resolver = urlResolve(input);
+            var resolver = urlResolver(input);
             var builtUrl = resolver.anchor.baseURI;
 
             if (componentConfig.usehash)
@@ -3761,7 +3778,7 @@
                         case 'asc': return asc ? 1 : -1;
                         case 'des': return des ? -1 : 1;
                         default: 
-                            Easy.log('[BadDefinition]: \''+ type +'\' is invalid type of order by. Avaliable types are: ' +
+                            Easy.log('[BadDefinition]: \''+ type +'\' is invalid type of order by. Available types are: ' +
                                 '\'asc\' for order ascendent and \'des\' for order descendent.');
                             return 0;
                     }
@@ -3793,37 +3810,39 @@
         }
         Compiler.setDefault = function(config) {
             var attr = config.attr;
-            if (!attr._name)
-                attr._name = attr.nodeName;
-            if (!attr.$e.$oldValue)
-                attr.$e.$oldValue = attr.nodeValue;
+            if (!attr.__e__.name)
+                attr.__e__.name = attr.nodeName;
+            if (!attr.__e__.$oldValue)
+                attr.__e__.$oldValue = attr.nodeValue;
         }
         Compiler.addOldAttr = function(config) {
-            easyProperty(config.el);
+            configEasyProperty(config.el);
             var el = config.el, value = config.value;
-            if (!el.$e.$oldAttrs) {
-                el.$e.$oldAttrs = [ value ];
+            if (!el.__e__.$oldAttrs) {
+                el.__e__.$oldAttrs = [ value ];
             } else {
-                if (el.$e.$oldAttrs.findOne(function (old) { return old == value; }))
+                if (el.__e__.$oldAttrs.findOne(function (old) { return old == value; }))
                     return value;
-                el.$e.$oldAttrs.push(value);
+                el.__e__.$oldAttrs.push(value);
             }
         }
         Compiler.setValue = function(obj) {
             var data = extend.addToObj(obj.scope, obj.methods);
             uiHandler.setNodeValue(obj.current, data);
             // Binding all the fields
-            return forEach(obj.current.$e.$fields, function (field) {
+            return forEach(obj.current.__e__.$fields, function (field) {
                 Bind.exec(obj.current, obj.scope, function () { functionManager.eval(field.exp, data); });
             });
         }
-        Compiler.getUpData = function(el) {
+        Compiler.getScopeData = function(el) {
+            var data; scopeGetter = function ($data) {data = $data;}
             do {
-                if(!el.$e) continue;
-                var curr = el.$e.data
-                if(typeof curr === 'function')
-                    return curr();
+                if(!el.__e__) continue;
+                var curr = el.__e__.data
+                if(curr === true) break;
             } while(el = el.parentNode)
+            scopeGetter = undefined;
+            return data;
         }
         try {
             // Setting the initial data
@@ -3851,7 +3870,7 @@
                         uiHandler.observer.mutation(function (elem) {
                             Compiler.compile({
                                 el: elem,
-                                data: Compiler.getUpData(elem)
+                                data: Compiler.getScopeData(elem)
                             });
                         }).observe($easy.el, {
                             childList: true,
