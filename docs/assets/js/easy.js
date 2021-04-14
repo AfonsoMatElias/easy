@@ -3122,6 +3122,8 @@
         }
         /** Finds a path from include elements */
         RouteHandler.getPath = function (input) {
+            if (input === '/' && !isNull($easy.routing.defaultPage)) 
+                return $easy.routing.defaultPage;
             // Searching for the path
             for (var key in includerManager.paths) {
                 var path = includerManager.paths[key];
@@ -3132,7 +3134,7 @@
                     return sec[0] === ':' ? '[\\S\\s]{1,}' : sec; 
                 }).join('/');
 
-                if( isArray(new RegExp('^'+ route +'$', 'gi').exec(input)) )
+                if (isArray(new RegExp('^'+ route +'$', 'gi').exec(input)))
                     return path;
             }
         }
@@ -3400,7 +3402,7 @@
                                 verifyShowValue(); unget();
     
                                 forEach($getterArg, function (arg) {
-                                    $easy.watch(arg[1].property, function () {
+                                    var watch = $easy.watch(arg[1].property, function () {
                                         verifyShowValue();
                                         if (!base.isConnected) watch.destroy();
                                     }, arg[0]);
@@ -3470,7 +3472,7 @@
                                 }); 
     
                                 forEach($getterArg, function (arg) {
-                                    $easy.watch(arg[1].property, function () {
+                                    var watch = $easy.watch(arg[1].property, function () {
                                         verifyChainCondition();
                                         var  isDestroy = true;
                                         forEach(chainCondition, function (item) {
@@ -3737,16 +3739,17 @@
                             currentNode.attributes[cmds.req] || currentNode.attributes[cmds.tmp] || currentNode.attributes[cmds.fill] || 
                             currentNode.attributes['wait-data'];
                         
-                        singleAttrCompilation = singleAttrCompilation || (currentNode.__e__.$oldAttrs || []).findOne(function (attr) {
-                            switch (attr.nodeName) {
-                                case cmds.data: case cmds.fill:
-                                case cmds.for: case cmds.req:
-                                case cmds.tmp: case 'wait-data':
-                                    currentNode.attributes.setNamedItem(attr);
-                                    return true;
-                                default: return false;
-                            }
-                        });
+                        if (config.force === true)
+                            singleAttrCompilation = singleAttrCompilation || (currentNode.__e__.$oldAttrs || []).findOne(function (attr) {
+                                switch (attr.nodeName) {
+                                    case cmds.data: case cmds.fill:
+                                    case cmds.for: case cmds.req:
+                                    case cmds.tmp: case 'wait-data':
+                                        currentNode.attributes.setNamedItem(attr);
+                                        return true;
+                                    default: return false;
+                                }
+                            });
                     } 
 
                     $attributes = singleAttrCompilation ? [ singleAttrCompilation ] : toArray((currentNode.attributes || []));
@@ -3797,6 +3800,10 @@
                         base.valueIn('href', RouteHandler.toRoute(currentNode.value || '/'));
                         if (path && $name === ':href') path.links.push(base);
     
+                        // if it's the active one, mark
+                        if (!isNull(RouteHandler.lastActivePath) && RouteHandler.lastActivePath === path)
+                            $easy.routing.markActive( base );
+
                         base.removeAttribute($name);
                         base.addEventListener('click', function (evt) {
                             evt.preventDefault();
