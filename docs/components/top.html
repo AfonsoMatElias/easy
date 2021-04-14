@@ -40,7 +40,7 @@
 </nav>
 <script>
     this.loaded = function (el) {
-        if (location.hash === '') {
+        if (location.pathname.includes('.html')) {
             var anchors = el.nodes('a');
             for (var i = 0; i < anchors.length; i++) {
                 var e = anchors[i];

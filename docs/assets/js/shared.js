@@ -11,48 +11,48 @@ function appExector(element, noApp) {
     new Promise(function (res) {
         res()
     })
-        .then(function () {
+    .then(function () {
 
-            var codes = element.nodes('textarea[cm-lang]');
-            for (let i = 0; i < codes.length; i++) {
-                var code = codes[i];
-                code.parentNode.editor = CodeMirror.fromTextArea(code, {
-                    readOnly: true,
-                    mode: code.valueIn('cm-lang'),
-                    scrollbarStyle: 'simple'
-                });
-            }
-            if (noApp) return;
-            // Executing apps
-            var $ad = 'config: { useDOMLoadEvent: false }, data:';
-            var $codes = element.querySelectorAll('div[execute]');
-            for (var i = 0; i < $codes.length; i++) {
+        var codes = element.nodes('textarea[cm-lang]');
+        for (let i = 0; i < codes.length; i++) {
+            var code = codes[i];
+            code.parentNode.editor = CodeMirror.fromTextArea(code, {
+                readOnly: true,
+                mode: code.valueIn('cm-lang'),
+                scrollbarStyle: 'simple'
+            });
+        }
+        if (noApp) return;
+        // Executing apps
+        var $ad = 'config: { useDOMLoadEvent: false }, data:';
+        var $codes = element.querySelectorAll('div[execute]');
+        for (var i = 0; i < $codes.length; i++) {
 
-                // The Main HTML Element
-                var $html = $codes[i];
+            // The Main HTML Element
+            var $html = $codes[i];
 
-                // The Script Element
-                var $script = $html.nextElementSibling;
+            // The Script Element
+            var $script = $html.nextElementSibling;
 
-                // The script content 
-                var $scriptContent = $script.editor.getValue();
+            // The script content 
+            var $scriptContent = $script.editor.getValue();
 
-                // The Display element
-                var $display = $script.nextElementSibling;
+            // The Display element
+            var $display = $script.nextElementSibling;
 
-                // Creating the element
-                var $resultExecutableElement = createNotCompilableElement($html.editor.getValue());
+            // Creating the element
+            var $resultExecutableElement = createNotCompilableElement($html.editor.getValue());
 
-                // Adding to the DOM
-                $display.appendChild($resultExecutableElement);
+            // Adding to the DOM
+            $display.appendChild($resultExecutableElement);
 
-                // Adding a peace of code that disable `DOMLoadEvent` usage
-                eval($scriptContent.replace('data:', $ad));
+            // Adding a peace of code that disable `DOMLoadEvent` usage
+            eval($scriptContent.replace('data:', $ad));
 
-                // Adding the easy app to the window object
-                window[$resultExecutableElement.id] = eval($resultExecutableElement.id);
-            }
-        });
+            // Adding the easy app to the window object
+            window[$resultExecutableElement.id] = eval($resultExecutableElement.id);
+        }
+    });
 }
 
 function getDateTime() {

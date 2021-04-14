@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function () {
             translations: languages,
             app: {
                 name: 'Easy',
-                version: 'v2.3.1',
+                version: 'v2.3.2',
                 
                 cdn: 'https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.3.1/easy.js',
                 url: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.3.1/easy.js',
@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         components: {
             config: {
-                preload: true
+                // preload: true
             },
             elements: {
                 'top': "/components/top",

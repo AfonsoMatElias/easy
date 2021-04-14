@@ -141,6 +141,12 @@
                     store: Boolean,
                     data: Object,
                     
+                    `Hooks: Adicionado Desde v2.3.2`
+                    created: Function, 
+                    mounted: Function,
+                    loaded: Function,
+                    destroyed: Function
+
                     /* Isto é para a secção de Roteamento (Routing) */
                     title: String,
                     route: String, 
@@ -184,6 +190,14 @@
             de
             compilação do componente.</li>
     </ul>
+
+    <div class="block-note info">
+        <p>
+            Os hooks que são definidos no registro dos components têm a mesma ação que as do <a
+                class="note mark-el">Lifecycles Hooks</a> de dentro do script do component, mas é substituida se for
+            definido novamente no script do componente.
+        </p>
+    </div>
 
     <h3> <a id="comp_handing"></a> Lidando com Components (Handling Components) </h3>
     <p>

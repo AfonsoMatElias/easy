@@ -144,6 +144,12 @@
                     store: Boolean,
                     data: Object,
                     
+                    `Hooks: Added Since v2.3.2`
+                    created: Function, 
+                    mounted: Function,
+                    loaded: Function,
+                    destroyed: Function
+
                     /* This is for Routing Section */
                     title: String,
                     route: String, 
@@ -161,7 +167,7 @@
             the changes made in the component data. The default value is <span class="note mark-el">false</span>.</li>
 
         <li> <span class="note mark-el">config.preload (<b>Since v2.2.0+</b>)</span> &ndash;
-            used to allow preloading the contents of all components on the instance when the application is started. 
+            used to allow preloading the contents of all components on the instance when the application is started.
             The default value is <span class="note mark-el">false</span>.</li>
 
         <li> <span class="note mark-el">elements</span> &ndash; used to define all the
@@ -170,7 +176,8 @@
             (From the server) or the <span class="mark-el">Options Object</span>.</li>
 
         <li> <span class="note mark-el">nameId.url</span> &ndash; represents the component path.
-            <span class="note">The extension .html is optional</span>. </li>
+            <span class="note">The extension .html is optional</span>.
+        </li>
 
         <li> <span class="note mark-el">nameId.template</span> &ndash; represents raw html code for
             template. <span class="note att-border"> Do not use together with <i class="mark-el">nameId.url</i>. </span>
@@ -187,6 +194,13 @@
         <li> <span class="note mark-el">nameId.data</span> &ndash; represents data that will be
             injected in the component compiling process. </li>
     </ul>
+
+    <div class="block-note info">
+        <p>
+            The components registration hooks has the same actions with component script <a class="note mark-el">
+                Lifecycles Hooks</a>, but it can be replaced if defined again in the component script.
+        </p>
+    </div>
 
     <h3> <a id="comp_handing"></a> Handling Components </h3>
     <p>
