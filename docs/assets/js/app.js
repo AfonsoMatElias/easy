@@ -45,11 +45,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 name: 'Easy',
                 version: 'v2.3.2',
                 
-                cdn: 'https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.3.1/easy.js',
-                url: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.3.1/easy.js',
+                cdn: 'https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.3.2/easy.js',
+                url: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.3.2/easy.js',
 
-                cdnMin: 'https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.3.1/easy.min.js',
-                urlMin: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.3.1/easy.min.js',
+                cdnMin: 'https://cdn.jsdelivr.net/gh/afonsomatelias/easy@2.3.2/easy.min.js',
+                urlMin: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.3.2/easy.min.js',
                 
                 connectors: {
                     ajax: 'https://github.com/AfonsoMatElias/easy/releases/download/v2.3.1/easy.ajax.js',
