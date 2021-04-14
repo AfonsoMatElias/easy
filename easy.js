@@ -124,7 +124,9 @@
         }
     }
 
-    function unget() { getter = undefined; }
+    function unget() {
+        getter = undefined;
+    }
     function $objDesigner(obj, options) {
         if (!obj) obj = {};
         if (!options) options = {};
@@ -165,6 +167,9 @@
     function isEmptyObj(obj) {
         if(!obj) return true;
         return obj.keys().length === 0;
+    }
+    function isFunction(obj) {
+        return typeof obj === 'function';
     }
     function toArray(obj, callback, context) {
         if (!obj) return [];
@@ -248,10 +253,37 @@
     }
     // Adding the extensions
     (function () {
-        if ( !isNull(Node.prototype.node) ) return;
+        if (!isNull(Node.prototype.node)) return;
         // Extension definer
         function def(key, callback, type) {
             $propDefiner((type || Object).prototype, key, { value: callback });
+        }
+        // The main animation function for the extension
+        function niceInOut(options) {
+            var target = options.target,
+                targetOther = options.otherEl,
+                key = options.key,
+                callback = options.callback,
+                direction = options.direction,
+                delay = options.delay;
+            var anm = vars.animations, keyNormalized = key.toLowerCase().split(':');
+            var keyIn = keyNormalized[0];
+
+            anm['to'].keys(function (_, v) {
+                target.classList.remove(v);
+            });
+            anm['from'].keys(function (_, v) {
+                target.classList.remove(v);
+            });
+
+            target.classList.add(anm[direction][keyIn]);
+            var keyOut = keyNormalized[1] || anm.reverse(keyIn);
+            
+            if (targetOther) targetOther.niceOut(keyOut);
+            // Executing the callback
+            setTimeout(function () {
+                if (callback) callback(target, targetOther);
+            }, (isNull(delay) ? 100 : delay));
         }
         // Query one element
         def('node', function (value) {
@@ -268,7 +300,7 @@
             var self = this;
             var array = Object.keys(self);
             // Calling the callback if it needs
-            if (callback && typeof callback === 'function')
+            if (callback && typeof isFunction(callback))
                 forEach(array, function (key) { 
                     callback(key, self[key]); 
                 }, context);
@@ -430,33 +462,6 @@
             }
             return this;
         }, Array);
-        // The main animation function for the extension
-        function niceInOut(options) {
-            var target = options.target,
-                targetOther = options.otherEl,
-                key = options.key,
-                callback = options.callback,
-                direction = options.direction,
-                delay = options.delay;
-            var anm = vars.animations, keyNormalized = key.toLowerCase().split(':');
-            var keyIn = keyNormalized[0];
-
-            anm['to'].keys(function (_, v) {
-                target.classList.remove(v);
-            });
-            anm['from'].keys(function (_, v) {
-                target.classList.remove(v);
-            });
-
-            target.classList.add(anm[direction][keyIn]);
-            var keyOut = keyNormalized[1] || anm.reverse(keyIn);
-            
-            if (targetOther) targetOther.niceOut(keyOut);
-            // Executing the callback
-            setTimeout(function () {
-                if (callback) callback(target, targetOther);
-            }, (isNull(delay) ? 100 : delay));
-        }
         // Execute the nice in animation into an element
         def('niceIn', function (key, outElem, callback, delay) {
             niceInOut({ 
@@ -533,7 +538,6 @@
                 });
             return self;
         }, String);
-        
         // Helper to check if a string starts with some str
         def('startsWith', function (value) {
             return (this.substr(0, value.length) === value);
@@ -746,7 +750,7 @@
             return self;
         });
     }
-    function Easy($elSelector, options) {
+    function Easy(selector, options) {
         if ( !(this instanceof Easy) ){
             Easy.log('[BadDefinition]: Easy is a constructor and should be called with the \'new\' keyword.');
             return this;
@@ -754,7 +758,6 @@
 
         this.name = 'Easy';
         this.version = '2.3.2';
-        this.data = options.data || {};
         this.dependencies = {};
         var $easy = this, exposed = { /* Store the exposed datas */ },
             webDataRequests = { /* Store web requests data */ }, 
@@ -763,8 +766,7 @@
             componentConfig = {}, skeletonConfig = { background: '#E2E2E2' , wave: '#ffffff5d' },
             functionManager = new Func();
 
-        var prototype = Object.create(Easy.prototype);
-        this.__proto__ = prototype;
+        var prototype = this.__proto__ = Object.create(Easy.prototype);
         // NOREACTIVE: Allow to skip this object when caught in reactive transformation process 
         this.__proto__.NOREACTIVE = true;
 
@@ -775,7 +777,7 @@
         ];// Default delimiters
 
         // Setting the default values in options
-        options = $objDesigner(options, { 
+        options = $objDesigner(options, {
             config:{}, data:{}, components:{}, mounted: functionManager.empty, loaded: functionManager.empty, dependencies: [] 
         });
         options.data = $objDesigner(options.data, {});
@@ -794,14 +796,10 @@
         componentConfig = options.components.config;
         this.delimiters = Object.freeze($$delimiters);
         this.options = options;
+        this.data = this.options.data;
 
-        /** Easy Logger */
-        Easy.log = function log(log, type) {
-            if ( !type ) type = 'error';
-            if ( $easy.options.config.log ) console[type]('[Easy '+ type +']', new EasyLog(log, type));
-            if ( !isNull($easy.emit) ) $easy.emit('log', { type: type, message: log });
-            return log;
-        }
+        /** Binding the Easy Logger */
+        Easy.log = Easy.log.bind(this);
         
         if (!isNull(options.components.config.base))
             Easy.log('The property component.config.`base` is deprecated, use only the <base href="..."/> element at the top of the <head> children.', 'warn');
@@ -870,7 +868,7 @@
          * @param {String} path The URL endpoint
          * @param {String} extra (optional) Some extra string that will be added to the path
          */
-         prototype.read = prototype.get = function (path, extra) {
+        prototype.read = prototype.get = function (path, extra) {
             try {
                 var connector = this.dependencies['Connector'];
                 if (isNull(connector)) throw ({ message: error.conn() });
@@ -1285,8 +1283,8 @@
                 if (callNow) callback.apply(context, args);
             };
         }
-        this.reactive = function reactive(fun) {
-            if (typeof fun !== 'function') {
+        this.reactive = function reactive(callback) {
+            if (!isFunction(callback)) {
                 Easy.log('[BadDefinition]: this.reactive function expects a function as parameter.');
                 return;
             }
@@ -1295,7 +1293,7 @@
                 Object.defineProperty(obj, prop.property, prop.descriptor);
             }
 
-            var $return = fun.call($easy); unget();
+            var $return = callback.call($easy); unget();
             if ( !isObj($return) ) return;
 
             // Adding missing properties that is the primitives
@@ -1327,7 +1325,7 @@
             if (!isArray(calls))
                 return Easy.log('Invalid value, try an array. Eg.: app.call([ ... ])');
             return forEach(calls, function (func, index) {
-                if (typeof func !== 'function' && ignoreIfNull !== true)
+                if (!isFunction(func) && ignoreIfNull !== true)
                     return Easy.log('The item-'+ index +' at app.call([ ... ]), is not a `function`, ' +
                                     'try: [ function(easy){ ... } ] or app.call([ ... ], true) to ignore the null items', 'warn');
                 if (func) func.call(this);
@@ -1355,10 +1353,9 @@
             this.skipNoFunction = function(list, k){
                 var skipped = false;
                 toArray(list, function(v, i) {
-                    if( typeof v !== 'function' ) {
-                        skipped = true;
-                        list.splice(i, 1);
-                    }
+                    if(isFunction(v)) return;
+                    skipped = true;
+                    list.splice(i, 1);
                 });
                 
                 if(skipped) Easy.log('[BadDefinition]: All restrictions must be a function! All non-functions '+
@@ -1397,11 +1394,9 @@
                     this.skipNoFunction(comps[key].restrictions, key);                
                     this.paths[key] = comps[key];
 
-                    if ( !isNull(onset) && typeof onset === 'function' )
+                    if (isFunction(onset))
                         onset.call(this, comps[key], key);
                       
-                    
-
                     if (options.components.config.preload)
                         this.get({
                             componentKey: key,
@@ -1485,7 +1480,7 @@
                         path: {
                             store: false,
                             path: location.pathname || location.hash,
-                            data: $easy.retrieve(nameNormalized, true) || $inc.$$data || compiler.upData(el)
+                            data: $easy.retrieve(nameNormalized, true) || $inc.$$data || compiler.upData($inc)
                         },
                         store: false,
                         componentConfig: $config
@@ -1513,14 +1508,13 @@
                     else
                         $url = $path.url;
                 } else {
-                    var message = 'No \''+ src +'\' component was found, please check if it\'s defined.';
-                    forEach(includerManager.fail, function (evt) { 
+                    var message = Easy.log('No \''+ src +'\' component was found, please check if it\'s defined.');
+                    return forEach(includerManager.fail, function (evt) { 
                         evt.call($easy, {
                             message: message,
                             inc: $inc 
                         });
                     });
-                    return Easy.log(message);
                 }
                 var component = includerManager.components[src];
                 // Checking if the component is stored
@@ -1636,6 +1630,8 @@
                 scripts = obj.scripts;
                 styles = obj.styles;
                 el = obj.el;
+                el.__e__ = obj.el.__e__.src;
+                el.__e__.src = toArray(obj.el.__e__.src);
             } else {
                 var temp = doc.createElement('body');
                 temp.innerHTML = componentStored.content;
@@ -1783,7 +1779,9 @@
                         config.inc.appendChild(el);
                         destroyable = config.inc;
                     }
-                    
+
+                    // Adding to the path
+                    el.__e__.src.push(config.src);
                     // Adding the destroy method
                     this.destroy = function () {
                         if (destroyable.parentNode)
@@ -1827,7 +1825,7 @@
                         }
                     }); mut.observe(target, { childList: true });
                 } catch (error) {
-                    error.file = config.inc.__e__.src;
+                    error.file = toArray(config.inc.__e__.src);
                     Easy.log(error);
                 }
             }
@@ -2097,7 +2095,7 @@
                                 forEach([name, vars.commands.order], function (p) {
                                     copy.removeAttribute(p);
                                 });
-                                copy.__e__ = { src: el.__e__.src, aId: el.__e__.aId };
+                                copy.__e__ = { src: toArray(el.__e__.src), aId: el.__e__.aId };
                                 copy.$prevent = true;
                                 data = uiHandler.cmd.for.item({
                                     item: item,
@@ -2489,7 +2487,7 @@
             if(!isNull($propDescriptor(object, property).get)) return this;
             
             // If it's a function
-            if (typeof $prop === 'function') {
+            if (isFunction($prop)) {
                 object[property] = $prop.bind($easy);
                 return this;
             }
@@ -2840,7 +2838,7 @@
                 } else {
                     var vtrim = trim(filter);
                     condition = functionManager.eval({ $exp: vtrim, $data: $data, $el: config.el });
-                    if (typeof condition === 'function') filterType = 'function';
+                    if (isFunction(condition)) filterType = 'function';
                 }
                 // Executes the filter function
                 function execute(value) {
@@ -2963,8 +2961,8 @@
         }
         /** Helper to handle the Routes. Dependencies: Easy, Includer */
         function RouteHandler(config) {
+            this.hasRouteView = !isNull(functionManager.attr(config.el, ['route-view'], true));
             this.routeView = config.el;
-            this.routeView.removeAttribute('route-view');
             this.manuallyMarkedAsActive = null;
             var inc = config.includer;
             var msg = function msg(codeName, firstPage, secPage) {
@@ -3085,13 +3083,15 @@
                 return location.href = ((incConfig.usehash ? '/#/' : '/') + resolver.pathname).replaceAll('//', '/');
             }).bind(this);
 
+            if (!this.hasRouteView)
+                return this;
+            
             $this.addEventListener('popstate', (function (evt) {
                 evt.preventDefault();
                 this.navegate((evt.state || {}).url || location.href, true);
             }).bind(this));
 
             this.navegate(location.href);
-            RouteHandler.navegate = this.navegate.bind(this);
         }
         // Static functions
         /** Bind all the properties that was read */
@@ -3213,7 +3213,7 @@
             $propTransfer($this, { event: event }, 'event');        
             // Calling the function, it is evaluated based on model data not the scope
             var $$result = functionManager.eval({ $exp: attr.value, $data: (options.scope || {}), $el: options.elem });
-            if (typeof $$result === 'function') $$result.apply($easy, [event]);
+            if (isFunction($$result)) $$result.apply($easy, [event]);
             // Defining the old value in the global object
             $propDefiner($this, 'event', eventDesc);
         }
@@ -3272,8 +3272,8 @@
                 if (!$$el) return Easy.log('[BadDefinition]: Invalid element passed in the compiler');
     
                 setEasyProperty($$el).__e__.$base = $$el.parentNode;
-                if ($$el.__e__.src.length == 0) 
-                    $$el.__e__.src = (($$el.parentNode || {}).__e__ ||{}).src || [];
+                if ($$el.__e__.src.length === 0) 
+                    $$el.__e__.src = toArray( (($$el.parentNode || {}).__e__ ||{}).src );
     
                 function includerHandler($config) {
                     var el = $config.el;
@@ -3282,7 +3282,6 @@
                     var base = $name == 'INC' ? el : el.__e__.$base;
                     var source = includerManager.src(base);
     
-                    el.__e__.src.push(source);
                     base.$$data = isEmptyObj($scope) ? null : extend.obj($scope);
                     // For includer dynamic change
                     var delimiters = uiHandler.getDelimiters(source);
@@ -3324,24 +3323,23 @@
                     return base;
                 }
                 
-                function walker(el, $scope) {
-                    var $name = el.nodeName, $value = el.nodeValue;
-
+                var walker = (function walker(currentNode, $scope, root) {
+                    var $name = currentNode.nodeName, $value = currentNode.nodeValue;
                     // setting easy property in the element
-                    setEasyProperty(el).__e__.src = $$el.__e__.src;
+                    setEasyProperty(currentNode).__e__.src = toArray(root.__e__.src);
                     // Add the old attributes if the compilation is forced
-                    if (config.force === true && el.__e__.$oldAttrs) {
-                        forEach(el.__e__.$oldAttrs, function (attr) {
-                            el.attributes.setNamedItem(attr);
+                    if (config.force === true && currentNode.__e__.$oldAttrs) {
+                        forEach(currentNode.__e__.$oldAttrs, function (attr) {
+                            currentNode.attributes.setNamedItem(attr);
                         });
                     }
                     
                     switch ($name) {
                         // Compilation to be skipped
                         case '#comment': return;
-                        case 'e-compile': el.__e__.$base.removeAttribute('e-compile'); break;
+                        case 'e-compile': currentNode.__e__.$base.removeAttribute('e-compile'); break;
                         case 'wait-data': {
-                            var base = el.__e__.$base;
+                            var base = currentNode.__e__.$base;
                             var attr = functionManager.attr(base, [ 'wait-data' ], true);
                             if(!trim(attr.value))
                                 return Easy.log({ message: error.invalid('in ' + attr.name), el: base });
@@ -3359,7 +3357,7 @@
                             return base.ignoreBaseCompilation = true;
                         }
                         case 'inc-tmp': {
-                            var base = el.__e__.$base;
+                            var base = currentNode.__e__.$base;
                             var attr = functionManager.attr(base, ['inc-tmp'], true);
     
                             if (trim(attr.value))
@@ -3369,29 +3367,29 @@
                             return;
                         }
                         case cmds.def: {
-                            var obj = functionManager.eval({ $exp: $value, $data: $scope, $el: el });
+                            var obj = functionManager.eval({ $exp: $value, $data: $scope, $el: currentNode });
                             if (obj) $easy.setData(obj, $scope);
-                            return el.__e__.$base.removeAttribute($name);
+                            return currentNode.__e__.$base.removeAttribute($name);
                         }
                         case cmds.if: case cmds.show: {
-                            var base = el.__e__.$base;
-                            var attr = functionManager.attr(el.__e__.$base, [cmds.if, cmds.show], true);
+                            var base = currentNode.__e__.$base;
+                            var attr = functionManager.attr(currentNode.__e__.$base, [cmds.if, cmds.show], true);
     
-                            if( (trim(el.value) === '') ) 
-                                return Easy.log({ message: 'Invalid expression in ' + attr.value, el: el })
+                            if( (trim(currentNode.value) === '') ) 
+                                return Easy.log({ message: 'Invalid expression in ' + attr.value, el: currentNode })
                             
                             // Checking if it has delimiters
-                            if (uiHandler.getDelimiters(el.value).length > 0) 
+                            if (uiHandler.getDelimiters(currentNode.value).length > 0) 
                                 return Easy.log(error.delimiter($name));
                             
-                            if (el.name === cmds.show) {
-                                el.__e__.$base = base;
-                                compiler.store({ el: base, value: el });
+                            if (currentNode.name === cmds.show) {
+                                currentNode.__e__.$base = base;
+                                compiler.store({ el: base, value: currentNode });
     
                                 // Toggle `display: none` in the element according the value result
                                 var verifyShowValue = function () {
                                     var check = functionManager.eval({
-                                        $exp: el.nodeValue, $data: $scope, $el: el
+                                        $exp: currentNode.nodeValue, $data: $scope, $el: currentNode
                                     });
                                     if (check) base.style.display = '';
                                     else base.style.display = 'none';
@@ -3407,7 +3405,7 @@
                                         if (!base.isConnected) watch.destroy();
                                     }, arg[0]);
                                 })
-                            } else if (el.name === cmds.if) {
+                            } else if (currentNode.name === cmds.if) {
                                 var curr = base, container = base.parentNode, chainCondition = [];
                                 var hideChainCondition = function () {
                                     forEach(chainCondition, function (item) {
@@ -3435,7 +3433,7 @@
                                         var check, chain = chainCondition[i];
                                         // Evaluating the element value
                                         if (chain.value) check = functionManager.eval({ 
-                                            $exp: chain.value, $data: $scope, $el: el 
+                                            $exp: chain.value, $data: $scope, $el: currentNode 
                                         });
 
                                         if (callback) callback();
@@ -3454,7 +3452,7 @@
                                     }
                                 }
     
-                                addToChainConditionList(curr, el);
+                                addToChainConditionList(curr, currentNode);
     
                                 do { // Getting the chain conditions
                                     curr = curr.nextElementSibling;
@@ -3486,21 +3484,21 @@
                             return;
                         }
                         case 'inc-src': {
-                            var base = includerHandler({ el: el, $scope: $scope });
+                            var base = includerHandler({ el: currentNode, $scope: $scope });
                             return base.ignoreBaseCompilation = true;
                         }
                         case cmds.data: {
-                            var base = el.__e__.$base;
+                            var base = currentNode.__e__.$base;
                             if (includerManager.isInc(base)) return; // Ignore scope criation in Includer Element
                             var attr = functionManager.attr(base, [cmds.data], true), $dt;
                             // Getting the data or the default
                             if ( trim(attr.value) === '' )
                                 $dt = extend.obj($easy.data); // clone the main data
                             else
-                                $dt = functionManager.eval({ $exp: attr.value, $data: $scope, $el: el }) || {};
+                                $dt = functionManager.eval({ $exp: attr.value, $data: $scope, $el: currentNode }) || {};
     
                             $dt.$scope = extend.obj($scope);
-                            walker.call($easy, base, extend.addToObj($dt, $$methods));
+                            walker(base, extend.addToObj($dt, $$methods), root);
                             
                             EasyEvent.emit({
                                 elem: base,
@@ -3510,7 +3508,7 @@
                             return base.ignoreBaseCompilation = true;
                         }
                         case cmds.tmp: case cmds.fill: case cmds.req: {
-                            var base = el.__e__.$base;
+                            var base = currentNode.__e__.$base;
                             // Preparing the element 
                             var attr = functionManager.attr(base, [cmds.tmp, cmds.fill], true);
                             if (attr) {
@@ -3527,20 +3525,20 @@
                             return base.ignoreBaseCompilation = true;
                         }
                         case cmds.for: {
-                            var base = el.__e__.$base;
+                            var base = currentNode.__e__.$base;
                             // Reading the for expression
                             var helper = uiHandler.cmd.for.read(base), comment;
                             if (!helper.ok) return;
                             
                             var $getterArg; // [0] -> obj; [1] -> prop
                             getter = function () { $getterArg = arguments; }
-                            var v = functionManager.eval({ $exp: helper.array, $data: $scope, $el: el }); unget();
+                            var v = functionManager.eval({ $exp: helper.array, $data: $scope, $el: currentNode }); unget();
                             var desc = $getterArg ? $getterArg[1].descriptor : null;
                             
                             var array = desc ? $propDefiner({}, 'value', desc) : { value: v };
     
                             comment = new Filter({
-                                el: el,
+                                el: currentNode,
                                 array: array,
                                 dec: helper.dec,
                                 data: $scope,
@@ -3576,17 +3574,17 @@
                             return base.ignoreBaseCompilation = true;
                         }
                         case cmds.content: {
-                            var base = el.__e__.$base;
+                            var base = currentNode.__e__.$base;
                             base.innerHTML = $value;                        
                             return base.removeAttribute($name);
                         }
                         case cmds.anm: {
-                            var base = el.__e__.$base;
+                            var base = currentNode.__e__.$base;
                             if (!isNull($value)) base.niceIn($value);
                             return base.removeAttribute($name);
                         }
                         default:
-                            var base = el.__e__.$base;
+                            var base = currentNode.__e__.$base;
                             if ($name.startsWith('on:') || $name.startsWith('listen:')) {
                                 if (trim($value) === '') return Easy.log('[BadDefinition]: Invalid expression in ' + $name);
                                 var evtExpression = $name.split(':')[1].split('.'); // click.preventdefault
@@ -3604,12 +3602,12 @@
                                         arguments[0].$data = { scope: $scope };
                                         // Calling the callback function
                                         var $$result = functionManager.eval({
-                                            $exp: $value, $data: extend.addToObj($scope || {}, $$methods), $el: el 
+                                            $exp: $value, $data: extend.addToObj($scope || {}, $$methods), $el: currentNode 
                                         });
                                         try {
-                                            if (typeof $$result === 'function') $$result.apply($easy, arguments);
+                                            if (isFunction($$result)) $$result.apply($easy, arguments);
                                         } catch (error) {
-                                            Easy.log({ message: error.message, scope: $scope, file: el.__e__.src });
+                                            Easy.log({ message: error.message, scope: $scope, file: currentNode.__e__.src });
                                         }
                                     });
                                 } else {
@@ -3619,12 +3617,12 @@
                                             $easy.off(eventName, $event.callback);
                                         // Calling the callback function
                                         var $$result = functionManager.eval({ 
-                                            $exp: $value, $data: extend.addToObj($scope || {}, $$methods), $el: el 
+                                            $exp: $value, $data: extend.addToObj($scope || {}, $$methods), $el: currentNode 
                                         });
                                         try {
-                                            if (typeof $$result === 'function') $$result.apply($easy, arguments);
+                                            if (isFunction($$result)) $$result.apply($easy, arguments);
                                         } catch (error) {
-                                            Easy.log({ message: error.message, scope: $scope, file: el.__e__.src });
+                                            Easy.log({ message: error.message, scope: $scope, file: currentNode.__e__.src });
                                         }
                                     }
                                     callback.$target = base;
@@ -3665,7 +3663,7 @@
                                     return Easy.log('[BadDefinition]: e-toggle attribute cannot have null or empty value.');
             
                                 function exec() {
-                                    var res = functionManager.eval({ $exp: $value, $data: $scope, $el: el });
+                                    var res = functionManager.eval({ $exp: $value, $data: $scope, $el: currentNode });
                                     if(res) base.valueIn(exp[1], 'true');
                                     else base.removeAttribute(exp[1]);
                                 }
@@ -3689,8 +3687,8 @@
                                     // Testing if the value if object definition
                                     if( !($value[0] === '{' && $value[1] !== '{') ) return;
             
-                                    compiler.set({ attr: el });
-                                    compiler.store({ el: base, value: el });
+                                    compiler.set({ attr: currentNode });
+                                    compiler.store({ el: base, value: currentNode });
             
                                     var name = $name.substr(2);
                                     if(!base.hasAttribute(name))
@@ -3712,13 +3710,13 @@
                                     var $getterArg; // [0] -> obj; [1] -> prop
                                     getter = function () { $getterArg = arguments; }
     
-                                    var res = functionManager.eval({ $exp: $value, $data: $scope, $el: el });        
+                                    var res = functionManager.eval({ $exp: $value, $data: $scope, $el: currentNode });        
                                     if(!isObj(res)) return; 
                                     exec(res); unget();
     
                                     if ($getterArg) {
                                         var w = $easy.watch($getterArg[1].property, function() {
-                                            exec(functionManager.eval({ $exp: el.__e__.$oldValue, $data: $scope, $el: el }));
+                                            exec(functionManager.eval({ $exp: currentNode.__e__.$oldValue, $data: $scope, $el: currentNode }));
                                         }, $getterArg[0]);
         
                                         uiHandler.$handleWatches.push({ el: base, watch: w });
@@ -3727,61 +3725,61 @@
                             }
                             break;
                     }
-    
+                    
+                    // Skip element if it was marked
+                    if (currentNode.hasAttribute && currentNode.hasAttribute('e-ignore')) return;
+
                     // Loop attrs
                     var singleAttrCompilation, $attributes = [];
                     // Attributes Priorities
-                    if (el.attributes)  {
-                        singleAttrCompilation = el.attributes[cmds.data] || el.attributes[cmds.for] || 
-                            el.attributes[cmds.req] || el.attributes[cmds.tmp] || el.attributes[cmds.fill] || 
-                            el.attributes['wait-data'];
+                    if (currentNode.attributes) {
+                        singleAttrCompilation = currentNode.attributes[cmds.data] || currentNode.attributes[cmds.for] || 
+                            currentNode.attributes[cmds.req] || currentNode.attributes[cmds.tmp] || currentNode.attributes[cmds.fill] || 
+                            currentNode.attributes['wait-data'];
                         
-                        singleAttrCompilation = singleAttrCompilation || (el.__e__.$oldAttrs || []).findOne(function (attr) {
+                        singleAttrCompilation = singleAttrCompilation || (currentNode.__e__.$oldAttrs || []).findOne(function (attr) {
                             switch (attr.nodeName) {
                                 case cmds.data: case cmds.fill:
                                 case cmds.for: case cmds.req:
                                 case cmds.tmp: case 'wait-data':
-                                    el.attributes.setNamedItem(attr);
+                                    currentNode.attributes.setNamedItem(attr);
                                     return true;
                                 default: return false;
                             }
                         });
                     } 
-    
-                    $attributes = singleAttrCompilation ? [ singleAttrCompilation ] : toArray((el.attributes || []));
+
+                    $attributes = singleAttrCompilation ? [ singleAttrCompilation ] : toArray((currentNode.attributes || []));
                     forEach($attributes, function (child) {
-                        setEasyProperty(child).__e__.$base = el;
+                        setEasyProperty(child).__e__.$base = currentNode;
     
                         if (isNull($propDescriptor(child, 'isConnected')))
                             // Connecting the isConnected property to the main element isConnected property
                             $propDefiner(child, 'isConnected', {
-                                get: function () { return el.isConnected; },
+                                get: function () { return currentNode.isConnected; },
                                 set: function () {}
                             });
       
                         // Compilation with the same $scope
-                        walker.call($easy, child, $scope);
+                        walker(child, $scope, root);
                     });
     
-                    // Skip element if it was marked
-                    if (el.hasAttribute && el.hasAttribute('e-ignore')) return;
-    
-                    if (el.ignoreBaseCompilation === true)
-                        return delete el.ignoreBaseCompilation;
+                    if (currentNode.ignoreBaseCompilation === true)
+                        return delete currentNode.ignoreBaseCompilation;
         
                         // after checking the attrs, check the element node name
                     if ($name == 'INC')
-                        return includerHandler({ el: el, $scope: $scope })
+                        return includerHandler({ el: currentNode, $scope: $scope })
                                 .ignoreBaseCompilation = true;
     
                     // dynamic toggled value in attr
-                    if (el.nodeValue) {
-                        var text = el, base = el.__e__.$base, 
+                    if (currentNode.nodeValue) {
+                        var text = currentNode, base = currentNode.__e__.$base, 
                             fields = uiHandler.getDelimiters(text.nodeValue);
     
                         if (fields.length) { 
                             text.__e__.$fields = fields;
-                            if($name !== '#text') compiler.store({ el: base, value: el });
+                            if($name !== '#text') compiler.store({ el: base, value: currentNode });
                             compiler.set({ attr: text });
                             compiler.bind({ current: text, scope: $$scope, methods: $$methods });
                         }
@@ -3789,41 +3787,41 @@
     
                     // Handling skeleton attribute
                     if(($name === cmds.skeleton) && (trim($value) === ''))
-                        el.__e__.$base.removeAttribute($name);
+                        currentNode.__e__.$base.removeAttribute($name);
     
                     // Url "hash" normalizer
                     if( $name === ':href' || $name === 'i:href' ) {
-                        var base = el.__e__.$base;
-                        var path = RouteHandler.getPath(el.value || '/');
+                        var base = currentNode.__e__.$base;
+                        var path = RouteHandler.getPath(currentNode.value || '/');
                         
-                        base.valueIn('href', RouteHandler.toRoute(el.value || '/'));
+                        base.valueIn('href', RouteHandler.toRoute(currentNode.value || '/'));
                         if (path && $name === ':href') path.links.push(base);
     
                         base.removeAttribute($name);
                         base.addEventListener('click', function (evt) {
                             evt.preventDefault();
-                            if (RouteHandler.navegate)
-                                RouteHandler.navegate(base.href);
+                            if ($easy.routing.hasRouteView)
+                                $easy.routing.navegate(base.href);
                             else
                                 $this.location.href = base.href;
                         });
                     }
     
                     // Getting in the children
-                    if (!isNull(el.childNodes)) {
-                        toArray(el.childNodes, function (child) {
+                    if (!isNull(currentNode.childNodes)) {
+                        toArray(currentNode.childNodes, function (child) {
                             $$scope = $scope;
-                            setEasyProperty(child).__e__.$base = el;
-                            walker.call($easy, child, $scope);
+                            setEasyProperty(child).__e__.$base = currentNode;
+                            walker(child, $scope, root);
                         });
                     }
                     
                     EasyEvent.emit({ // Emitting the event
-                        elem: el,
+                        elem: currentNode,
                         type: vars.events.compiled,
                         scope: $scope
                     });
-                }
+                }).bind($easy)
                 // Setting the data function
                 var $closure = $$scope;
                 if ('data' in $$el.__e__) delete $$el.__e__.data; 
@@ -3838,17 +3836,19 @@
                 });
     
                 $$el.$prevent = config.skipAutoCompile || undefined;
+                $$el.__e__.$base = $$el.ownerElement || $$el.parentNode;
                 
-                new Task(function(resolve, reject) {
-                    try {
-                        $$el.__e__.$base = $$el.ownerElement || $$el.parentNode;
-                        // Compiling the the element
-                        walker.call($easy, $$el, $$scope);
-                        if ( !isNull(config.done) ) config.done.call($easy, $$el);
-                        resolve($easy);
-                    } catch (error) {
-                        reject(Easy.log(error));
-                    }
+                Task.resolve({
+                    element: $$el,
+                    data: $$scope,
+                    onDone: isFunction(config.done) ? config.done : functionManager.empty
+                })
+                .then(function ($in) {
+                    walker($in.element, $in.data, $in.element);
+                    $in.onDone.call($easy, $in.element);
+                })
+                .catch(function (err) {
+                    Easy.log(err)
                 });
             }
         };
@@ -3884,7 +3884,7 @@
                     return path.restrictions.remove(func);
                 }
             }
-        }
+        };
 
         this.watch = Watch.exec;
         this.toElement = toElement;
@@ -3898,10 +3898,10 @@
         this.use(options.dependencies);
 
         var initializer = (function (){
-            this.el = doc.node($elSelector || '');
+            this.el = doc.node(selector || '');
 
-            if (!this.el)
-                return Easy.log('[NotFound]: Element with selector \''+ $elSelector +'\' not found, please check it.');
+            if (!this.el) 
+                return Easy.log('[NotFound]: Element with selector \''+ selector +'\' not found, please check it.');
             
             this.routing = new RouteHandler({
                 el: this.el.node('[route-view]') || doc.createElement('div'), 
@@ -3960,14 +3960,29 @@
         this.name = log.name || 'Error';
         this.__proto__.toString = function(){ return instance.message; };
     }
-    EasyLog.prototype = Object.create(Error.prototype, {
-        constructor: { value: EasyLog, writable: true, configurable: true }
-    });
+    Easy.log = function log(log, type) {
+        if ( !type ) type = 'error';
+
+        var print = function () {
+            console[type]('[Easy '+ type +']', new EasyLog(log, type));
+            return log;
+        }
+
+        if (!(this instanceof Easy))
+            return print(); 
+
+        if ( this.options.config.log ) print();
+        if ( !isNull(this.emit) ) this.emit('log', { type: type, message: log });
+        return log;
+    }
     // Default proto methods
     Easy.prototype.http = http;
     Easy.prototype.extend = extend;
     Easy.prototype.return = function (status, message, result, extra) {
         return extend.addToObj({ status: status, message: message, result: result }, extra);
     }
+    EasyLog.prototype = Object.create(Error.prototype, {
+        constructor: { value: EasyLog, writable: true, configurable: true }
+    });
     return Easy;
 })));
