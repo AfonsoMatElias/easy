@@ -168,6 +168,17 @@
         if(!obj) return true;
         return obj.keys().length === 0;
     }
+    function isFilledObj(obj) {
+        if (isEmptyObj(obj)) return false;
+
+        var oneFilledField = false;
+        obj.keys(function (k, v) {
+            if (!isNull(v))
+            oneFilledField = true;
+        });
+
+        return oneFilledField;
+    }
     function isFunction(obj) {
         return typeof obj === 'function';
     }
@@ -335,8 +346,8 @@
             function parent(elem) {
                 var $node = elem.parentNode;
 
-                if ( isNull(selector) ) return $node;
-                if ( $node === doc || isNull($node) ) return null;
+                if ( isNull(selector)) return $node;
+                if ( $node === doc || isNull($node)) return null;
 
                 var tester = doc.createElement('body');
                 tester.innerHTML = $node.outerHTML;
@@ -346,7 +357,7 @@
                 else 
                     tester.children[0].innerHTML = '';
 
-                if ( !isNull(tester.querySelector(selector)) )
+                if ( !isNull(tester.querySelector(selector)))
                     return $node;
                 else if ( $node.nodeName === tester.nodeName )
                     return null;
@@ -366,7 +377,7 @@
             });
             function check(v1, v2) {    
                 var s1 = v1, s2 = v2;
-                if( !isObj(s1) && !isObj(s2) ) {
+                if( !isObj(s1) && !isObj(s2)) {
                     s1 = toStr(v1), s2 = toStr(v2);
                     if (options.ignoreCase) {
                         s1 = s1.toLowerCase();
@@ -586,13 +597,13 @@
             
             this.then = function (resolve, reject) {
                 thens.push(resolve);
-                if( !isNull(reject) )
+                if( !isNull(reject))
                     catches.push(reject);
                 return self;
             }
             this.catch = function (reject, resolve) {
                 catches.push(reject);
-                if( !isNull(resolve) )
+                if( !isNull(resolve))
                     thens.push(resolve);
                 return self;
             }
@@ -624,7 +635,7 @@
     $this.UrlParams = function(url) {
         if (!url) url = location.href;
         var compare = arguments[1];
-        if ( compare && isString(compare) ) {
+        if ( compare && isString(compare)) {
             // Building from url
             var $url = url.split('/').reverse();
             if ($url[0] === '') $url.shift();
@@ -751,7 +762,7 @@
         });
     }
     function Easy(selector, options) {
-        if ( !(this instanceof Easy) ){
+        if ( !(this instanceof Easy)){
             Easy.log('[BadDefinition]: Easy is a constructor and should be called with the \'new\' keyword.');
             return this;
         }
@@ -948,7 +959,7 @@
                 var checkables = { checkbox: true, radio: true };
                 // Try to get value from the element
                 function tryGetValue($el) {
-                    var val = null;
+                    var val = undefined;
                     mValues.findOne(function (value) {
                         return (val = $el.valueIn(value)) ? true : false;
                     });
@@ -999,7 +1010,7 @@
                 var isarray = $build.hasAttribute(vars.commands.array);
                 var value = objBuilder($build);
 
-                if (isEmptyObj(value)) return;
+                if (!isFilledObj(value)) return;
 
                 (function objStructurer(remainPath, lastLayer) {
                     var splittedPath = remainPath.split('.');
@@ -1024,7 +1035,7 @@
                             // Handle Array
                             if ( isObj(propertyValue) && !isEmptyObj(propertyValue)) {
                                 lastLayer[part] = [ extend.obj(propertyValue, value) ];
-                            } else if ( isArray(propertyValue) ) {
+                            } else if ( isArray(propertyValue)) {
                                 propertyValue.push(value);
                             } else {
                                 lastLayer[part] = [ value ];
@@ -1071,7 +1082,7 @@
                 return "keyframes " + n + " { to { opacity: 1; transform: translate" + dir + "; } }"
             }
             
-            style.textContent = ".hide-it { display: none !important; }" +
+            style.textCtent = ".hide-it { display: none !important; }" +
                 "inc:not([no-replace]),[inc-src]:not([no-replace]) { display:none!important; }" + 
                 ".to-top, .to-bottom, .to-right, .to-left { opacity: 0; }" +
                 ".from-top, .from-bottom, .from-right, .from-left" +
@@ -1168,7 +1179,7 @@
                 return Easy.log('[BadDefinition]: Invalid data, only Object (non Array one) can be exposed, ' +
                             'try to wrap it into an object literal!. Eg.: { myData: data }.');
             var elements = waitedData[name];
-            if( !isNull(elements) ) {
+            if( !isNull(elements)) {
                 delete waitedData[name];
                 return forEach(elements, function (el) {
                     var $data = new ReactiveObject(data);
@@ -1258,7 +1269,7 @@
                     if( isNull(value) || !trim(value.name) || 
                         (isNull(value.delimiter) || 
                         !trim(value.delimiter.open) || 
-                        !trim(value.delimiter.close) )) {
+                        !trim(value.delimiter.close))) {
                         return Easy.log('[BadDefinition]: Invalid object, check if the object has this structure and has valid values: ' + 
                                         '\n{ name: \'...\', delimiter: { open: \'...\', close: \'...\' } }');
                     }
@@ -1294,7 +1305,7 @@
             }
 
             var $return = callback.call($easy); unget();
-            if ( !isObj($return) ) return;
+            if ( !isObj($return)) return;
 
             // Adding missing properties that is the primitives
             $return.keys(function (key, value) {
@@ -1366,7 +1377,7 @@
             this.setComponent = function (objects, onset) {
                 var comps = {};
                 objects.keys((function (key, value) {
-                    if( !isNull(this.paths[key]) )
+                    if( !isNull(this.paths[key]))
                         return Easy.log('[BadDefinition]: Cannot redefine the component \''+ key +'\' ');
 
                     comps[key] = isString(value) ? {
@@ -1388,7 +1399,7 @@
                       comps[key].url = urlWBase;
                     }
 
-                    if( isNull(comps[key].restrictions) )
+                    if( isNull(comps[key].restrictions))
                         comps[key].restrictions = [];
 
                     this.skipNoFunction(comps[key].restrictions, key);                
@@ -1406,7 +1417,7 @@
                             }
                         })
                     
-                    if ( isObj(value) && isObj(value.children) ) {
+                    if ( isObj(value) && isObj(value.children)) {
                         this.setComponent(value.children, function ($comp, $key) {
                             $comp.route = value.route + $comp.route;
                             comps[$key] = $comp;
@@ -1488,7 +1499,7 @@
                 }
                 var $path = includerManager.paths[src], $url;
                 if ($path) {
-                    if( !isNull($path.restrictions.findOne( function (v) { return v.call($easy) === false; } )) )
+                    if( !isNull($path.restrictions.findOne( function (v) { return v.call($easy) === false; } )))
                         return forEach(includerManager.blocked, function (evt) { 
                             evt.call($easy, {
                                 message: 'The component was blocked by the restrictions!',
@@ -1756,10 +1767,10 @@
                 
                 try {
                     // In case of empty scope get the up component data
-                    if ( isEmptyObj(this.scope) ) 
+                    if ( isEmptyObj(this.scope)) 
                         this.scope = extend.obj(compiler.upData(config.inc));
                     // Add the scope object if it isn't empty
-                    if ( !isEmptyObj(this.scope) ) {
+                    if ( !isEmptyObj(this.scope)) {
                         delete this.data.$scope;
                         this.data.$scope = this.scope;
                     }
@@ -2002,7 +2013,7 @@
                             // Ignored node
                             if ( node.aboveMe && node.hasAttribute('e-ignore')) 
                                 return;
-                            if ( ( $easy.options.config.deepIgnore === true && node.aboveMe && node.aboveMe('[e-ignore]') ) ) 
+                            if ( ( $easy.options.config.deepIgnore === true && node.aboveMe && node.aboveMe('[e-ignore]')) ) 
                                 return;
 
                             // Checking if the element needs to be skipped
@@ -2212,7 +2223,7 @@
                     var center = '([\\S\\s]*?)';
                     for (var i = 0; i < uiHandler.$$delimiters.length; i++) {
                         var dlm = uiHandler.$$delimiters[i], 
-                        result = text.match( RegExp( dlm.delimiter.open + center + dlm.delimiter.close, flag) );
+                        result = text.match( RegExp( dlm.delimiter.open + center + dlm.delimiter.close, flag));
                         if ( result ) return result; 
                     }
                 }
@@ -2259,7 +2270,7 @@
                 // Set the actually value of the field
                 if ((name in origin)) {
                     try {
-                        if ( !isNull(origin[name]) ) {
+                        if ( !isNull(origin[name])) {
                             var ctorName = origin[name].__proto__.constructor.name;
                             // In case of Boolean, the constructor does not parse string to boolean
                             // The verification will be manually
@@ -2311,7 +2322,7 @@
 
                 // Repleacing if we got delimiters
                 forEach(uiHandler.getDelimiters($value), function (f) {
-                    $value = $value.replaceAll( f.field, functionManager.exec({ $exp: f.exp, $data: $scope, $el: elem }) );
+                    $value = $value.replaceAll( f.field, functionManager.exec({ $exp: f.exp, $data: $scope, $el: elem }));
                 });
 
                 // Checking if it is an object
@@ -2833,7 +2844,7 @@
             } else {
                 var lastValue = array.value, filterType = 'global', condition;
 
-                if ( (filter.indexOf(':') !== -1) ) {
+                if ( (filter.indexOf(':') !== -1)) {
                     filterType = 'targeted';
                 } else {
                     var vtrim = trim(filter);
@@ -2976,11 +2987,11 @@
                     if(path.isDefault === true) {
                         if(isNull(this.defaultPage))
                             this.defaultPage = path;
-                        else throw ( msg('default', this.defaultPage.name, key) );
+                        else throw ( msg('default', this.defaultPage.name, key));
                     } else if (path.isNotFound === true) {
                         if(isNull(this.notFoundPage))
                             this.notFoundPage = path;
-                        else throw ( msg('notFound', this.notFoundPage.name, key) );
+                        else throw ( msg('notFound', this.notFoundPage.name, key));
                     }
                 }
             } catch (error) {
@@ -2998,7 +3009,7 @@
 
                 if (usehash && resolver.hash.match(ruleHome))
                     navegateTo = '/';
-                else if (usehash && navegateTo.match(ruleOtherPage) )
+                else if (usehash && navegateTo.match(ruleOtherPage))
                     navegateTo = resolver.hash;
                     
                 navegateTo = (navegateTo[0] === '/' ? navegateTo : '/' + navegateTo).trim();
@@ -3036,7 +3047,7 @@
 
                 var el = doc.createElement('inc');
                 el.valueIn('src', path.name);
-                if ( path.keepAlive === true )
+                if (path.keepAlive === true )
                     el.valueIn('keep-alive', '');
                 this.routeView.appendChild(el);
 
@@ -3059,7 +3070,7 @@
                 $this.history.pushState({ url: url }, title, url);
             }
             this.popState = function (number) {
-                if ( isNull(number) ) number = -1;
+                if ( isNull(number)) number = -1;
                 $this.history.go(number);
             }
             this.markActive = function (anchor) {
@@ -3148,13 +3159,13 @@
             else
                 resolver.pathname = resolver.pathname.substr(1);
             
-            builtUrl += resolver.pathname;
+            builtUrl += resolver.pathname + resolver.hash + (resolver.search ? '?'+resolver.search : '');
             return builtUrl;
         }
         /** watch a property from data */
         Watch.exec = function (prop, callback, object) {
             if (!object) object = $easy.data;
-            if ( !object.hasOwnProperty(prop) ) return;
+            if ( !object.hasOwnProperty(prop)) return;
             var $getterArg; // [0] -> obj; [1] -> prop
             getter = function () { $getterArg = arguments; };
             var _ = object[prop]; unget();
@@ -3377,7 +3388,7 @@
                             var base = currentNode.__e__.$base;
                             var attr = functionManager.attr(currentNode.__e__.$base, [cmds.if, cmds.show], true);
     
-                            if( (trim(currentNode.value) === '') ) 
+                            if( (trim(currentNode.value) === '')) 
                                 return Easy.log({ message: 'Invalid expression in ' + attr.value, el: currentNode })
                             
                             // Checking if it has delimiters
@@ -3613,7 +3624,7 @@
                                         }
                                     });
                                 } else {
-                                    if( !isNull(vars.events[eventName]) ) return;
+                                    if( !isNull(vars.events[eventName])) return;
                                     var callback = function() {
                                         if(evtExpression.indexOf('once') !== -1) // If once
                                             $easy.off(eventName, $event.callback);
@@ -3631,7 +3642,7 @@
                                     var $event = $easy.on(eventName, callback);
                                 }
                                 return base.removeAttribute($name);
-                            } else if ( $name === 'e-bind' || $name.startsWith('e-bind:') ) {
+                            } else if ( $name === 'e-bind' || $name.startsWith('e-bind:')) {
                                 var val = $name.split(':'),
                                     // By default bind the value property
                                     field = val.length === 1 ? 'value' : val[1];
@@ -3659,7 +3670,7 @@
                                     uiHandler.setNodeValue(base, $scope);
                                 }, { two: true });
                                 return base.removeAttribute($name);
-                            } else if ( $name.startsWith('e-toggle:') ) {
+                            } else if ( $name.startsWith('e-toggle:')) {
                                 var exp = $name.split(':');
                                 if (isNull($value) || trim($value) === '')
                                     return Easy.log('[BadDefinition]: e-toggle attribute cannot have null or empty value.');
@@ -3682,12 +3693,12 @@
                                 }
     
                                 return base.removeAttribute($name);
-                            } else if ( $name.startsWith('e-') && !vars.commands.hasValue($name) ) {
+                            } else if ( $name.startsWith('e-') && !vars.commands.hasValue($name)) {
                                 // alternable attr values
                                 if(uiHandler.getDelimiters($value).length === 0 && trim($value) !== '') {
                                     $value = trim($value);
                                     // Testing if the value if object definition
-                                    if( !($value[0] === '{' && $value[1] !== '{') ) return;
+                                    if( !($value[0] === '{' && $value[1] !== '{')) return;
             
                                     compiler.set({ attr: currentNode });
                                     compiler.store({ el: base, value: currentNode });
@@ -3864,30 +3875,30 @@
             add: includerManager.setComponent.bind(includerManager),
             get: function (name) {
                 var path = checkIncPath(name);
-                if( isNull(path) ) return;
-                var res = extend.obj( path );
+                if( isNull(path)) return;
+                var res = extend.obj(Path );
                 delete res.restrictions;
                 return res;
             },
             restrictions: {
                 add: function (name, restrs) {
-                    if( !isArray(restrs) ) {
+                    if( !isArray(restrs)) {
                         Easy.log('[BadDefinition]: ' + error.invalid() + ' Try an array!'); 
                         return; 
                     } 
                     var path = checkIncPath(name);
-                    if( isNull(path) ) return;
+                    if( isNull(path)) return;
                     includerManager.skipNoFunction(restrs, name);
                     return path.restrictions.push.apply(path.restrictions, restrs);
                 },
                 get: function (name) {
                     var path = checkIncPath(name);
-                    if( isNull(path) ) return;
+                    if( isNull(path)) return;
                     return path.restrictions;
                 },
                 remove: function (name, func) {
                     var path = checkIncPath(name);
-                    if( isNull(path) ) return;
+                    if( isNull(path)) return;
                     return path.restrictions.remove(func);
                 }
             }
@@ -3979,7 +3990,7 @@
             return print(); 
 
         if ( this.options.config.log ) print();
-        if ( !isNull(this.emit) ) this.emit('log', { type: type, message: log });
+        if ( !isNull(this.emit)) this.emit('log', { type: type, message: log });
         return log;
     }
     // Default proto methods
