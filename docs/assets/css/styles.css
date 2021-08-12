@@ -162,6 +162,10 @@ body {
     filter: blur(8px);
 }
 
+.hide-it {
+    display: none;
+}
+
 .app-flex-center {
     margin: auto;
 }
