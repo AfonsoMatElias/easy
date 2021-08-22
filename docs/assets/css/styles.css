@@ -163,7 +163,7 @@ body {
 }
 
 .hide-it {
-    display: none;
+    display: none!important;
 }
 
 .app-flex-center {
