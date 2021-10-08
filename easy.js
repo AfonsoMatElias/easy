@@ -1,5 +1,5 @@
 /**
- * Easy.js @version v2.3.2 Release
+ * Easy.js @version v2.3.3 Release
  * Released under the MIT License.
  * (c) 2019-Present @author Afonso Matumona
  */
@@ -635,16 +635,8 @@
     $this.UrlParams = function(url) {
         if (!url) url = location.href;
         var compare = arguments[1];
-        if ( compare && isString(compare)) {
-            // Building from url
-            var $url = url.split('/').reverse();
-            if ($url[0] === '') $url.shift();
-            var $compare = compare.split('/').reverse();
-            forEach($compare, (function(value, index) {
-                if (value[0] === ':')
-                    this[value.substr(1)] = $url[index];     
-            }).bind(this));
-        } else {
+
+        var buildQueryParams = function () {
             // Building from query string
             var queryStr = url.split('?')[1];
             if (!queryStr) return this;
@@ -653,6 +645,22 @@
                 var pair = key.split('=');
                 this[pair[0]] = (pair[1] || '').split('#')[0]
             }).bind(this));
+        };
+
+        if ( compare && isString(compare)) {
+            // Building from url
+            var urlWithQueryParamsIgnored = url.split('?')[0];
+            var $url = urlWithQueryParamsIgnored.split('/').reverse();
+            if ($url[0] === '') $url.shift();
+            var $compare = compare.split('/').reverse();
+            forEach($compare, (function(value, index) {
+                if (value[0] === ':')
+                    this[value.substr(1)] = $url[index];     
+            }).bind(this));
+
+            buildQueryParams.call(this);
+        } else {
+            buildQueryParams.call(this);
         }
         this.push = function (input) {
             if (isNull(url)) return url;
@@ -1030,7 +1038,7 @@
                                 lastLayer[part] = value;
                             else
                                 // Build array if the object already exists
-                                lastLayer[part] = extend.array( (isEmptyObj(propertyValue) ? null : propertyValue), value);
+                                lastLayer[part] = extend.obj(propertyValue, value);
                         } else {
                             // Handle Array
                             if ( isObj(propertyValue) && !isEmptyObj(propertyValue)) {
@@ -1082,7 +1090,7 @@
                 return "keyframes " + n + " { to { opacity: 1; transform: translate" + dir + "; } }"
             }
             
-            style.textCtent = ".hide-it { display: none !important; }" +
+            style.textContent = ".hide-it { display: none !important; }" +
                 "inc:not([no-replace]),[inc-src]:not([no-replace]) { display:none!important; }" + 
                 ".to-top, .to-bottom, .to-right, .to-left { opacity: 0; }" +
                 ".from-top, .from-bottom, .from-right, .from-left" +
@@ -1628,7 +1636,7 @@
             }
 
             this.getParams = (function () {
-                return new UrlParams(location.href, (!location.href.includes('?') ? this.route : null))
+                return new UrlParams(location.href, this.route)
             }).bind(config.path)
 
             var store = config.store,
@@ -3812,7 +3820,7 @@
                         if (path && $name === ':href') path.links.push(base);
     
                         // if it's the active one, mark
-                        if (!isNull(RouteHandler.lastActivePath) && RouteHandler.lastActivePath === path)
+                        if (!isNull(RouteHandler.lastActivePath) && RouteHandler.lastActivePath === path && $name === ':href')
                             $easy.routing.markActive( base );
 
                         base.removeAttribute($name);
